@@ -218,6 +218,12 @@ class TaskRunner extends \Depage\Depage\Ui\Base
                 $tag .= ".project." . $this->task->projectName;
             }
             foreach ($activeUsers as $user) {
+                if ($this->task->projectName &&
+                    (!is_callable([$user, "canEditProject"])
+                        || !$user->canEditProject($this->task->projectName)
+                    )
+                ) break;
+
                 $newN = new \Depage\Notifications\Notification($this->pdo);
                 $newN->setData([
                     'sid' => $user->sid,

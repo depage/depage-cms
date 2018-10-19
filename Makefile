@@ -1,10 +1,13 @@
 RM = rm -rf
 I18N = ~/Dev/depage-cms/www/framework/i18n.sh
 JSMIN = ~/Dev/depage-cms/www/framework/JsMin/minimize
+PHP = $(shell which php)
 
 SASSDIR = www/framework/Cms/sass/
 CSSDIR = www/framework/Cms/css/
 JSDIR = www/framework/Cms/js/
+
+WWWPATH = /var/www/depage-cms/
 
 .PHONY: all min minjs locale locale-php sass sassc push pushdev pushlive doc clean
 
@@ -35,11 +38,21 @@ $(CSSDIR)%.css: $(SASSDIR)%.scss $(SASSDIR)modules/*.scss www/framework/HtmlForm
 
 sassc: $(patsubst %.scss,$(CSSDIR)%.css, $(notdir $(wildcard $(SASSDIR)*.scss)))
 
+run-taskrunner:
+	cd $(WWWPATH) ; sudo -u nobody $(PHP) -f framework/Tasks/TaskRunner.php -- --dp-path $(WWWPATH) --conf-url https://localhost/depage-cms/ --watch
+
+run-socketserver:
+	cd $(WWWPATH) ; sudo -u nobody $(PHP) -f framework/WebSocket/Server.php -- --dp-path $(WWWPATH) --conf-url https://localhost/depage-cms/
+
+run-scheduler:
+	cd /var/www/depage-cms/ ; sudo -u nobody $(PHP) -f framework/Cms/Scheduler.php  -- --dp-path $(WWWPATH) --conf-url https://localhost/depage-cms/
+
 push: pushlive
 
 pushlive: all
 	rsync \
 	    -k -r -v -c \
+	    --delete \
 	    --exclude '.DS_Store' \
 	    --exclude '.git' \
 	    --exclude 'cache/' \
@@ -48,6 +61,7 @@ pushlive: all
 pushdev: all
 	rsync \
 	    -k -r -v -c \
+	    --delete \
 	    --exclude '.DS_Store' \
 	    --exclude '.git' \
 	    --exclude 'cache/' \
@@ -56,6 +70,7 @@ pushdev: all
 pushtwins: all
 	rsync \
 	    -k -r -v -c \
+	    --delete \
 	    --exclude '.DS_Store' \
 	    --exclude '.git' \
 	    --exclude 'cache/' \

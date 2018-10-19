@@ -35,7 +35,6 @@
 
         > span.depage-label + span {
             @include radius($cornerRadius);
-            //border: 1px solid $borderColor;
             display: inline-block;
             background: $backgroundColor;
             margin-top: 10px;
@@ -71,6 +70,12 @@
             @include box-shadow(inset 0 0 4px 0 rgba(0, 0, 0, 0.7));
         }
         input[type="radio"]:disabled + span {
+        }
+        input[type="radio"]:focus + span {
+            @include box-shadow(inset 0 0 0 1px $selectionBackgroundColor);
+        }
+        input[type="radio"]:checked:focus + span {
+            @include box-shadow(inset 0 0 4px 1px $selectionBackgroundColor);
         }
         label {
             cursor: pointer;
@@ -140,6 +145,7 @@
             display: inline-block;
             padding: 3px 10px;
             padding-left: $tagIconSize * 1.25;
+            //border: 1px solid transparent;
             color: $textBaseColor;
             cursor: pointer;
             letter-spacing: 0.03em;
@@ -170,6 +176,12 @@
                 @include icon-base("checkbox-checked-white", $tagIconSize);
             }
         }
+        input[type="checkbox"]:focus + span {
+            @include box-shadow(inset 0 0 0 1px $selectionBackgroundColor);
+        }
+        input[type="checkbox"]:checked:focus + span {
+            @include box-shadow(inset 0 0 4px 1px $selectionBackgroundColor);
+        }
     }
 }
 // }}}
@@ -195,7 +207,7 @@
             position: absolute;
             left: 0;
             top: 0;
-            padding-top: 6px;
+            padding-top: 8px;
             padding-left: 10px;
             width: $labelWidth;
             height: auto;
@@ -208,6 +220,7 @@
             padding-left: $labelWidth;
             border-color: transparent !important;
             border-bottom-color: $backgroundLighterColor !important;
+            @include radius(0);
         }
         .textarea,
         .textarea .textarea-content {
@@ -225,7 +238,7 @@
                 @include radius($cornerRadius, "top", "right");
             }
         }
-        &:last-child {
+        &:last-of-type  {
             input,
             textarea,
             .textarea {
@@ -251,7 +264,6 @@
         }
     }
     label:focus-within .depage-label {
-        //font-weight: bold;
         color: $textBaseColor;
     }
     > p > .depage-label,
@@ -259,43 +271,119 @@
         font-size: $fSizeS;
         color: $textLighterColor;
     }
-    @media screen and (min-width: 1800px) {
-        $indent: 120px;
-        padding-left: $indent + 15px;;
-
-        > legend {
-            position: absolute;
-            width: $indent;
-            margin-left: -$indent;
-            top: 10px;
-        }
-    }
 }
 // }}}
 // {{{ .doc-properties .doc-property-meta
 .doc-properties .doc-property-meta {
-    background-color: $baseColor;
+    $iconSize: 32px;
+    $releaseButtonWidth: 140px;
+
+    background-color: $backgroundColor;
     padding-bottom: 3px;
 
     > legend {
         margin-bottom: 2px;
+        display: none;
     }
     p {
-        padding-right: 100px;
         position: relative;
         line-height: $treeLineHeight;
     }
-    p + p {
-        //margin-bottom: -5px;
-    }
-    .release {
-        display: block;
-        position: absolute;
-        top: - $treeLineHeight;
-        right: 0;
+    p.status {
+        padding-right: $releaseButtonWidth + 10px;
+        line-height: $iconSize;
+        padding-left: 20px;
+        padding-bottom: 5px;
 
-        &.disabled {
-            opacity: 0.5;
+        a {
+            text-decoration: underline;
+            color: $textBaseColor;
+        }
+    }
+    p.date {
+        //font-size: $fSizeS;
+        //font-style: italic;
+        color: $textLighterColor;
+    }
+    .opener {
+        position: absolute;
+        top: $iconSize * 0.5 - 5px;
+        left: 10px;
+        display: block;
+        content: " ";
+        float: left;
+        width: 24px;
+        height: 24px;
+        margin-top: 1px;
+        cursor: pointer;
+        @include icon-base("closed", 24px);
+    }
+    &.open .opener {
+        @include icon("open", 24px);
+    }
+    p.release {
+        position: absolute;
+        top: 7px;
+        right: 15px;
+        width: $releaseButtonWidth;
+
+        a {
+            display: block;
+            //float: right;
+            width: $releaseButtonWidth;
+            text-align: center;
+            padding: 3px 10px;
+            color: $selectionBackgroundColor;
+            @include radius($cornerRadius);
+            @include transition($transitionTime, "background-color, color");
+        }
+    }
+    &.open p.release a,
+    p.release a:hover {
+        background-color: $selectionBackgroundColor;
+        color: $textBrightColor;
+        font-weight: bold;
+    }
+    p.release a.disabled {
+        background-color: transparent;
+        color: $textDisabledColor;
+        font-weight: normal;
+        //opacity: 0.5;
+    }
+
+    > p.input-url input {
+        @include radius($cornerRadius);
+    }
+
+    div.details {
+        display: none;
+
+        span.depage-label {
+            display: none;
+        }
+    }
+
+    i.icon {
+        display: inline-block;
+        vertical-align: middle;
+        margin-top: -2px;
+        padding: 0;
+        width: $iconSize;
+        height: $iconSize;
+        margin-right: 5px;
+        @include icon-base("", $iconSize);
+    }
+    i.icon-published {
+        @include icon("published", $iconSize);
+    }
+    i.icon-unreleased {
+        @include icon("unreleased", $iconSize);
+    }
+
+    &.open {
+        div.details {
+            display: block;
+            padding-top: $treeLineHeight * 0.5;
         }
     }
 }

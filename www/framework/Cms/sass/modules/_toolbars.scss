@@ -101,6 +101,7 @@
             &.icon-user,
             &.icon-help,
             &.icon-projects,
+            &.icon-reload,
             &.icon-settings {
                 &:before {
                     content: " ";
@@ -183,6 +184,9 @@
             }
             &.icon-delete:before {
                 @include icon("delete", 24px);
+            }
+            &.icon-reload:before {
+                @include icon("reload", 24px);
             }
             &.icon-user:before {
                 @include icon("user", 24px);
@@ -377,7 +381,6 @@
         a.button,
         a.toggle-button {
             width: 28px;
-            background-color: $backgroundLighterColor;
             border-right: 1px solid #dddddd;
             @include radius(0);
 
@@ -391,6 +394,9 @@
                 @include radius(3px, "top", "right");
                 @include radius(3px, "bottom", "right");
                 border-right: none;
+            }
+            &:hover {
+                background-color: $backgroundLighterColor;
             }
         }
         a.toggle-button.active {

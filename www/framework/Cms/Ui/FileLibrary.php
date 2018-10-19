@@ -24,10 +24,14 @@ class FileLibrary extends Base
 
         if (empty($this->projectName)) {
             throw new \Depage\Cms\Exceptions\Project("no project given");
-        } else {
-            $this->project = $this->getProject($this->projectName);
-            $this->fs = \Depage\Fs\Fs::factory($this->project->getProjectPath() . "lib/");
         }
+
+        $this->project = $this->getProject($this->projectName);
+        if (!$this->project) {
+            throw new \Depage\Cms\Exceptions\Project("not allowed");
+        }
+
+        $this->fs = \Depage\Fs\Fs::factory($this->project->getProjectPath() . "lib/");
     }
     // }}}
 

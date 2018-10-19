@@ -25,6 +25,7 @@
             "copy" => _("Copy"),
             "create" => _("New"),
             "createNew" => _("Create new:"),
+            "createNewAtEnd" => _("Create new element at the end"),
             "createNoElements" => _("There are no elements that can be created in this element"),
             "cut" => _("Cut"),
             "delete" => _("Delete"),
@@ -32,7 +33,8 @@
             "deselectAll" => _("Deselect all"),
             "duplicate" => _("Duplicate"),
             "edit" => _("Edit"),
-            "editHelp" => _("Edit current page in edit interface on the left ←."),
+            "editHelp" => _("Edit the current page in edit interface on the left ←."),
+            "editTooltip" => _("Edit the current page"),
             "forceHeightMessage" => _("Height: "),
             "forceWidthMessage" => _("Width: "),
             "layoutSwitchHelp" => _("Switch layout to: Edit-only, Split-view and Preview-only"),
@@ -43,10 +45,14 @@
             "projectFilter" => _("Filter Projects"),
             "reload" => _("Reload"),
             "reloadHelp" => _("Reload page preview"),
+            "reloadTooltip" => _("Reload page preview"),
             "rename" => _("Rename"),
             "selectAll" => _("Select all"),
             "uploadFinishedCancel" => _("Finished uploading/Cancel"),
             "zoomHelp" => _("Change zoom level of preview."),
+            "layout-left-full" => _("Switch to edit-only layout"),
+            "layout-split" => _("Switch to split layout"),
+            "layout-right-full" => _("Switch to preview-only layout"),
         ];
     }
 

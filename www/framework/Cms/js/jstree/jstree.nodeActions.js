@@ -20,6 +20,9 @@
 
     if($.jstree.plugins.nodeActions) { return; }
 
+    var lang = $('html').attr('lang');
+    var locale = depageCMSlocale[lang];
+
     /**
      * nodeActions configuration
      *
@@ -40,6 +43,7 @@
             parent.bind.call(this);
 
             var className = "jstree-node-actions";
+            var el = this.element;
             var inst = this.element.jstree(true);
             var node;
             var nodeParent;
@@ -94,14 +98,18 @@
                     }
                     e.stopPropagation();
                 })
-                .on("click.jstree", ".jstree-container-ul", function(e) {
-                    var $container = $(this);
-                    if ($container.height() + 30 < e.offsetY && 50 > e.offsetX) {
-                        var node = inst.get_node($container.parent());
-                        var nodesForSelf = inst.getAvailableNodesFor(node);
+                .on("redraw.jstree", function(e) {
+                    var $button = el.children(".jstree-root-add-button");
 
-                        // @todo get correct position for menu
-                        $.vakata.context.show($(this), {x: e.pageX, y: e.pageY }, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
+                    if ($button.length == 0) {
+                        $button = $("<a class=\"jstree-root-add-button\" data-tooltip=\"" + locale.createNewAtEnd + "\">+</a>").appendTo(el);
+
+                        $button.on("click", function() {
+                            var node = inst.get_node(el);
+                            var nodesForSelf = inst.getAvailableNodesFor(node);
+
+                            $.vakata.context.show($(this), false, inst.getCreateMenu(inst, nodesForSelf, inst.insertCallback(node, "last")));
+                        });
                     }
                 });
 

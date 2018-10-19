@@ -130,7 +130,7 @@ class DocProperties extends Base
 
         if (in_array($node->prefix, ['pg', 'sec', 'edit'])) {
             // only for page data content
-            $this->addPgRelease();
+            $this->addPgRelease($node);
         }
 
         if ($callback = $this->getCallbackForNode($node)) {
@@ -311,35 +311,90 @@ class DocProperties extends Base
      * @param mixed $node
      * @return void
      **/
-    protected function addPgRelease()
+    protected function addPgRelease($currentNode)
     {
         $pageInfo = $this->project->getPages($this->docRef)[0];
         $lastchangeUser = \Depage\Auth\User::loadById($this->pdo, $pageInfo->lastchangeUid);
         $dateFormatter = new \Depage\Formatters\DateNatural();
-        //var_dump($pageInfo);
 
         $fs = $this->form->addFieldset("xmledit-{$this->docRef}-lastchange-fs", [
-            'label' => _("Last Change"),
-            'class' => "doc-property-fieldset doc-property-meta",
+            'label' => _("Page Status"),
+            'class' => "doc-property-fieldset doc-property-meta " . ($currentNode->prefix == 'pg' ? "open" : ""),
             'dataAttr' => [
                 'docref' => $this->docRef,
             ],
         ]);
-        $fs->addHtml(sprintf(
-            _("<p>%s by %s</p>"),
-            $dateFormatter->format($pageInfo->lastchange, true),
-            htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
-        ));
-        if ($this->authUser->canPublishProject()) {
-            $releaseTitle = _("Release Page");
-            $releaseHover = _("Mark this page to be published, when project gets published next time");
-        } else {
-            $releaseTitle = _("Request Page Release");
-            $releaseHover = _("Ask for this page the be released");
-        }
-        $class = $pageInfo->released ? "disabled" : "";
-        $fs->addHtml("<p><a class=\"button release $class\" aria-label=\"$releaseHover\">{$releaseTitle}</a></p>");
 
+        if ($pageInfo->type == "Depage\\Cms\\XmlDocTypes\\Page") {
+            // {{{ add published/release status
+            $target = $this->project->getDefaultTargetUrl();
+
+            $url = $target . $pageInfo->url;
+            $icon = "";
+            $message = "";
+
+            if ($pageInfo->published) {
+                $icon .= "<i class=\"icon icon-published\" data-tooltip=\"" . _("Page is published") . "\"></i>";
+            }
+            if (!$pageInfo->released) {
+                $icon .= "<i class=\"icon icon-unreleased\" data-tooltip=\"" . _("Page has unreleased changes") . "\"></i>";
+            }
+            if ($pageInfo->published && !$pageInfo->released) {
+                $message = _("Page is published but has unreleased changes.");
+            } else if ($pageInfo->published) {
+                $message = _("Page is published.");
+            } else if (!$pageInfo->released) {
+                $message = _("Page has not been published yet.");
+            }
+
+            if ($pageInfo->published) {
+                $fs->addHtml(sprintf(
+                    _("<p class=\"status\">%s<a href=\"%s\" target=\"_blank\">%s</a></p>"),
+                    $icon,
+                    htmlspecialchars($url),
+                    htmlspecialchars($message)
+                ));
+            } else {
+                $fs->addHtml(sprintf(
+                    _("<p class=\"status\">%s%s</p>"),
+                    $icon,
+                    htmlspecialchars($message)
+                ));
+            }
+            // }}}
+
+            $fs->addHtml("<div class=\"details\">");
+                // {{{ add changed date
+                $fs->addHtml(sprintf(
+                    _("<p class=\"date\">%s %s by %s</p>"),
+                    _("Changed"),
+                    $dateFormatter->format($pageInfo->lastchange, true),
+                    htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
+                ));
+                // }}}
+                // {{{ add url input
+                $fs->addUrl("url-$nodeId", [
+                    'label' => _("url"),
+                    'readonly' => true,
+                    'defaultValue' => $url,
+                ]);
+                // }}}
+            $fs->addHtml("</div>");
+
+            // {{{ add release button
+            if (true || !$pageInfo->released) {
+                if ($this->authUser->canPublishProject()) {
+                    $releaseTitle = _("Release Page");
+                    $releaseHover = _("Mark this page to be published, when project gets published next time");
+                } else {
+                    $releaseTitle = _("Request Release");
+                    $releaseHover = _("Ask for this page the be released");
+                }
+                $class = $pageInfo->released ? "disabled" : "";
+                $fs->addHtml("<p class=\"release\"><a class=\"button $class\" data-tooltip=\"$releaseHover\">{$releaseTitle}</a></p>");
+            }
+            // }}}
+        }
     }
     // }}}
     // {{{ addPgMeta()
@@ -351,20 +406,24 @@ class DocProperties extends Base
      **/
     protected function addPgMeta($node)
     {
+        $pageInfo = $this->project->getPages($this->docRef)[0];
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
         $pageInfo = $this->project->getPages($this->docRef)[0];
 
-        $list = ['' => _("Default")] + $this->project->getColorschemes();
-        $fs = $this->form->addFieldset("xmledit-$nodeId-colorscheme-fs", [
-            'label' => _("Colorscheme"),
-            'class' => "doc-property-fieldset",
-        ]);
-        $fs->addSingle("colorscheme-$nodeId", [
-            'label' => "",
-            'list' => $list,
-            'skin' => "select",
-            'dataInfo' => "//*[@db:id = '$nodeId']/@colorscheme",
-        ]);
+
+        if ($pageInfo->type == "Depage\\Cms\\XmlDocTypes\\Page") {
+            $list = ['' => _("Default")] + $this->project->getColorschemes();
+            $fs = $this->form->addFieldset("xmledit-$nodeId-colorscheme-fs", [
+                'label' => _("Colorscheme"),
+                'class' => "doc-property-fieldset",
+            ]);
+            $fs->addSingle("colorscheme-$nodeId", [
+                'label' => "",
+                'list' => $list,
+                'skin' => "select",
+                'dataInfo' => "//*[@db:id = '$nodeId']/@colorscheme",
+            ]);
+        }
 
         $navs = $this->project->getNavigations();
         $defaults = [];
@@ -411,25 +470,26 @@ class DocProperties extends Base
             ]);
         }
 
-        $fs = $this->form->addFieldset("xmledit-$nodeId-pagetype-fs", [
-            'label' => _("Pagetype"),
-            'class' => "doc-property-fieldset",
-        ]);
-        $fs->addSingle("xmledit-$nodeId-pagetype", [
-            'label' => "",
-            'skin' => "select",
-            'class' => 'page-type',
-            'list' => [
-                'html' => _("html"),
-                'text' => _("text"),
-                'php' => _("php"),
-            ],
-            'defaultValue' => $pageInfo->fileType,
-            'dataAttr' => [
-                'pageId' => $pageInfo->pageId,
-            ],
-        ]);
-
+        if ($pageInfo->type == "Depage\\Cms\\XmlDocTypes\\Page") {
+            $fs = $this->form->addFieldset("xmledit-$nodeId-pagetype-fs", [
+                'label' => _("Pagetype"),
+                'class' => "doc-property-fieldset",
+            ]);
+            $fs->addSingle("xmledit-$nodeId-pagetype", [
+                'label' => "",
+                'skin' => "select",
+                'class' => 'page-type',
+                'list' => [
+                    'html' => _("html"),
+                    'text' => _("text"),
+                    'php' => _("php"),
+                ],
+                'defaultValue' => $pageInfo->fileType,
+                'dataAttr' => [
+                    'pageId' => $pageInfo->pageId,
+                ],
+            ]);
+        }
     }
     // }}}
     // {{{ addPgTitle()

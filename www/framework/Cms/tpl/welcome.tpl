@@ -1,10 +1,10 @@
 <div <?php self::attr([
-    'class' => "scrollable-content {$this->class}",
+    'class' => "scrollable-content top",
 ]); ?>>
     <div class="box-welcome">
         <div class="content">
-            <h1 class="size-XL"><?php self::t($this->title, true); ?></h1>
-            <p class="size-L"><a href="<?php self::t($this->login_link); ?>" class="button"><?php self::t($this->login); ?></a></p>
+            <h1 class="size-XL"><?php self::t(_("Welcome to depage-cms"), true); ?></h1>
+            <?php self::e($this->loginForm); ?>
         </div>
     </div>
     <?php self::e($this->content); ?>

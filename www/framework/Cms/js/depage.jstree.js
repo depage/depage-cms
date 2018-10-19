@@ -124,6 +124,7 @@
                 return;
             }
             xmldb.renameNode(param.node.data.nodeId, decodeEntities(param.text));
+            // @todo updated page status in pg-meta element
 
             jstree.disable_node(param.node);
         }, base);
@@ -199,8 +200,8 @@
             } else if (typeof nextId !== 'undefined') {
                 xmldb.createNodeBefore(param.node.li_attr.rel, nextId, base.afterCreate, param.node.li_attr.xmlTemplateData);
             } else {
-                xmldb.createNodeIn(param.node.li_attr.rel, parentId, base.afterCreate, param.node.li_attr.xmlTemplateData);
                 jstree.open_node(parentId);
+                xmldb.createNodeIn(param.node.li_attr.rel, parentId, base.afterCreate, param.node.li_attr.xmlTemplateData);
             }
 
             jstree.disable_node(param.node);

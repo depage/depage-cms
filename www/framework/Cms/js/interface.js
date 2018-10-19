@@ -7,6 +7,7 @@
  * @require framework/shared/depage-jquery-plugins/depage-growl.js
  * @require framework/shared/depage-jquery-plugins/depage-live-filter.js
  * @require framework/shared/depage-jquery-plugins/depage-live-help.js
+ * @require framework/shared/depage-jquery-plugins/depage-tooltip.js
  * @require framework/shared/depage-jquery-plugins/depage-shy-dialogue.js
  * @require framework/shared/depage-jquery-plugins/depage-uploader.js
  *
@@ -155,6 +156,7 @@ var depageCMS = (function() {
             localJS.setupVarious();
             localJS.setupToolbar();
             localJS.setupPreviewLinks();
+            localJS.setupTooltips();
             localJS.setupProjectList();
             localJS.setupNewsletterList();
             localJS.setupSortables();
@@ -170,6 +172,7 @@ var depageCMS = (function() {
         // {{{ setupAjaxContent
         setupAjaxContent: function() {
             localJS.setupPreviewLinks();
+            localJS.setupTooltips();
             localJS.setupNewsletterList();
         },
         // }}}
@@ -239,7 +242,8 @@ var depageCMS = (function() {
             var $layoutButtons = $("<li class=\"pills preview-buttons layout-buttons\" data-live-help=\"" + locale.layoutSwitchHelp + "\"></li>").prependTo($toolbarRight);
             for (var i in layouts) {
                 var newLayout = layouts[i];
-                var $button = $("<a class=\"toggle-button " + newLayout + "\" title=\"switch to " + newLayout + "-layout\">" + newLayout + "</a>")
+                var tooltip = locale["layout-" + newLayout];
+                var $button = $("<a class=\"toggle-button " + newLayout + "\" aria-label=\"" + tooltip + "\" data-tooltip=\"" + tooltip + "\"></a>")
                     .appendTo($layoutButtons)
                     .on("click", {layout: newLayout}, localJS.switchLayout);
             }
@@ -247,17 +251,8 @@ var depageCMS = (function() {
             // add button placeholder
             var $previewButtons = $("<li class=\"preview-buttons\"></li>").prependTo($toolbarPreview);
 
-            // add reload button
-            var $reloadButton = $("<a class=\"button\" data-live-help=\"" + locale.reloadHelp + "\">" + locale.reload + "</a>")
-                .appendTo($previewButtons)
-                .on("click", function() {
-                    if ($previewFrame.length > 0) {
-                        $previewFrame[0].contentWindow.location.reload();
-                    }
-                });
-
             // add edit button
-            var $editButton = $("<a class=\"button\" data-live-help=\"" + locale.editHelp + "\">" + locale.edit + "</a>")
+            var $editButton = $("<a class=\"button\" data-live-help=\"" + locale.editHelp + "\" data-tooltip=\"" + locale.editTooltip + "\">" + locale.edit + "</a>")
                 .appendTo($previewButtons)
                 .on("click", function() {
                     var url = "";
@@ -272,6 +267,15 @@ var depageCMS = (function() {
                         var page = matches[2];
 
                         localJS.edit(project, page);
+                    }
+                });
+
+            // add reload button
+            var $reloadButton = $("<a class=\"button icon-reload icon-only\" data-live-help=\"" + locale.reloadHelp + "\" data-tooltip=\"" + locale.reloadTooltip + "\">" + locale.reload + "</a>")
+                .appendTo($previewButtons)
+                .on("click", function() {
+                    if ($previewFrame.length > 0) {
+                        $previewFrame[0].contentWindow.location.reload();
                     }
                 });
 
@@ -456,7 +460,6 @@ var depageCMS = (function() {
                     },{
                         title: locale.delete,
                         message : locale.deleteQuestion,
-                        direction: 'LC',
                         directionMarker: true
                     });
             });
@@ -524,7 +527,6 @@ var depageCMS = (function() {
                         },{
                             title: locale.delete,
                             message : locale.deleteQuestion,
-                            direction: 'LC',
                             directionMarker: true
                         });
                     }
@@ -536,7 +538,7 @@ var depageCMS = (function() {
                     handle: "h1",
                     pullPlaceholder: false,
                     placeholder: '<div class="placeholder"></div>',
-                    tolerance: 10,
+                    tolerance: 40,
                     onDragStart: function($item, container, _super, event) {
                         currentPos = $item.index();
 
@@ -627,7 +629,7 @@ var depageCMS = (function() {
                         }
                     },{
                         bind_el: false,
-                        direction: "BC",
+                        direction: "TC",
                         directionMarker: true,
                         inputs: {
                             href: {
@@ -660,6 +662,21 @@ var depageCMS = (function() {
                 return false;
             });
             */
+        },
+        // }}}
+        // {{{ setupTooltips
+        setupTooltips: function() {
+            $("a[data-tooltip], i[data-tooltip]").each(function() {
+                var $t = $(this);
+                var dir = $t.attr("data-pos") || "BC";
+
+                $t.depageTooltip({
+                    direction: dir,
+                    directionMarker: true,
+                    positionOffset: 20,
+                    message: $t.attr("data-tooltip")
+                });
+            });
         },
         // }}}
         // {{{ setupTrees
@@ -1214,6 +1231,8 @@ var depageCMS = (function() {
                 $docPropertiesContainer.addClass("loaded");
                 var $form = $docPropertiesContainer.find('.depage-form');
 
+                localJS.setupTooltips();
+
                 $form.depageForm();
                 $form.find("p.submit").remove();
                 $form.find("input, textarea, .textarea-content").on("focus", function() {
@@ -1245,7 +1264,7 @@ var depageCMS = (function() {
 
                     xmldb.setAttribute(pageId, attrName, attrValue);
                 });
-                $form.find(".doc-property-meta a.release").on("click", function() {
+                $form.find(".doc-property-meta p.release a").on("click", function() {
                     $(this).addClass("disabled");
                     var docRef = $(this).parents("fieldset").data("docref");
                     var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
@@ -1253,6 +1272,14 @@ var depageCMS = (function() {
                     xmldb.releaseDocument();
 
                     return false;
+                });
+                $form.find(".doc-property-meta .details").each(function() {
+                    var $details = $(this);
+                    var $button = $("<span class=\"opener\"></span>").insertBefore($details);
+
+                    $button.on("click", function() {
+                        $details.parent().toggleClass("open");
+                    });
                 });
                 $form.find(".edit-src").each(function() {
                     var $input = $(this).find("input");
@@ -1280,7 +1307,7 @@ var depageCMS = (function() {
                     });
                 });
                 $form.on("depageForm.autosaved", function() {
-                    $form.find(".doc-property-meta a.release").removeClass("disabled");
+                    $form.find(".doc-property-meta p.release a").removeClass("disabled");
                 });
 
                 // @todo add ui for editing table columns and rows
@@ -1308,8 +1335,8 @@ var depageCMS = (function() {
             var $inputParent = $input.parent().parent();
             var url = baseUrl + "project/" + projectName + "/library/manager/" + encodeURIComponent(path) + "/";
 
-            currentLibAccept = $inputParent.attr("data-accept");
-            currentLibForceSize = $inputParent.attr("data-forceSize");
+            currentLibAccept = $inputParent.attr("data-accept") || "";
+            currentLibForceSize = $inputParent.attr("data-forceSize") || "";
             currentLibPath = path;
 
             $pageTreeContainer.children(".jstree-container").jstree(true).looseFocus();
@@ -1498,7 +1525,6 @@ var depageCMS = (function() {
                 }
             },{
                 bind_el: false,
-                direction: "LC",
                 directionMarker: true,
                 title: locale.delete,
                 message: locale.deleteQuestion
@@ -1577,7 +1603,6 @@ var depageCMS = (function() {
                 }
             },{
                 bind_el: false,
-                direction: "LC",
                 directionMarker: true,
                 title: locale.delete,
                 message: locale.deleteQuestion
@@ -1774,7 +1799,7 @@ var depageCMS = (function() {
                         .appendTo($body);
 
                     // @todo add close button to header
-                    $("<a class=\"close\" aria-label=\"" + locale.close + "\">" + locale.close + "</a>").appendTo(
+                    $("<a class=\"close\" data-tooltip=\"" + locale.close + "\">" + locale.close + "</a>").appendTo(
                         $result.find("header.info")
                     ).on("click", function() {
                         $("div.help").remove();
@@ -1828,7 +1853,6 @@ var depageCMS = (function() {
                     }
                 });
             } else {
-                // @todo updated for jsinterface
                 $.get(baseUrl + "project/" + pName + "/edit/?ajax=true", function(data) {
                     var $result = $("<div></div>")
                         .html( data )
@@ -1950,7 +1974,6 @@ var depageCMS = (function() {
                             },{
                                 title: locale.delete,
                                 message : locale.deleteQuestion,
-                                direction: 'LC',
                                 directionMarker: true
                             });
                     }
@@ -1999,100 +2022,6 @@ var depageCMS = (function() {
 
                     delete currentTasks[prop];
                 }
-            }
-        },
-        // }}}
-
-        // {{{ openUpload
-        openUpload: function(projectName, targetPath) {
-            $upload = $("#upload");
-
-            if ($upload.length === 0) {
-                $upload = $("<div id=\"upload\" class=\"layout-left\"></div>").appendTo($body);
-                var $box = $("<div class=\"box\"></div>").appendTo($upload);
-            }
-
-            var uploadUrl = baseUrl + "project/" + projectName + "/upload" + targetPath;
-
-            $(document).bind('keyup.uploader', function(e){
-                var key = e.which || e.keyCode;
-                if (key == 27) {
-                    localJS.closeUpload();
-                }
-            });
-
-            $box.load(uploadUrl, function() {
-                var $submitButton = $box.find('input[type="submit"]');
-                var $dropArea = $box.find('.dropArea');
-                var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($box);
-                var $finishButton = $("<a class=\"button\">" + locale.uploadFinishedCancel + "</a>").appendTo($box);
-
-                $finishButton.on("click", function() {
-                    localJS.closeUpload();
-                });
-
-                $box.find('input[type="file"]').depageUploader({
-                    //loader_img : scriptPath + '/progress.gif'
-                    $drop_area: $dropArea,
-                    $progress_container: $progressArea
-                }).on('start', function(e, html) {
-                    $submitButton.hide();
-                    //$uploadIndicator.show();
-                }).on('complete', function(e, html) {
-                    $submitButton.show();
-                });
-            });
-        },
-        // }}}
-        // {{{ closeUpload
-        closeUpload: function() {
-            $upload = $("#upload");
-
-            $upload.remove();
-
-            $(document).unbind('keyup.uploader');
-        },
-        // }}}
-        // {{{ setStatus
-        setStatus: function(message) {
-            console.log(unescape(message));
-            window.status = unescape(message);
-        },
-        // }}}
-        // {{{ msg
-        msg: function(newmsg) {
-            newmsg = unescape(newmsg);
-            newmsg = newmsg.replace(/<br>/g, "\n");
-            newmsg = newmsg.replace(/&apos;/g, "'");
-            newmsg = newmsg.replace(/&quot;/g, "\"");
-            newmsg = newmsg.replace(/&auml;/g, "ä");
-            newmsg = newmsg.replace(/&Auml;/g, "Ä");
-            newmsg = newmsg.replace(/&ouml;/g, "ö");
-            newmsg = newmsg.replace(/&Ouml;/g, "Ö");
-            newmsg = newmsg.replace(/&uuml;/g, "ü");
-            newmsg = newmsg.replace(/&Uuml;/g, "Ü");
-            newmsg = newmsg.replace(/&szlig;/g, "ß");
-            alert(newmsg);
-        },
-        // }}}
-        // {{{ flashLoaded
-        flashLoaded: function() {
-        },
-        // }}}
-        // {{{ flashLayoutChanged
-        flashLayoutChanged: function(layout) {
-            if (parent != window) {
-                parent.depageCMS.flashLayoutChanged(layout);
-            } else {
-                // @todo add better solution instead of this locale hack
-                layout = layout.replace(/Seiten editieren/, "edit-pages");
-                layout = layout.replace(/Dateien/, "files");
-                layout = layout.replace(/Farben/, "colors");
-                layout = layout.replace(/ /, "-");
-                $(".live-help-mock")
-                    .hide()
-                    .filter(".layout-" + layout)
-                    .show();
             }
         },
         // }}}

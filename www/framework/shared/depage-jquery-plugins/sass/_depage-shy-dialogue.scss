@@ -54,6 +54,7 @@
         background: $background;
         padding: $padding;
         width: $width;
+        max-width: 80vw;
         height: $height;
 
         .message,
@@ -81,7 +82,7 @@
 
     .buttons {
         text-align: right;
-        padding-top: $padding;
+        padding-top: 2em;
     }
 
     $default-multiplier: 1.2;

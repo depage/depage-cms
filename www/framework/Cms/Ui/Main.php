@@ -57,12 +57,11 @@ class Main extends Base {
                 'helpUrl' => $this->helpUrl,
             ], $this->htmlOptions);
         } else {
+            $form = new \Depage\Cms\Forms\Login("login");
+
             // not logged in
             $h = new Html("welcome.tpl", [
-                'class' => "top",
-                'title' => _("Welcome to\n depage::cms"),
-                'login' => "Login",
-                'login_link' => "login/",
+                'loginForm' => $form,
                 'content' => [
                     $this->news(),
                     $this->help(),
@@ -85,23 +84,10 @@ class Main extends Base {
             }
         } else {
             // not logged in
-            $form = new \Depage\HtmlForm\HtmlForm("login", [
-                'label' => _("Login"),
+            $form = new \Depage\Cms\Forms\Login("login", [
                 'validator' => function($form, $values) {
                     return (bool) $this->auth->login($values['name'], $values['pass']);
                 },
-            ]);
-
-            // define formdata
-            $form->addText("name", [
-                'label' => 'Name',
-                'required' => true,
-                'autofocus' => true,
-            ]);
-
-            $form->addPassword("pass", [
-                'label' => 'Passwort',
-                'required' => true,
             ]);
 
             $form->process();
@@ -112,6 +98,7 @@ class Main extends Base {
                 $error = "";
                 if (!$form->isEmpty()) {
                     $error = "<p class=\"error\">false/unknown username password combination</p>";
+                    $form->addHtml($error);
                 }
 
                 $h = new Html("scrollable.tpl", [
@@ -122,7 +109,6 @@ class Main extends Base {
                         'title' => "Login",
                         'liveHelp' => _("Login"),
                         'content' => [
-                            $error,
                             $form,
                         ],
                     ]),
@@ -264,39 +250,6 @@ class Main extends Base {
      */
     public function task($taskId) {
         return $this->tasks($taskId);
-    }
-    // }}}
-    // {{{ test_task()
-    /**
-     * @brief test_task
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function test_task()
-    {
-        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, "Test Task");
-        $sleepMin = 0;
-        $sleepMax = 100000;
-        $sleepMax = 1000000;
-        //$sleepMax = 10000000;
-
-        for ($i = 0; $i < 5; $i++) {
-            $dep1 = $task->addSubtask("init $i", "echo(\"init $i\n\"); usleep(rand($sleepMin, $sleepMax));");
-
-            for ($j = 0; $j < 5; $j++) {
-                $dep2 = $task->addSubtask("dep2 $i/$j", "echo(\"dep $i/$j\n\"); usleep(rand($sleepMin, $sleepMax));", $dep1);
-
-                for ($k = 0; $k < 10; $k++) {
-                    $task->addSubtask("testing $i/$j/$k", "echo(\"testing $i/$j/$k\n\"); usleep(rand($sleepMin, $sleepMax));", $dep2);
-                }
-            }
-        }
-        //$task->addSubtask("testing error", "throw new \Exception(\"ahhhh!\");");
-
-        $task->begin();
-
-        \Depage\Depage\Runner::redirect(DEPAGE_BASE);
     }
     // }}}
 
@@ -536,19 +489,6 @@ class Main extends Base {
     }
     // }}}
 
-    // {{{ test()
-    /**
-     * @brief test
-     *
-     * @param mixed $param
-     * @return void
-     **/
-    public function test()
-    {
-
-        die();
-    }
-    // }}}
     // {{{ search()
     /**
      * @brief search

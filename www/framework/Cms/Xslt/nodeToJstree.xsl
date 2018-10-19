@@ -153,7 +153,6 @@
 
     <xsl:template match="pg:folder | pg:page" mode="title">
         <xsl:value-of select="@name" />
-        <xsl:if test="@db:released = 'true'"></xsl:if>
         <xsl:if test="@db:released = 'false'"> – changed ⤶</xsl:if>
     </xsl:template>
 
@@ -161,6 +160,14 @@
         <xsl:if test="@nav_hidden = 'true'">
             <xsl:text> </xsl:text>
             page-hidden
+        </xsl:if>
+        <xsl:if test="@db:published = 'true'">
+            <xsl:text> </xsl:text>
+            page-published
+        </xsl:if>
+        <xsl:if test="@db:published = 'false'">
+            <xsl:text> </xsl:text>
+            page-not-published
         </xsl:if>
         <xsl:if test="@db:released = 'true'">
             <xsl:text> </xsl:text>

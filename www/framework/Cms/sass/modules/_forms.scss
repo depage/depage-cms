@@ -10,8 +10,9 @@
     select,
     textarea,
     .textarea,
-    .textarea-content {
-        padding: 5px 10px;
+    .textarea-content,
+    .selectize-input {
+        padding: 8px 12px;
         font-size: $fSizeM + 1px;
 
         &::placeholder {
@@ -158,6 +159,7 @@
     p.submit,
     p.cancel {
         float: left;
+
         input {
             margin-top: 24px;
             cursor: pointer;
@@ -169,6 +171,8 @@
     p.submit {
         input {
             font-weight: bold;
+            color: $textBrightColor;
+            background: $selectionBackgroundColor;
         }
     }
     p.cancel {
@@ -230,8 +234,8 @@
 /* }}} */
 /* {{{ sortable forms */
 .sortable-forms {
-    $height: $menuLineHeight;
-    margin-top: 15px;
+    $height: $menuLineHeight * 1.5;
+    margin-top: 40px;
 
     form fieldset {
         border-color: transparent !important;
@@ -246,15 +250,19 @@
         margin-left: 25%;
 
         &.new {
-            margin-top: 22px;
+            margin-top: 40px;
+
             h1 {
                 padding-left: 2em;
+                color: $textBaseColor;
+                text-decoration: none;
+                border-top: 1px solid transparent;
 
                 &:before {
                     display: block;
                     content: " ";
                     position: absolute;
-                    top: 0em;
+                    top: 10px;
                     left: 0em;
                     width: 2em;
                     height: 2em;
@@ -263,12 +271,32 @@
                 }
             }
         }
+        &:first-child {
+            h1 {
+                border-top: 1px solid transparent;
+            }
+        }
         &:target,
         &.active {
+            z-index: 100;
+
+            h1,
+            form {
+                @include box-shadow($lightShadow);
+            }
+            h1,
+            form,
+            form::before {
+                border-top: 1px solid $selectionBackgroundColor;
+                border-bottom: 1px solid $selectionBackgroundColor;
+            }
             h1 {
+                border-left: 5px solid $selectionBackgroundColor;
                 background-color: $backgroundLighterColor;
                 font-weight: bold;
-                width: 34%;
+                width: 33%;
+                color: $textBaseColor;
+                text-decoration: none;
 
                 &:hover {
                     text-decoration: none;
@@ -276,6 +304,18 @@
             }
             form {
                 display: block;
+                padding-top: 12px;
+
+                &::before {
+                    content: " ";
+                    display: block;
+                    position: absolute;
+                    top: -1px;
+                    left: -10px;
+                    width: 10px;
+                    height: $height;
+                    background-color: $backgroundLighterColor;
+                }
             }
         }
         &.dragged {
@@ -285,6 +325,9 @@
             h1 {
                 background-color: $backgroundLighterColor;
                 font-weight: bold;
+                width: 133%;
+                @include box-shadow($lightShadow);
+                //@include radius($cornerRadius);
             }
             form {
                 display: none !important;
@@ -309,7 +352,7 @@
         top: 0;
         display: block;
         cursor: pointer;
-        width: 100%;
+        width: 133%;
         height: $height;
         line-height: $height;
         margin: 0;
@@ -320,43 +363,17 @@
         background: none;
         font-weight: normal;
         padding-top: 0;
-
-        &:hover {
-            text-decoration: underline;
-        }
-        &.dragged {
-            position: absolute;
-            z-index: 5000;
-
-            h1 {
-                font-weight: bold;
-            }
-            form {
-                display: none !important;
-            }
-        }
-        h1 {
-            position: relative;
-            position: relative;
-        }
+        margin: -($menuLineHeight * 0.125) 0;
+        color: $linkColor;
+        text-decoration: none;
+        border-top: 1px solid $borderLightColor;
+        border-bottom: 1px solid transparent;
+        border-left: 5px solid transparent;
     }
     .placeholder {
-        //border: 1px solid #ffffff;
         height: $height;
     }
 
-    form {
-        display: none;
-        width: 100%;
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 10;
-    }
-    p.submit {
-        position: static;
-        float: none;
-    }
     form {
         display: none;
         width: 100%;
@@ -420,11 +437,13 @@
 }
 // }}}
 // {{{ .selectize-input
-.depage-form .selectize-input {
-    border-color: transparent;
-    @include radius(4px);
-
-    // @todo make background dark on opened menu
+.depage-form {
+    .selectize-input.dropdown-active,
+    .selectize-input.dropdown-active::before,
+    .selectize-dropdown {
+        color: $textBrightColor !important;
+        background-color: $backgroundMenu !important;
+    }
 }
 // }}}
 // {{{ .depageEditorToolbar

@@ -44,6 +44,12 @@ class Tree extends Base {
             $this->doc = $this->xmldb->getDoc($this->docName);
             $this->docInfo = $this->doc->getDocInfo();
             $this->docId = $this->docInfo->id;
+        } else {
+            throw new \Depage\Cms\Exceptions\Project("unknown document");
+        }
+
+        if (!$this->project) {
+            throw new \Depage\Cms\Exceptions\Project("not allowed");
         }
         $this->deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, $this->projectName, 0);
     }

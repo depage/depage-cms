@@ -1,10 +1,33 @@
 // {{{ box-welcome, box-login
 .box-welcome,
 .box-login {
-    @extend .box-main;
+    @extend .box-full-minus-aside;
 
     .content {
         min-height: 200px;
+        border-bottom: none;
+        margin-bottom: 45px;
+
+        @media screen and (min-width: 1000px) {
+            margin-top: 20vh;
+        }
+
+        form {
+            padding: 15px;
+            background: $backgroundLighterColor;
+            border-top: 1px solid $selectionBackgroundColor;
+            border-bottom: 1px solid $selectionBackgroundColor;
+            @include box-shadow($lightShadow);
+
+            h2 {
+                margin-bottom: 15px;
+            }
+            p.submit input {
+                color: $textBrightColor;
+                background: $selectionBackgroundColor;
+
+            }
+        }
     }
 
     @media screen and (min-width: 1000px) {
@@ -43,6 +66,10 @@
 // {{{ box-help
 .box-help {
     @extend .box-aside;
+
+    .content {
+        border-bottom: none;
+    }
 
     @media screen and (min-width: 1000px) {
         .content:before {

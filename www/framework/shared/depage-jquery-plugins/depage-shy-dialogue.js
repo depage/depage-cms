@@ -95,9 +95,42 @@
             setTimeout(function() {
                 base.show(x, y);
                 base.showButtons();
+
+                // bind escape key to cancel
+                $(document).on('keyup.shydialogue', function(e){
+                    var key = e.which || e.keyCode;
+                    if (key == 27) {
+                        base.hideDialogue();
+                    }
+                });
+
+                // stop propagation of hide when clicking inside the wrapper or input
+                base.$wrapper.click(function(e) {
+                    e.stopPropagation();
+                });
+
+                if (base.options.bind_el) {
+                    base.$el.click(function(e) {
+                        e.stopPropagation();
+                    });
+                }
+
+                // hide dialog when clicked outside
+                $(document).on("click.shydialogue", function() {
+                    base.hideDialogue();
+                });
+
             }, 50);
         };
         /// }}}
+        // {{{ hideDialogue
+        base.hideDialogue = function() {
+            base.hide();
+
+            $(document).off("click.shydialogue").off('keyup.shydialogue');
+
+        };
+        // }}}
 
         // {{{ showButtons()
         /**
@@ -108,13 +141,13 @@
         base.showButtons = function() {
             $buttonWrapper = $('<div class="buttons" />');
             $inputWrapper = $('<div class="inputs" />');
-            $wrapper.append($inputWrapper);
-            $wrapper.append($buttonWrapper);
+            this.$wrapper.append($inputWrapper);
+            this.$wrapper.append($buttonWrapper);
 
             base.setInputs(base.options.inputs);
             base.setButtons(base.buttons);
 
-            $wrapper.find('input, a').eq(0).focus().select();
+            this.$wrapper.find('input, a').eq(0).focus().select();
         };
         // }}}
 
@@ -187,7 +220,7 @@
                         .data('depage.shyDialogue', base)
                         .click(function(e){
                             if (typeof(button.click) !== 'function' || button.click(e) !== false) {
-                                base.hide();
+                                base.hideDialogue();
                             }
                             return false;
                         });
@@ -222,7 +255,7 @@
         icon: '',
         title: '',
         message: '',
-        direction : 'TL',
+        direction : 'TR',
         directionMarker : null,
         fadeoutDuration: 300,
         inputs: {},

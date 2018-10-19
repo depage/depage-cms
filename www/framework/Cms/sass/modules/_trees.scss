@@ -136,26 +136,6 @@
 }
 // }}}
 // {{{ jstree node-actions
-.jstree-container-ul {
-    position: relative;
-
-    &::after {
-        position: absolute;
-        content: " ";
-        font-weight: bold !important;
-        bottom: $treeLineHeight * 0.5 + ($treeLineHeight - $actionIconHeight) * 0.5;
-        left: $treeLineHeight - 1px;
-        width: $actionIconHeight;
-        height: $actionIconHeight;
-        line-height: $actionIconHeight - 3px;
-        @include radius($actionIconHeight * 0.5);
-        color: $selectionTextColor;
-        background-color: $backgroundDisabledColor;
-        text-align: center;
-        @include icon-base("add-white", $actionIconHeight);
-        cursor: pointer;
-    }
-}
 .jstree-node {
     > .jstree-anchor::after {
         content: " ";
@@ -254,6 +234,37 @@
             @include radius(0, "bottom", "left");
             @include radius(0, "bottom", "right");
         }
+    }
+}
+// }}}
+// {{{ .jstree-root-add-button
+.jstree-root-add-button {
+    position: relative;
+    display: block;
+    height: 2 * $treeLineHeight;
+    width: 2 * $treeLineHeight;
+    cursor: pointer;
+    margin-top: 1.5 * $treeLineHeight;
+    text-indent: -1000em;
+
+
+    &::before {
+        position: absolute;
+        content: " ";
+        font-weight: bold !important;
+        bottom: $treeLineHeight * 0.5 + ($treeLineHeight - $actionIconHeight) * 0.5;
+        left: $treeLineHeight - 1px;
+        width: $actionIconHeight;
+        height: $actionIconHeight;
+        color: $selectionTextColor;
+        background-color: $backgroundColor;
+        text-align: center;
+        @include icon-base("add-white", $actionIconHeight);
+        @include transition(300ms, "background-color");
+        @include radius(50%);
+    }
+    &:hover::before {
+        background-color: $insertMarkerBackground;
     }
 }
 // }}}
@@ -393,9 +404,6 @@
 .jstree-last {
     background: transparent;
 }
-.jstree-container-ul {
-    padding-bottom: 2.5 * $treeLineHeight;
-}
 .jstree-open > .jstree-ocl {
     @include icon("open", $iconSize);
 }
@@ -525,7 +533,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        @include icon-base("unreleased", $iconSize);
+        @include icon-base("unreleased-small", $iconSize);
     }
 }
 
