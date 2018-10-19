@@ -321,27 +321,35 @@
     &.open .opener {
         @include icon("open", 24px);
     }
-    .release {
-        display: block;
-        //float: right;
-        width: $releaseButtonWidth;
-        text-align: center;
+    p.release {
         position: absolute;
-        bottom: 5px;
-        right: 0;
-        padding: 3px 10px;
+        top: 7px;
+        right: 15px;
+        width: $releaseButtonWidth;
+
+        a {
+            display: block;
+            //float: right;
+            width: $releaseButtonWidth;
+            text-align: center;
+            padding: 3px 10px;
+            color: $selectionBackgroundColor;
+            @include radius($cornerRadius);
+        }
+    }
+    &.open p.release a,
+    p.release a:hover {
         background-color: $selectionBackgroundColor;
         color: $textBrightColor;
         font-weight: bold;
-        @include radius($cornerRadius);
-
-        &.disabled {
-            background-color: transparent;
-            color: $textDisabledColor;
-            font-weight: normal;
-            //opacity: 0.5;
-        }
     }
+    p.release a.disabled {
+        background-color: transparent;
+        color: $textDisabledColor;
+        font-weight: normal;
+        //opacity: 0.5;
+    }
+
     > p.input-url input {
         @include radius($cornerRadius);
     }
@@ -377,7 +385,7 @@
         }
         div.details {
             display: block;
-            padding-bottom: $treeLineHeight * 2;
+            padding-top: $treeLineHeight * 0.5;
         }
     }
 }

@@ -1264,7 +1264,7 @@ var depageCMS = (function() {
 
                     xmldb.setAttribute(pageId, attrName, attrValue);
                 });
-                $form.find(".doc-property-meta a.release").on("click", function() {
+                $form.find(".doc-property-meta p.release a").on("click", function() {
                     $(this).addClass("disabled");
                     var docRef = $(this).parents("fieldset").data("docref");
                     var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
@@ -1307,7 +1307,7 @@ var depageCMS = (function() {
                     });
                 });
                 $form.on("depageForm.autosaved", function() {
-                    $form.find(".doc-property-meta a.release").removeClass("disabled");
+                    $form.find(".doc-property-meta p.release a").removeClass("disabled");
                 });
 
                 // @todo add ui for editing table columns and rows

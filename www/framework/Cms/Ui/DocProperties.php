@@ -364,21 +364,21 @@ class DocProperties extends Base
             // }}}
 
             $fs->addHtml("<div class=\"details\">");
-            // {{{ add changed date
-            $fs->addHtml(sprintf(
-                _("<p class=\"date\">%s %s by %s</p>"),
-                _("Changed"),
-                $dateFormatter->format($pageInfo->lastchange, true),
-                htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
-            ));
-            // }}}
-            // {{{ add url input
-            $fs->addUrl("url-$nodeId", [
-                'label' => _("url"),
-                'readonly' => true,
-                'defaultValue' => $url,
-            ]);
-            // }}}
+                // {{{ add changed date
+                $fs->addHtml(sprintf(
+                    _("<p class=\"date\">%s %s by %s</p>"),
+                    _("Changed"),
+                    $dateFormatter->format($pageInfo->lastchange, true),
+                    htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
+                ));
+                // }}}
+                // {{{ add url input
+                $fs->addUrl("url-$nodeId", [
+                    'label' => _("url"),
+                    'readonly' => true,
+                    'defaultValue' => $url,
+                ]);
+                // }}}
             $fs->addHtml("</div>");
 
             // {{{ add release button
@@ -391,7 +391,7 @@ class DocProperties extends Base
                     $releaseHover = _("Ask for this page the be released");
                 }
                 $class = $pageInfo->released ? "disabled" : "";
-                $fs->addHtml("<p><a class=\"button release $class\" data-tooltip=\"$releaseHover\">{$releaseTitle}</a></p>");
+                $fs->addHtml("<p class=\"release\"><a class=\"button $class\" data-tooltip=\"$releaseHover\">{$releaseTitle}</a></p>");
             }
             // }}}
         }
