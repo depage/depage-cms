@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-19 17:21+0200\n"
+"POT-Creation-Date: 2018-10-19 18:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2165,9 +2165,17 @@ msgstr ""
 msgid "Page Status"
 msgstr "Seitenstatus"
 
+#: Cms/Ui/DocProperties.php:337
+msgid "Page is published"
+msgstr "Seite ist veröffentlicht"
+
+#: Cms/Ui/DocProperties.php:340
+msgid "Page has unreleased changes"
+msgstr "Seite hat nicht freigegebene Änderungen"
+
 #: Cms/Ui/DocProperties.php:343
 msgid "Page is published but has unreleased changes."
-msgstr ""
+msgstr "Seite ist veröffentlicht, wurde aber geändert."
 
 #: Cms/Ui/DocProperties.php:345
 msgid "Page is published."

@@ -666,7 +666,7 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupTooltips
         setupTooltips: function() {
-            $("a[data-tooltip]").each(function() {
+            $("a[data-tooltip], i[data-tooltip]").each(function() {
                 var $t = $(this);
                 var dir = $t.attr("data-pos") || "BC";
 

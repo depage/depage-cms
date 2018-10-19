@@ -335,6 +335,7 @@
             padding: 3px 10px;
             color: $selectionBackgroundColor;
             @include radius($cornerRadius);
+            @include transition($transitionTime, "background-color, color");
         }
     }
     &.open p.release a,
@@ -380,9 +381,6 @@
     }
 
     &.open {
-        p.status {
-            padding-right: 0;
-        }
         div.details {
             display: block;
             padding-top: $treeLineHeight * 0.5;

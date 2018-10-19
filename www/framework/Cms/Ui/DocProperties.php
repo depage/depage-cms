@@ -334,10 +334,10 @@ class DocProperties extends Base
             $message = "";
 
             if ($pageInfo->published) {
-                $icon .= "<i class=\"icon icon-published\"></i>";
+                $icon .= "<i class=\"icon icon-published\" data-tooltip=\"" . _("Page is published") . "\"></i>";
             }
             if (!$pageInfo->released) {
-                $icon .= "<i class=\"icon icon-unreleased\"></i>";
+                $icon .= "<i class=\"icon icon-unreleased\" data-tooltip=\"" . _("Page has unreleased changes") . "\"></i>";
             }
             if ($pageInfo->published && !$pageInfo->released) {
                 $message = _("Page is published but has unreleased changes.");
