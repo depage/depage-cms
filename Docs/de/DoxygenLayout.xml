@@ -1,12 +1,12 @@
 <doxygenlayout version="1.0">
   <!-- Navigation index tabs for HTML output -->
   <navindex>
-    <tab type="mainpage" visible="yes" title="Home"/>
+    <tab type="mainpage" visible="no" title="Home"/>
 
-    <tab type="user" url="md__docs_de_02__interface.html" title="Interface" />
+    <tab type="user" url="md__docs_de_02__interface.html" title="Getting started" />
     <tab type="user" url="md__docs_de_03__editing_pages.html" title="Seiten Editieren" />
     <tab type="user" url="md__docs_de_04__file_library.html" title="Dateibibliothek" />
-    <tab type="user" url="md__docs_de_05__colors.html" title="Farbschemata" />
+    <tab type="user" url="md__docs_de_05__colors.html" title="Farben" />
     <tab type="user" url="md__docs_de_06__settings.html" title="Einstellungen" />
     <tab type="user" url="md__docs_de_07__newsletter.html" title="Newsletter" />
 

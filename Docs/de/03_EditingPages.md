@@ -10,10 +10,19 @@ Die Strukturansicht
 -------------------
 
 Die Strukturansicht im oberen linken Fensterbereich ist eine Baumdarstellung der einzelnen Seiten eines Internetauftritts. Aus dieser Seitenhirarchie und ihren Namen wird automatisch die Navigation des Internetauftritts generiert.
-Am unteren Ende stehen verschiedene Funktionen zur Verfügung, die mit den Seiten vorgenommen werden können.
-     löschen duplizieren
-hinzufügen
+Zu jedem Baum stehen stehen oben verschiedene Funktionen zur Verfügung, die mit den Seiten vorgenommen werden können, wenn der Baum aktiv ist.
+
+- Hinzufügen
+- Duplizieren
+- Löschen
+
+![Caption Das Split Interface](images/menu-new.png "Das Menu zum Erstellen neuer Elemente")
+
+
+
 Seiten und Ordner
+-----------------
+
 Es gibt zwei Arten von Elementen: Seiten und Ordner. Ordner sind dadurch gekennzeichnet, dass ihr Name in eckigen Klammer steht: [Ordner].
 Seiten und Ordner unterscheiden sich dadurch, dass Seiten immer einen Seiteninhalt enthalten. Ordner hingegen bilden nur ein Element in der Navigation, enthalten aber keinen Inhalt. Wird in der Navigation ein Ordner angewählt, wird immer das erste Seitenelement innerhalb des Ordners angezeigt, nicht der Ordner selbst. Seiten, wie auch Ordner können weitere Unterseiten enthalten. Sobald ein Element weitere Unterelemente enthält ist es mit einem Pfeil davor gekennzeichnet.
 Seiten hinzufügen
@@ -45,7 +54,48 @@ Die Dokumentenstruktur
 
 Neben der Navigationsstruktur gibt es noch eine Dokumentenstruktur. Hier wird der eigentliche Inhalt einer Seite bearbeitet. Zur Bearbeitung stehen die selben Mittel zur Verfügung, wie auch bei der Bearbeitung der Navigationsstruktur: Hinzufügen, Duplizieren, Verschieben, Kopieren und Löschen.
 Allerdings verhält sich die Funktion Duplizieren etwas anders als bei der Bearbeitung der Navigation: Hier wird das Element selbst, wie auch alle Unterelemente mit dupliziert.
-Das Meta* Element
+
+
+Seitenelemente hinzufügen
+-------------------------
+
+Neue Elemente werden über den Button hinzufügen in das Dokument eingefügt. Es werden jeweils nur solche Elemente angezeigt, die auch in das aktuelle Elemente eingefügt werden können – beispielsweise ein neuer Link in eine Linkliste oder ein neues Bild in eine Slideshow.
+
+
+Sobald ein Seitenelement markiert wird, wird der Inhalt im Eigenschaftsbereich angezeigt und kann dort bearbeitet werden. Es stehen folgende Eigenschaftselemente zur Verfügung:
+
+- **Textelement (einzeilig):**
+    Das Textelement (einzeilig) steht für unformatierten, einzeiligen Text, wie beispielsweise einzeilige Überschriften zur Verfügung.
+
+- **Textelement (mehrzeilig):**
+    Das Textelement (mehrzeilig) steht für unformatierten, mehrzeiligen Text zur Verfügung, wie beispielsweise mehrzeilige Überschriften oder kurze Teaser.
+
+- **Textelement (formatiert):**
+    Das Textelement (formatiert) steht für formatierten, mehrzeiligen Text zur Verfügung. Dort können Texte mit Auszeichnungen wie fett oder kursiv versehen werden. Außerdem können innerhalb des Textes Links zu anderen Seiten gesetzt werden.
+    Dazu markiert man zunächst den Textabschnitt, der als Link dienen soll und klickt dann auf das Link-Symbol. Es wird in einer Dialogbox das Linkziel abgefragt, das entweder auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verweisen kann. Zudem kann gewählt werden, ob der Link im gleichen oder in einem neuem Browserfenster geöffnet werden soll.
+
+- **Bild:**
+    Mit Hilfe des Bild-Elements kann ein Bild aus der Dateibibliothek ausgewählt werden und so in die Seite integriert werden. In das Alt-Textfeld kann ein Text eingegeben werden, der dann sichtbar ist, wenn jemand keine Bilder anzeigen kann, oder auch solange ein Bild noch nicht vollständig geladen ist.
+    Falls die Höhe oder Breite für ein Bild erzwungen wird, stehen in der Dateibibliothek nur solche Bilder zur Verfügung, die die richtigen Bildmaße haben.
+    Je nach Template kann auch noch ein Link ausgewählt werden, der geöffnet wird, wenn man auf das Bild klickt.
+
+- **Datum:**
+
+- **Uhrzeit:**
+
+- **Link:**
+Das Link-Element ermöglicht es Verweise in die Seite einzufügen, die nicht innerhalb des Textes auftauchen, wie beispielsweise in Linklisten. Es kann auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verwiesen werden.
+    Zudem kann gewählt werden, ob der Link im gleichen oder in einem neuem Browserfenster geöffnet werden soll:
+    Dieses Symbol bedeutet, dass der Link in einem neuen Fenster geöffnet wird.
+    Dieses Symbol bedeutet, dass der Link im gleichen Fenster geöffnet wird.
+
+- **Quelltext:**
+    Der Quelltext steht nur Administratoren und Developern zur Verfügung. Mit dessen Hilfe können einzelne HTML- oder Script-Elemente direkt in eine Seite integriert werden, ohne dass man dafür die Templates abändern müsste. Dies ist vor allem für Einzelfälle oder Scripts gedacht.
+
+
+Das Meta Element
+================
+
 Alle Seiten und Ordner in depage-cms haben ein gemeinsames Element: Das Meta* Element. Es wird automatisch markiert, wenn eine Seite ausgewählt wird.
 Im Meta* Element werden Einstellungen vorgenommen, die für jede Seite zur Verfügung stehen.
 Als erstes ist zu sehen, wer die Seite als letztes und zu welchem Zeitpunkt bearbeitet hat. Hier kann auch der aktuelle Stand der Seite freigegeben werden, so dass der Inhalt bei der nächsten Veröffentlichung mit übernommen wird.
@@ -57,28 +107,25 @@ Unter Linkinfo kann ein zusätzlicher Beschreibender Text angegeben werden, der 
 Unter Beschreibung kann ein Beschreibungstext der Seite oder Stichworte angegeben werden, die dann – in der Regel für den Benutzer unsichtbar – in den Description-Tag der HTML-Seite eingetragen werden. Dieser Text wird unter anderem von Suchmaschinen ausgelesen und teilweise auch in den Suchergebnissen mit angezeigt.
 
 
-Seitenelemente hinzufügen
--------------------------
+Seitenvorschau
+==============
 
-Neue Elemente werden über den Button hinzufügen in das Dokument eingefügt. Es werden jeweils nur solche Elemente angezeigt, die auch in das aktuelle Elemente eingefügt werden können – beispielsweise ein neuer Link in eine Linkliste oder ein neues Bild in eine Slideshow.
+Die Vorschau
+------------
+
+Die Vorschau der Seiten aktualisiert sich mit jeder Änderung der Seite automatisch. Ebenfalls automatisch ändert sich die Sprache der Vorschau: Sobald beispielsweise ein deutsches Textfeld bearbeitet wird, wird die deutsche Version der Seite angezeigt, wenn ein englisches Textfeld bearbeitet wird, wird die englische Version angezeigt.
+
+Aktualisieren
+-------------
+
+Wenn sich die Vorschau nicht wie gewünscht aktualisieren sollte, dann kann die Vorschau (und deren Dateien wie Bilder und Stylesheets) über den Aktualisieren-Button neu laden.
+
+Zoom
+----
+
+Um die Seite auch auf kleineren Geräten in der breiteren Desktop-Variante anzeigen lassen zu können, steht ein Zoom-Button zur Verfügung, mit der die Vorschau der Seite in einer andere Größe (50%, 75% oder 100%) angezeigt werden kann.
 
 
-Sobald ein Seitenelement markiert wird, wird der Inhalt im Eigenschaftsbereich angezeigt und kann dort bearbeitet werden. Es stehen folgende Eigenschaftselemente zur Verfügung:
-- Textelement (einzeilig)
-    Das Textelement (einzeilig) steht für unformatierten, einzeiligen Text, wie beispielsweise einzeilige Überschriften zur Verfügung.
-- Textelement (mehrzeilig)
-    Das Textelement (mehrzeilig) steht für unformatierten, mehrzeiligen Text zur Verfügung, wie beispielsweise mehrzeilige Überschriften oder kurze Teaser.
-- Textelement (formatiert)
-    Das Textelement (formatiert) steht für formatierten, mehrzeiligen Text zur Verfügung. Dort können Texte mit Auszeichnungen wie fett oder kursiv versehen werden. Außerdem können innerhalb des Textes Links zu anderen Seiten gesetzt werden.
-Dazu markiert man zunächst den Textabschnitt, der als Link dienen soll und klickt dann auf das Link-Symbol. Es wird in einer Dialogbox das Linkziel abgefragt, das entweder auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verweisen kann. Zudem kann gewählt werden, ob der Link im gleichen oder in einem neuem Browserfenster geöffnet werden soll.
-Der Quelltext steht nur Administratoren und Developern zur Verfügung. Mit dessen Hilfe können einzelne HTML- oder Script-Elemente direkt in eine Seite integriert werden, ohne dass man dafür die Templates abändern müsste. Dies ist vor allem für Einzelfälle oder Scripts gedacht.
-   Quelltext
 
-
-Mit Hilfe des Bild-Elements kann ein Bild aus der Dateibibliothek ausgewählt werden und so in die Seite integriert werden. In das Alt-Textfeld kann ein Text eingegeben werden, der dann sichtbar ist, wenn jemand keine Bilder anzeigen kann, oder auch solange ein Bild noch nicht vollständig geladen ist.
-Falls die Höhe oder Breite für ein Bild erzwungen wird, stehen in der Dateibibliothek nur solche Bilder zur Verfügung, die die richtigen Bildmaße haben.
-Je nach Template kann auch noch ein Link ausgewählt werden, der geöffnet wird, wenn man auf das Bild klickt.
-Das Link-Element ermöglicht es Verweise in die Seite einzufügen, die nicht innerhalb des Textes auftauchen, wie beispielsweise in Linklisten. Es kann auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verwiesen werden.
-Zudem kann gewählt werden, ob der Link im gleichen oder in einem neuem Browserfenster geöffnet werden soll:
-Dieses Symbol bedeutet, dass der Link in einem neuen Fenster geöffnet wird.
-Dieses Symbol bedeutet, dass der Link im gleichen Fenster geöffnet wird.
+Freigabe/Veröffentlichen
+========================
