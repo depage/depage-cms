@@ -1,18 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="192" height="1152" viewBox="0 0 192 1152">
   <defs>
-    <circle id="icon_sprite-b" cx="16" cy="16" r="16"/>
-    <rect id="icon_sprite-a" width="32" height="24" x="8" y="12"/>
-    <mask id="icon_sprite-d" width="32" height="24" x="0" y="0" fill="#fff">
-      <use xlink:href="#icon_sprite-a"/>
+    <circle id="path-1" cx="16" cy="16" r="16"/>
+    <rect id="path-3" width="32" height="24" x="8" y="12"/>
+    <mask id="mask-4" width="32" height="24" x="0" y="0" fill="#fff">
+      <use xlink:href="#path-3"/>
     </mask>
-    <circle id="icon_sprite-f" cx="33" cy="24" r="10"/>
-    <filter id="icon_sprite-e" width="192.5%" height="192.5%" x="-46.2%" y="-43.8%" filterUnits="objectBoundingBox">
+    <circle id="path-5" cx="33" cy="24" r="10"/>
+    <filter id="filter-6" width="192.5%" height="192.5%" x="-46.2%" y="-43.8%" filterUnits="objectBoundingBox">
       <feOffset dy=".5" in="SourceAlpha" result="shadowOffsetOuter1"/>
       <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="3"/>
       <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0"/>
     </filter>
-    <circle id="icon_sprite-h" cx="24" cy="24" r="10"/>
-    <filter id="icon_sprite-g" width="147.5%" height="147.5%" x="-23.8%" y="-21.2%" filterUnits="objectBoundingBox">
+    <circle id="path-7" cx="24" cy="24" r="10"/>
+    <filter id="filter-8" width="147.5%" height="147.5%" x="-23.8%" y="-21.2%" filterUnits="objectBoundingBox">
       <feOffset dy=".5" in="SourceAlpha" result="shadowOffsetOuter1"/>
       <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation="1.5"/>
       <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0"/>
@@ -34,11 +34,11 @@
     </g>
     <path fill="#7F7F7F" fill-rule="nonzero" d="M45.369,26.977 C45.888,26.793 46.356,26.194 46.41,25.647 C46.41,25.647 46.501,24.731 46.501,23.751 C46.501,22.771 46.41,21.855 46.41,21.855 C46.356,21.308 45.888,20.709 45.369,20.525 L41.331,19.088 C40.812,18.904 40.238,18.329 40.055,17.811 L39.479,16.418 C39.243,15.921 39.244,15.108 39.48,14.611 L41.318,10.745 C41.554,10.248 41.45,9.504 41.086,9.091 L38.41,6.415 C37.997,6.051 37.253,5.947 36.756,6.183 L32.89,8.021 C32.393,8.257 31.58,8.258 31.083,8.022 L29.689,7.446 C29.171,7.262 28.596,6.688 28.412,6.17 L26.975,2.131 C26.791,1.612 26.192,1.144 25.645,1.09 C25.645,1.09 24.73,1 23.75,1 C22.77,1 21.855,1.09 21.855,1.09 C21.308,1.144 20.709,1.612 20.525,2.131 L19.088,6.17 C18.904,6.689 18.329,7.263 17.811,7.447 L16.417,8.022 C15.92,8.258 15.107,8.257 14.61,8.021 L10.744,6.183 C10.247,5.947 9.503,6.051 9.09,6.415 L6.414,9.091 C6.05,9.504 5.946,10.248 6.182,10.745 L8.02,14.611 C8.256,15.108 8.257,15.921 8.021,16.418 L7.446,17.812 C7.262,18.33 6.688,18.905 6.169,19.089 L2.131,20.525 C1.612,20.709 1.144,21.308 1.09,21.855 C1.09,21.855 1,22.771 1,23.751 C1,24.731 1.09,25.647 1.09,25.647 C1.144,26.194 1.612,26.793 2.131,26.977 L6.169,28.413 C6.688,28.597 7.262,29.172 7.446,29.69 L8.021,31.084 C8.257,31.581 8.256,32.394 8.02,32.891 L6.182,36.757 C5.946,37.254 6.05,37.998 6.414,38.411 L9.09,41.087 C9.503,41.451 10.247,41.555 10.744,41.319 L14.61,39.481 C15.107,39.245 15.92,39.244 16.417,39.48 L17.811,40.055 C18.329,40.239 18.904,40.813 19.088,41.332 L20.525,45.371 C20.709,45.89 21.308,46.358 21.855,46.412 C21.855,46.412 22.77,46.502 23.75,46.502 C24.73,46.502 25.645,46.412 25.645,46.412 C26.192,46.358 26.791,45.89 26.975,45.371 L28.412,41.332 C28.596,40.813 29.171,40.239 29.689,40.055 L31.083,39.48 C31.58,39.244 32.393,39.245 32.89,39.481 L36.756,41.319 C37.253,41.555 37.997,41.451 38.41,41.087 L41.086,38.411 C41.45,37.998 41.554,37.254 41.318,36.757 L39.48,32.891 C39.244,32.394 39.243,31.581 39.479,31.084 L40.054,29.691 C40.238,29.173 40.812,28.598 41.331,28.414 L45.369,26.977 Z M23.75,31.876 C19.263,31.876 15.625,28.239 15.625,23.751 C15.625,19.264 19.262,15.626 23.75,15.626 C28.237,15.626 31.875,19.264 31.875,23.751 C31.875,28.239 28.238,31.876 23.75,31.876 Z" transform="translate(48 96)"/>
     <g transform="translate(104 104)">
-      <mask id="icon_sprite-c" fill="#fff">
-        <use xlink:href="#icon_sprite-b"/>
+      <mask id="mask-2" fill="#fff">
+        <use xlink:href="#path-1"/>
       </mask>
-      <use fill="#D8D8D8" xlink:href="#icon_sprite-b"/>
-      <g mask="url(#icon_sprite-c)">
+      <use fill="#D8D8D8" xlink:href="#path-1"/>
+      <g mask="url(#mask-2)">
         <g transform="translate(-8 -8)">
           <polygon fill="#F90" points="0 0 24 0 24 24 0 24"/>
           <polygon fill="#047CBF" points="0 24 24 24 24 48 0 48"/>
@@ -100,7 +100,7 @@
       <polygon points="0 12 30 12 30 14 0 14"/>
       <polygon points="0 18 23.226 18 23.226 20 0 20"/>
     </g>
-    <use stroke="#7F7F7F" stroke-dasharray="2 2 2 2" stroke-width="4" mask="url(#icon_sprite-d)" transform="translate(0 576)" xlink:href="#icon_sprite-a"/>
+    <use stroke="#7F7F7F" stroke-dasharray="2 2 2 2" stroke-width="4" mask="url(#mask-4)" transform="translate(0 576)" xlink:href="#path-3"/>
     <rect width="30" height="22" x="9" y="13" stroke="#7F7F7F" stroke-width="2" transform="translate(48 576)"/>
     <g stroke="#4E4C4B" transform="translate(56 444)">
       <path fill="#FFF" fill-rule="nonzero" stroke-width="1.5" d="M30.947427,7.33476502 L25.1618234,0.75 L2.20993103,0.75 C1.40217398,0.75 0.75,1.39917683 0.75,2.20113273 L0.75,22.1188673 C0.75,22.9172332 1.40392725,23.57 2.19948276,23.57 L29.8005172,23.57 C30.6008436,23.57 31.25,22.9192126 31.25,22.1145145 L31.25,10.7895508 C31.25,9.89087714 31.25,9.89087714 31.25,9.44940677 C31.25,9.18136336 31.25,9.18136336 31.25,9.14982455 C31.25,8.68316327 31.1838868,8.2147399 31.0735722,7.7714034 C31.0278674,7.5877232 30.983055,7.43930837 30.947427,7.33476502 Z"/>
@@ -231,8 +231,8 @@
     <rect width="29" height="29" x="9.5" y="9.5" stroke="#7F7F7F" stroke-width="3" rx="6" transform="translate(48 864)"/>
     <g transform="translate(0 912)">
       <path fill="#047CBF" d="M0,24 C0,16.2680135 6.2680135,10 14,10 C14.6023794,10 33.3067116,10 33.9090909,10 C41.6410774,10 47.9090909,16.2680135 47.9090909,24 C47.9090909,31.7319865 41.6410774,38 33.9090909,38 L13.8160511,38 C6.16884452,37.9003433 0,31.6705771 0,24 Z"/>
-      <use fill="#000" filter="url(#icon_sprite-e)" xlink:href="#icon_sprite-f"/>
-      <use fill="#FFF" xlink:href="#icon_sprite-f"/>
+      <use fill="#000" filter="url(#filter-6)" xlink:href="#path-5"/>
+      <use fill="#FFF" xlink:href="#path-5"/>
     </g>
     <g transform="translate(48 912)">
       <path fill="#FFF" stroke="#CACACA" stroke-width="1.5" d="M0.75,24 C0.75,31.2527006 6.58150458,37.1556573 13.8160511,37.25 L33.9090909,37.25 C41.2268638,37.25 47.1590909,31.3177729 47.1590909,24 C47.1590909,16.6822271 41.2268638,10.75 33.9090909,10.75 C33.1175126,10.75 33.1175126,10.75 30.6288763,10.75 C27.5745539,10.75 27.5745539,10.75 23.9545455,10.75 C20.334537,10.75 20.334537,10.75 17.2802146,10.75 C14.7915783,10.75 14.7915783,10.75 14,10.75 C6.68222707,10.75 0.75,16.6822271 0.75,24 Z"/>
@@ -250,8 +250,8 @@
     </g>
     <g transform="translate(96 912)">
       <circle cx="24" cy="24" r="14.75" fill="#FFF" stroke="#CACACA" stroke-width="1.5"/>
-      <use fill="#000" filter="url(#icon_sprite-g)" xlink:href="#icon_sprite-h"/>
-      <use fill="#047CBF" xlink:href="#icon_sprite-h"/>
+      <use fill="#000" filter="url(#filter-8)" xlink:href="#path-7"/>
+      <use fill="#047CBF" xlink:href="#path-7"/>
     </g>
     <g fill="#FFF" transform="translate(144 912)">
       <circle cx="24" cy="24" r="13.25" stroke="#CACACA" stroke-width="1.5"/>

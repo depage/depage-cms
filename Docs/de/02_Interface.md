@@ -1,4 +1,4 @@
-Einführung
+Einführung      {#getting-started}
 ==========
 
 [TOC]
@@ -35,23 +35,23 @@ Sobald die Seite im Split-Modus angezeigt wird, kann das Layout umgestellt werde
 Der Editierbereich
 ------------------
 
-Der Editierbereich ist immer in zwei Bereiche unterteilt. Links gibt es einen oder mehrere Strukturbäume, die immer mit ähnlichen Werkzeugen – wie verschieben, kopieren, umbenennen oder löschen – bearbeitet werden können. Rechts sind die jeweiligen Einstellungsfelder für das links markierte Element.
+Der Editierbereich ist immer in zwei Bereiche unterteilt. Links gibt es einen oder mehrere Strukturbäume, die immer mit ähnlichen Werkzeugen – wie verschieben, kopieren, umbenennen oder löschen – bearbeitet werden können. Rechts sind die jeweiligen Dokument Eigenschaften für das links markierte Element.
 
-In der Titelzeile eines Strukturbaums ist ein Ladehinweis zu sehen, wenn gerade Daten zum
-Server gesendet oder vom Server empfangen werden, weil man selbst oder jemand anderes eine Seite bearbeitet hat. Um Platz zu sparen, können die Strukturbäume auch eingeklappt werden.
+Die Dokument Eigenschaften erweitertern sich je nach Inhalt dynamisch nach unten, und müssen bei Bedarf entsprechend nach oben oder nach unten gescrollt werden.
 
-Der Einstellungsbereich erweitert sich je nach Inhalt dynamisch nach unten, und muss bei Bedarf entsprechend nach oben oder nach unten gescrollt werden.
+> Weiterführende Info:
+>
+> [Seiten Editieren](@ref editing-pages)
+>
+> [Seiten Editieren](@ref editing-pages)
 
 
 Der Vorschaubereich
 -------------------
 
-Die Vorschau der Seiten aktualisiert sich mit jeder Änderung der Seite automatisch. Ebenfalls automatisch ändert sich die Sprache der Vorschau: Sobald beispielsweise ein deutsches Textfeld bearbeitet wird, wird die deutsche Version der Seite angezeigt, wenn ein englisches Textfeld bearbeitet wird, wird die englische Version angezeigt.
+Die Vorschau der Seiten aktualisiert sich mit jeder Änderung der Seite automatisch.
 
-Wenn sich die Vorschau nicht wie gewünscht aktualisieren sollte, dann kann die Vorschau (und deren Dateien wie Bilder und Stylesheets) über den Aktualisieren-Button neu laden.
-
-Um die Seite auch auf kleineren Geräten in der breiteren Desktop-Variante anzeigen lassen zu können, steht ein Zoom-Button zur Verfügung, mit der die Vorschau der Seite in einer andere Größe (50%, 75% oder 100%) angezeigt werden kann.
-
+> [Siehe Seiten Editieren](@ref page-preview)
 
 
 Menüs

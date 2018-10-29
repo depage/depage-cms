@@ -1,4 +1,4 @@
-Seiten editieren
+Seiten editieren    {#editing-pages}
 ================
 
 [TOC]
@@ -107,7 +107,7 @@ Unter Linkinfo kann ein zusätzlicher Beschreibender Text angegeben werden, der 
 Unter Beschreibung kann ein Beschreibungstext der Seite oder Stichworte angegeben werden, die dann – in der Regel für den Benutzer unsichtbar – in den Description-Tag der HTML-Seite eingetragen werden. Dieser Text wird unter anderem von Suchmaschinen ausgelesen und teilweise auch in den Suchergebnissen mit angezeigt.
 
 
-Seitenvorschau
+Seitenvorschau     {#page-preview}
 ==============
 
 Die Vorschau
@@ -129,3 +129,5 @@ Um die Seite auch auf kleineren Geräten in der breiteren Desktop-Variante anzei
 
 Freigabe/Veröffentlichen
 ========================
+
+![Caption Das Split Interface](images/server-structure-publishing.svg "Das Menu zum Erstellen neuer Elemente")
