@@ -1,4 +1,4 @@
-Die Dateibibliothek
+Die Dateibibliothek     {#file-library}
 ===================
 
 [TOC]
@@ -28,9 +28,11 @@ Es können auch neue Dateien in die Dateibibliothek hochgeladen werden.
 
 
 Dazu klickt man auf den Button Upload. Es öffnet sich ein Dialog, in dem man verschiedene Dateien auswählen oder diese per Drag&Drop in das aktuell gewählte Verzeichnis hochgeladen kann Nachdem der Upload abgeschlossen ist, kann der Dialog über Upload beenden geschlossen werden.
-» Vorsicht:
-Dateien, die bereits unter dem gleichen Namen im aktuellen Verzeichnis liegen, werden ohne Vorwarnung überschrieben!
-Das dient vor allem dazu, dass Bilder einfach mit einer neuen Version aktualisiert werden können, ohne für jede Datei eine Überschreib-Warnung bestätigen zu müssen.
+
+> **Vorsicht**
+>
+> _Dateien, die bereits unter dem gleichen Namen im aktuellen Verzeichnis liegen, werden ohne Vorwarnung überschrieben!_
+> _Das dient vor allem dazu, dass Bilder einfach mit einer neuen Version aktualisiert werden können, ohne für jede Datei eine Überschreib-Warnung bestätigen zu müssen._
 
 
 Dateien löschen

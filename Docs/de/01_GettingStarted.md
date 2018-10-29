@@ -37,13 +37,7 @@ Der Editierbereich
 
 Der Editierbereich ist immer in zwei Bereiche unterteilt. Links gibt es einen oder mehrere Strukturbäume, die immer mit ähnlichen Werkzeugen – wie verschieben, kopieren, umbenennen oder löschen – bearbeitet werden können. Rechts sind die jeweiligen Dokument Eigenschaften für das links markierte Element.
 
-Die Dokument Eigenschaften erweitertern sich je nach Inhalt dynamisch nach unten, und müssen bei Bedarf entsprechend nach oben oder nach unten gescrollt werden.
-
-> Weiterführende Info:
->
-> [Seiten Editieren](@ref editing-pages)
->
-> [Seiten Editieren](@ref editing-pages)
+> [Siehe Seiten Editieren](@ref editing-pages)
 
 
 Der Vorschaubereich
@@ -51,7 +45,7 @@ Der Vorschaubereich
 
 Die Vorschau der Seiten aktualisiert sich mit jeder Änderung der Seite automatisch.
 
-> [Siehe Seiten Editieren](@ref page-preview)
+> [Siehe Vorschau](@ref page-preview)
 
 
 Menüs

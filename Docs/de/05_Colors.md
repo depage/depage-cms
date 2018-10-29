@@ -1,5 +1,5 @@
-Farbschemata
-============
+Farben      {#colors}
+======
 
 [TOC]
 

@@ -7,8 +7,12 @@ für Stück erweitert, ergänzt und umstrukturiert werden.
 depage-cms funktioniert hier ähnlich wie ein Outliner. Es können Seiten erstellt, umbenannt, kopiert, verschoben oder gelöscht werden. Aus dieser Struktur läßt sich dann über die Seiten-Templates bestimmen, wie hieraus (und bei Bedarf auch zusätzlichen Meta-Informationen) die Navigation und der Seiteninhalt generiert wird.
 
 
-> Weitere Kapitel
+> **Inhalt**
 >
 > [Getting Started](@ref getting-started)
 >
 > [Seiten Editieren](@ref editing-pages)
+>
+> [Dateibibliothek](@ref file-library)
+>
+> [Farben](@ref colors)

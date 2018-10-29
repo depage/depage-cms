@@ -5,8 +5,8 @@
 
     <tab type="user" url="@ref getting-started" title="Getting started" />
     <tab type="user" url="@ref editing-pages" title="Seiten Editieren" />
-    <tab type="user" url="md__docs_de_04__file_library.html" title="Bibliothek" />
-    <tab type="user" url="md__docs_de_05__colors.html" title="Farben" />
+    <tab type="user" url="@ref file-library" title="Bibliothek" />
+    <tab type="user" url="@ref colors" title="Farben" />
     <tab type="user" url="md__docs_de_06__settings.html" title="Administration">
         <tab type="user" url="md__docs_de_06__settings.html" title="Projekt Einstellungen" />
         <tab type="user" url="md__docs_de_06__settings.html" title="Benutzerverwaltung" />

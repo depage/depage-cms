@@ -64,32 +64,38 @@ Neue Elemente werden über den Button hinzufügen in das Dokument eingefügt. Es
 
 Sobald ein Seitenelement markiert wird, wird der Inhalt im Eigenschaftsbereich angezeigt und kann dort bearbeitet werden. Es stehen folgende Eigenschaftselemente zur Verfügung:
 
-- **Textelement (einzeilig):**
+- **Textelement (einzeilig)**
+
     Das Textelement (einzeilig) steht für unformatierten, einzeiligen Text, wie beispielsweise einzeilige Überschriften zur Verfügung.
 
-- **Textelement (mehrzeilig):**
+- **Textelement (mehrzeilig)**
+
     Das Textelement (mehrzeilig) steht für unformatierten, mehrzeiligen Text zur Verfügung, wie beispielsweise mehrzeilige Überschriften oder kurze Teaser.
 
-- **Textelement (formatiert):**
+- **Textelement (formatiert)**
+
     Das Textelement (formatiert) steht für formatierten, mehrzeiligen Text zur Verfügung. Dort können Texte mit Auszeichnungen wie fett oder kursiv versehen werden. Außerdem können innerhalb des Textes Links zu anderen Seiten gesetzt werden.
     Dazu markiert man zunächst den Textabschnitt, der als Link dienen soll und klickt dann auf das Link-Symbol. Es wird in einer Dialogbox das Linkziel abgefragt, das entweder auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verweisen kann. Zudem kann gewählt werden, ob der Link im gleichen oder in einem neuem Browserfenster geöffnet werden soll.
 
-- **Bild:**
+- **Bild**
+
     Mit Hilfe des Bild-Elements kann ein Bild aus der Dateibibliothek ausgewählt werden und so in die Seite integriert werden. In das Alt-Textfeld kann ein Text eingegeben werden, der dann sichtbar ist, wenn jemand keine Bilder anzeigen kann, oder auch solange ein Bild noch nicht vollständig geladen ist.
     Falls die Höhe oder Breite für ein Bild erzwungen wird, stehen in der Dateibibliothek nur solche Bilder zur Verfügung, die die richtigen Bildmaße haben.
     Je nach Template kann auch noch ein Link ausgewählt werden, der geöffnet wird, wenn man auf das Bild klickt.
 
-- **Datum:**
+- **Datum**
 
-- **Uhrzeit:**
+- **Uhrzeit**
 
-- **Link:**
-Das Link-Element ermöglicht es Verweise in die Seite einzufügen, die nicht innerhalb des Textes auftauchen, wie beispielsweise in Linklisten. Es kann auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verwiesen werden.
+- **Link**
+
+    Das Link-Element ermöglicht es Verweise in die Seite einzufügen, die nicht innerhalb des Textes auftauchen, wie beispielsweise in Linklisten. Es kann auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verwiesen werden.
     Zudem kann gewählt werden, ob der Link im gleichen oder in einem neuem Browserfenster geöffnet werden soll:
     Dieses Symbol bedeutet, dass der Link in einem neuen Fenster geöffnet wird.
     Dieses Symbol bedeutet, dass der Link im gleichen Fenster geöffnet wird.
 
-- **Quelltext:**
+- **Quelltext**
+
     Der Quelltext steht nur Administratoren und Developern zur Verfügung. Mit dessen Hilfe können einzelne HTML- oder Script-Elemente direkt in eine Seite integriert werden, ohne dass man dafür die Templates abändern müsste. Dies ist vor allem für Einzelfälle oder Scripts gedacht.
 
 
@@ -127,7 +133,7 @@ Um die Seite auch auf kleineren Geräten in der breiteren Desktop-Variante anzei
 
 
 
-Freigabe/Veröffentlichen
-========================
+Freigabe / Veröffentlichen
+==========================
 
 ![Caption Das Split Interface](images/server-structure-publishing.svg "Das Menu zum Erstellen neuer Elemente")
