@@ -1,4 +1,4 @@
-Newsletter
+Newsletter    {#newsletter}
 ==========
 
 [TOC]

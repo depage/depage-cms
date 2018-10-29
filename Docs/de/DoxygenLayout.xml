@@ -1,17 +1,23 @@
 <doxygenlayout version="1.0">
   <!-- Navigation index tabs for HTML output -->
   <navindex>
-    <tab type="mainpage" visible="no" title="Home"/>
+    <tab type="mainpage" visible="yes" title="Inhalt"/>
 
-    <tab type="user" url="@ref getting-started" title="Getting started" />
-    <tab type="user" url="@ref editing-pages" title="Seiten Editieren" />
-    <tab type="user" url="@ref file-library" title="Bibliothek" />
-    <tab type="user" url="@ref colors" title="Farben" />
-    <tab type="user" url="md__docs_de_06__settings.html" title="Administration">
-        <tab type="user" url="md__docs_de_06__settings.html" title="Projekt Einstellungen" />
-        <tab type="user" url="md__docs_de_06__settings.html" title="Benutzerverwaltung" />
+    <tab type="user" url="@ref get-started" title="Grundlagen">
+        <tab type="user" url="@ref get-started" title="Einführung" />
+        <tab type="user" url="@ref editing-pages" title="Seiten Editieren" />
+        <tab type="user" url="@ref publishing" title="Publizieren" />
     </tab>
-    <tab type="user" url="md__docs_de_07__newsletter.html" title="Newsletter" />
+    <tab type="user" url="@ref file-library" title="Erweitert">
+        <tab type="user" url="@ref file-library" title="Dateibibliothek" />
+        <tab type="user" url="@ref colors" title="Farben" />
+        <tab type="user" url="@ref newsletter" title="Newsletter" />
+    </tab>
+    <tab type="user" url="@ref admin" title="Administration">
+        <tab type="user" url="@ref admin-project-settings" title="Projekt Einstellungen" />
+        <tab type="user" url="@ref admin-user-management" title="Benutzerverwaltung" />
+        <tab type="user" url="@ref admin-tasks" title="Tasks" />
+    </tab>
 
     <tab type="examples" visible="no" title="Examples" intro=""/>
 

@@ -1,4 +1,4 @@
-Einführung      {#getting-started}
+Einführung      {#get-started}
 ==========
 
 [TOC]
@@ -75,3 +75,5 @@ Hilfe
 -----
 
 Über den Button Hilfe, steht eine kurze Beschreibung der Interface-Element zur Verfügung.
+
+> [Weiter mit Seiten Editieren](@ref editing-pages)

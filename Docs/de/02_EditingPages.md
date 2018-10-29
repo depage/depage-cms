@@ -133,7 +133,4 @@ Um die Seite auch auf kleineren Geräten in der breiteren Desktop-Variante anzei
 
 
 
-Freigabe / Veröffentlichen
-==========================
-
-![Caption Das Split Interface](images/server-structure-publishing.svg "Das Menu zum Erstellen neuer Elemente")
+> [Weiter mit Publizieren](@ref publishing)

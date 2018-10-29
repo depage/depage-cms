@@ -1,0 +1,7 @@
+Administration     {#admin}
+==============
+
+[TOC]
+
+Administration
+==============
