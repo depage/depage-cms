@@ -25,7 +25,3 @@ Welcome to depage-cms.
 > [Administration](@ref admin)
 >
 > > [Projekteinstellungen](@ref admin-project-settings)
-> >
-> > [Benutzerverwaltung](@ref admin-user-management)
-> >
-> > [Tasks](@ref admin-tasks)
