@@ -19,7 +19,7 @@ Zu jedem Baum stehen stehen oben verschiedene Funktionen zur Verfügung, die mit
 
 Diese können entweder über die Toolbar des ausgewählten Baums erreicht werden oder über das Kontextmenü (rechte Maustaste) der jeweiligen Seite.
 
-![Caption Das Split Interface](images/menu-new.png "Das Menu zum Erstellen neuer Elemente")
+![Das Menu zum Erstellen neuer Elemente](images/menu-new.png)
 
 
 
@@ -196,4 +196,4 @@ Projektschnellzugriff      {#project-shortcuts}
 
 
 
-> [Weiter mit Publizieren](@ref publishing)
+> [Weiter zum Thema: Publizieren](@ref publishing)

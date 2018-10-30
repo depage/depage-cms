@@ -41,3 +41,6 @@ Dateien löschen
 Da beim Veröffentlichen immer die gesamte Dateibibliothek auf dem Server aktualisiert wird empfiehlt es sich von Zeit zu Zeit unbenötigte
 Dateien zu löschen. Dazu markiert man einfach die Dateien in der Dateiübersicht und drückt den Button löschen. Nach einer Sicherheitsabfrage wird die Datei aus der Dateibibliothek entfernt.
 
+
+
+> [Weiter zum Thema: Farben](@ref colors)
