@@ -3,22 +3,32 @@ Die Dateibibliothek     {#file-library}
 
 [TOC]
 
-Die Dateibibliothek
-===================
+Dateibibliothek
+===============
 
-Die Dateibibliothek ist ein Satz von Dateien, die nicht von depage-cms direkt erstellt werden, sondern in Seiten eingebunden oder von dort verlinkt werden können. Es gibt zwei Ansichten:
-Die Thumbnailansicht
-In der Thumbnailansicht wird von allen Dateien, für die es möglich ist, eine Vorschau angezeigt. Sie ist vor allem dann praktisch, wenn es um die Auswahl von Bildern geht.
-Die Listenansicht
-In der Listenansicht werden nur alle Dateien eines Verzeichnisses aufgelistet, ohne dass dabei eine Vorschau angezeigt wird. Diese Ansicht
-ist schneller, da keine Vorschau-Bilder geladen werden müssen.
-Ordner erstellen
-Über den Button Neuer Ordner kann man einen Ordner in der Dateihierarchie hinzufügen. Die Reihenfolge der Ordner in der Bibliothek ist immer von der Benennung abhängig und ihre Position im Baum kann nicht verändert werden.
+Die Dateibibliothek ist ein Satz von Dateien, die nicht von depage-cms direkt erstellt werden, sondern in Seiten eingebunden oder von dort verlinkt werden können.
+
+Über den Button *Neu"* kann man einen Ordner in der Dateihierarchie hinzufügen. Die Reihenfolge der Ordner kann verändert werden.
+
 Ordner umbenennen / verschieben
+-------------------------------
+
 Ordner können ineinander mitsamt ihrem Inhalt verschoben oder auch umbenannt werden.
-» Esistallerdingsdabeizubeachten, dass sich zu allen Dateien, die sich in diesem Ordner befinden und schon verlinkt sind, die Verknüpfungen lösen, und so nicht mehr auf der Seite angezeigt werden.
+
+> **Vorsicht**
+>
+> Es ist allerdings dabei zu beachten, dass sich zu allen Dateien, die sich in diesem Ordner befinden und schon verlinkt sind, die Verknüpfungen lösen, und *so nicht mehr auf der Seite angezeigt werden*.
+
+Es wird deshalb empfohlen, sich möglichst vorab eine flexible und erweiterbare Struktur der Ordner zu überlegen, so dass die Dateibibliothek problemlos mit den Anforderungen der Seite mitwachsen kann.
+
 Ordner löschen
-Ordner können über den Button löschen auch wieder gelöscht werden. Allerdings gilt auch hier: Alle zu diesem Ordner gesetzten Verknüpfungen gehen verloren.
+-------------
+
+Ordner können über den Button löschen auch wieder gelöscht werden.
+
+> **Vorsicht**
+>
+> Es gilt auch beim Löschen: *Alle zu in diesem Ordner befindlichen Dateien gesetzten Verknüpfungen gehen verloren*.
 
 
 Datei-Upload
@@ -26,8 +36,9 @@ Datei-Upload
 
 Es können auch neue Dateien in die Dateibibliothek hochgeladen werden.
 
+Dazu klickt man auf den Button Upload. Es öffnet sich ein Dialog, in dem man verschiedene Dateien auswählen kann und diese in das aktuell gewählte Verzeichnis hochladen kann. Bis der Upload abgeschlossen ist, sollte die Dateibibliothek geöffnet bleiben.
 
-Dazu klickt man auf den Button Upload. Es öffnet sich ein Dialog, in dem man verschiedene Dateien auswählen oder diese per Drag&Drop in das aktuell gewählte Verzeichnis hochgeladen kann Nachdem der Upload abgeschlossen ist, kann der Dialog über Upload beenden geschlossen werden.
+Dateien lassen sich auch per *Drag and Drop* hochladen in dem sie direkt in die Dateiübersicht (die rechte Seite des Fensters) gezogen werden. Der Upload startet dann sofort in den gerade gewählten Ordner.
 
 > **Vorsicht**
 >
