@@ -13,4 +13,4 @@ Freigabe von Seiten
 Veröffentlichen
 ==========================
 
-![Caption Das Split Interface](images/server-structure-publishing.svg "Das Menu zum Erstellen neuer Elemente")
+![Serverstruktur zwischen Live- and Edit-Server](images/server-structure-publishing.svg)

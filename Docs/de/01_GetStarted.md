@@ -11,7 +11,7 @@ Projektübersicht
 
 Das Dashboard ist die erste Seite, die nach dem Login angezeigt wird. Es besteht aus einer Projektübersicht mit dem Zugriff auf die einzelnen Projektfunktionen.
 
-![Dashboard](images/dashboard.png "Das Dashboard mit der Übersicht der Projekte")
+![Das Dashboard mit der Übersicht der Projekte](images/dashboard.png)
 
 In der Projektübersicht stehen folgende Funktionen zur Verfügung:
 
@@ -33,7 +33,7 @@ Geteiltes Layout
 
 Innerhalb von depage-cms arbeitet man die meiste Zeit innerhalb eines geteilten Fensters. Der linke Teil enthält die eigentliche Bedienoberfläche. Dort werden neue Seiten erstellt, Texte abgeändert oder Bilder ausgewählt. In der rechten Seite, die sich öffnet, sobald man eine Seite editiert, wird die automatische Vorschau der Seite angezeigt, die aktuell bearbeitet wird.
 
-![Das Split Interface](images/split-interface.png "Das Split-Interface")
+![Das Split Interface](images/split-interface.png)
 
 Sobald die Seite im Split-Modus angezeigt wird, kann das Layout umgestellt werden zwischen:
 
