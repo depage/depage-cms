@@ -4,7 +4,6 @@ User Manual
 Welcome to depage-cms.
 
 
-
 > **Inhalt**
 >
 > [Grundladen](@ref get-started)

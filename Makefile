@@ -22,12 +22,20 @@ locale:
 tags:  $(wildcard www/framework/**/*.php)
 	phpctags -R -C tags-cache
 
-doc:
+doc: Docs/html/de/index.html Docs/html/en/index.html
+
+Docs/html/en/index.html: Docs/en/Doxyfile Docs/en/*.md Docs/en/DoxygenLayout.xml
 	cd Docs ; git clone https://github.com/depage/depage-docu.git depage-docu || true
-	mkdir -p Docs/html/
-	#doxygen Docs/Doxyfile
+	mkdir -p Docs/html/en/
+	doxygen Docs/en/Doxyfile
+	cp -r Docs/depage-docu/www/lib Docs/html/en/
+	cp -r Docs/en/images/ Docs/html/en/images/
+
+Docs/html/de/index.html: Docs/de/Doxyfile Docs/de/*.md Docs/de/DoxygenLayout.xml
+	cd Docs ; git clone https://github.com/depage/depage-docu.git depage-docu || true
+	mkdir -p Docs/html/de/
 	doxygen Docs/de/Doxyfile
-	#cp -r Docs/depage-docu/www/lib Docs/html/de/
+	cp -r Docs/depage-docu/www/lib Docs/html/de/
 	cp -r Docs/de/images/ Docs/html/de/images/
 
 clean:
