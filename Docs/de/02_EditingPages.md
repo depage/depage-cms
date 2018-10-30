@@ -132,5 +132,11 @@ Zoom
 Um die Seite auch auf kleineren Geräten in der breiteren Desktop-Variante anzeigen lassen zu können, steht ein Zoom-Button zur Verfügung, mit der die Vorschau der Seite in einer andere Größe (50%, 75% oder 100%) angezeigt werden kann.
 
 
+Projektschnellzugriff      {#project-shortcuts}
+=====================
+
+Über den Projektschnellzugriff können direkt über das Dashboard schnell viel verwendete Seitentypen neu angelegt werden – wie beispielsweise News oder Blog-Einträge. Diese werden dann automatisch an der richtigen Stelle in der Seitenstruktur angelegt, können aber danach natürlich bei Bedarf wie gewohnt verschoben werden.
+
+
 
 > [Weiter mit Publizieren](@ref publishing)

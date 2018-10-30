@@ -10,9 +10,19 @@ Projektübersicht
 ----------------
 
 Das Dashboard ist die erste Seite, die nach dem Login angezeigt wird. Es besteht aus einer Projektübersicht mit dem Zugriff auf die einzelnen Projektfunktionen.
-Im Startscreen kann man sich direkt die zuletzt geändert Seiten anzeigen lassen. Über Editieren wird die Editieransicht von depage-cms geöffnet. Über Vorschau lässt sich der aktuelle unveröffentlichte Stand der Seite anzeigen.
 
 ![Dashboard](images/dashboard.png "Das Dashboard mit der Übersicht der Projekte")
+
+In der Projektübersicht stehen folgende Funktionen zur Verfügung:
+
+- Man kann sich direkt die zuletzt geändert Seiten anzeigen lassen. Dazu klickt man einfach auf den Projektnamen oder auf den Pfeil davor. Dort wird dann das letzte Veröffentlichungsdatum angezeigt und alle Seite, die seit der letzten Veröffentlichung geändert oder freigeben wurden.
+- *Editieren* öffnet die [Editieransicht](@ref editing-pages) von depage-cms.
+- Über [Vorschau](@ref page-preview) lässt sich der aktuelle unveröffentlichte Stand der Seite anzeigen.
+- Über [Publizieren](@ref publishing) kann der aktuelle Stand der Veränderung live genommen werden.
+- Für Projekte die dies unterstützen steht der [Projektschnellzugriff](@ref project-shortcuts) zu Verfügung.
+- Über den Button *Dateibibliothek* kann schnell zu der [Dateibibliothek](@ref file-library) gesprungen werden, in der die Assets wie Bilder, Videos und andere Dateien des Projektes verwaltet und hochgeladen werden.
+- Über *Farben bearbeiten* können die [Farben und Farbschemata](@ref colors) des Projektes bearbeitet werden.
+- Als letzter Punkt steht ein Link zu den [Einstellungen](@ref admin-project-settings) zur Verfügung.
 
 
 Das Split-Interface
@@ -25,7 +35,7 @@ Innerhalb von depage-cms arbeitet man die meiste Zeit innerhalb eines geteilten 
 
 ![Das Split Interface](images/split-interface.png "Das Split-Interface")
 
-Sobald die Seite im Split-Modus angezeigt wird, kann das Layout umgestellt werden:
+Sobald die Seite im Split-Modus angezeigt wird, kann das Layout umgestellt werden zwischen:
 
 - Nur Editier-Layout
 - Geteiltes Layout

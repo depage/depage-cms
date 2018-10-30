@@ -13,10 +13,12 @@
         <tab type="user" url="@ref colors" title="Farben" />
         <tab type="user" url="@ref newsletter" title="Newsletter" />
     </tab>
-    <tab type="user" url="@ref admin" title="Administration">
+    <tab type="user" url="@ref admin-project-settings" title="Administration">
         <tab type="user" url="@ref admin-project-settings" title="Projekt Einstellungen" />
+        <!--
         <tab type="user" url="@ref admin-user-management" title="Benutzerverwaltung" />
         <tab type="user" url="@ref admin-tasks" title="Tasks" />
+        -->
     </tab>
 
     <tab type="examples" visible="no" title="Examples" intro=""/>
