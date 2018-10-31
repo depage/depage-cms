@@ -1,199 +1,200 @@
-Seiten editieren    {#editing-pages}
-================
+Editing Pages    {#editing-pages}
+=============
 
 [TOC]
 
-Seiten editieren
-================
+Editing Pages
+=============
 
-Die Strukturansicht
+The Navigation Tree
 -------------------
 
-Die Strukturansicht im oberen linken Fensterbereich ist eine Baumdarstellung der einzelnen Seiten eines Internetauftritts. Aus dieser Seitenhierarchie und ihren Namen wird automatisch die Navigation des Internetauftritts generiert.
+The Navigation tree in the top left part of the Editing View gives you an overview of the structure of all the pages of your project. depage-cms uses this structure to automatically generate the navigation and file structure of your web presence.
 
-Zu jedem Baum stehen stehen oben verschiedene Funktionen zur Verfügung, die mit den Seiten vorgenommen werden können, wenn der Baum aktiv ist.
+In every tree you'll have access to the following functions to edit the currently active tree:
 
-- Hinzufügen
-- Duplizieren
-- Löschen
+- Adding
+- Duplicating
+- Deleting
 
-Diese können entweder über die Toolbar des ausgewählten Baums erreicht werden oder über das Kontextmenü (rechte Maustaste) der jeweiligen Seite.
+These are accessible through the toolbar at the top of the window or through a context menu, that opens, when you make a right click on a node.
 
-![Das Menu zum Erstellen neuer Elemente](images/menu-new.png)
+![The toolbar of the tree](images/toolbar.png)
 
 
 
-Seiten und Ordner     {#pages-and-folders}
+Pages and Folders     {#pages-and-folders}
 -----------------
 
-Es gibt drei Arten von Seiten-Elementen:
+The are three kinds of elements
 
-- Seiten,
-- Ordner und
+- Pages,
+- Folders and
 - Redirects.
 
-Sie sind durch ihre unterschiedlichen Icons voneinander unterscheidbar.
+All three a distinguishable by their icons.
 
-Seiten und Ordner unterscheiden sich dadurch, dass Seiten immer einen Seiteninhalt enthalten. Ordner hingegen bilden nur ein Element in der Navigation, enthalten aber keinen Inhalt. Wird in der Navigation ein Ordner angewählt, wird immer das erste Seitenelement innerhalb des Ordners angezeigt, nicht der Ordner selbst. Seiten, wie auch Ordner können weitere Unterseiten enthalten. Sobald ein Element weitere Unterelemente enthält ist es mit einem Pfeil davor gekennzeichnet.
-
-Neue Seiten hinzufügen    {#adding-pages}
-----------------------
-
-Über den Button *Neu* werden neue Seiten und Ordner in den Strukturbaum eingefügt. Zur Auswahl stehen zum einen der Ordner und die leere Seite, die noch keine Inhaltselemente enthält, und zum anderen eine Reihe vorgegebener Seiten, die schon verschiedene Inhaltselemente wie Text und Bilder enthalten können.
-
-Eines neues Element wird immer an letzter Stelle innerhalb des gerade markierten Elementes eingefügt, und dann sofort markiert.
-
-Mit *Enter* kann man den Editiervorgang abschließen. *Escape* bricht den Vorgang ab.
-
-![Das Menu zum Erstellen neuer Elemente](images/menu-new.png)
+Pages are different from folders because they can contain pages content. Folders don't have content by themselves but are just part of the navigation structure. If you click on a folder in the navigation of your website, you'll go to the first child page inside that folder. Pages and folders can both have child pages and folders. If an element has one or more children, it will be marked with an arrow in front of it.
 
 
-Direktmenü zum Erstellen    {#inplace-add-menu}
-------------------------
+Adding Pages    {#adding-pages}
+------------
 
-Man kann auch gezielt an genau einer Stelle eine neue Seite erstellen. Wenn man mit der Maus über den rechten Bereich des Baumes fährt, werden je nach Position blaue *Plus-Buttons* angezeigt. Darüber lassen sich schnell neue Seiten direkt an der gewünschten Stelle einfügen:
+You can click on the button *New* to add new pages and folders to your navigation tree. You can choose between oder folder, an ampty page or a page already filled with specific content like text, sections and images.
 
-![Direktmenü: Innen einfügen](images/menu-new-insert-inside.png)
+A new element will be added to the bottom of the child list, and then marked for renaming.
 
-![Direktmenü: Davor einfügen](images/menu-new-insert-before.png)
+*Enter* finishes the renaming process, *Escape* cancels it.
 
-![Direktmenü: Danach einfügen](images/menu-new-insert-after.png)
+![The menu to add new elements](images/menu-new.png)
+
+
+The In-Place Add Menu    {#inplace-add-menu}
+---------------------
+
+You can also directly add new pages to a specific position in the tree. Just move your mouse on the right part of the tree: Depending on the position of you the mouse, you'll get blue *Plus-Buttons*, that give you access to add new pages at that specific position:
+
+![In-Place Menu: Add Inside](images/menu-new-insert-inside.png)
+
+![In-Place Menu: Insert Before](images/menu-new-insert-before.png)
+
+![In-Place Menu: Insert After](images/menu-new-insert-after.png)
 
 
 
-Duplizieren     {#duplicating-pages}
+Duplicating     {#duplicating-pages}
 -----------
 
-Jede Seite lässt sich über den Button duplizieren vervielfachen. Es wird eine exakte Kopie der Seite erstellt und direkt unterhalb des Originals abgelegt.
+You can duplicate a page with all its contents by clicking on the *Duplicate* Button.
 
-![Duplizieren Button](images/icon-duplicate.png)
-
-
-Löschen      {#deleting-pages}
--------
-
-Um eine Seite zu löschen muss man sie zunächst markieren und dann auf den Button *Löschen* klicken. Es erscheint dann eine Sicherheitsabfrage, ob man das Element wirklich löschen möchte, die man mit Ok bestätigen oder mit Escape abbrechen kann. Ein Element wird immer komplett mit allen Unterelementen gelöscht.
-
-![Löschen Button](images/icon-delete.png)
+![Duplicate Button](images/icon-duplicate.png)
 
 
-Verschieben und Kopieren    {#moving-and-copying-pages}
-------------------------
+Deleting      {#deleting-pages}
+--------
 
-Seiten- und Ordnerelemente lassen sich einfach mit der Maus nehmen und an eine neue Position verschieben. Wenn man sie auf einem anderen Element fallen lässt, wird die Seite in das andere Element verschoben und erscheint dort an letzter Stelle. Wird es zwischen zwei Elementen fallengelassen, wird es an diese Stelle verschoben. Eine blaue Markierung zeigt an, wohin das Element gelegt wird.
+To delete a page, you have to select it first and then click on the *Delete* button. After confirming the deletion in the opening dialog, the element will be deleted with all its children.
 
-Seiten werden auf die gleiche Art und Weise kopiert, wie sie auch verschoben werden. Zum kopieren muss nur zusätzlich die *Strg-Taste* gehalten werden, bis das Element an der neuen Stelle losgelassen wird.
+![Delete Button](images/icon-delete.png)
 
 
-Dokumente Editieren    {#editing-documents}
-===================
+Moving and Copying    {#moving-and-copying-pages}
+------------------
 
-Die Dokumentenstruktur
+You can move pages with drag and drop by moving them to a new position in the tree. If you move it on another page, it will be moved to the end of its children. If you move it between other pages, it will be moved directly to that position. A blue marker shows you where it will appear while dragging.
+
+Copying pages works the same way as moving them. The only difference is, that you'll have to press *Ctrl* until you dropped the element at the new position.
+
+
+Editing Documents    {#editing-documents}
+=================
+
+The Document Structure
 ----------------------
 
-Neben der Navigationsstruktur gibt es noch eine Dokumentenstruktur. Hier wird der eigentliche Inhalt einer Seite bearbeitet. Zur Bearbeitung stehen die selben Mittel zur Verfügung, wie auch bei der Bearbeitung der Navigationsstruktur: [Hinzufügen](@ref adding-pages), [Duplizieren](@ref duplicating-pages), [Verschieben, Kopieren](@ref moving-and-copying-pages) und [Löschen](@ref deleting-pages).
+The second tree below the navigation tree is the document tree. The document tree consists of the content of the currently selected page. To edit the document structure, you'll have access to the same tools as when editing the navigation structure: [Adding](@ref adding-pages), [Duplicating](@ref duplicating-pages), [Moving and Copying](@ref moving-and-copying-pages) and [Deleting](@ref deleting-pages).
 
 
-Seitenelemente hinzufügen
--------------------------
+Adding Document Elements
+------------------------
 
-Neue Elemente werden über den Button *Neu* in das Dokument eingefügt. Es werden jeweils nur solche Elemente angezeigt, die auch in das aktuelle Elemente eingefügt werden können – beispielsweise ein neuer Link in eine Linkliste oder ein neues Bild in eine Slideshow.
+You can add new elements to the tree by clicking on *New*. Depending on the selected node, you'll only be able to add elements, that can be children of that node - e.g. a new link into a link-list, a new image into a slideshow or a new text into a section.
 
-Genau wie in der Navigationsstruktur steht auch hier das [Direktmenü](@ref inplace-add-menu) zur Verfügung.
+The document tree also supports the [In-Place Menu](@ref inplace-add-menu).
 
-Sobald ein Seitenelement markiert wird, wird der Inhalt im Eigenschaftsbereich angezeigt und kann dort bearbeitet werden.
+As soon as you select a node, the content of this node, will be displayed in the document properties area.
 
 
-Eigenschaftstypen
------------------
+Types of document properties
+----------------------------
 
-Es stehen folgende Eigenschaftselemente zur Verfügung:
+This are the document property types available:
 
-- **Text (einzeilig)**
+- **Text (single line)**
 
-    Das *Text (einzeilig)* steht für unformatierten, einzeiligen Text, wie beispielsweise einzeilige Überschriften zur Verfügung.
+    *Text (single line)* is for unstyled single text line, e.g. single headlines etc.
 
-- **Text (mehrzeilig)**
+- **Text (multiple line)**
 
-    Das *Text (mehrzeilig)* steht für unformatierten, mehrzeiligen Text zur Verfügung, wie beispielsweise mehrzeilige Überschriften oder kurze Teaser.
+    *Text (multiple lines)* is a multiline text field, e.g. for headlines that span multiple lines and short teasers.
 
-- **Text (formatiert)**
+- **Text (styled)**
 
-    Das *Text (formatiert)* steht für formatierten, mehrzeiligen Text zur Verfügung. Dort können Texte mit Auszeichnungen wie fett oder kursiv versehen werden. Außerdem können innerhalb des Textes Links zu anderen Seiten gesetzt werden.
+    *Text (styled)* is a richt text field. It allows styling of the text like bold and italic or to structure your text with bullet or numbered lists, but it also supports linking parts of the text.
 
-    Dazu markiert man zunächst den Textabschnitt, der als Link dienen soll und klickt dann auf das Link-Symbol. Es wird in einer Dialogbox das Linkziel abgefragt, das entweder auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verweisen kann. Zudem kann gewählt werden, ob der Link im gleichen oder in einem neuem Browserfenster geöffnet werden soll.
+    To link a specific section of the text, just select the text, you want to link and then click on the link symbol on the left. The Dialog lets you link to internal pages, to files in the library or to external URLs.
 
-- **Bild**
+- **Image**
 
-    Mit Hilfe des Bild-Elements kann ein Bild aus der Dateibibliothek ausgewählt werden und so in die Seite integriert werden. In das Alt-Textfeld kann ein Text eingegeben werden, der dann sichtbar ist, wenn jemand keine Bilder anzeigen kann, oder auch solange ein Bild noch nicht vollständig geladen ist.
+    The *image* element lets your choose and embed images in your content. The *alt* field containes additional text, that gets displayed, when the image cannot be displayed or as long the image has not been loaded yet.
 
-    Falls die Höhe oder Breite für ein Bild erzwungen wird, stehen in der Dateibibliothek nur solche Bilder zur Verfügung, die die richtigen Bildmaße haben.
+    If the width or heigth of the image is enforced, you will only be able to choose the images that match ther parameters.
 
-    Je nach Template kann auch noch ein Link ausgewählt werden, der geöffnet wird, wenn man auf das Bild klickt.
+    Depending on the template, you can also add a Link to an image.
 
-- **Datum**
+- **Date**
 
-    Über *Datum* können Datumsangaben bearbeitet werden.
+    *Date* is a field, where you can choose a date.
 
-- **Uhrzeit**
+- **Time**
 
-    Über *Ührzeit* wird eine Uhrzeit angegeben.
+    *Time* lets you edit time values.
 
 - **Link**
 
-    *Link* ermöglicht es Verweise in die Seite einzufügen, die nicht innerhalb des Textes auftauchen, wie beispielsweise in Linklisten. Es kann auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verwiesen werden.
+    *Link* lets you link elements, that are not part of the text content but link whole parts of a template like link-lists or teasers. The can link to internal pages, files in the library or external URLs.
 
-- **Quelltext**
+- **Source**
 
-    Der Quelltext steht nur Administratoren und Developern zur Verfügung. Mit dessen Hilfe können einzelne HTML- oder Script-Elemente direkt in eine Seite integriert werden, ohne dass man dafür die Templates abändern müsste. Dies ist vor allem für Einzelfälle oder Scripts gedacht, die nicht über normale Templates abgedeckt sind. Der Gebrauch sollte aber vermieden werden.
-
-
-Das Meta Element    {#meta-property}
-================
-
-Alle Seiten und Ordner in depage-cms haben ein gemeinsames Element: Das *Meta Element*. Es wird automatisch markiert, wenn eine Seite ausgewählt wird.
-
-Im Meta Element werden Einstellungen vorgenommen, die für jede Seite zur Verfügung stehen:
-
-- Als erstes ist zu sehen, wer die Seite als letztes und zu welchem Zeitpunkt bearbeitet hat. Hier kann auch der aktuelle Stand der Seite freigegeben werden, so dass der Inhalt bei der nächsten Veröffentlichung mit übernommen wird.
-
-- Als nächstes kommt die Auswahl des Farbschemas. depage-cms arbeitet mit [Farbschemata](@ref colors), Sätzen von verschiedenen Farben, die als Gruppe ausgewählt werden und auf die jeweilige Seite angewendet werden.
-
-- Der Punkt Navigation entscheidet darüber, ob und an welcher Stelle eine Seite in der Navigation erscheint.
-
-- Mit Tags läßt sich eine Seite in Kategorien einordnen und so zu einem späteren Zeitpunkt besser filtern.
-
-- Bei Titel kann der Titel der Seite angegeben werden, die in der Kopfzeile des Browser-Fensters erscheinen soll.
-
-- Unter Linkinfo kann ein zusätzlicher Beschreibender Text angegeben werden, der dazu benutzt werden kann den lokalisierten Seitentitel in der Navigation festzulegen. Das ist besonders wichtig bei mehrsprachigen Seiten.
-
-- Unter Beschreibung kann ein Beschreibungstext der Seite oder Stichworte angegeben werden, die dann – in der Regel für den Benutzer unsichtbar – in den Description-Tag der HTML-Seite eingetragen werden. Dieser Text wird unter anderem von Suchmaschinen ausgelesen und teilweise auch in den Suchergebnissen mit angezeigt.
+    The *source* element is only editable for administrators and developers. It lets you directly add HTML or script elements, that are not part of the given templates. This is useful for special cases, where is does not make sense to add specific templates. But in general: You should minimize the use of source elements.
 
 
-Seitenvorschau     {#page-preview}
-==============
+The Meta Property    {#meta-property}
+=================
 
-Die Vorschau
+Every page and folder have on common element in depage-cms: The *Meta Property*. This property is automatically selected, when loading a page.
+
+You can change common page settings in the meta property:
+
+- First you can see, who changed the current page. You can also release the page, to be published during the next publishing process.
+
+- Next up is the current *coloscheme*. depage-cms support multiple [colorschemes](@ref colors), with which you can easily adjust the colors of your page.
+
+- In *Navigation* you can check how and if a page gets included in the navigation.
+
+- With *Tags* you can categorize and group your pages.
+
+- The *title* contains the title that will be in the header oder tab title of the browser window.
+
+- *Linkinfo* lets override the current page title to be displayed in the navigation without renaming the page. This is especially important in multi-language sites.
+
+- *Description* contains a short descriptive text oder keywords, that will be added to the description-tag of the HTML-source which is generally not visible for end users. This text is mostly used by search engines and sometimes displayed in the search snippet results.
+
+
+Page preview     {#page-preview}
+============
+
+The Preview
 ------------
 
-Die Vorschau der Seiten aktualisiert sich mit jeder Änderung der Seite automatisch. Ebenfalls automatisch ändert sich die Sprache der Vorschau: Sobald beispielsweise ein deutsches Textfeld bearbeitet wird, wird die deutsche Version der Seite angezeigt, wenn ein englisches Textfeld bearbeitet wird, wird die englische Version angezeigt.
+The preview of the current page gets updated automatically when editing your page. The preview will always displayed in the language, you edited last: E.g. if you edit an english text field, you'll get the preview of the english version. But if you edit a german text field, you'll get the german version.
 
-Aktualisieren
--------------
+Reloading
+---------
 
-Wenn sich die Vorschau nicht wie gewünscht aktualisieren sollte, dann kann die Vorschau (und deren Dateien wie Bilder und Stylesheets) über den Aktualisieren-Button neu laden.
+If the preview does not get updated for some reason, the user can press the *reload* button to updated the preview (and the included files like images and stylesheets).
 
 Zoom
 ----
 
-Um die Seite auch auf kleineren Geräten in der breiteren Desktop-Variante anzeigen lassen zu können, steht ein Zoom-Button zur Verfügung, mit der die Vorschau der Seite in einer andere Größe (50%, 75% oder 100%) angezeigt werden kann.
+To change the preview to see more on your preview or to show the desktop version on smaller devices, you can change the zoom level to 50%, 75% oder 100%.
 
 
-Projektschnellzugriff      {#project-shortcuts}
-=====================
+Project Shortcuts      {#project-shortcuts}
+=================
 
-Über den Projektschnellzugriff können direkt über das Dashboard schnell viel verwendete Seitentypen neu angelegt werden – wie beispielsweise News oder Blog-Einträge. Diese werden dann automatisch an der richtigen Stelle in der Seitenstruktur angelegt, können aber danach natürlich bei Bedarf wie gewohnt verschoben werden.
+By clicking on the *project shortcuts* on the dashboard, you can quickly add specific, often used page types like news or blog-posts to your page tree. These will automatically added at the correct position in the page tree, but can be moved later if the need arises.
 
 
 
-> [Weiter zum Thema: Publizieren](@ref publishing)
+> [Go the the chapter: Publishing](@ref publishing)

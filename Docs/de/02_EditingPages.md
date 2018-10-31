@@ -19,7 +19,7 @@ Zu jedem Baum stehen stehen oben verschiedene Funktionen zur Verfügung, die mit
 
 Diese können entweder über die Toolbar des ausgewählten Baums erreicht werden oder über das Kontextmenü (rechte Maustaste) der jeweiligen Seite.
 
-![Das Menu zum Erstellen neuer Elemente](images/menu-new.png)
+![Die Toolbar des aktiven Baums](images/toolbar.png)
 
 
 
@@ -97,7 +97,7 @@ Neben der Navigationsstruktur gibt es noch eine Dokumentenstruktur. Hier wird de
 Seitenelemente hinzufügen
 -------------------------
 
-Neue Elemente werden über den Button *Neu* in das Dokument eingefügt. Es werden jeweils nur solche Elemente angezeigt, die auch in das aktuelle Elemente eingefügt werden können – beispielsweise ein neuer Link in eine Linkliste oder ein neues Bild in eine Slideshow.
+Neue Elemente werden über den Button *Neu* in das Dokument eingefügt. Es werden jeweils nur solche Elemente angezeigt, die auch in das aktuelle Elemente eingefügt werden können – beispielsweise ein neuer Link in eine Linkliste, ein neues Bild in eine Slideshow oder einen neuen Text in einen Abschnitt.
 
 Genau wie in der Navigationsstruktur steht auch hier das [Direktmenü](@ref inplace-add-menu) zur Verfügung.
 
@@ -119,9 +119,9 @@ Es stehen folgende Eigenschaftselemente zur Verfügung:
 
 - **Text (formatiert)**
 
-    Das *Text (formatiert)* steht für formatierten, mehrzeiligen Text zur Verfügung. Dort können Texte mit Auszeichnungen wie fett oder kursiv versehen werden. Außerdem können innerhalb des Textes Links zu anderen Seiten gesetzt werden.
+    Das *Text (formatiert)* steht für formatierten, mehrzeiligen Text zur Verfügung. Dort können Texte mit Auszeichnungen wie fett oder kursiv versehen werden. Es werden auch Absatzstile wie Listen mit Aufzählungszeichen oder nummerierte Listen unterstützt. Außerdem können innerhalb des Textes Links zu anderen Seiten gesetzt werden.
 
-    Dazu markiert man zunächst den Textabschnitt, der als Link dienen soll und klickt dann auf das Link-Symbol. Es wird in einer Dialogbox das Linkziel abgefragt, das entweder auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verweisen kann. Zudem kann gewählt werden, ob der Link im gleichen oder in einem neuem Browserfenster geöffnet werden soll.
+    Dazu markiert man zunächst den Textabschnitt, der als Link dienen soll und klickt dann auf das Link-Symbol. Es wird in einer Dialogbox das Linkziel abgefragt, das entweder auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verweisen kann.
 
 - **Bild**
 
@@ -192,7 +192,7 @@ Um die Seite auch auf kleineren Geräten in der breiteren Desktop-Variante anzei
 Projektschnellzugriff      {#project-shortcuts}
 =====================
 
-Über den Projektschnellzugriff können direkt über das Dashboard schnell viel verwendete Seitentypen neu angelegt werden – wie beispielsweise News oder Blog-Einträge. Diese werden dann automatisch an der richtigen Stelle in der Seitenstruktur angelegt, können aber danach natürlich bei Bedarf wie gewohnt verschoben werden.
+Über den *Projektschnellzugriff* können direkt über das Dashboard schnell viel verwendete Seitentypen neu angelegt werden – wie beispielsweise News oder Blog-Einträge. Diese werden dann automatisch an der richtigen Stelle in der Seitenstruktur angelegt, können aber danach natürlich bei Bedarf wie gewohnt verschoben werden.
 
 
 
