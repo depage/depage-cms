@@ -1,89 +1,89 @@
-Einführung      {#get-started}
-==========
+Introduction      {#get-started}
+============
 
 [TOC]
 
-Das Dashboard
+The Dashboard
 =============
 
-Projektübersicht
+Project Overview
 ----------------
 
-Das Dashboard ist die erste Seite, die nach dem Login angezeigt wird. Es besteht aus einer Projektübersicht mit dem Zugriff auf die einzelnen Projektfunktionen.
+Your Dashboard will open directly after logging in. The main part of the dashboard is the project overview with project-specific function.
 
-![Das Dashboard mit der Übersicht der Projekte](images/dashboard.png)
+![The Dashboard and the overview over your projects](images/dashboard.png)
 
-In der Projektübersicht stehen folgende Funktionen zur Verfügung:
+You can reach the following functions in the project overview:
 
-- Man kann sich direkt die zuletzt geändert Seiten anzeigen lassen. Dazu klickt man einfach auf den Projektnamen oder auf den Pfeil davor. Dort wird dann das letzte Veröffentlichungsdatum angezeigt und alle Seite, die seit der letzten Veröffentlichung geändert oder freigeben wurden.
-- *Editieren* öffnet die [Editieransicht](@ref editing-pages) von depage-cms.
-- Über [Vorschau](@ref page-preview) lässt sich der aktuelle unveröffentlichte Stand der Seite anzeigen.
-- Über [Publizieren](@ref publishing) kann der aktuelle Stand der Veränderung live genommen werden.
-- Für Projekte die dies unterstützen steht der [Projektschnellzugriff](@ref project-shortcuts) zu Verfügung.
-- Über den Button *Dateibibliothek* kann schnell zu der [Dateibibliothek](@ref file-library) gesprungen werden, in der die Assets wie Bilder, Videos und andere Dateien des Projektes verwaltet und hochgeladen werden.
-- Über *Farben bearbeiten* können die [Farben und Farbschemata](@ref colors) des Projektes bearbeitet werden.
-- Als letzter Punkt steht ein Link zu den [Einstellungen](@ref admin-project-settings) zur Verfügung.
+- An overview over all changed pages. To open the overview, you just have to click on the project name or the arrow in front of it. You will the see last publishing date and all pages that are not published yet or have been changed or released after the last publication.
+- *Edit* opens the [Edit View](@ref editing-pages) of depage-cms.
+- [Preview](@ref page-preview) opens a preview, what your project will look like after publishing.
+- By clicking on [Publish](@ref publishing) you can publish all your changes to the live server.
+- If your projects supports this, you have access to the [Project Shortcuts](@ref project-shortcuts).
+- In the [File Library](@ref file-library) you can manage all project assets like images, videos and other files. This is also the place to upload new assets.
+- *Edit Colors* opens the [Colors and Colorschemes View](@ref colors), where you can edit and manage the colors for your project.
+- The last buttons gives you access to the [Project Settings](@ref admin-project-settings).
 
 
-Das Split-Interface
+The Split-Interface
 ===================
 
-Geteiltes Layout
-----------------
+Split Layout
+------------
 
-Innerhalb von depage-cms arbeitet man die meiste Zeit innerhalb eines geteilten Fensters. Der linke Teil enthält die eigentliche Bedienoberfläche. Dort werden neue Seiten erstellt, Texte abgeändert oder Bilder ausgewählt. In der rechten Seite, die sich öffnet, sobald man eine Seite editiert, wird die automatische Vorschau der Seite angezeigt, die aktuell bearbeitet wird.
+Most of the time you'll work inside a split view: The left part consists of user user interface to edit and add your content. You'll be able to add new pages, change texts or choose images. The right part, which opens as soon as you start editing your pages, consists of an automatic preview of the page you are currently editing.
 
-![Das Split Interface](images/split-interface.png)
+![The Split Interface](images/split-interface.png)
 
-Sobald die Seite im Split-Modus angezeigt wird, kann das Layout umgestellt werden zwischen:
+As soon a the split-view opens, you can choose between three layout modes:
 
-- Nur Editier-Layout
-- Geteiltes Layout
-- Nur Vorschau Layout
+- Edit-Only
+- Split-View
+- Preview-Only
 
 
-Der Editierbereich
+The Editing Area
 ------------------
 
-Der Editierbereich ist immer in zwei Bereiche unterteilt. Links gibt es einen oder mehrere Strukturbäume, die immer mit ähnlichen Werkzeugen – wie verschieben, kopieren, umbenennen oder löschen – bearbeitet werden können. Rechts sind die jeweiligen Dokument Eigenschaften für das links markierte Element.
+The Editing area also has two parts: On the left, there are one or two structural trees, that you can edit with similar tools, like moving, copying, renaming or deleting. Right next to it is the area of the document properties of the element that you select in the tree on the left.
 
-> [Siehe Seiten Editieren](@ref editing-pages)
+> [See Editing Pages](@ref editing-pages)
 
 
-Der Vorschaubereich
+The Preview Area
 -------------------
 
-Die Vorschau der Seiten aktualisiert sich mit jeder Änderung der Seite automatisch.
+The preview of the page gets updated automatically while editing the pages.
 
-> [Siehe Vorschau](@ref page-preview)
+> [See Page Preview](@ref page-preview)
 
 
-Menüs
+Menus
 =====
 
-Das Projekt Menü
+The Project Menu
 ----------------
 
-Das Projektmenü bietet einen Schnellzugriff auf die folgenden Projektfunktionen, die auch über das Dashboard erreicht werden können:
+The project menu gives you access to common project functions, that are also available on the dashboard:
 
-- Editieren
-- Dateibibliothek
-- Farben
-- Publizieren
-- Einstellungen
+- Edit
+- File library
+- Colors
+- Publishing
+- Settings
 
-Zudem kann man über das Projektmenü schnell zwischen verschiedenen Projekten zu wechseln.
+And you can switch between different projects.
 
 
-Das Benutzer Menü
+The User Menu
 -----------------
 
-Über das Benutzermenü besteht die Möglichkeit sich auszuloggen, aber auch bestimmte Benutzereinstellungen vorzunehmen (z.B. Passwort ändern).
+The user manu gives you access to logout of depage-cms and to change some of the settings of your user account (e.g. change your password).
 
 
-Hilfe
------
+Help
+----
 
-Über den Button Hilfe, steht eine kurze Beschreibung der Interface-Element zur Verfügung.
+There is an inline help buttons, which opens short descriptions of the interface elements currently displayed on your screen.
 
-> [Weiter zum Thema: Seiten Editieren](@ref editing-pages)
+> [Go to the chapter: Editing Pages](@ref editing-pages)
