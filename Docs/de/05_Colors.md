@@ -16,7 +16,7 @@ Durch ein Farbschema können nicht nur verschiedene Farben angesprochen werden, 
 
 Um eine Farbe zu Bearbeiten klickt man einfach auf die gewünschte Farbe und kann diese dann im Farbfeld auf der rechten Seite anpassen.
 
-![Farben bearbeiten](images/editing-colors.png)
+![Farben bearbeiten](images/colors.png)
 
 Das Standardfarbschema
 ----------------------

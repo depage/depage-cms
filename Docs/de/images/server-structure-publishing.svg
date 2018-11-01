@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="950" height="550" viewBox="0 0 950 550">
+  <g fill="none" fill-rule="evenodd">
+    <rect width="950" height="550" fill="#FFF"/>
+    <g transform="translate(500)">
+      <path stroke="#999" stroke-dasharray="10 5" stroke-width="2" d="M0,51 L200,51"/>
+      <path stroke="#999" stroke-width="2" d="M199.5 50L199.5 60M.5 50L.5 60"/>
+      <text fill="#999" font-family="LucidaGrande-Bold, Lucida Grande" font-size="11" font-weight="bold">
+        <tspan x="39.432" y="42">Public Facing Servers</tspan>
+      </text>
+    </g>
+    <g transform="translate(100)">
+      <path stroke="#999" stroke-dasharray="10 5" stroke-width="2" d="M0,51 L200,51"/>
+      <path stroke="#999" stroke-width="2" d="M199.5 50L199.5 60M.5 50L.5 60"/>
+      <text fill="#999" font-family="LucidaGrande-Bold, Lucida Grande" font-size="11" font-weight="bold">
+        <tspan x="53.142" y="42">Backend Servers</tspan>
+      </text>
+    </g>
+    <g transform="rotate(-90 125 125)">
+      <path stroke="#999" stroke-dasharray="10 5" stroke-width="2" d="M0,51 L100,51"/>
+      <path stroke="#999" stroke-width="2" d="M99.5 50L99.5 60M.5 50L.5 60"/>
+      <text fill="#999" font-family="LucidaGrande-Bold, Lucida Grande" font-size="11" font-weight="bold">
+        <tspan x="26.324" y="42">Services</tspan>
+      </text>
+    </g>
+    <g transform="rotate(-90 250.5 250)">
+      <path stroke="#999" stroke-dasharray="10 5" stroke-width="2" d="M0,51 L225,51"/>
+      <path stroke="#999" stroke-width="2" d="M224.5 50L224.5 60M.5 50L.5 60"/>
+      <text fill="#999" font-family="LucidaGrande-Bold, Lucida Grande" font-size="11" font-weight="bold">
+        <tspan x="62.675" y="42">Optional Services</tspan>
+      </text>
+    </g>
+    <g transform="translate(500 150)">
+      <rect width="198" height="98" x="1" y="1" fill="#FFF" stroke="#7F7F7F" stroke-width="2" rx="10"/>
+      <text fill="#000" font-family="LucidaGrande-Bold, Lucida Grande" font-size="12" font-weight="bold">
+        <tspan x="53.002" y="51.973">Live Server</tspan>
+      </text>
+    </g>
+    <g transform="translate(100 150)">
+      <rect width="198" height="98" x="1" y="1" fill="#FFF" stroke="#7F7F7F" stroke-width="2" rx="10"/>
+      <text fill="#000" font-family="LucidaGrande-Bold, Lucida Grande" font-size="12" font-weight="bold">
+        <tspan x="53.556" y="51.973">Edit Server</tspan>
+      </text>
+    </g>
+    <g transform="translate(100 400)">
+      <rect width="198" height="98" x="1" y="1" fill="#FFF" stroke="#7F7F7F" stroke-width="2" rx="10"/>
+      <text fill="#000" font-family="LucidaGrande-Bold, Lucida Grande" font-size="12" font-weight="bold">
+        <tspan x="37.214" y="51.973">Analytics Server</tspan>
+      </text>
+    </g>
+    <g transform="rotate(180 312.5 225)">
+      <path fill="#FFF" stroke="#7F7F7F" stroke-width="2" d="M0,175 C0,175 0,166.050855 0,154.999887 L0,20.0001129 C0,8.95435556 8.96376435,0 19.9914593,0 L314.337891,0"/>
+      <path fill="#047CBF" fill-rule="nonzero" d="M3.95969504,2 C4.32145928,2 4.64028414,2.13835268 4.91939009,2.41505805 L9.58241457,7.03474872 C9.86152051,7.3211066 10,7.63749452 10,7.99570999 C10,8.35392547 9.86152051,8.6788934 9.58241457,8.95559876 L4.91939009,13.5827969 C4.64135763,13.8616473 4.32145928,14 3.95969504,14 C3.5979308,14 3,13.7457164 3,12.9280673 L3,3.12366832 C3,2.2454945 3.5979308,2 3.95969504,2 Z" transform="translate(311 -8)"/>
+      <circle cx="8" cy="8" r="5" fill="#FFF" stroke="#7F7F7F" stroke-width="2" transform="translate(-8 167)"/>
+    </g>
+    <g transform="translate(300 192)">
+      <path fill="#FFF" stroke="#047CBF" stroke-width="2" d="M0,8 L188.966797,8"/>
+      <path fill="#047CBF" fill-rule="nonzero" d="M3.95969504,2 C4.32145928,2 4.64028414,2.13835268 4.91939009,2.41505805 L9.58241457,7.03474872 C9.86152051,7.3211066 10,7.63749452 10,7.99570999 C10,8.35392547 9.86152051,8.6788934 9.58241457,8.95559876 L4.91939009,13.5827969 C4.64135763,13.8616473 4.32145928,14 3.95969504,14 C3.5979308,14 3,13.7457164 3,12.9280673 L3,3.12366832 C3,2.2454945 3.5979308,2 3.95969504,2 Z" transform="translate(185)"/>
+      <circle cx="8" cy="8" r="5" fill="#FFF" stroke="#047CBF" stroke-width="2" transform="translate(-8)"/>
+    </g>
+    <g transform="matrix(0 1 1 0 592 100)">
+      <path fill="#FFF" stroke="#047CBF" stroke-width="2" d="M0,8 L38.9667969,8"/>
+      <path fill="#047CBF" fill-rule="nonzero" d="M3.95969504,2 C4.32145928,2 4.64028414,2.13835268 4.91939009,2.41505805 L9.58241457,7.03474872 C9.86152051,7.3211066 10,7.63749452 10,7.99570999 C10,8.35392547 9.86152051,8.6788934 9.58241457,8.95559876 L4.91939009,13.5827969 C4.64135763,13.8616473 4.32145928,14 3.95969504,14 C3.5979308,14 3,13.7457164 3,12.9280673 L3,3.12366832 C3,2.2454945 3.5979308,2 3.95969504,2 Z" transform="translate(35)"/>
+      <circle cx="8" cy="8" r="5" fill="#FFF" stroke="#047CBF" stroke-width="2" transform="translate(-8)"/>
+    </g>
+    <g transform="matrix(0 1 1 0 567 100)">
+      <path fill="#FFF" stroke="#047CBF" stroke-width="2" d="M0,8 L38.9667969,8"/>
+      <path fill="#047CBF" fill-rule="nonzero" d="M3.95969504,2 C4.32145928,2 4.64028414,2.13835268 4.91939009,2.41505805 L9.58241457,7.03474872 C9.86152051,7.3211066 10,7.63749452 10,7.99570999 C10,8.35392547 9.86152051,8.6788934 9.58241457,8.95559876 L4.91939009,13.5827969 C4.64135763,13.8616473 4.32145928,14 3.95969504,14 C3.5979308,14 3,13.7457164 3,12.9280673 L3,3.12366832 C3,2.2454945 3.5979308,2 3.95969504,2 Z" transform="translate(35)"/>
+      <circle cx="8" cy="8" r="5" fill="#FFF" stroke="#047CBF" stroke-width="2" transform="translate(-8)"/>
+    </g>
+    <g transform="matrix(0 1 1 0 542 100)">
+      <path fill="#FFF" stroke="#047CBF" stroke-width="2" d="M0,8 L38.9667969,8"/>
+      <path fill="#047CBF" fill-rule="nonzero" d="M3.95969504,2 C4.32145928,2 4.64028414,2.13835268 4.91939009,2.41505805 L9.58241457,7.03474872 C9.86152051,7.3211066 10,7.63749452 10,7.99570999 C10,8.35392547 9.86152051,8.6788934 9.58241457,8.95559876 L4.91939009,13.5827969 C4.64135763,13.8616473 4.32145928,14 3.95969504,14 C3.5979308,14 3,13.7457164 3,12.9280673 L3,3.12366832 C3,2.2454945 3.5979308,2 3.95969504,2 Z" transform="translate(35)"/>
+      <circle cx="8" cy="8" r="5" fill="#FFF" stroke="#047CBF" stroke-width="2" transform="translate(-8)"/>
+    </g>
+    <g transform="matrix(0 1 1 0 192 100)">
+      <path fill="#FFF" stroke="#047CBF" stroke-width="2" d="M0,8 L38.9667969,8"/>
+      <path fill="#047CBF" fill-rule="nonzero" d="M3.95969504,2 C4.32145928,2 4.64028414,2.13835268 4.91939009,2.41505805 L9.58241457,7.03474872 C9.86152051,7.3211066 10,7.63749452 10,7.99570999 C10,8.35392547 9.86152051,8.6788934 9.58241457,8.95559876 L4.91939009,13.5827969 C4.64135763,13.8616473 4.32145928,14 3.95969504,14 C3.5979308,14 3,13.7457164 3,12.9280673 L3,3.12366832 C3,2.2454945 3.5979308,2 3.95969504,2 Z" transform="translate(35)"/>
+      <circle cx="8" cy="8" r="5" fill="#FFF" stroke="#047CBF" stroke-width="2" transform="translate(-8)"/>
+    </g>
+    <g transform="rotate(-90 284.5 117)">
+      <path fill="#FFF" stroke="#7F7F7F" stroke-width="2" d="M0,8 L113.966797,8"/>
+      <path fill="#047CBF" fill-rule="nonzero" d="M3.95969504,2 C4.32145928,2 4.64028414,2.13835268 4.91939009,2.41505805 L9.58241457,7.03474872 C9.86152051,7.3211066 10,7.63749452 10,7.99570999 C10,8.35392547 9.86152051,8.6788934 9.58241457,8.95559876 L4.91939009,13.5827969 C4.64135763,13.8616473 4.32145928,14 3.95969504,14 C3.5979308,14 3,13.7457164 3,12.9280673 L3,3.12366832 C3,2.2454945 3.5979308,2 3.95969504,2 Z" transform="translate(110)"/>
+      <circle cx="8" cy="8" r="5" fill="#FFF" stroke="#7F7F7F" stroke-width="2" transform="translate(-8)"/>
+    </g>
+    <g transform="matrix(0 1 1 0 642 100)">
+      <path fill="#FFF" stroke="#047CBF" stroke-width="2" d="M0,8 L38.9667969,8"/>
+      <path fill="#047CBF" fill-rule="nonzero" d="M3.95969504,2 C4.32145928,2 4.64028414,2.13835268 4.91939009,2.41505805 L9.58241457,7.03474872 C9.86152051,7.3211066 10,7.63749452 10,7.99570999 C10,8.35392547 9.86152051,8.6788934 9.58241457,8.95559876 L4.91939009,13.5827969 C4.64135763,13.8616473 4.32145928,14 3.95969504,14 C3.5979308,14 3,13.7457164 3,12.9280673 L3,3.12366832 C3,2.2454945 3.5979308,2 3.95969504,2 Z" transform="translate(35)"/>
+      <circle cx="8" cy="8" r="5" fill="#FFF" stroke="#047CBF" stroke-width="2" transform="translate(-8)"/>
+    </g>
+    <g transform="matrix(0 1 1 0 617 100)">
+      <path fill="#FFF" stroke="#047CBF" stroke-width="2" d="M0,8 L38.9667969,8"/>
+      <path fill="#047CBF" fill-rule="nonzero" d="M3.95969504,2 C4.32145928,2 4.64028414,2.13835268 4.91939009,2.41505805 L9.58241457,7.03474872 C9.86152051,7.3211066 10,7.63749452 10,7.99570999 C10,8.35392547 9.86152051,8.6788934 9.58241457,8.95559876 L4.91939009,13.5827969 C4.64135763,13.8616473 4.32145928,14 3.95969504,14 C3.5979308,14 3,13.7457164 3,12.9280673 L3,3.12366832 C3,2.2454945 3.5979308,2 3.95969504,2 Z" transform="translate(35)"/>
+      <circle cx="8" cy="8" r="5" fill="#FFF" stroke="#047CBF" stroke-width="2" transform="translate(-8)"/>
+    </g>
+    <text fill="#4A4A4A" font-family="LucidaGrande, Lucida Grande" font-size="11">
+      <tspan x="355.635" y="178">Veröffentlichung</tspan> <tspan x="357.947" y="191">zum Live Server</tspan> <tspan x="332.424" y="217">FTPS/SFTP (verschlüsselt)</tspan>
+    </text>
+    <text fill="#047CBF" font-family="LucidaGrande-Bold, Lucida Grande" font-size="11" font-weight="bold">
+      <tspan x="578.118" y="79">Visitors</tspan>
+    </text>
+    <text fill="#047CBF" font-family="LucidaGrande-Bold, Lucida Grande" font-size="11" font-weight="bold">
+      <tspan x="179.912" y="79">Editors</tspan>
+    </text>
+    <text fill="#4A4A4A" font-family="LucidaGrande, Lucida Grande" font-size="11">
+      <tspan x="360.103" y="441">Zugriffsstatistik</tspan> <tspan x="345.166" y="467">HTTPS (verschlüsselt)</tspan>
+    </text>
+    <g fill="#9B9B9B" transform="translate(228 213)">
+      <path d="M12.5,0 C5.59643555,0 0,1.73801436 0,3.88198758 L0,6.98757764 C0,9.13155085 5.59643555,10.8695652 12.5,10.8695652 C19.4035645,10.8695652 25,9.13155085 25,6.98757764 L25,3.88198758 C25,1.73801436 19.4035645,0 12.5,0 Z"/>
+      <path d="M12.5,13.1916996 C5.59643555,13.1916996 0,11.422085 0,9.23913043 L0,13.9822134 C0,16.165168 5.59643555,17.9347826 12.5,17.9347826 C19.4035645,17.9347826 25,16.165168 25,13.9822134 L25,9.23913043 C25,11.422085 19.4035645,13.1916996 12.5,13.1916996 Z"/>
+      <path d="M12.5,20.256917 C5.59643555,20.256917 0,18.4873024 0,16.3043478 L0,21.0474308 C0,23.2303854 5.59643555,25 12.5,25 C19.4035645,25 25,23.2303854 25,21.0474308 L25,16.3043478 C25,18.4873024 19.4035645,20.256917 12.5,20.256917 Z"/>
+    </g>
+    <g fill="#9B9B9B" transform="translate(263 463)">
+      <path d="M12.5,0 C5.59643555,0 0,1.73801436 0,3.88198758 L0,6.98757764 C0,9.13155085 5.59643555,10.8695652 12.5,10.8695652 C19.4035645,10.8695652 25,9.13155085 25,6.98757764 L25,3.88198758 C25,1.73801436 19.4035645,0 12.5,0 Z"/>
+      <path d="M12.5,13.1916996 C5.59643555,13.1916996 0,11.422085 0,9.23913043 L0,13.9822134 C0,16.165168 5.59643555,17.9347826 12.5,17.9347826 C19.4035645,17.9347826 25,16.165168 25,13.9822134 L25,9.23913043 C25,11.422085 19.4035645,13.1916996 12.5,13.1916996 Z"/>
+      <path d="M12.5,20.256917 C5.59643555,20.256917 0,18.4873024 0,16.3043478 L0,21.0474308 C0,23.2303854 5.59643555,25 12.5,25 C19.4035645,25 25,23.2303854 25,21.0474308 L25,16.3043478 C25,18.4873024 19.4035645,20.256917 12.5,20.256917 Z"/>
+    </g>
+    <path fill="#9B9B9B" fill-rule="nonzero" d="M4.6875,18.75 L20.3125,18.75 C22.9013184,18.75 25,16.6513672 25,14.0625 L0,14.0625 C0,16.6513672 2.09868164,18.75 4.6875,18.75 Z M20.3125,15.625 L21.875,15.625 L21.875,17.1875 L20.3125,17.1875 L20.3125,15.625 Z M23.4375,0 L1.5625,0 L0,12.5 L25,12.5 L23.4375,0 Z" transform="translate(262 216)"/>
+    <path fill="#9B9B9B" fill-rule="nonzero" d="M4.6875,18.75 L20.3125,18.75 C22.9013184,18.75 25,16.6513672 25,14.0625 L0,14.0625 C0,16.6513672 2.09868164,18.75 4.6875,18.75 Z M20.3125,15.625 L21.875,15.625 L21.875,17.1875 L20.3125,17.1875 L20.3125,15.625 Z M23.4375,0 L1.5625,0 L0,12.5 L25,12.5 L23.4375,0 Z" transform="translate(662 216)"/>
+    <g transform="rotate(-90 288.5 63)">
+      <path fill="#FFF" stroke="#7F7F7F" stroke-width="2" d="M75,350 L20.0001012,350 C8.95435032,350 0,341.040865 0,330.005001 L0,19.9949991 C0,8.95206601 8.9492433,0 20.0089013,0 L66.6137695,0"/>
+      <path fill="#047CBF" fill-rule="nonzero" d="M3.95969504,2 C4.32145928,2 4.64028414,2.13835268 4.91939009,2.41505805 L9.58241457,7.03474872 C9.86152051,7.3211066 10,7.63749452 10,7.99570999 C10,8.35392547 9.86152051,8.6788934 9.58241457,8.95559876 L4.91939009,13.5827969 C4.64135763,13.8616473 4.32145928,14 3.95969504,14 C3.5979308,14 3,13.7457164 3,12.9280673 L3,3.12366832 C3,2.2454945 3.5979308,2 3.95969504,2 Z" transform="translate(60 -8)"/>
+      <circle cx="8" cy="8" r="5" fill="#FFF" stroke="#7F7F7F" stroke-width="2" transform="translate(67 342)"/>
+    </g>
+    <text fill="#4A4A4A" font-family="LucidaGrande, Lucida Grande" font-size="11">
+      <tspan x="371.748" y="328">Newsletter </tspan> <tspan x="355.962" y="341">An-/Abmeldung</tspan> <tspan x="343.166" y="367">HTTPS (verschlüsselt)</tspan>
+    </text>
+    <text fill="#047CBF" font-family="LucidaGrande-Bold, Lucida Grande" font-size="11" font-weight="bold">
+      <tspan x="751" y="411">LEGENDE</tspan>
+    </text>
+    <text fill="#4A4A4A" font-family="LucidaGrande, Lucida Grande" font-size="11">
+      <tspan x="801" y="472">Datenbank(en)</tspan>
+    </text>
+    <text fill="#4A4A4A" font-family="LucidaGrande, Lucida Grande" font-size="11">
+      <tspan x="801" y="437">Datenübertragung</tspan>
+    </text>
+    <text fill="#4A4A4A" font-family="LucidaGrande, Lucida Grande" font-size="11">
+      <tspan x="801" y="509">Dateibibliothek</tspan>
+    </text>
+    <g transform="translate(756 426)">
+      <path fill="#FFF" stroke="#047CBF" stroke-width="2" d="M0,8 L23.9667969,8"/>
+      <path fill="#047CBF" fill-rule="nonzero" d="M3.95969504,2 C4.32145928,2 4.64028414,2.13835268 4.91939009,2.41505805 L9.58241457,7.03474872 C9.86152051,7.3211066 10,7.63749452 10,7.99570999 C10,8.35392547 9.86152051,8.6788934 9.58241457,8.95559876 L4.91939009,13.5827969 C4.64135763,13.8616473 4.32145928,14 3.95969504,14 C3.5979308,14 3,13.7457164 3,12.9280673 L3,3.12366832 C3,2.2454945 3.5979308,2 3.95969504,2 Z" transform="translate(20)"/>
+      <circle cx="8" cy="8" r="5" fill="#FFF" stroke="#047CBF" stroke-width="2" transform="translate(-8)"/>
+    </g>
+    <g fill="#9B9B9B" transform="translate(750 455)">
+      <path d="M12.5,0 C5.59643555,0 0,1.73801436 0,3.88198758 L0,6.98757764 C0,9.13155085 5.59643555,10.8695652 12.5,10.8695652 C19.4035645,10.8695652 25,9.13155085 25,6.98757764 L25,3.88198758 C25,1.73801436 19.4035645,0 12.5,0 Z"/>
+      <path d="M12.5,13.1916996 C5.59643555,13.1916996 0,11.422085 0,9.23913043 L0,13.9822134 C0,16.165168 5.59643555,17.9347826 12.5,17.9347826 C19.4035645,17.9347826 25,16.165168 25,13.9822134 L25,9.23913043 C25,11.422085 19.4035645,13.1916996 12.5,13.1916996 Z"/>
+      <path d="M12.5,20.256917 C5.59643555,20.256917 0,18.4873024 0,16.3043478 L0,21.0474308 C0,23.2303854 5.59643555,25 12.5,25 C19.4035645,25 25,23.2303854 25,21.0474308 L25,16.3043478 C25,18.4873024 19.4035645,20.256917 12.5,20.256917 Z"/>
+    </g>
+    <path fill="#9B9B9B" fill-rule="nonzero" d="M4.6875,18.75 L20.3125,18.75 C22.9013184,18.75 25,16.6513672 25,14.0625 L0,14.0625 C0,16.6513672 2.09868164,18.75 4.6875,18.75 Z M20.3125,15.625 L21.875,15.625 L21.875,17.1875 L20.3125,17.1875 L20.3125,15.625 Z M23.4375,0 L1.5625,0 L0,12.5 L25,12.5 L23.4375,0 Z" transform="translate(750 495)"/>
+    <rect width="699" height="284" y="266" fill="#FFF" fill-opacity=".5"/>
+  </g>
+</svg>

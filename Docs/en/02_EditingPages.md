@@ -11,6 +11,8 @@ The Navigation Tree
 
 The Navigation tree in the top left part of the Editing View gives you an overview of the structure of all the pages of your project. depage-cms uses this structure to automatically generate the navigation and file structure of your web presence.
 
+![The Edit View](images/split-interface.png)
+
 In every tree you'll have access to the following functions to edit the currently active tree:
 
 - Adding
@@ -170,6 +172,8 @@ You can change common page settings in the meta property:
 
 - *Description* contains a short descriptive text oder keywords, that will be added to the description-tag of the HTML-source which is generally not visible for end users. This text is mostly used by search engines and sometimes displayed in the search snippet results.
 
+![The properties of the meta element](images/page-meta.png)
+
 
 Page preview     {#page-preview}
 ============
@@ -194,6 +198,8 @@ Project Shortcuts      {#project-shortcuts}
 =================
 
 By clicking on the *project shortcuts* on the dashboard, you can quickly add specific, often used page types like news or blog-posts to your page tree. These will automatically added at the correct position in the page tree, but can be moved later if the need arises.
+
+![The project shortcuts on the project overview](images/project-shortcuts.png)
 
 
 

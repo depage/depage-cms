@@ -11,6 +11,14 @@ The settings pages let you adjust and change project settings.
 *Usually this is the responsibility of the administrators*
 
 
+Tags
+----
+
+*Tags* help you to categorize and filter your pages. But the templates of the project have to support this functionality. You may reorder tags per drag and drop.
+
+![Editing Tags](images/settings-tags.png)
+
+
 Navigation
 ----------
 
@@ -26,15 +34,11 @@ Common navigation properties include:
 *Usually this is the responsibility of the administrators, because the functionality largely depends on the templates.*
 
 
-Tags
-----
-
-*Tags* help you to categorize and filter your pages. But the templates of the project have to support this functionality. You may reorder tags per drag and drop.
-
-
 Languages
 --------
 
 depage-cms enables you to generate a page in multiple languages. Different language version always work in tandem, meaning depage-cms always generates a page in all languages in the same page structure.
 
 The first languages doubles as fallback language if the users browser does not support one of the current translations.
+
+![Editing Languages](images/settings-languages.png)

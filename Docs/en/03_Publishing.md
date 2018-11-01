@@ -19,8 +19,14 @@ Page status
 The current state of the page will be displayed in the [Meta Property](@ref meta-property). A page can be:
 
 - not published yet,
+    ![](images/page-status-not-published.png)
+
 - published as is or
+    ![](images/page-status-published.png)
+
 - published, but have unreleased changes.
+    ![](images/page-status-changed.png)
+
 
 
 Request page release
@@ -32,8 +38,6 @@ When the *Request Release* button gets clicked, all user that can published the 
 
 This button is available as long a page is not released, so that editor can request a page release again if necessary.
 
-![Request Release button](images/request-release.png)
-
 
 Release Pages
 -------------
@@ -42,8 +46,6 @@ User, that can publish a project, can release pages by themselves and don't have
 
 You can release a page in the meta property or on the publish project page.
 
-![Release Page Button](images/release-page.png)
-
 
 Publishing
 ==========
@@ -51,6 +53,8 @@ Publishing
 Publishing copies all released pages to the live server and synchronizes the file library. Publishing can also updated the search-indes of the site and update the database schemes, if this is supported by the live site.
 
 Users that are allowed to published can start the process on the dashboard with the *Publish* button or through the project menu.
+
+![The publishing dialog](images/publish.png)
 
 The publishing dialog contains a list of all changed and not yet published pages, where you can preview the changes and select pages to be published.
 

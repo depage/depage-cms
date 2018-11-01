@@ -19,6 +19,8 @@ Darunter befindet sich zwei Listen der zur Verfügung stehenden News-Meldungen. 
 
 Es kann zusätzlich eine Beschreibung des Newsletters angegeben werden. Diese ist aber nicht innerhalb des Newsletters sichtbar, sondern wird als Meta-Description-Tag in die HTML-Version des Newsletters mit aufgenommen.
 
+![Editing the newsletter](images/newsletter-edit.png)
+
 
 Veröffentlichen
 ---------------
@@ -32,6 +34,8 @@ Veröffentlichen
 - Bei Auswahl von *Benutzerdefinierte Empfänger* kann der Newsletter auch an manuell angegebene E-Mail-Adressen geschickt werden. Die E-Mail-Adressen werden dafür unter E-Mails als kommagetrennte Liste angegeben.
 
 Über *Vorschau* kann man sich die Vorschau des Newsletters in der jeweiligen Sprache anzeigen lassen. Vor Versand ist es wichtig, dabei beide Sprachversionen zu checken.
+
+![Publishing and sending the newsletter](images/newsletter-publish.png)
 
 
 Versenden

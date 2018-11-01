@@ -11,6 +11,14 @@ Auf den Einstellungsseiten können verschiedene Parameter des Projektes angepass
 *In der Regel werden diese von den Administratoren verwaltet.*
 
 
+Tags
+----
+
+*Tags* helfen Ihnen dabei, Seiten zu kategorisieren und zu filtern. Ihre Templates müssen dies allerdings unterstützen. Die Reihenfolge der Tags kann per Drag and Drop angepasst werden.
+
+![Tags bearbeitn](images/settings-tags.png)
+
+
 Navigation
 ----------
 
@@ -26,12 +34,6 @@ Navigationseigenschaften helfen dabei eine Seite zu automatisch strukturieren, o
 *In der Regel werden diese von den Administratoren verwaltet, da die Funktion sehr von den Templates des jeweiligen Projektes abhängt.*
 
 
-Tags
-----
-
-*Tags* helfen Ihnen dabei, Seiten zu kategorisieren und zu filtern. Ihre Templates müssen dies allerdings unterstützen. Die Reihenfolge der Tags kann per Drag and Drop angepasst werden.
-
-
 Sprachen
 --------
 
@@ -40,3 +42,5 @@ depage-cms ermöglicht es Ihnen Seiten in mehreren Sprachen zu erstellen. Die Sp
 Die erste Sprache fungiert dabei als Alternativsprache, wenn die Seite nicht in der Sprache des Besuchers verfügbar ist. Die Reihenfolge der Sprachen kann per Drag and Drop angepasst werden.
 
 Die erste angelegte Sprache wird als Standardsprache für die Besucher ausgewählt, wenn der Browser keine der vorhandenen Sprachen unterstützt.
+
+![Sprachen bearbeiten](images/settings-languages.png)

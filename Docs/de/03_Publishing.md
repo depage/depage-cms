@@ -19,8 +19,14 @@ Seitenstatus
 Im [Meta Element](@ref meta-property) wird der aktuelle Status der Seite angezeigt. Eine Seite kann entweder
 
 - noch nicht veröffentlicht sein,
+    ![](images/page-status-not-published.png)
+
 - mit dem aktuellen Stand veröffentlicht sein oder
+    ![](images/page-status-published.png)
+
 - veröffentlicht sein, aber noch unveröffentlichte Änderungen enthalten.
+    ![](images/page-status-changed.png)
+
 
 
 Freigabe anfragen
@@ -32,8 +38,6 @@ Beim Drücken des Buttons, werden alle Benutzer, die zum Veröffentlichen eines 
 
 Dieser Button steht so lange zur Verfügung, bis die entsprechende Seite freigeben wurde, damit Editoren die Freigabe notfalls auch erneut anfragen können.
 
-![Der Button zur Anfrage der Freigabe](images/request-release.png)
-
 
 Seiten Freigeben
 ----------------
@@ -41,8 +45,6 @@ Seiten Freigeben
 Benutzer, die das Recht zur Veröffentlichung besitzen können Seiten selbst freigeben und brauchen die Freigabe nicht zu beantragen.
 
 Dies kann entweder im Meta Element direkt vorgenommen werden oder direkt bei der Veröffentlichung der Seite.
-
-![Der Button zur Anfrage der Freigabe](images/release-page.png)
 
 
 Publizieren
@@ -52,10 +54,11 @@ Das Publizieren kopiert den aktuell freigegebenen Stand der Seite auf den Live-S
 
 Zur Veröffentlichung berechtigte Benutzer können diese direkt über das Dashboard unter *Publizieren* auslösen oder über der Projektmenü.
 
+![Der Publikationsdialog](images/publish.png)
+
 Im Publikationsdialog werden alle geänderten und noch nicht veröffentlichten Seiten angezeigt, können dort in der Vorschau angezeigt werden und einzeln zur Freigabe ausgewählt werden.
 
 Über den Button *Jetzt veröffentlichen* wird der Task zum Publizieren der Seite gestartet, der die Seite dann im Hintergrund publiziert. Da der Publizierungstask unabhängig vom Benutzer abläuft, können sich die Benutzer auch ein- und ausloggen, ohne dass dieser Prozess abgebrochen wird. Die Seite kann auch weiterhin bearbeitet werden, ohne dass die Veröffentlichung davon betroffen wäre.
-
 
 Serverstruktur
 --------------

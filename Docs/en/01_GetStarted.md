@@ -11,7 +11,7 @@ Project Overview
 
 Your Dashboard will open directly after logging in. The main part of the dashboard is the project overview with project-specific function.
 
-![The Dashboard and the overview over your projects](images/dashboard.png)
+![The Dashboard and the overview over your projects](images/dashboard-open.png)
 
 You can reach the following functions in the project overview:
 
@@ -40,6 +40,8 @@ As soon a the split-view opens, you can choose between three layout modes:
 - Edit-Only
 - Split-View
 - Preview-Only
+
+![Layout Buttons](images/layout-buttons.png)
 
 
 The Editing Area
@@ -74,11 +76,15 @@ The project menu gives you access to common project functions, that are also ava
 
 And you can switch between different projects.
 
+![The Project Menu](images/menu-project.png)
+
 
 The User Menu
 -----------------
 
 The user manu gives you access to logout of depage-cms and to change some of the settings of your user account (e.g. change your password).
+
+![The User Menu](images/menu-user.png)
 
 
 Help

@@ -8,6 +8,8 @@ File Library
 
 The *File Library* ist a set of files and assets, that are not created by depage-cms, but get included in the generated pages or get linked.
 
+![The file overview in the file library](images/file-library.png)
+
 The *New* button lets you add new folders to the file tree. And you can change the order of the folders.
 
 Renaming / Moving Folders

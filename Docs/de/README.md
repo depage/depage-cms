@@ -1,7 +1,7 @@
 User Manual
 ======================
 
-Willkommen zu depage-cms.
+Willkommen bei depage-cms.
 
 
 > **Inhalt**

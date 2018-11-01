@@ -11,7 +11,7 @@ Projektübersicht
 
 Das Dashboard ist die erste Seite, die nach dem Login angezeigt wird. Es besteht aus einer Projektübersicht mit dem Zugriff auf die einzelnen Projektfunktionen.
 
-![Das Dashboard mit der Übersicht der Projekte](images/dashboard.png)
+![Das Dashboard mit der Übersicht der Projekte](images/dashboard-open.png)
 
 In der Projektübersicht stehen folgende Funktionen zur Verfügung:
 
@@ -41,6 +41,7 @@ Sobald die Seite im Split-Modus angezeigt wird, kann das Layout umgestellt werde
 - Geteiltes Layout
 - Nur Vorschau Layout
 
+![Layout Buttons](images/layout-buttons.png)
 
 Der Editierbereich
 ------------------
@@ -74,11 +75,15 @@ Das Projektmenü bietet einen Schnellzugriff auf die folgenden Projektfunktionen
 
 Zudem kann man über das Projektmenü schnell zwischen verschiedenen Projekten zu wechseln.
 
+![Das Projekt Menu](images/menu-project.png)
+
 
 Das Benutzer Menü
 -----------------
 
 Über das Benutzermenü besteht die Möglichkeit sich auszuloggen, aber auch bestimmte Benutzereinstellungen vorzunehmen (z.B. Passwort ändern).
+
+![Das Benutzer Menü](images/menu-user.png)
 
 
 Hilfe

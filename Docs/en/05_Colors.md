@@ -16,7 +16,7 @@ A color scheme may also change the appearance of other elements like logos and n
 
 To edit a color you just have to click on it and change the color in the color chooser on the right side of the window.
 
-![Editing Colors](images/editing-colors.png)
+![Editing Colors](images/colors.png)
 
 The Default Colorscheme
 -----------------------

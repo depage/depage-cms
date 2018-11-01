@@ -11,6 +11,8 @@ Die Strukturansicht
 
 Die Strukturansicht im oberen linken Fensterbereich ist eine Baumdarstellung der einzelnen Seiten eines Internetauftritts. Aus dieser Seitenhierarchie und ihren Namen wird automatisch die Navigation des Internetauftritts generiert.
 
+![Die Editieransicht](images/split-interface.png)
+
 Zu jedem Baum stehen stehen oben verschiedene Funktionen zur Verfügung, die mit den Seiten vorgenommen werden können, wenn der Baum aktiv ist.
 
 - Hinzufügen
@@ -157,17 +159,19 @@ Im Meta Element werden Einstellungen vorgenommen, die für jede Seite zur Verfü
 
 - Als erstes ist zu sehen, wer die Seite als letztes und zu welchem Zeitpunkt bearbeitet hat. Hier kann auch der aktuelle Stand der Seite freigegeben werden, so dass der Inhalt bei der nächsten Veröffentlichung mit übernommen wird.
 
-- Als nächstes kommt die Auswahl des Farbschemas. depage-cms arbeitet mit [Farbschemata](@ref colors), Sätzen von verschiedenen Farben, die als Gruppe ausgewählt werden und auf die jeweilige Seite angewendet werden.
+- Als nächstes kommt die Auswahl des *Farbschemas*. depage-cms arbeitet mit [Farbschemata](@ref colors), Sätzen von verschiedenen Farben, die als Gruppe ausgewählt werden und auf die jeweilige Seite angewendet werden.
 
-- Der Punkt Navigation entscheidet darüber, ob und an welcher Stelle eine Seite in der Navigation erscheint.
+- Der Punkt *Navigation* entscheidet darüber, ob und an welcher Stelle eine Seite in der Navigation erscheint.
 
-- Mit Tags läßt sich eine Seite in Kategorien einordnen und so zu einem späteren Zeitpunkt besser filtern.
+- Mit *Tags* läßt sich eine Seite in Kategorien einordnen und so zu einem späteren Zeitpunkt besser filtern.
 
-- Bei Titel kann der Titel der Seite angegeben werden, die in der Kopfzeile des Browser-Fensters erscheinen soll.
+- Bei *Titel* kann der Titel der Seite angegeben werden, die in der Kopfzeile des Browser-Fensters erscheinen soll.
 
-- Unter Linkinfo kann ein zusätzlicher Beschreibender Text angegeben werden, der dazu benutzt werden kann den lokalisierten Seitentitel in der Navigation festzulegen. Das ist besonders wichtig bei mehrsprachigen Seiten.
+- Unter *Linkinfo* kann ein zusätzlicher Beschreibender Text angegeben werden, der dazu benutzt werden kann den lokalisierten Seitentitel in der Navigation festzulegen. Das ist besonders wichtig bei mehrsprachigen Seiten.
 
-- Unter Beschreibung kann ein Beschreibungstext der Seite oder Stichworte angegeben werden, die dann – in der Regel für den Benutzer unsichtbar – in den Description-Tag der HTML-Seite eingetragen werden. Dieser Text wird unter anderem von Suchmaschinen ausgelesen und teilweise auch in den Suchergebnissen mit angezeigt.
+- Unter *Beschreibung* kann ein Beschreibungstext der Seite oder Stichworte angegeben werden, die dann – in der Regel für den Benutzer unsichtbar – in den Description-Tag der HTML-Seite eingetragen werden. Dieser Text wird unter anderem von Suchmaschinen ausgelesen und teilweise auch in den Suchergebnissen mit angezeigt.
+
+![Die Eigenschaften des Meta Elements](images/page-meta.png)
 
 
 Seitenvorschau     {#page-preview}
@@ -194,6 +198,7 @@ Projektschnellzugriff      {#project-shortcuts}
 
 Über den *Projektschnellzugriff* können direkt über das Dashboard schnell viel verwendete Seitentypen neu angelegt werden – wie beispielsweise News oder Blog-Einträge. Diese werden dann automatisch an der richtigen Stelle in der Seitenstruktur angelegt, können aber danach natürlich bei Bedarf wie gewohnt verschoben werden.
 
+![Der Projektschnellzugriff in der Projektübersicht](images/project-shortcuts.png)
 
 
 > [Weiter zum Thema: Publizieren](@ref publishing)

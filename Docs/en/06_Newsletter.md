@@ -19,6 +19,8 @@ Below these there is a list of news entries. The upper list contains all news en
 
 There is also a field for the description of the newsletter. This description is not visible in the newsletter but gets invisibly included in the description meta tag of the HTML version of the newsletter.
 
+![Editing the newsletter](images/newsletter-edit.png)
+
 
 Publishing
 ----------
@@ -32,6 +34,8 @@ Publishing
 - *Custom Recipients* lets you add custom emails to send it to for testing purposes. You add emails as a comma separated list of emails.
 
 *Preview* lets you check all language versions of the newsletter. It is important to check both language versions before sending.
+
+![Publishing and sending the newsletter](images/newsletter-publish.png)
 
 
 Sending
