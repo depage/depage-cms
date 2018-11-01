@@ -1,57 +1,57 @@
-Die Dateibibliothek     {#file-library}
-===================
+The File Library    {#file-library}
+================
 
 [TOC]
 
-Dateibibliothek
-===============
+File Library
+============
 
-Die Dateibibliothek ist ein Satz von Dateien, die nicht von depage-cms direkt erstellt werden, sondern in Seiten eingebunden oder von dort verlinkt werden können.
+The *File Library* ist a set of files and assets, that are not created by depage-cms, but get included in the generated pages or get linked.
 
-Über den Button *Neu"* kann man einen Ordner in der Dateihierarchie hinzufügen. Die Reihenfolge der Ordner kann verändert werden.
+The *New* button lets you add new folders to the file tree. And you can change the order of the folders.
 
-Ordner umbenennen / verschieben
--------------------------------
+Renaming / Moving Folders
+-------------------------
 
-Ordner können ineinander mitsamt ihrem Inhalt verschoben oder auch umbenannt werden.
+You can move and rename folders.
 
-> **Vorsicht**
+> **Attention**
 >
-> Es ist allerdings dabei zu beachten, dass sich zu allen Dateien, die sich in diesem Ordner befinden und schon verlinkt sind, die Verknüpfungen lösen, und *so nicht mehr auf der Seite angezeigt werden*.
+> Moving or renaming folders, removes existing links to embeded files in this folder so that they *won't be displayed on the live site anymore*.
 
-Es wird deshalb empfohlen, sich möglichst vorab eine flexible und erweiterbare Struktur der Ordner zu überlegen, so dass die Dateibibliothek problemlos mit den Anforderungen der Seite mitwachsen kann.
+We suggest, to use a flexible and extendible folder structure from the beginning, that will grow without problems when adding content to your project.
 
-Ordner löschen
--------------
+Deleting Folders
+----------------
 
-Ordner können über den Button löschen auch wieder gelöscht werden.
+You can delete folders with the *Delete* button.
 
-> **Vorsicht**
+> **Attention**
 >
-> Es gilt auch beim Löschen: *Alle zu in diesem Ordner befindlichen Dateien gesetzten Verknüpfungen gehen verloren*.
+> The same applies when deleting folders: *All links to assets in this folder get lost when deleting*.
 
 
-Datei-Upload
-------------
+File-Upload
+-----------
 
-Es können auch neue Dateien in die Dateibibliothek hochgeladen werden.
+You can upload new files into the file library.
 
-Dazu klickt man auf den Button Upload. Es öffnet sich ein Dialog, in dem man verschiedene Dateien auswählen kann und diese in das aktuell gewählte Verzeichnis hochladen kann. Bis der Upload abgeschlossen ist, sollte die Dateibibliothek geöffnet bleiben.
+Just click on the *Upload* button in the folder you want to upload the files to. After you have chosen the files, you wish to upload, you should keep the file library open, until the upload has finished.
 
-Dateien lassen sich auch per *Drag and Drop* hochladen in dem sie direkt in die Dateiübersicht (die rechte Seite des Fensters) gezogen werden. Der Upload startet dann sofort in den gerade gewählten Ordner.
+You can also upload files by *drag and drop* just my dragging them over the file list (the right side of the window). The upload will start immediately after dropping them.
 
-> **Vorsicht**
+> **Attention**
 >
-> _Dateien, die bereits unter dem gleichen Namen im aktuellen Verzeichnis liegen, werden ohne Vorwarnung überschrieben!_
-> _Das dient vor allem dazu, dass Bilder einfach mit einer neuen Version aktualisiert werden können, ohne für jede Datei eine Überschreib-Warnung bestätigen zu müssen._
+> _Files that have the same name as the uploaded files, will automatically be overriden without warning!_
+> _This is mainly useful to update existing images and files with a newer version, without explicitly confirming every override action._
 
 
-Dateien löschen
----------------
+Deleting Files
+--------------
 
-Da beim Veröffentlichen immer die gesamte Dateibibliothek auf dem Server aktualisiert wird empfiehlt es sich von Zeit zu Zeit unbenötigte
-Dateien zu löschen. Dazu markiert man einfach die Dateien in der Dateiübersicht und drückt den Button löschen. Nach einer Sicherheitsabfrage wird die Datei aus der Dateibibliothek entfernt.
+Because the whole file library get synchronized to the live-server, it is recommended to delete unused files from time to time.
+You just have to select the files and delete them from the file list by clicking the *Delete* button. After confirming the delete action the file(s) will be removed from the library.
 
 
 
-> [Weiter zum Thema: Farben](@ref colors)
+> [Go to the chapter: Colors](@ref colors)

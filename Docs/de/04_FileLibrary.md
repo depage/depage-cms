@@ -8,7 +8,7 @@ Dateibibliothek
 
 Die Dateibibliothek ist ein Satz von Dateien, die nicht von depage-cms direkt erstellt werden, sondern in Seiten eingebunden oder von dort verlinkt werden können.
 
-Über den Button *Neu"* kann man einen Ordner in der Dateihierarchie hinzufügen. Die Reihenfolge der Ordner kann verändert werden.
+Über den Button *Neu* kann man einen Ordner in der Dateihierarchie hinzufügen. Die Reihenfolge der Ordner kann verändert werden.
 
 Ordner umbenennen / verschieben
 -------------------------------

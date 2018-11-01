@@ -60,7 +60,7 @@ The button *Publish Now* starts the publishing process, which works in the backg
 Server structure
 ----------------
 
-The following graphic show the structure between live- and edit-server.
+The following graphic shows the structure between live- and edit-server.
 
 ![The structure between live- and edit-server](images/server-structure-publishing.svg)
 
