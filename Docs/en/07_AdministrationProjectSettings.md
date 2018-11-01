@@ -1,49 +1,40 @@
-Projekteinstellungen     {#admin-project-settings}
-====================
+Project Settings     {#admin-project-settings}
+================
 
 [TOC]
 
-Projekteinstellungen
-====================
+Project Settings
+================
 
-Auf den Einstellungsseiten können verschiedene Parameter des Projektes angepasst werden.
+The settings pages let you adjust and change project settings.
 
-*In der Regel werden diese von den Administratoren verwaltet.*
+*Usually this is the responsibility of the administrators*
 
 
 Navigation
 ----------
 
-Navigationseigenschaften helfen dabei eine Seite zu automatisch strukturieren, oder bestimmte Einstellungen in den Templates vorzunehmen.
+Navigation properties help to structure a project or to change specific settings in a template.
 
-Übliche Navigationseigenschaften sind beispielsweise:
+Common navigation properties include:
 
-- versteckt: Seite wird zwar generiert, aber nicht in der Navigation angezeigt
-- kein deutsch: Deutsche Version der Seite wird nicht angezeigt
-- englisch englisch: Englische Version der Seite wird nicht angezeigt
-- News: Seite oder Ordner enthält Seiten aus denen der Atom-Feed erzeugt wird
+- hidden: A page will be generated, but will be hidden from the navigation
+- no english: English version of the page will not be displayed
+- no german: German version of the page will not be displayed
+- news: page or folder contains pages that will be included in the atom feed
 
-*In der Regel werden diese von den Administratoren verwaltet, da die Funktion sehr von den Templates des jeweiligen Projektes abhängt.*
+*Usually this is the responsibility of the administrators, because the functionality largely depends on the templates.*
 
 
 Tags
 ----
 
-Tags helfen Ihnen dabei, Seiten zu kategorisieren und zu filtern. Ihre Templates müssen dies allerdings unterstützen. Die Reihenfolge der Tags kann per Drag&Drop angepasst werden.
+*Tags* help you to categorize and filter your pages. But the templates of the project have to support this functionality. You may reorder tags per drag and drop.
 
 
-Sprachen
+Languages
 --------
 
-depage-cms ermöglicht es Ihnen Seiten in mehreren Sprachen zu erstellen. Die erste Sprache fungiert dabei als Alternativsprache, wenn die Seite nicht in der Sprache des Besuchers verfügbar ist. Die Reihenfolge der Sprachen kann per Drag&Drop angepasst werden.
+depage-cms enables you to generate a page in multiple languages. Different language version always work in tandem, meaning depage-cms always generates a page in all languages in the same page structure.
 
-Die erste angelegte Sprache wird als Standardsprache für die Besucher ausgewählt, wenn der Browser keine der vorhandenen Sprachen unterstützt.
-
-
-Veröffentlichen
-===============
-
-Eine der wichtigsten Funktionen in depage-cms ist das Veröffentlichen. Mit dieser Funktion wird der aktuelle Stand der Seiten und der Datei-Bibliothek auf einen Webserver kopiert, so dass sie dann für den normalen Besucher der Internetseite sichtbar werden.
-Die Seiten können durch entweder lokal auf dem gleichen Server veröffentlicht werden, oder per ftp auf einem Remote-Server. depage-cms kann insofern unabhängig vom Veröffentlichungsserver genutzt werden.
-Spezielle Einstellungen müssen hier nicht vorgenommen werden, da sie normalerweise vom Administrator vorgegeben werden.
-
+The first languages doubles as fallback language if the users browser does not support one of the current translations.
