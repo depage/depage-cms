@@ -124,7 +124,7 @@ This are the document property types available:
 
     *Text (styled)* is a richt text field. It allows styling of the text like bold and italic or to structure your text with bullet or numbered lists, but it also supports linking parts of the text.
 
-    To link a specific section of the text, just select the text, you want to link and then click on the link symbol on the left. The Dialog lets you link to internal pages, to files in the library or to external URLs.
+> [More about editing text](@ref text-editor)
 
 - **Image**
 
@@ -133,6 +133,8 @@ This are the document property types available:
     If the width or heigth of the image is enforced, you will only be able to choose the images that match ther parameters.
 
     Depending on the template, you can also add a Link to an image.
+
+> [More about about the file library](@ref file-library)
 
 - **Date**
 
@@ -146,9 +148,62 @@ This are the document property types available:
 
     *Link* lets you link elements, that are not part of the text content but link whole parts of a template like link-lists or teasers. The can link to internal pages, files in the library or external URLs.
 
+- **Type**
+
+    *Type* lets you choose between options of a document property, e.g. between different text sizes like S, M, L and XL.
+
 - **Source**
 
     The *source* element is only editable for administrators and developers. It lets you directly add HTML or script elements, that are not part of the given templates. This is useful for special cases, where is does not make sense to add specific templates. But in general: You should minimize the use of source elements.
+
+
+The Text Editor      {#text-editor}
+===============
+
+Styling Text
+------------
+
+To style your text, you have to select the text you want to style first. And then you can an option from the styling toolbar.
+
+There are character styles like
+
+- bold *b*
+- italix *i* or
+- small *s*.
+
+And there are paragraph styles like:
+
+- Normal Paragraph
+- List with bullets
+- Numbered list
+
+![The new text editor with the styling toolbar](images/text-editor.png)
+
+In extended richtext fields, there are also headline styles for *h1-h3*.
+
+If you paste styled text from other applications, all styles that are not part of the allowed styles, will be removed and normalized, to have a consistent output.
+
+
+Adding Links
+------------
+
+To link a specific section of the text, just select the text, you want to link and then click on the link symbol on the left. The Dialog lets you link to internal pages, to files in the library or to external URLs.
+
+To edit an existing link, just double click on it, to open the dialog to edit the URL.
+
+Internal links look like this:
+
+    pageref://[docid]
+
+You can add an internal link, by dragging a page from the page tree into the input in the dialog.
+
+Links to files in the file library look like this:
+
+    libref://path/to/the/file.png
+
+And external links are normal links like this:
+
+    https://depage.net
 
 
 The Meta Property    {#meta-property}

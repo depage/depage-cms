@@ -123,7 +123,7 @@ Es stehen folgende Eigenschaftselemente zur Verfügung:
 
     Das *Text (formatiert)* steht für formatierten, mehrzeiligen Text zur Verfügung. Dort können Texte mit Auszeichnungen wie fett oder kursiv versehen werden. Es werden auch Absatzstile wie Listen mit Aufzählungszeichen oder nummerierte Listen unterstützt. Außerdem können innerhalb des Textes Links zu anderen Seiten gesetzt werden.
 
-    Dazu markiert man zunächst den Textabschnitt, der als Link dienen soll und klickt dann auf das Link-Symbol. Es wird in einer Dialogbox das Linkziel abgefragt, das entweder auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verweisen kann.
+> [Mehr über den Text Editor](@ref text-editor)
 
 - **Bild**
 
@@ -132,6 +132,8 @@ Es stehen folgende Eigenschaftselemente zur Verfügung:
     Falls die Höhe oder Breite für ein Bild erzwungen wird, stehen in der Dateibibliothek nur solche Bilder zur Verfügung, die die richtigen Bildmaße haben.
 
     Je nach Template kann auch noch ein Link ausgewählt werden, der geöffnet wird, wenn man auf das Bild klickt.
+
+> [Mehr über die Dateibibliothek](@ref file-library)
 
 - **Datum**
 
@@ -145,9 +147,62 @@ Es stehen folgende Eigenschaftselemente zur Verfügung:
 
     *Link* ermöglicht es Verweise in die Seite einzufügen, die nicht innerhalb des Textes auftauchen, wie beispielsweise in Linklisten. Es kann auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verwiesen werden.
 
+- **Typ**
+
+    *Typ* bietet die Asuwahl bestimmter Einstellungen der Dokumenteigenschaft, z.B. verschiedene Textgrößen wie S, M, L und XL.
+
 - **Quelltext**
 
     Der Quelltext steht nur Administratoren und Developern zur Verfügung. Mit dessen Hilfe können einzelne HTML- oder Script-Elemente direkt in eine Seite integriert werden, ohne dass man dafür die Templates abändern müsste. Dies ist vor allem für Einzelfälle oder Scripts gedacht, die nicht über normale Templates abgedeckt sind. Der Gebrauch sollte aber vermieden werden.
+
+
+Text Editieren      {#text-editor}
+==============
+
+Text formatieren
+----------------
+
+Um Text zu formatieren, markiert man zunächst den zu formatierenden Text und wählt dann eine Option aus der Formatierungstoolbar aus.
+
+Es gibt zum einen Zeichenformatierungen wie
+
+- fett *b*,
+- kursiv *i* oder
+- klein *s*.
+
+Zum anderen stehen Absatzformatierungen zur Verfügung wie:
+
+- Normaler Absatz
+- Liste mit Auszählungszeichen
+- Nummerierte Liste
+
+![Der neue Text Editor mit der Formatierungstoolbar](images/text-editor.png)
+
+In erweiterten Textfelder besteht zudem noch die Möglichkeit Absätze auch als Headline *h1-h3* zu formatieren.
+
+Beim Einfügen von externem Text werden alle Formatierungen, die nicht unter die oben genannten Formatierungen fallen, herausgelöscht und normalisiert, um einen konsistente Textdarstellung zu erreichen.
+
+
+Text verlinken
+--------------
+
+Um Text zu verlinken, markiert man zunächst den Textabschnitt, der als Link dienen soll und klickt dann auf das Link-Symbol. Es wird in einer Dialogbox das Linkziel abgefragt, das entweder auf eine andere Seite innerhalb des eigenen Internetauftritts, auf Dateien in der Dateibibliothek oder auf andere Internetseiten verweisen kann.
+
+Um einen bestehenden Link zu bearbeiten, klickt man doppelt auf den Link und die Dialogbox zu Bearbeitung öffnet sich erneut.
+
+Interne Links sehen folgendermaßen aus:
+
+    pageref://[docid]
+
+Interne Links lassen sich einfach setzen, indem man die zu verlinkende Seite aus dem Seitenbaum in das Textfeld des Dialogs zieht.
+
+Links zu Dateien in der Dateibibliothek sind folgendermaßen aufgebaut:
+
+    libref://path/to/the/file.png
+
+Alle andere Links bleiben wie gehabt, z.B.:
+
+    https://depage.net
 
 
 Das Meta Element    {#meta-property}
