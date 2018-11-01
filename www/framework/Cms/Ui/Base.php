@@ -34,7 +34,7 @@ class Base extends \Depage\Depage\Ui\Base
     public function _init(array $importVariables = []) {
         parent::_init($importVariables);
 
-        $this->helpUrl = "https://localhost/depage-cms-docs/de/index.html";
+        $this->helpUrl = "https://docs.depage.net/depage-cms-manual/" . DEPAGE_LANG . "/index.html";
 
         if (empty($this->pdo)) {
             // get database instance
