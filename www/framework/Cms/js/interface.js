@@ -610,8 +610,11 @@ var depageCMS = (function() {
             if (typeof Squire !== 'undefined') {
                 // {{{ Squire.showLinkDialog()
                 Squire.prototype.showLinkDialog = function(href, callback) {
-                    var pos = this.getPosBySelection();
                     var editor = this;
+                    var pos = editor.getPosBySelection();
+
+                    // @todo fix postion the correct way
+                    pos.top -= 90;
 
                     $body.depageShyDialogue({
                         ok: {
