@@ -11,7 +11,7 @@ Project Overview
 
 Your Dashboard will open directly after logging in. The main part of the dashboard is the project overview with project-specific function.
 
-![The Dashboard and the overview over your projects](images/dashboard-open.png)
+![The Dashboard and the overview over your projects](images/dashboard.png)
 
 You can reach the following functions in the project overview:
 

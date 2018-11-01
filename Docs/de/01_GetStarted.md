@@ -11,7 +11,7 @@ Projektübersicht
 
 Das Dashboard ist die erste Seite, die nach dem Login angezeigt wird. Es besteht aus einer Projektübersicht mit dem Zugriff auf die einzelnen Projektfunktionen.
 
-![Das Dashboard mit der Übersicht der Projekte](images/dashboard-open.png)
+![Das Dashboard mit der Übersicht der Projekte](images/dashboard.png)
 
 In der Projektübersicht stehen folgende Funktionen zur Verfügung:
 
