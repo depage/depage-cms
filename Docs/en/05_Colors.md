@@ -1,37 +1,37 @@
-Farben      {#colors}
+Colors      {#colors}
 ======
 
 [TOC]
 
-Farbschemata
+Color Schemes
 ============
 
-depage-cms Farbschemata
+depage-cms Color Schemes
 -----------------------
 
-depage-cms arbeitet mit Farbschemata, d.h. Sätzen von verschiedenen Farben, die als Gruppe ausgewählt werden und auf die jeweilige Seite angewendet werden.
+depage-cms supports color schemes that are complete sets of colors that can be applied per page.
 
-So können schnell verschiedene Seiten in ihrem Erscheinungsbild verändert werden, ohne dass dafür die Templates bearbeitet werden müssen.
-Durch ein Farbschema können nicht nur verschiedene Farben angesprochen werden, sondern auch Logodateien oder Navigationselemente, die als Bilder vorliegen, so dass auch diese Elemente passend zum aktuellen Farbschema angezeigt werden.
+This way it is easy to adjust the appearance of page, without adjusting the templates.
+A color scheme may also change the appearance of other elements like logos and navigational elements, so that they'll fit the chosen color scheme.
 
-Um eine Farbe zu Bearbeiten klickt man einfach auf die gewünschte Farbe und kann diese dann im Farbfeld auf der rechten Seite anpassen.
+To edit a color you just have to click on it and change the color in the color chooser on the right side of the window.
 
-![Farben bearbeiten](images/editing-colors.png)
+![Editing Colors](images/editing-colors.png)
 
-Das Standardfarbschema
-----------------------
+The Default Colorscheme
+-----------------------
 
-Das erste nicht-globale Farbschema wird immer automatisch als Standard für alle Seiten verwendet, für die kein anderes Farbschema ausgewählt wurde.
+The first non-global color scheme doubles as the default color scheme for pages for which no explicit color scheme has been chosen by the user.
 
-Globale Farben
---------------
+Global Colors
+-------------
 
-Neben den Farbschemata, die seitenabhängig sind, kann man auch noch einen Satz von globalen Farben festlegen, die für alle Seiten zur Verfügung stehen.
+Additionally to the color schemes that change per page, there are also global colors that get used on all pages.
 
-Wie die Farben verwendet werden, hängt vom jeweiligen Template ab. Insofern sollten normale Benutzer nur die Werte der Farben abändern, aber keine neue Farben anlegen, umbenennen oder löschen.
+The templates change how these colors will be used. Only users that also can edit templates should add new color, rename or delete them. Normal users should only change the color values.
 
-Die Verwaltung der Farbnamen unterliegt den Administratoren und Entwicklern.
+It is the task of administrators and developers to manage the color names.
 
 
 
-> [Weiter zum Thema: Newsletter](@ref newsletter)
+> [Go to the chapter: Newsletter](@ref newsletter)
