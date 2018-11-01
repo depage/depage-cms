@@ -5,7 +5,7 @@ Publizieren     {#publishing}
 
 Eine der wichtigsten Funktionen in depage-cms ist das Veröffentlichen. Mit dieser Funktion wird der aktuelle Stand der Seiten und der Datei-Bibliothek auf einen Webserver kopiert, so dass sie dann für den normalen Besucher der Internetseite sichtbar werden.
 
-Die Seiten können dann entweder lokal auf dem gleichen Server veröffentlicht werden, oder per ftp auf einem Remote-Server. depage-cms kann insofern unabhängig vom Veröffentlichungsserver genutzt werden.
+Die Seiten können dann entweder lokal auf dem gleichen Server veröffentlicht werden, oder per ftp auf einem Remote-Server. Die veröffentlichte Live-Seite ist somit unabhängig vom Editier-Server auf dem depage-cms läuft.
 
 
 Freigabe von Seiten
