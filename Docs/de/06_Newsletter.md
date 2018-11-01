@@ -31,10 +31,10 @@ Veröffentlichen
 
 - Bei Auswahl von *Benutzerdefinierte Empfänger* kann der Newsletter auch an manuell angegebene E-Mail-Adressen geschickt werden. Die E-Mail-Adressen werden dafür unter E-Mails als kommagetrennte Liste angegeben.
 
-Über Vorschau kann man sich die Vorschau des Newsletters in der jeweiligen Sprache anzeigen lassen. Vor Versand ist es wichtig, dabei beide Sprachversionen zu checken.
+Über *Vorschau* kann man sich die Vorschau des Newsletters in der jeweiligen Sprache anzeigen lassen. Vor Versand ist es wichtig, dabei beide Sprachversionen zu checken.
 
 
 Versenden
 ---------
 
-Über Jetzt senden wird der Newsletter dann zunächst als HTML-Version auf der Webseite veröffentlicht und danach an alle ausgewählten bzw. angegeben Empfänger verschickt.
+Über *Jetzt senden* wird der Newsletter dann zunächst als HTML-Version auf der Webseite veröffentlicht und danach an alle ausgewählten bzw. angegeben Empfänger verschickt.
