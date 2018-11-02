@@ -15,7 +15,7 @@ Version 2.0
 - Neue [Dateibibliothek](@ref file-library)
 - Neues Interface zur Bearbeitung der Farbschemata [color schemes](@ref colors)
 - Verbesserung der [Vorschau](@ref page-preview), so dass diese automatisch in der gerade bearbeiteten Sprache angezeigt wird
-- Verbesserung der [Vorschau](@ref page-preview), um das gerade aktivierte Element hervorzuheben
+- Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 **Backend**

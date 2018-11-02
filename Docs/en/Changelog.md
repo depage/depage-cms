@@ -15,7 +15,7 @@ Version 2.0
 - Revamped [file library](@ref file-library)
 - New editor for [color schemes](@ref colors)
 - Enhanced [preview](@ref page-preview) to automatically show currently edited language
-- Enhanced [preview](@ref page-preview) to highlight the currently selected document property
+- Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 **Backend**
