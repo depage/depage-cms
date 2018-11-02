@@ -81,12 +81,15 @@
             cursor: pointer;
             display: inline;
 
+            > span {
+                position: relative;
+            }
             > span::after {
                 display: block;
                 position: absolute;
                 content: " ";
-                left: 6px;
-                top: -9px;
+                left: 0;
+                top: 0;
                 width: 32px;
                 height: 32px;
             }
@@ -101,7 +104,9 @@
     label.input-single-option-full {
         > span {
             text-indent: -1000em;
-            width: 44px;
+            width: 36px;
+            height: 32px;
+            padding: 0;
 
             &::after {
                 @include icon-base();
@@ -132,26 +137,27 @@
     label.input-single-option-_blank {
         > span {
             text-indent: -1000em;
-            width: 36px;
+            width: 32px;
+            padding: 0;
 
             &::after {
-                margin-top: 1px;
-                margin-left: -4px;
+                left: 3px;
+                width: 24px;
                 @include icon-base();
             }
         }
     }
     label.input-single-option-> span::after {
-        @include icon("target-self", 32px);
+        @include icon("target-self", 24px);
     }
     label.input-single-option-_blank > span::after {
-        @include icon("target-blank", 32px);
+        @include icon("target-blank", 24px);
     }
     label.input-single-option-> input[type="radio"]:checked + span::after {
-        @include icon("target-self-white", 32px);
+        @include icon("target-self-white", 24px);
     }
     label.input-single-option-_blank > input[type="radio"]:checked + span::after {
-        @include icon("target-blank-white", 32px);
+        @include icon("target-blank-white", 24px);
     }
 }
 // }}}
@@ -437,13 +443,13 @@
 // }}}
 // {{{ doc-properties edit-a
 .doc-properties .edit-a {
-    padding-right: 105px;
+    padding-right: 95px;
 
     .input-single.edit-target {
         position: absolute;
         z-index: 100;
-        top: 20px;
-        right: 20px;
+        bottom: 15px;
+        right: 15px;
     }
 }
 // }}}
