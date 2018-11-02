@@ -51,10 +51,10 @@
 
     background-repeat: no-repeat;
     background-image: url(../images/icon_sprite.svg?201808161709);
-    background-size: (4 * $iSize) (24 * $iSize);
+    background-size: (8 * $iSize) (24 * $iSize);
 
     @media (pointer:coarse) {
-        background-size: (4 * $iSize * $touchScale) (24 * $iSize * $touchScale);
+        background-size: (8 * $iSize * $touchScale) (24 * $iSize * $touchScale);
     }
 
     @if ($name != "") {
@@ -137,9 +137,13 @@
         img-full: 0 20,
         img-crop: 1 20,
         img-contain: 2 20,
+        target-self: 3 20,
+        target-blank: 4 20,
         img-full-white: 0 21,
         img-crop-white: 1 21,
         img-contain-white: 2 21,
+        target-self-white: 3 21,
+        target-blank-white: 4 21,
         cancel: 0 22,
         cancel-white: 1 22,
         format-a: 0 23,
@@ -158,10 +162,10 @@
     }
 
     @if ($scale != 1) {
-        background-size: (4 * $iSize) (24 * $iSize);
+        background-size: (8 * $iSize) (24 * $iSize);
 
         @media (pointer:coarse) {
-            background-size: (4 * $iSize * $touchScale) (24 * $iSize * $touchScale);
+            background-size: (8 * $iSize * $touchScale) (24 * $iSize * $touchScale);
         }
     }
 }

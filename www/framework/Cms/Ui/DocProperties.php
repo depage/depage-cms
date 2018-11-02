@@ -767,21 +767,14 @@ class DocProperties extends Base
     protected function addEditA($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+        $lang = $node->getAttribute("lang");
 
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Link")), "edit-a");
 
-        $lang = $node->getAttribute("lang");
         $fs->addText("xmledit-$nodeId-title", [
             'label' => !empty($lang) ? $lang : _("Title"),
             'placeholder' => _("Link title"),
             'dataInfo' => "//*[@db:id = '$nodeId']",
-        ]);
-
-        $fs->addText("xmledit-$nodeId-href", [
-            'label' => _("href"),
-            'class' => "edit-href",
-            'placeholder' => _("http://domain.com"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@href",
         ]);
 
         // @todo leave only one target setting for multiple links
@@ -795,6 +788,14 @@ class DocProperties extends Base
             'class' => "edit-type edit-target",
             'dataInfo' => "//*[@db:id = '$nodeId']/@target",
         ]);
+
+        $fs->addText("xmledit-$nodeId-href", [
+            'label' => _("href"),
+            'class' => "edit-href",
+            'placeholder' => _("http://domain.com"),
+            'dataInfo' => "//*[@db:id = '$nodeId']/@href",
+        ]);
+
     }
     // }}}
     // {{{ addEditAudio()

@@ -91,36 +91,67 @@
                 height: 32px;
             }
         }
-        label.input-single-option-contain,
-        label.input-single-option-fill,
-        label.input-single-option-full {
-            > span {
-                text-indent: -1000em;
-                width: 44px;
+    }
+}
+// }}}
+// {{{ .doc-properties .input-single.edit-type with icons
+.doc-properties .depage-form .input-single.edit-type {
+    label.input-single-option-contain,
+    label.input-single-option-fill,
+    label.input-single-option-full {
+        > span {
+            text-indent: -1000em;
+            width: 44px;
 
-                &::after {
-                    @include icon-base();
-                }
+            &::after {
+                @include icon-base();
             }
         }
-        label.input-single-option-fill > span::after {
-            @include icon("img-crop", 32px);
+    }
+    label.input-single-option-fill > span::after {
+        @include icon("img-crop", 32px);
+    }
+    label.input-single-option-contain > span::after {
+        @include icon("img-contain", 32px);
+    }
+    label.input-single-option-full > span::after {
+        @include icon("img-full", 32px);
+    }
+    label.input-single-option-fill > input[type="radio"]:checked + span::after {
+        @include icon("img-crop-white", 32px);
+    }
+    label.input-single-option-contain > input[type="radio"]:checked + span::after {
+        @include icon("img-contain-white", 32px);
+    }
+    label.input-single-option-full > input[type="radio"]:checked + span::after {
+        @include icon("img-full-white", 32px);
+    }
+}
+.doc-properties .depage-form .input-single.edit-target {
+    label.input-single-option-,
+    label.input-single-option-_blank {
+        > span {
+            text-indent: -1000em;
+            width: 36px;
+
+            &::after {
+                margin-top: 1px;
+                margin-left: -4px;
+                @include icon-base();
+            }
         }
-        label.input-single-option-contain > span::after {
-            @include icon("img-contain", 32px);
-        }
-        label.input-single-option-full > span::after {
-            @include icon("img-full", 32px);
-        }
-        label.input-single-option-fill > input[type="radio"]:checked + span::after {
-            @include icon("img-crop-white", 32px);
-        }
-        label.input-single-option-contain > input[type="radio"]:checked + span::after {
-            @include icon("img-contain-white", 32px);
-        }
-        label.input-single-option-full > input[type="radio"]:checked + span::after {
-            @include icon("img-full-white", 32px);
-        }
+    }
+    label.input-single-option-> span::after {
+        @include icon("target-self", 32px);
+    }
+    label.input-single-option-_blank > span::after {
+        @include icon("target-blank", 32px);
+    }
+    label.input-single-option-> input[type="radio"]:checked + span::after {
+        @include icon("target-self-white", 32px);
+    }
+    label.input-single-option-_blank > input[type="radio"]:checked + span::after {
+        @include icon("target-blank-white", 32px);
     }
 }
 // }}}
@@ -406,6 +437,14 @@
 // }}}
 // {{{ doc-properties edit-a
 .doc-properties .edit-a {
+    padding-right: 105px;
+
+    .input-single.edit-target {
+        position: absolute;
+        z-index: 100;
+        top: 20px;
+        right: 20px;
+    }
 }
 // }}}
 
