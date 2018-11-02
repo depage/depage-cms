@@ -79,10 +79,10 @@
         create: 0 17,
         duplicate: 1 17,
         delete: 2 17,
-        checkbox-checked: 0 18,
-        checkbox-unchecked: 1 18,
-        checkbox-checked-white: 2 18,
-        checkbox-unchecked-white: 3 18,
+        checkbox-checked: 0 18 false,
+        checkbox-unchecked: 1 18 false,
+        checkbox-checked-white: 2 18 false,
+        checkbox-unchecked-white: 3 18 false,
         switch-on: 0 19,
         switch-off: 1 19,
         radio-checked: 2 19,
@@ -105,22 +105,34 @@
         format-ol: 3 23,
     );
 
-    @if map_has_key($icons, $name) {
-        $pos: map_get($icons, $name);
-        background-position: (nth($pos, 1) * -1 * $iSize) (nth($pos, 2) * -1 * $iSize);
-
-        @media (pointer:coarse) {
-            background-position: (nth($pos, 1) * -1 * $iSize * $touchScale) (nth($pos, 2) * -1 * $iSize * $touchScale);
-        }
-    }
-
     @if ($scale != 1) {
         background-size: (8 * $iSize) (24 * $iSize);
+    }
 
-        @media (pointer:coarse) {
-            background-size: (8 * $iSize * $touchScale) (24 * $iSize * $touchScale);
+    @if map_has_key($icons, $name) {
+        $pos: map_get($icons, $name);
+        $length: length(map_get($icons, $name));
+        background-position: (nth($pos, 1) * -1 * $iSize) (nth($pos, 2) * -1 * $iSize);
+
+        @if (length($pos) == 3) {
+            @media (pointer:coarse) {
+                background-position: (nth($pos, 1) * -1 * $iSize) (nth($pos, 2) * -1 * $iSize);
+
+                @if ($scale != 1) {
+                    background-size: (8 * $iSize) (24 * $iSize);
+                }
+            }
+        } @else {
+            @media (pointer:coarse) {
+                background-position: (nth($pos, 1) * -1 * $iSize * $touchScale) (nth($pos, 2) * -1 * $iSize * $touchScale);
+
+                @if ($scale != 1) {
+                    background-size: (8 * $iSize * $touchScale) (24 * $iSize * $touchScale);
+                }
+            }
         }
     }
+
 }
 @mixin tree-icon($name, $icon) {
     .icon-#{$name} > .jstree-icon {

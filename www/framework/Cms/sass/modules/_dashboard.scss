@@ -139,6 +139,10 @@
     dl {
         text-indent: 0;
         margin: 12px 0 48px 28px;
+
+        @media (pointer:coarse) {
+            margin-left: 28px * $touchScale;
+        }
     }
     dt {
         position: relative;
@@ -165,6 +169,12 @@
         display: block;
         width: 24px;
         height: 24px;
+
+        @media (pointer:coarse) {
+            left: -28px * $touchScale;
+            width: 24px * $touchScale;
+            height: 24px * $touchScale;
+        }
     }
     dt strong,
     a.button {

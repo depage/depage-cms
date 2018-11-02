@@ -136,6 +136,16 @@
             @include icon-base("none");
         }
     }
+    @media screen and (pointer:coarse) and (min-width: 1000px) {
+        .content {
+            padding-left: (32px + 10px) * $touchScale;
+        }
+        .content::before {
+            top: 4px * $touchScale;
+            width: 32px * $touchScale;
+            height: 32px * $touchScale;
+        }
+    }
 }
 // }}}
 

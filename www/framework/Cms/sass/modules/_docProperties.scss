@@ -409,6 +409,11 @@
         height: $iconSize;
         margin-right: 5px;
         @include icon-base("", $iconSize);
+
+        @media (pointer:coarse) {
+            width: $iconSize * $touchScale;
+            height: $iconSize * $touchScale;
+        }
     }
     i.icon-published {
         @include icon("published", $iconSize);
