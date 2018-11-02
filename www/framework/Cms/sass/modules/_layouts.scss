@@ -232,9 +232,7 @@ html {
         bottom: 0;
         left: 0;
         right: 0;
-        overflow-y: auto;
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
+        @extend %scrollY;
 
         &.top {
             padding-top: 1.5 * $toolbarHeight;

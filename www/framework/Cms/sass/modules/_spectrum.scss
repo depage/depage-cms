@@ -6,8 +6,7 @@
     display:inline-block;
     *display: inline;
     *zoom: 1;
-    overflow-x: hidden;
-    overflow-y: auto;
+    @extend %scrollY;
 }
 .sp-container.sp-flat {
     position: relative;

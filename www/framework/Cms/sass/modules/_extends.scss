@@ -1,0 +1,15 @@
+%scrollY {
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    @media (hover) {
+        overflow-y: hidden;
+
+        &:hover {
+            overflow-y: auto;
+        }
+    }
+}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :

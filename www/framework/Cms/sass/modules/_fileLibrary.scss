@@ -63,7 +63,7 @@ figure.thumb {
         position: absolute;
         top: 0;
         bottom: 0;
-        overflow: auto;
+        @extend %scrollY;
 
         header.info {
             right: 0;

@@ -187,6 +187,8 @@ select,
 }
 /* }}} */
 
+@import "modules/_extends.scss";
+
 @import "modules/_toolbars.scss";
 @import "modules/_headers.scss";
 @import "modules/_layouts.scss";

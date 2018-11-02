@@ -8,6 +8,14 @@
     input,
     button,
     select,
+    textarea {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+    input,
+    button,
+    select,
     textarea,
     .textarea,
     .textarea-content,
