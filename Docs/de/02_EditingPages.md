@@ -113,15 +113,15 @@ Es stehen folgende Eigenschaftselemente zur Verfügung:
 
 - **Text (einzeilig)**
 
-    Das *Text (einzeilig)* steht für unformatierten, einzeiligen Text, wie beispielsweise einzeilige Überschriften zur Verfügung.
+    *Text (einzeilig)* steht für unformatierten, einzeiligen Text, wie beispielsweise einzeilige Überschriften zur Verfügung.
 
 - **Text (mehrzeilig)**
 
-    Das *Text (mehrzeilig)* steht für unformatierten, mehrzeiligen Text zur Verfügung, wie beispielsweise mehrzeilige Überschriften oder kurze Teaser.
+    *Text (mehrzeilig)* steht für unformatierten, mehrzeiligen Text zur Verfügung, wie beispielsweise mehrzeilige Überschriften oder kurze Teaser.
 
 - **Text (formatiert)**
 
-    Das *Text (formatiert)* steht für formatierten, mehrzeiligen Text zur Verfügung. Dort können Texte mit Auszeichnungen wie fett oder kursiv versehen werden. Es werden auch Absatzstile wie Listen mit Aufzählungszeichen oder nummerierte Listen unterstützt. Außerdem können innerhalb des Textes Links zu anderen Seiten gesetzt werden.
+    *Text (formatiert)* steht für formatierten, mehrzeiligen Text zur Verfügung. Dort können Texte mit Auszeichnungen wie fett oder kursiv versehen werden. Es werden auch Absatzstile wie Listen mit Aufzählungszeichen oder nummerierte Listen unterstützt. Außerdem können innerhalb des Textes Links zu anderen Seiten gesetzt werden.
 
 > [Mehr über den Text Editor](@ref text-editor)
 
@@ -134,6 +134,10 @@ Es stehen folgende Eigenschaftselemente zur Verfügung:
     Je nach Template kann auch noch ein Link ausgewählt werden, der geöffnet wird, wenn man auf das Bild klickt.
 
 > [Mehr über die Dateibibliothek](@ref file-library)
+
+- **Tabelle**
+
+    Tabelle untertützt das Editieren von einfachen Tabellen im Content mit Formatierungsmöglichkeiten wie der formatierte Text.
 
 - **Datum**
 
@@ -194,7 +198,7 @@ Interne Links sehen folgendermaßen aus:
 
     pageref://[docid]
 
-Interne Links lassen sich einfach setzen, indem man die zu verlinkende Seite aus dem Seitenbaum in das Textfeld des Dialogs zieht.
+> *Interne Links lassen sich einfach setzen, indem man die zu verlinkende Seite aus dem Seitenbaum in das Textfeld des Dialogs zieht.*
 
 Links zu Dateien in der Dateibibliothek sind folgendermaßen aufgebaut:
 
@@ -236,6 +240,10 @@ Die Vorschau
 ------------
 
 Die Vorschau der Seiten aktualisiert sich mit jeder Änderung der Seite automatisch. Ebenfalls automatisch ändert sich die Sprache der Vorschau: Sobald beispielsweise ein deutsches Textfeld bearbeitet wird, wird die deutsche Version der Seite angezeigt, wenn ein englisches Textfeld bearbeitet wird, wird die englische Version angezeigt.
+
+In Projekten, die dies unterstützen, scrollt depage-cms automatisch zu der Stelle im Dokument, die gerade bearbeitet wird und highlightet diese Stelle kurz mit einem roten Rahmen:
+
+![Die Vorschau mit der roten Markierung des gerade aktivierten Elements](images/preview.png)
 
 Aktualisieren
 -------------

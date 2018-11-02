@@ -136,6 +136,10 @@ This are the document property types available:
 
 > [More about about the file library](@ref file-library)
 
+- **Table**
+
+    The *Table* element support editing of simple tables with styling options like the richtext component.
+
 - **Date**
 
     *Date* is a field, where you can choose a date.
@@ -195,7 +199,7 @@ Internal links look like this:
 
     pageref://[docid]
 
-You can add an internal link, by dragging a page from the page tree into the input in the dialog.
+> *You can add an internal link, by dragging a page from the page tree into the input in the dialog.*
 
 Links to files in the file library look like this:
 
@@ -237,6 +241,10 @@ The Preview
 ------------
 
 The preview of the current page gets updated automatically when editing your page. The preview will always displayed in the language, you edited last: E.g. if you edit an english text field, you'll get the preview of the english version. But if you edit a german text field, you'll get the german version.
+
+In projects that support highlighting, depage-cms will scroll to and highlight the currently selected elements with a red outline:
+
+![The Preview with the red marker of the currently selected element](images/preview.png)
 
 Reloading
 ---------

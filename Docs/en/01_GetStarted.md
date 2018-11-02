@@ -3,7 +3,7 @@ Introduction      {#get-started}
 
 [TOC]
 
-The Dashboard
+The Dashboard     {#dashboard}
 =============
 
 Project Overview

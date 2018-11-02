@@ -1,8 +1,7 @@
 <div class="news-list">
     <div class="news">
         <h2>Version 2.0 released</h2>
-        <p>Yeah!</p>
-        <p><a href="changelog/">changelog</a></p>
+        <p><a href="https://docs.depage.net/depage-cms-manual/<?php echo(DEPAGE_LANG); ?>/changelog.html" target="_blank">changelog</a></p>
     </div>
 </div>
 

@@ -26,3 +26,8 @@ Welcome to depage-cms.
 > [Administration](@ref admin)
 >
 > > [Project Settings](@ref admin-project-settings)
+
+
+> **Version History**
+>
+> [Changelog](@ref changelog)
