@@ -156,9 +156,15 @@ class Application implements \Wrench\Application\DataHandlerInterface,
 
         if (!isset($headers['cookie'])) return false;
 
-        list($key, $sid) = explode("=", $headers['cookie']);
+        preg_match_all("/([^=;]*)=([^=;]*)/", $headers['cookie'], $m, \PREG_SET_ORDER);
 
-        return $sid;
+        foreach ($m as $c) {
+            if ($c[1] == "depagecms-session-id") {
+                return $c[2];
+            }
+        }
+
+        return false;
     }
     // }}}
 }
