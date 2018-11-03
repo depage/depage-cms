@@ -1,8 +1,8 @@
-// {{{ doc-properties
+// {{{ .doc-properties
 .doc-properties {
     position: absolute;
     background: $backgroundLighterColor;
-    //padding: 10px;
+    overflow-y: auto !important;
 
     fieldset {
         padding-left: 15px;

@@ -613,9 +613,6 @@ var depageCMS = (function() {
                     var editor = this;
                     var pos = editor.getPosBySelection();
 
-                    // @todo fix postion the correct way
-                    pos.top -= 90;
-
                     $body.depageShyDialogue({
                         ok: {
                             title: locale.ok,

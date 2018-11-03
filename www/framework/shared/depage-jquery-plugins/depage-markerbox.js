@@ -54,11 +54,16 @@
              */
             show: function(left, top) {
                 var direction = base.options.direction.toLowerCase();
-                this.addWrapper();
-                this.setContent(base.options.title, base.options.message, base.options.icon);
-                this.setPosition(top, left, base.options.direction);
+                var that = this;
 
-                this.$wrapper.fadeIn(base.options.fadeinDuration);
+                that.addWrapper();
+                that.setContent(base.options.title, base.options.message, base.options.icon);
+
+                setTimeout(function() {
+                    // defer setting position until element has added all children
+                    that.setPosition(top, left, base.options.direction);
+                    that.$wrapper.fadeIn(base.options.fadeinDuration);
+                }, 10);
 
                 // allow chaining
                 return this;
@@ -233,9 +238,9 @@
                     case 'c': // center
                         wrapperPos.left = - (wrapperWidth + paddingLeft + paddingRight) / 2;
                         if (d[0] == "t") {
-                            wrapperPos.top -= wrapperHeight +  paddingTop + offset;
+                            wrapperPos.top -= (wrapperHeight + paddingTop + offset);
                         } else if (d[0] == "b") {
-                            wrapperPos.bottom -= wrapperHeight + paddingBottom + offset;
+                            wrapperPos.bottom -= (wrapperHeight + paddingBottom + offset);
                         }
                         if (d[0] == "t" || d[0] == "b") { // horizontal
                             markerPos.left = (wrapperWidth + paddingLeft + paddingRight) / 2 - dWidth / 2;
@@ -254,7 +259,7 @@
                 }
             },
             // }}}
-            // {{{ getPositionFromElement()
+            // {{{ adjustPositionToElement()
             /**
              * set the position of the dialogue including the direction marker
              *
