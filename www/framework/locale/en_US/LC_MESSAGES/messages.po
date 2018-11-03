@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-19 18:09+0200\n"
+"POT-Creation-Date: 2018-11-02 14:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -174,8 +174,8 @@ msgstr ""
 msgid "(public)"
 msgstr ""
 
-#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:783
-#: Cms/Ui/DocProperties.php:892
+#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:795
+#: Cms/Ui/DocProperties.php:893
 msgid "http://domain.com"
 msgstr ""
 
@@ -2205,7 +2205,7 @@ msgstr ""
 msgid "Ask for this page the be released"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:415 Cms/Ui/DocProperties.php:791
+#: Cms/Ui/DocProperties.php:415 Cms/Ui/DocProperties.php:784
 msgid "Default"
 msgstr ""
 
@@ -2262,7 +2262,7 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:771
+#: Cms/Ui/DocProperties.php:772
 msgid "Link"
 msgstr ""
 
@@ -2270,60 +2270,60 @@ msgstr ""
 msgid "Link title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:781 Cms/Ui/DocProperties.php:890
-msgid "href"
-msgstr ""
-
-#: Cms/Ui/DocProperties.php:789
+#: Cms/Ui/DocProperties.php:782
 msgid "Target"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:792
+#: Cms/Ui/DocProperties.php:785
 msgid "New Window"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:812
+#: Cms/Ui/DocProperties.php:793 Cms/Ui/DocProperties.php:891
+msgid "href"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:813
 msgid "Audio"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:816 Cms/Ui/DocProperties.php:841
-#: Cms/Ui/DocProperties.php:868
+#: Cms/Ui/DocProperties.php:817 Cms/Ui/DocProperties.php:842
+#: Cms/Ui/DocProperties.php:869
 msgid "src"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:837
+#: Cms/Ui/DocProperties.php:838
 msgid "Video"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:861
+#: Cms/Ui/DocProperties.php:862
 msgid "Image"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:878
+#: Cms/Ui/DocProperties.php:879
 msgid "title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:879
+#: Cms/Ui/DocProperties.php:880
 msgid "Image title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:884
+#: Cms/Ui/DocProperties.php:885
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:885
+#: Cms/Ui/DocProperties.php:886
 msgid "Image description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:909
+#: Cms/Ui/DocProperties.php:910
 msgid "Table"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:948
+#: Cms/Ui/DocProperties.php:949
 msgid "Source"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:967
+#: Cms/Ui/DocProperties.php:968
 msgid "Not allowed to edit this element."
 msgstr ""
 
