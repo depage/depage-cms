@@ -235,6 +235,7 @@
             },{
                 bind_el: false,
                 directionMarker: true,
+                actionActiveTimeout: 1000,
                 title: locale.delete,
                 message: locale.deleteQuestion
             });

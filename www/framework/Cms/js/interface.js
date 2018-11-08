@@ -460,6 +460,7 @@ var depageCMS = (function() {
                     },{
                         title: locale.delete,
                         message : locale.deleteQuestion,
+                        actionActiveTimeout: 1000,
                         directionMarker: true
                     });
             });
@@ -527,6 +528,7 @@ var depageCMS = (function() {
                         },{
                             title: locale.delete,
                             message : locale.deleteQuestion,
+                            actionActiveTimeout: 1000,
                             directionMarker: true
                         });
                     }
@@ -1526,6 +1528,7 @@ var depageCMS = (function() {
             },{
                 bind_el: false,
                 directionMarker: true,
+                actionActiveTimeout: 1000,
                 title: locale.delete,
                 message: locale.deleteQuestion
             });
@@ -1604,6 +1607,7 @@ var depageCMS = (function() {
             },{
                 bind_el: false,
                 directionMarker: true,
+                actionActiveTimeout: 1000,
                 title: locale.delete,
                 message: locale.deleteQuestion
             });
@@ -1974,6 +1978,7 @@ var depageCMS = (function() {
                             },{
                                 title: locale.delete,
                                 message : locale.deleteQuestion,
+                                actionActiveTimeout: 1000,
                                 directionMarker: true
                             });
                     }
