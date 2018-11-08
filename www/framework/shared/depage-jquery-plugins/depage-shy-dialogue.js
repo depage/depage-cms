@@ -218,7 +218,10 @@
                         .attr('id', base.options.id + '-' + i)
                         .text(title)
                         .data('depage.shyDialogue', base)
-                        .click(function(e){
+                        .on("click", function(e){
+                            if (!$btn.hasClass("enabled")) {
+                                return false;
+                            }
                             if (typeof(button.click) !== 'function' || button.click(e) !== false) {
                                 base.hideDialogue();
                             }
@@ -228,6 +231,10 @@
                     $buttonWrapper.append($btn);
                 })();
             }
+
+            setTimeout(function() {
+                $buttonWrapper.find(".button").addClass("enabled");
+            }, base.options.actionActiveTimeout);
 
             // allow chaining
             return this;
@@ -255,8 +262,9 @@
         icon: '',
         title: '',
         message: '',
-        direction : 'TR',
-        directionMarker : null,
+        direction: 'TR',
+        directionMarker: null,
+        actionActiveTimeout: 10,
         fadeoutDuration: 300,
         inputs: {},
         buttons: {},
