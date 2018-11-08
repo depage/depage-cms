@@ -159,8 +159,8 @@ class Application implements \Wrench\Application\DataHandlerInterface,
         preg_match_all("/([^=;]*)=([^=;]*)/", $headers['cookie'], $m, \PREG_SET_ORDER);
 
         foreach ($m as $c) {
-            if ($c[1] == "depagecms-session-id") {
-                return $c[2];
+            if (trim($c[1]) == "depagecms-session-id") {
+                return trim($c[2]);
             }
         }
 
