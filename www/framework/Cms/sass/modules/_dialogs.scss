@@ -27,16 +27,23 @@
         padding: 6px;
         @include radius(4px);
     }
-    a.button:hover {
-        background-color: lighten($backgroundDarkColor, 30%);
-    }
-    a.button.default {
-        padding: 6px 12px;
-        background: $selectionBackgroundColor;
-        color: $textBrightColor;
-
+    a.button {
+        &:focus,
         &:hover {
-            background: lighten($selectionBackgroundColor, 5%);
+            background-color: lighten($backgroundDarkColor, 30%);
+        }
+        &:focus {
+            border-color: $selectionBackgroundColor;
+        }
+        &.default {
+            padding: 6px 12px;
+            background: $selectionBackgroundColor;
+            color: $textBrightColor;
+
+            &:focus,
+            &:hover {
+                background: lighten($selectionBackgroundColor, 5%);
+            }
         }
     }
 }
