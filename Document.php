@@ -426,7 +426,7 @@ class Document
             } else {
                 $this->endTransaction();
 
-                throw new Exceptions\XmlDbException('This node is no ELEMENT_NODE or node does not exist');
+                throw new Exceptions\XmlDbException('This node is no ELEMENT_NODE or node does not exist' . " {$this->doc_id}/{$id}");
             }
 
             $success = $xml_doc->loadXML($xml_str);
@@ -1833,7 +1833,7 @@ class Document
             "UPDATE {$this->table_docs}
             SET
                 lastchange=:timestamp,
-                lastchange_uid=:user_id
+                lastchange_uid=IFNULL(:user_id, lastchange_uid)
             WHERE
                 id=:doc_id;"
         );
