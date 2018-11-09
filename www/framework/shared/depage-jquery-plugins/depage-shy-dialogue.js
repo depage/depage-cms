@@ -233,7 +233,9 @@
             }
 
             setTimeout(function() {
-                $buttonWrapper.find(".button").addClass("enabled");
+                $buttonWrapper.find(".button")
+                    .addClass("enabled")
+                    .first().focus();
             }, base.options.actionActiveTimeout);
 
             // allow chaining

@@ -93,7 +93,7 @@
         padding: ($corner-radius / 3);
         margin-top: 1em * $default-multiplier - 1em;
         margin-right: 0.2em;
-        border: 1px solid $background;
+        border: 1px solid transparent;
         cursor: default;
         opacity: 0.5;
 
