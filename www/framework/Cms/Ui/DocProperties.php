@@ -320,7 +320,7 @@ class DocProperties extends Base
         $lastPublishDate = $this->project->getLastPublishDate();
         $hasUnpublishedChanges = false;
         if ($pageInfo->lastrelease && $lastPublishDate) {
-            $hasUnpublishedChanges = $pageInfo->lastrelease->getTimestamp() > $lastPublishDate->getTimestamp();
+            $hasUnpublishedChanges = $lastPublishDate->getTimestamp() <= $pageInfo->lastrelease->getTimestamp();
         }
 
         $fs = $this->form->addFieldset("xmledit-{$this->docRef}-lastchange-fs", [
@@ -360,14 +360,14 @@ class DocProperties extends Base
 
             if ($pageInfo->published) {
                 $fs->addHtml(sprintf(
-                    _("<p class=\"status\">%s<a href=\"%s\" target=\"_blank\">%s</a></p>"),
+                    _("<p class=\"status\">%s<span><a href=\"%s\" target=\"_blank\">%s</a></span></p>"),
                     $icon,
                     htmlspecialchars($url),
                     htmlspecialchars($message)
                 ));
             } else {
                 $fs->addHtml(sprintf(
-                    _("<p class=\"status\">%s%s</p>"),
+                    _("<p class=\"status\">%s<span>%s</span></p>"),
                     $icon,
                     htmlspecialchars($message)
                 ));
