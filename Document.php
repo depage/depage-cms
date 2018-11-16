@@ -118,6 +118,7 @@ class Document
 
         if ($info) {
             $info->lastchange = new \DateTime($info->lastchange);
+            $info->lastrelease = $this->getHistory()->getLatestVersion()->lastsaved ?? false;
         }
 
         return $info;
@@ -196,9 +197,8 @@ class Document
     public function isReleased()
     {
         $info = $this->getDocInfo();
-        $latest = $this->getHistory()->getLatestVersion();
 
-        if (!empty($latest) && $info->lastchange->getTimestamp() <= $latest->lastsaved->getTimestamp()) {
+        if (!empty($latest) && $info->lastchange->getTimestamp() <= $info->lastrelease->getTimestamp()) {
             return true;
         }
 
@@ -215,9 +215,8 @@ class Document
     public function isPublished()
     {
         $info = $this->getDocInfo();
-        $latest = $this->getHistory()->getLatestVersion();
 
-        return !empty($latest);
+        return !empty($info->lastrelease);
     }
     // }}}
 
