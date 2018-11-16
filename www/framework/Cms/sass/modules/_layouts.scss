@@ -349,6 +349,27 @@ html {
             }
         }
     }
+    @media screen and (min-width: 2100px) {
+        $currentEditWidth: $editWidth + 1 * $treeWidth;
+
+        &.layout-right-full {
+            .layout-left {
+                left: -$currentEditWidth;
+                width: $currentEditWidth;
+            }
+        }
+        &.layout-split {
+            .layout-left {
+                width: $currentEditWidth;
+            }
+            .layout-right {
+                left: $currentEditWidth;
+            }
+            .toolbar menu.preview {
+                left: $currentEditWidth;
+            }
+        }
+    }
     @media screen and (max-width: 1340px) {
         $currentEditWidth: $editWidth - 0.5 * $treeWidth;
 
