@@ -99,7 +99,9 @@
                 // bind escape key to cancel
                 $(document).on('keyup.shydialogue', function(e){
                     var key = e.which || e.keyCode;
-                    if (key == 27) {
+                    if (key == 13) {
+                        base.$wrapper.find('a.button.default').click();
+                    } else if (key == 27) {
                         base.hideDialogue();
                     }
                 });
@@ -120,7 +122,7 @@
                     base.hideDialogue();
                 });
 
-            }, 50);
+            }, 10);
         };
         /// }}}
         // {{{ hideDialogue
@@ -147,7 +149,7 @@
             base.setInputs(base.options.inputs);
             base.setButtons(base.buttons);
 
-            this.$wrapper.find('input, a').eq(0).focus().select();
+            this.$wrapper.find('input, a.button.default').first().focus().select();
         };
         // }}}
 
@@ -182,7 +184,7 @@
                     $input
                         .on("keyup", function(e) {
                             if (e.which == 13) {
-                                $wrapper.find('a').eq(0).click();
+                                $wrapper.find('a.button.default').click();
                             }
                         });
 
@@ -233,9 +235,9 @@
             }
 
             setTimeout(function() {
-                $buttonWrapper.find(".button")
-                    .addClass("enabled")
-                    .first().focus();
+                $buttonWrapper
+                    .children("a.button").addClass("enabled")
+                    .filter(".default").focus();
             }, base.options.actionActiveTimeout);
 
             // allow chaining
