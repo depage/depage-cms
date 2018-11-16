@@ -317,6 +317,12 @@ class DocProperties extends Base
         $lastchangeUser = \Depage\Auth\User::loadById($this->pdo, $pageInfo->lastchangeUid);
         $dateFormatter = new \Depage\Formatters\DateNatural();
 
+        $lastPublishDate = $this->project->getLastPublishDate();
+        $hasUnpublishedChanges = false;
+        if ($pageInfo->lastrelease && $lastPublishDate) {
+            $hasUnpublishedChanges = $pageInfo->lastrelease->getTimestamp() > $lastPublishDate->getTimestamp();
+        }
+
         $fs = $this->form->addFieldset("xmledit-{$this->docRef}-lastchange-fs", [
             'label' => _("Page Status"),
             'class' => "doc-property-fieldset doc-property-meta " . ($currentNode->prefix == 'pg' ? "open" : ""),
@@ -336,11 +342,16 @@ class DocProperties extends Base
             if ($pageInfo->published) {
                 $icon .= "<i class=\"icon icon-published\" data-tooltip=\"" . _("Page is published") . "\"></i>";
             }
+            if ($pageInfo->published && $hasUnpublishedChanges) {
+                $icon .= "<i class=\"icon icon-unpublished\" data-tooltip=\"" . _("Page is waiting to be published") . "\"></i>";
+            }
             if (!$pageInfo->released) {
                 $icon .= "<i class=\"icon icon-unreleased\" data-tooltip=\"" . _("Page has unreleased changes") . "\"></i>";
             }
             if ($pageInfo->published && !$pageInfo->released) {
                 $message = _("Page is published but has unreleased changes.");
+            } else if ($hasUnpublishedChanges) {
+                $message = _("Page is waiting to be published.");
             } else if ($pageInfo->published) {
                 $message = _("Page is published.");
             } else if (!$pageInfo->released) {

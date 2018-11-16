@@ -418,6 +418,9 @@
     i.icon-published {
         @include icon("published", $iconSize);
     }
+    i.icon-unpublished {
+        @include icon("unpublished", $iconSize);
+    }
     i.icon-unreleased {
         @include icon("unreleased", $iconSize);
     }
