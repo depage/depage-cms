@@ -198,7 +198,7 @@ class Document
     {
         $info = $this->getDocInfo();
 
-        if (!empty($latest) && $info->lastchange->getTimestamp() <= $info->lastrelease->getTimestamp()) {
+        if (!empty($info->lastrelease) && $info->lastchange->getTimestamp() <= $info->lastrelease->getTimestamp()) {
             return true;
         }
 
