@@ -46,12 +46,12 @@
     }
     80% {
         opacity: 0;
-        width: 200%;
+        width: 230%;
         @include transform(translateY(-$transitionDistance));
     }
     100% {
         opacity: 1;
-        width: 200%;
+        width: 230%;
         @include transform(translateY(0));
     }
 }

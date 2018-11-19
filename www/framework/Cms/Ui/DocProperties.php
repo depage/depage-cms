@@ -317,9 +317,16 @@ class DocProperties extends Base
         $lastchangeUser = \Depage\Auth\User::loadById($this->pdo, $pageInfo->lastchangeUid);
         $dateFormatter = new \Depage\Formatters\DateNatural();
 
+        list($lang) = array_keys($this->project->getLanguages());
         $lastPublishDate = $this->project->getLastPublishDate();
+        $lastPublishDateOf = $this->project->getLastPublishDateOf($lang . $pageInfo->url);
+
+        if (!$lastPublishDateOf) {
+            $pageInfo->published = false;
+        }
+
         $hasUnpublishedChanges = false;
-        if ($pageInfo->lastrelease && $lastPublishDate) {
+        if ($pageInfo->lastrelease) {
             $hasUnpublishedChanges = $lastPublishDate->getTimestamp() <= $pageInfo->lastrelease->getTimestamp();
         }
 
@@ -342,7 +349,7 @@ class DocProperties extends Base
             if ($pageInfo->published) {
                 $icon .= "<i class=\"icon icon-published\" data-tooltip=\"" . _("Page is published") . "\"></i>";
             }
-            if ($pageInfo->published && $hasUnpublishedChanges) {
+            if ($hasUnpublishedChanges) {
                 $icon .= "<i class=\"icon icon-unpublished\" data-tooltip=\"" . _("Page is waiting to be published") . "\"></i>";
             }
             if (!$pageInfo->released) {

@@ -858,6 +858,31 @@ class Project extends \Depage\Entity\Entity
         return $date;
     }
     // }}}
+    // {{{ getLastPublishDateOf()
+    /**
+     * @brief getLastPublishDateOf
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getLastPublishDateOf($filename)
+    {
+        $publishPdo = clone $this->pdo;
+        $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->name;
+
+        list($publishId) = array_keys($this->getPublishingTargets());
+
+        $fs = \Depage\Fs\Fs::factory("");
+        $publisher = new \Depage\Publisher\Publisher($publishPdo, $fs, $publishId);
+
+        $info = $publisher->getFileInfo($filename);
+        if ($info) {
+            return $info->lastmod;
+        }
+
+        return false;
+    }
+    // }}}
 
     // {{{ hasPageShortcuts()
     /**

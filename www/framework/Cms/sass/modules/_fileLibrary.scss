@@ -1,7 +1,9 @@
 // {{{ figure.thumb
 figure.thumb {
+    $iconSize: 24px;
     $width: $thumbSize;
     $height: $thumbSize;
+
     border: 1px solid $backgroundBrightColor;
     background: #ffffff;
     position: relative;
@@ -24,6 +26,13 @@ figure.thumb {
         margin-top: 5px;
         text-align: center;
     }
+    &.not-published p.publishing-status:after {
+        @include icon-base("unreleased", $iconSize);
+    }
+    &.published p.publishing-status:after {
+        @include icon-base("published", $iconSize);
+    }
+
     .fileinfo {
         position: absolute;
         display: none;
@@ -34,7 +43,7 @@ figure.thumb {
         left: 100%;
         top: $height;
         left: 0;
-        width: 200%;
+        width: 230%;
         text-align: left;
         z-index: 5000;
         @include box-shadow($shadow);
@@ -48,6 +57,26 @@ figure.thumb {
             overflow-wrap: break-word;
             white-space: normal;
             overflow: visible;
+        }
+        p.change-date {
+            margin-top: 15px;
+        }
+        p.publishing-status {
+            margin-top: 15px;
+            position: relative;
+            padding-right: $iconSize;
+        }
+        p.publishing-status:after {
+            content: " ";
+            display: block;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: $iconSize;
+            height: $iconSize;
+        }
+        p.publishing-status + p {
+            margin-top: 15px;
         }
     }
     img:hover + figcaption .fileinfo {
@@ -117,6 +146,10 @@ figure.thumb {
     .message {
         text-align: center;
         margin-bottom: 15px;
+    }
+    ul {
+        padding-right: $thumbSize;
+        padding-bottom: 2 * $thumbSize;
     }
     li {
         list-style: none;
