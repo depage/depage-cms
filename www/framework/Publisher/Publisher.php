@@ -310,6 +310,29 @@ class Publisher
         return $date;
     }
     // }}}
+    // {{{ getFileInfo()
+    /**
+     * @brief getFileInfo
+     *
+     * @param mixed $filename
+     * @return void
+     **/
+    public function getFileInfo($filename)
+    {
+        $query = $this->pdo->prepare("SELECT filename, hash, lastmod, exist FROM {$this->tableFiles} WHERE filenamehash = SHA1(:filename) AND publishId = :publishId");
+        $query->execute(array(
+            'filename' => $filename,
+            'publishId' => $this->publishId,
+        ));
+
+        $data = $query->fetchObject();
+        if ($data) {
+            $data->lastmod = new \DateTime($data->lastmod);
+        }
+
+        return $data;
+    }
+    // }}}
 
     // {{{ resetPublishedState()
     /**
