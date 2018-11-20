@@ -3,10 +3,10 @@ Changelog     {#changelog}
 
 [TOC]
 
-Version 2.0
+Version 2.0   {#v2-0}
 ===========
 
-**User Interface**
+**User Interface Highlights**
 
 - Enhanced [Dashboard](@ref dashboard)
 - Complete revamp of the [Edit Interface](@ref editing-pages)
@@ -17,6 +17,22 @@ Version 2.0
 - Enhanced [preview](@ref page-preview) to automatically show currently edited language
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
+
+v2.0.1      {#v2-0-1}
+------
+
+**User Interface**
+
+- Enhancement of page status
+- Update of file library to show publishing state of current file
+- Optimization of delete dialog
+
+v2.0.0      {#v2-0-0}
+------
+
+**User Interface**
+
+- Complete overhaul of the edit interface
 
 **Backend**
 

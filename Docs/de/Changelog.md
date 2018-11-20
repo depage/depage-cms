@@ -3,10 +3,10 @@ Versionshistorie     {#changelog}
 
 [TOC]
 
-Version 2.0
+Version 2.0   {#v2-0}
 ===========
 
-**User Interface**
+**User Interface Highlights**
 
 - Verbessertes [Dashboard](@ref dashboard)
 - Vollständig neues [Editier Interface](@ref editing-pages)
@@ -17,6 +17,22 @@ Version 2.0
 - Verbesserung der [Vorschau](@ref page-preview), so dass diese automatisch in der gerade bearbeiteten Sprache angezeigt wird
 - Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
+
+v2.0.1      {#v2-0-1}
+------
+
+**User Interface**
+
+- Verbesserung des Seitenstatus
+- Aktualisierung der Seitenbibliotek zu Anzeige des Veröffentlichungsstatus der jeweilgen Datei
+- Verbesserung des Löschen-Dialogs
+
+v2.0.0      {#v2-0-0}
+------
+
+**User Interface**
+
+- Komplett überarbeitetes Edit-Interface
 
 **Backend**
 
@@ -31,3 +47,4 @@ Version 2.0
 - Entfernung alter Abhängigkeiten
 - Api verbessert
 - Verbesserter IPv6 support
+
