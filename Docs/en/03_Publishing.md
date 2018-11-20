@@ -21,11 +21,17 @@ The current state of the page will be displayed in the [Meta Property](@ref meta
 - not published yet,
     ![](images/page-status-not-published.png)
 
-- published as is or
-    ![](images/page-status-published.png)
+- released, but waiting to be published or
+    ![](images/page-status-released-waiting.png)
 
-- published, but have unreleased changes.
+- published with unreleased changes or
     ![](images/page-status-changed.png)
+
+- published and released but with unpublished changes or
+    ![](images/page-status-published-waiting.png)
+
+- published as is.
+    ![](images/page-status-published.png)
 
 
 

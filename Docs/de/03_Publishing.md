@@ -21,11 +21,17 @@ Im [Meta Element](@ref meta-property) wird der aktuelle Status der Seite angezei
 - noch nicht veröffentlicht sein,
     ![](images/page-status-not-published.png)
 
-- mit dem aktuellen Stand veröffentlicht sein oder
-    ![](images/page-status-published.png)
+- freigegeben aber noch nicht veröffentlicht sein,
+    ![](images/page-status-released-waiting.png)
 
-- veröffentlicht sein, aber noch unveröffentlichte Änderungen enthalten.
+- veröffentlicht sein, aber noch unveröffentlichte Änderungen enthalten oder
     ![](images/page-status-changed.png)
+
+- veröffentlicht und freigegen, aber noch nicht mit dem letzten Stand veröffentlicht sein oder
+    ![](images/page-status-published-waiting.png)
+
+- mit dem aktuellen Stand veröffentlicht sein.
+    ![](images/page-status-published.png)
 
 
 
