@@ -246,9 +246,19 @@ class DocProperties extends Base
      **/
     protected function getLabelForNode($node, $fallback = "")
     {
+        if (false) {
+            _("prop_name_edit_img_caption");
+            _("prop_name_edit_img_copyright");
+            _("prop_name_edit_img_thumb");
+        }
+
         $label = $node->getAttribute("name");
         if (empty($label)) {
             $label = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "name");
+            if (!empty($label)) {
+
+                $label = _($label);
+            }
         }
         if (empty($label)) {
             $label = $fallback;
