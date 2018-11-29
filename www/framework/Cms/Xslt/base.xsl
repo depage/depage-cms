@@ -10,7 +10,7 @@
     xmlns:sec="http://cms.depagecms.net/ns/section"
     xmlns:edit="http://cms.depagecms.net/ns/edit"
     xmlns:exslt="http://exslt.org/common"
-    extension-element-prefixes="xsl db proj pg sec edit ">
+    extension-element-prefixes="xsl exslt db proj pg sec edit ">
 
     <xsl:key name="navigation" match="pg:*" use="@db:id"/>
 
@@ -22,7 +22,7 @@
         <xsl:param name="rel" select="@rel"/>
         <xsl:param name="pretext" select="@pretext"/>
         <xsl:param name="aptext" select="@aptext"/>
-        <xsl:param name="content"/>
+        <xsl:param name="content" />
         <xsl:param name="justapply" select="false()"/>
         <xsl:param name="redirect"/>
         <xsl:param name="altcontent"/>
@@ -33,13 +33,26 @@
 
         <xsl:if test="@lang = $lang or not(@lang)">
             <!-- get name from meta-information if link is ref to page_id -->
-            <xsl:variable name="pgmeta" select="dp:getPage($href_id, '//pg:meta')/pg:meta" />
-            <xsl:variable name="linkdesc" select="dp:choose(
-                $pgmeta/pg:linkdesc[@lang = $lang]/@value,
-                $pgmeta/pg:linkdesc[@lang = $lang]/@value,
-                key('navigation', $href_id)/@name
-                )"/>
-            <xsl:variable name="title" select="$pgmeta/pg:title[@lang = $lang]/@value"/>
+            <xsl:variable name="pgmetaText">
+                <xsl:if test="$href_id and $content = '' and not($justapply)">
+                    <xsl:copy-of select="dp:getPage($href_id, '//pg:meta')/pg:meta" />
+                </xsl:if>
+            </xsl:variable>
+            <xsl:variable name="pgmeta" select="exslt:node-set($pgmetaText)/pg:meta" />
+            <xsl:variable name="linkdesc">
+                <xsl:if test="$pgmeta">
+                    <xsl:value-of select="dp:choose(
+                        $pgmeta/pg:linkdesc[@lang = $lang]/@value,
+                        $pgmeta/pg:linkdesc[@lang = $lang]/@value,
+                        key('navigation', $href_id)/@name
+                        )"/>
+                </xsl:if>
+            </xsl:variable>
+            <xsl:variable name="title">
+                <xsl:if test="$pgmeta">
+                    <xsl:value-of select="$pgmeta/pg:title[@lang = $lang]/@value"/>
+                </xsl:if>
+            </xsl:variable>
 
             <xsl:if test="name(../..) = 'sec:unordered_list'">
                 <xsl:text disable-output-escaping="yes">&lt;li&gt;&lt;p&gt;&lt;span&gt;&lt;/span&gt;</xsl:text>
