@@ -104,6 +104,7 @@ class Tree extends Base {
     {
         $treeUrl = "project/{$this->projectName}/tree/{$this->docName}/";
         $wsUrl = new \Depage\Html\Link("jstree", "wss", "");
+        $languages = array_keys($this->project->getLanguages());
 
         return new Html("jstree.tpl", [
             'projectName' => $this->projectName,
@@ -117,6 +118,7 @@ class Tree extends Base {
             'seqNr' => $this->getCurrentSeqNr($this->docInfo->id),
             'settings' => $this->treeSettings(),
             'selected' => $selected,
+            'previewLang' => $languages[0],
         ], $this->htmlOptions);
     }
     // }}}
@@ -490,6 +492,7 @@ class Tree extends Base {
         $status = false;
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
+        // @todo move node to trash for "pages" document?
         $parent_id = $this->doc->getParentIdById($id);
         $ids = $this->doc->deleteNode($id);
         $status = count($ids) > 0;

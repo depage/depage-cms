@@ -369,6 +369,9 @@
     height: $treeLineHeight;
     line-height: $treeLineHeight;
 }
+.jstree-icon.jstree-themeicon {
+    cursor: grab;
+}
 .jstree-ocl {
     width: $iconSize;
 }

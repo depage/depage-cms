@@ -38,7 +38,7 @@ var depageCMS = (function() {
     var currentPreviewUrl,
         currentDocId,
         currentDocPropertyId,
-        currentPreviewLang = "de",
+        currentPreviewLang = "",
         currentLibPath = "",
         currentLibAccept = "",
         currentLibForceSize = "",
@@ -1121,6 +1121,10 @@ var depageCMS = (function() {
             $pageTreeContainer.removeClass("loaded").load(url + "?ajax=true", function() {
                 $pageTreeContainer.addClass("loaded");
                 $tree = $pageTreeContainer.children(".jstree-container");
+
+                if (currentPreviewLang == "") {
+                    currentPreviewLang = $tree.data("previewlang");
+                }
 
                 jstreePages = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {

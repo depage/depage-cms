@@ -14,6 +14,7 @@
     data-delta-updates-fallback-url="<?php self::a($this->treeUrl . "fallback/updates/", "auto"); ?>"
     data-delta-updates-post-url="<?php self::a($this->treeUrl, "auto"); ?>"
     data-tree-settings="<?php self::t(json_encode($this->settings)); ?>"
+    data-previewlang="<?php self::t($this->previewLang); ?>"
 >
     <?php self::e($this->nodes); ?>
 </div>
