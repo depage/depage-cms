@@ -1231,6 +1231,8 @@ var depageCMS = (function() {
             var url = baseUrl + "project/" + projectName + "/doc-properties/" + docref + "/" + nodeid + "/";
             var xmldb = new DepageXmldb(baseUrl, projectName, "pages");
 
+            $docPropertiesContainer.find("input[type='color']").spectrum("destroy");
+
             $docPropertiesContainer.removeClass("loaded").empty().load(url + "?ajax=true", function() {
                 $docPropertiesContainer.addClass("loaded");
                 var $form = $docPropertiesContainer.find('.depage-form');
@@ -1313,6 +1315,15 @@ var depageCMS = (function() {
                 $form.on("depageForm.autosaved", function() {
                     $form.find(".doc-property-meta p.release a").removeClass("disabled");
                 });
+                $form.find("input[type='color']").spectrum({
+                    preferredFormat: "hex",
+                    showButtons: false,
+                    showInitial: true,
+                    showInput: true,
+                    showPalette: false,
+                    showSelectionPalette: false
+                });
+
 
                 // @todo add ui for editing table columns and rows
                 // @todo keep squire from merging cells when deleting at the beginning or end of cell

@@ -7,6 +7,7 @@
     *display: inline;
     *zoom: 1;
     @extend %scrollY;
+    width: $treeWidth - 30px;
 }
 .sp-container.sp-flat {
     position: relative;
@@ -341,23 +342,25 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     margin:0;
     overflow:hidden;
     cursor:pointer;
-    padding: 4px;
+    padding: 7px;
     display:inline-block;
     *zoom: 1;
     *display: inline;
-    border: solid 1px #91765d;
-    background: #eee;
+    border: none;
+    background: #ffffff;
     color: #333;
     vertical-align: middle;
+    width: 100%;
+    @include radius($cornerRadius);
 }
 .sp-replacer:hover, .sp-replacer.sp-active {
-    border-color: #F0C49B;
     color: #111;
 }
 .sp-replacer.sp-disabled {
     cursor:default;
-    border-color: silver;
-    color: silver;
+    opacity: 0.5;
+    //border-color: silver;
+    //color: silver;
 }
 .sp-dd {
     padding: 2px 0;
@@ -365,15 +368,21 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     line-height: 16px;
     float:left;
     font-size:10px;
+    display: none;
 }
 .sp-preview {
     position:relative;
-    width: 25px;
-    height: 20px;
-    border: solid 1px #222;
+    width: 100%;
+    height: $treeLineHeight * 1;
+    border: none;
     margin-right: 5px;
     float:left;
     z-index: 0;
+
+    &,
+    .sp-preview-inner {
+        @include radius($cornerRadius);
+    }
 }
 
 .sp-palette {
@@ -389,6 +398,24 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 
 .sp-container {
     padding-bottom:0;
+}
+
+body > .sp-container {
+    background: $backgroundMenu;
+    min-height: 0;
+    padding: 7px;
+    height: auto;
+    @include box-shadow($shadow);
+    @include radius($cornerRadius * 0.5);
+
+    .sp-input {
+        background: #ffffff;
+        color: $textBaseColor;
+        border: none;
+    }
+    .sp-picker-container {
+        padding-bottom: 0;
+    }
 }
 
 
