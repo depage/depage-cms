@@ -43,6 +43,12 @@ progress {
             opacity: 1;
         }
     }
+    .error {
+        strong,
+        em {
+            color: $errorColor !important;
+        }
+    }
 }
 // }}}
 // {{{ #toolbarmain .task-progress

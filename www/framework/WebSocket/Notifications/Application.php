@@ -101,14 +101,19 @@ class Application implements \Wrench\Application\DataHandlerInterface,
 
         foreach ($tasks as $task) {
             $progress = $task->getProgress();
-            $status = sprintf(_("'%s' will finish in %s"), $progress->description, $this->timeFormatter->format($progress->estimated));
+            $description = sprintf(_("'%s' will finish in %s"), $progress->description, $this->timeFormatter->format($progress->estimated));
+
+            if ($task->status == 'failed') {
+                $description = _("Failed");
+            }
             $taskInfo[] = (object) [
                 'type' => "task",
                 'id' => $task->taskId,
                 'name' => $task->taskName,
                 'project' => $task->projectName,
                 'percent' => $progress->percent,
-                'status' => $status,
+                'description' => $description,
+                'status' => $task->status,
             ];
         }
         foreach ($this->clients as $id => $client) {

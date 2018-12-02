@@ -154,6 +154,7 @@ var depageCMS = (function() {
             }
 
             localJS.setupVarious();
+            localJS.setupLoginCheck();
             localJS.setupToolbar();
             localJS.setupPreviewLinks();
             localJS.setupTooltips();
@@ -188,6 +189,11 @@ var depageCMS = (function() {
             $(".teaser").click( function() {
                 document.location = $("a", this)[0].href;
             });
+        },
+        // }}}
+        // {{{ setupLoginCheck
+        setupLoginCheck: function() {
+            // @todo check if user is still logged in and show message when he isnt
         },
         // }}}
         // {{{ setupNotifications
@@ -1922,13 +1928,14 @@ var depageCMS = (function() {
             // render global progress
             // @todo keep number of tasks until back to zero
             percent = Math.round(tasks.reduce(function(a, task) { return a + task.percent; }, 0) / tasks.length);
-            localJS.renderProgressFor($wrappers.children(".task-overview"), "global", "global", "", percent, "");
+            localJS.renderProgressFor($wrappers.children(".task-overview"), "global", "global", "", percent, "", "");
 
             // render local progress
             for (i = 0; i < tasks.length; i++) {
                 var t = tasks[i];
 
-                localJS.renderProgressFor($wrappers.children(".task-list"), t.id, t.name, t.project, t.percent, t.status);
+                console.log(t);
+                localJS.renderProgressFor($wrappers.children(".task-list"), t.id, t.name, t.project, t.percent, t.description, t.status);
             }
 
             localJS.cleanTaskProgress();
@@ -1940,7 +1947,7 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ renderProgressFor
-        renderProgressFor: function($wrappers, taskId, name, project, percent, status) {
+        renderProgressFor: function($wrappers, taskId, name, project, percent, description, status) {
             var lastFrame = +(new Date()) - 100;
 
             $wrappers.each(function(i, wrapper) {
@@ -1992,7 +1999,11 @@ var depageCMS = (function() {
                 $pText.text(lastP + "%");
                 $p.attr("value", lastP);
                 $t.children("em").eq(0).text(name);
-                $t.children("em").eq(1).text(status);
+                $t.children("em").eq(1).text(description);
+
+                if (status == 'failed') {
+                    $t.addClass("error");
+                }
 
                 // @todo add different optics when task failed
 
