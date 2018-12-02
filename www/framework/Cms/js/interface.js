@@ -137,11 +137,6 @@ var depageCMS = (function() {
 
             $window.triggerHandler("switchLayout", "split");
 
-            // @todo add event to page, when clicking outside of edit interface to save current fields
-
-            // @todo test/remove
-            //localJS.openUpload("depage", "/");
-
             // setup ajax timers
             setTimeout(localJS.updateAjaxContent, 1000);
         },
@@ -773,7 +768,7 @@ var depageCMS = (function() {
                 .on("click", function(e) {
                     $fileContainer.addClass("focus");
                     $toolbar.addClass("visible");
-                    // @todo create toolbar for selected files
+
                     $libraryTreeContainer.jstree(true).looseFocus();
                 })
                 .on("click", "figure", function(e) {
@@ -1103,8 +1098,6 @@ var depageCMS = (function() {
                     $color.trigger("changeColorName.spectrum");
                 })
                 .prependTo(".sp-input-container");
-
-            // @todo add palette based on colors in colorschemes of current project?
         },
         // }}}
 
@@ -1239,7 +1232,6 @@ var depageCMS = (function() {
             var xmldb = new DepageXmldb(baseUrl, projectName, "pages");
 
             $docPropertiesContainer.removeClass("loaded").empty().load(url + "?ajax=true", function() {
-                // @todo scroll to top
                 $docPropertiesContainer.addClass("loaded");
                 var $form = $docPropertiesContainer.find('.depage-form');
 
@@ -1543,7 +1535,6 @@ var depageCMS = (function() {
                 message: locale.deleteQuestion
             });
 
-            // @todo add click event outside of shy dialogue to hide it
             $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
         },
         // }}}
@@ -1622,7 +1613,6 @@ var depageCMS = (function() {
                 message: locale.deleteQuestion
             });
 
-            // @todo add click event outside of shy dialogue to hide it
             $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
         },
         // }}}
@@ -1719,7 +1709,6 @@ var depageCMS = (function() {
         preview: function(url) {
             if (typeof url == 'undefined' || url[0] == "/") return;
 
-            // @todo add preview language on multilanguage sites
             if (parent != window) {
                 parent.depageCMS.preview(url);
             } else if ($previewFrame.length == 1) {
@@ -1812,7 +1801,6 @@ var depageCMS = (function() {
                         .addClass("layout-right")
                         .appendTo($body);
 
-                    // @todo add close button to header
                     $("<a class=\"close\" data-tooltip=\"" + locale.close + "\">" + locale.close + "</a>").appendTo(
                         $result.find("header.info")
                     ).on("click", function() {
@@ -2008,8 +1996,6 @@ var depageCMS = (function() {
                 if (status == 'failed') {
                     $t.addClass("error");
                 }
-
-                // @todo add different optics when task failed
 
                 animLoop(function(deltaT, now) {
                     var timeDiff = now - lastFrame;
