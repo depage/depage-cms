@@ -18,6 +18,20 @@ Version 2.0   {#v2-0}
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
+v2.0.2      {#v2-0-2}
+------
+
+**User Interface**
+
+- Fixed editing of footnotes
+- Fixed bug with preview language
+- Fixed bug when displaying faile background processes
+- Added ability to edit color on doc-properties
+
+**Backend**
+
+- Optimized base xsl template for performance
+
 v2.0.1      {#v2-0-1}
 ------
 

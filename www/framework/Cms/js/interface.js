@@ -1937,7 +1937,6 @@ var depageCMS = (function() {
             for (i = 0; i < tasks.length; i++) {
                 var t = tasks[i];
 
-                console.log(t);
                 localJS.renderProgressFor($wrappers.children(".task-list"), t.id, t.name, t.project, t.percent, t.description, t.status);
             }
 

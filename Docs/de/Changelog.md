@@ -18,6 +18,20 @@ Version 2.0   {#v2-0}
 - Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
+v2.0.2      {#v2-0-2}
+------
+
+**User Interface**
+
+- Bug bei der Bearbeitung von Fußnoten behoben
+- Bug bei der Sprachauswahl der Seitenvorschau behoben
+- Bug in der Anzeige fehlgeschlagender Hintergrund-Tasks behoben
+- Option zur Beareitung von Farben im Seitencontent hinzugefügt.
+
+**Backend**
+
+- Performance-Optimierung der XSL Basis-Vorlagen
+
 v2.0.1      {#v2-0-1}
 ------
 
