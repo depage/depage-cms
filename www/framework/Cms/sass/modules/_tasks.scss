@@ -48,6 +48,17 @@ progress {
         em {
             color: $errorColor !important;
         }
+        progress {
+            &::-webkit-progress-value {
+                background: $errorColor !important;
+            }
+            &::-moz-progress-bar {
+                background: $errorColor !important;
+            }
+            &::progress-value {
+                background: $errorColor !important;
+            }
+        }
     }
 }
 // }}}
