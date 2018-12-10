@@ -122,6 +122,7 @@ class DocProperties extends Base
             'jsAutosave' => true,
             'dataNode' => $node,
             'class' => "labels-on-top",
+            'ttl' => $this->auth->sessionLifetime,
         ]);
 
         if ($node->getAttribute("icon")) {
