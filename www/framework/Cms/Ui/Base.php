@@ -62,6 +62,7 @@ class Base extends \Depage\Depage\Ui\Base
                 $this->options->auth->method, // method
                 $this->options->auth->digestCompat // should we digest compatibility
             );
+            $this->auth->sessionLifetime = 7 * 24 * 60 * 60; // a week
         }
 
         if (empty($this->xmldbCache)) {
