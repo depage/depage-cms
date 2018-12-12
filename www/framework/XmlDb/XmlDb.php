@@ -574,7 +574,7 @@ class XmlDb implements XmlGetter
         }
 
         $query = $this->pdo->prepare(
-            "INSERT {$this->table_docs} SET name = :name, type = :type;"
+            "INSERT {$this->table_docs} SET name = :name, type = :type"
         );
         $query->execute([
             'name' => $docName,
