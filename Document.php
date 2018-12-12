@@ -1717,7 +1717,7 @@ class Document
         }
 
         if (is_null($id) || !is_numeric($id)) {
-            $id_query = 'NULL';
+            $id_query = null;
         } else {
             $id_query = (int) $id;
         }
