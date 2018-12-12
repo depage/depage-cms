@@ -694,9 +694,9 @@ class Document
         $dth = $this->getDoctypeHandler();
 
         if ($dth->isAllowedAdd($node, $target_id)) {
-            $dth->onAddNode($node, $target_id, $target_pos, $extras);
-
             $this->beginTransactionAltering();
+
+            $dth->onAddNode($node, $target_id, $target_pos, $extras);
 
             $success = $this->saveNodeIn($node, $target_id, $target_pos, true);
 
@@ -1716,7 +1716,7 @@ class Document
         }
 
         if (is_null($id) || !is_numeric($id)) {
-            $id_query = 'NULL';
+            $id_query = null;
         } else {
             $id_query = (int) $id;
         }
