@@ -18,6 +18,25 @@ Version 2.0   {#v2-0}
 - Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
+
+v2.0.4      {#v2-0-4}
+------
+
+**Backend**
+
+- Besseres Fehlerhandling in FsFtp hinzugfügt
+- Fehler in XmlDb behoben
+
+
+v2.0.3      {#v2-0-3}
+------
+
+**Backend**
+
+- Session Laufzeit auf maximal eine Woche verlängert
+- Fehlende Übersetzungen hinzugefügt
+
+
 v2.0.2      {#v2-0-2}
 ------
 
