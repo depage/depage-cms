@@ -61,15 +61,20 @@ class FtpCurl
 
         $options = [
             CURLOPT_USERPWD        => $username . ':' . $password,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_FTP_SSL        => CURLFTPSSL_TRY, // require SSL For both control and data connections
-            CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_PORT           => (isset($parsed['port'])) ? $parsed['port'] : 21,
             CURLOPT_FOLLOWLOCATION => true,
             //CURLOPT_VERBOSE        => true,
         ];
+
+        if ($parsed['scheme'] == "ftps") {
+            $options += [
+                CURLOPT_SSL_VERIFYPEER => true,
+                CURLOPT_SSL_VERIFYHOST => 2,
+                CURLOPT_FTP_SSL        => CURLFTPSSL_TRY, // require SSL For both control and data connections
+                CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
+            ];
+        }
 
         if ($this->getParameter('timeout')) {
             $options[CURLOPT_TIMEOUT] = $this->getParameter('timeout');
