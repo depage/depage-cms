@@ -43,7 +43,7 @@ class FtpCurl
     {
         $parsed = Fs::parseUrl($url);
         $host = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $url);
-        $path = (isset($parsed['path'])) ? $parsed['path'] : '/';
+        $path = $parsed['path'];
 
         if (static::$handle) {
             curl_reset(static::$handle);
@@ -57,7 +57,7 @@ class FtpCurl
         }
 
         $username = $parsed['user'];
-        $password = (isset($parsed['pass'])) ? $parsed['pass'] : '';
+        $password = $parsed['pass'];
 
         $options = [
             CURLOPT_USERPWD        => $username . ':' . $password,
@@ -68,6 +68,7 @@ class FtpCurl
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_PORT           => (isset($parsed['port'])) ? $parsed['port'] : 21,
             CURLOPT_FOLLOWLOCATION => true,
+            //CURLOPT_VERBOSE        => true,
         ];
 
         if ($this->getParameter('timeout')) {

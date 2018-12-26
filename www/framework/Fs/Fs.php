@@ -342,6 +342,10 @@ class Fs
             unset($parsed['query']);
         }
 
+        if (!isset($parsed['path'])) $parsed['path'] = "/";
+        if (!isset($parsed['user'])) $parsed['user'] = "";
+        if (!isset($parsed['pass'])) $parsed['pass'] = "";
+
         return $parsed;
     }
     // }}}
