@@ -18,6 +18,14 @@ Version 2.0   {#v2-0}
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
+v2.0.5      {#v2-0-5}
+------
+
+**Backend**
+
+- Fixed a bug in XmlForm when saving attribute nodes with special characters
+
+
 v2.0.4      {#v2-0-4}
 ------
 

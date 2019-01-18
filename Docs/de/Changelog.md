@@ -19,6 +19,14 @@ Version 2.0   {#v2-0}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.0.5      {#v2-0-5}
+------
+
+**Backend**
+
+- Fehler in XmlForm behoben, wenn Attribute mit Sonderzeichen gespeichert werden
+
+
 v2.0.4      {#v2-0-4}
 ------
 
