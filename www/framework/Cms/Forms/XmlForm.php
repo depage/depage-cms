@@ -173,6 +173,8 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
                     $parent->setAttribute("href", $href);
                     $parent->removeAttribute("href_id");
                 }
+            } else if ($node->nodeType == \XML_ATTRIBUTE_NODE) {
+                $node->parentNode->setAttribute($node->nodeName, $element->getValue());
             } else {
                 $node->nodeValue = $element->getValue();
             }
