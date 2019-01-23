@@ -25,5 +25,9 @@ CREATE TABLE `_xmldocs` (
 /*
     @version 1.9.0
 */
-ALTER TABLE _xmldocs MODIFY `ns` mediumtext NOT NULL DEFAULT '';
-ALTER TABLE _xmldocs MODIFY `entities` mediumtext NOT NULL DEFAULT '';
+
+/*
+    @version 2.0.0
+*/
+ALTER TABLE `_xmldocs` MODIFY `ns` mediumtext NOT NULL DEFAULT '';
+ALTER TABLE `_xmldocs` MODIFY `entities` mediumtext NOT NULL DEFAULT '';
