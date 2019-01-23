@@ -16,3 +16,7 @@ CREATE TABLE `_xmlnodetypes` (
   `xmltemplate` varchar(255) NOT NULL DEFAULT '',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4;
+
+/*
+    @version 2.0.0
+*/
