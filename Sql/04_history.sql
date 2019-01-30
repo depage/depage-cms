@@ -26,3 +26,7 @@ ALTER TABLE _history ADD COLUMN `first_saved_at` timestamp NOT NULL DEFAULT '000
     @version 1.5.25
 */
 ALTER TABLE _history MODIFY `hash` varchar(64) NOT NULL DEFAULT '';
+
+/*
+    @version 2.0.0
+*/

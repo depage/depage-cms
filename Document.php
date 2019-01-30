@@ -118,6 +118,7 @@ class Document
 
         if ($info) {
             $info->lastchange = new \DateTime($info->lastchange);
+            $info->lastrelease = $this->getHistory()->getLatestVersion()->lastsaved ?? false;
         }
 
         return $info;
@@ -196,9 +197,8 @@ class Document
     public function isReleased()
     {
         $info = $this->getDocInfo();
-        $latest = $this->getHistory()->getLatestVersion();
 
-        if (!empty($latest) && $info->lastchange->getTimestamp() <= $latest->lastsaved->getTimestamp()) {
+        if (!empty($info->lastrelease) && $info->lastchange->getTimestamp() <= $info->lastrelease->getTimestamp()) {
             return true;
         }
 
@@ -215,9 +215,8 @@ class Document
     public function isPublished()
     {
         $info = $this->getDocInfo();
-        $latest = $this->getHistory()->getLatestVersion();
 
-        return !empty($latest);
+        return !empty($info->lastrelease);
     }
     // }}}
 
@@ -426,7 +425,7 @@ class Document
             } else {
                 $this->endTransaction();
 
-                throw new Exceptions\XmlDbException('This node is no ELEMENT_NODE or node does not exist');
+                throw new Exceptions\XmlDbException('This node is no ELEMENT_NODE or node does not exist' . " {$this->doc_id}/{$id}");
             }
 
             $success = $xml_doc->loadXML($xml_str);
@@ -695,9 +694,9 @@ class Document
         $dth = $this->getDoctypeHandler();
 
         if ($dth->isAllowedAdd($node, $target_id)) {
-            $dth->onAddNode($node, $target_id, $target_pos, $extras);
-
             $this->beginTransactionAltering();
+
+            $dth->onAddNode($node, $target_id, $target_pos, $extras);
 
             $success = $this->saveNodeIn($node, $target_id, $target_pos, true);
 
@@ -1717,7 +1716,7 @@ class Document
         }
 
         if (is_null($id) || !is_numeric($id)) {
-            $id_query = 'NULL';
+            $id_query = null;
         } else {
             $id_query = (int) $id;
         }
@@ -1833,7 +1832,7 @@ class Document
             "UPDATE {$this->table_docs}
             SET
                 lastchange=:timestamp,
-                lastchange_uid=:user_id
+                lastchange_uid=IFNULL(:user_id, lastchange_uid)
             WHERE
                 id=:doc_id;"
         );

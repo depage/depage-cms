@@ -21,3 +21,7 @@ CREATE TABLE `_xmltree` (
   CONSTRAINT `_xmltree_ibfk_1` FOREIGN KEY (`id_parent`) REFERENCES `_xmltree` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `_xmltree_ibfk_2` FOREIGN KEY (`id_doc`) REFERENCES `_xmldocs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*
+    @version 2.0.0
+*/
