@@ -19,6 +19,14 @@ Version 2.0   {#v2-0}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.0.6      {#v2-0-6}
+------
+
+**Frontend**
+
+- Fehler beim Autospeichern der Dokumenteigenschaften behoben
+
+
 v2.0.5      {#v2-0-5}
 ------
 

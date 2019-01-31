@@ -18,6 +18,14 @@ Version 2.0   {#v2-0}
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
+v2.0.6      {#v2-0-6}
+------
+
+**Frontend**
+
+- Fixed bug in autosaving doc-properties
+
+
 v2.0.5      {#v2-0-5}
 ------
 
