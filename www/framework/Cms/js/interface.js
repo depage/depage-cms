@@ -1223,12 +1223,35 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ loadDocProperties
-        loadDocProperties: function(docref, nodeid) {
-            if (currentDocPropertyId == nodeid) return false;
+        loadDocProperties: function(docref, nodeId) {
+            if (currentDocPropertyId == nodeId) return false;
 
-            currentDocPropertyId = nodeid;
+            var $form = $docPropertiesContainer.find('.depage-form');
+            if ($form.length > 0) {
+                if ($form[0].data.hasChanged) {
+                    $form[0].data.autosave();
+                }
 
-            var url = baseUrl + "project/" + projectName + "/doc-properties/" + docref + "/" + nodeid + "/";
+                if ($form[0].data.saving === true) {
+                    $form.hide();
+                    setTimeout(function() {
+                        localJS.loadDocProperties(docref, nodeId);
+                    }, 200);
+                } else {
+                    localJS.loadDocPropertiesNow(docref, nodeId);
+                }
+
+                return false;
+            }
+
+            localJS.loadDocPropertiesNow(docref, nodeId);
+        },
+        // }}}
+        // {{{ loadDocProperties
+        loadDocPropertiesNow: function(docref, nodeId) {
+            currentDocPropertyId = nodeId;
+
+            var url = baseUrl + "project/" + projectName + "/doc-properties/" + docref + "/" + nodeId + "/";
             var xmldb = new DepageXmldb(baseUrl, projectName, "pages");
 
             $docPropertiesContainer.find("input[type='color']").spectrum("destroy");
