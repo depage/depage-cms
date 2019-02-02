@@ -5,6 +5,7 @@
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:dp="http://cms.depagecms.net/ns/depage"
     xmlns:db="http://cms.depagecms.net/ns/database"
     xmlns:proj="http://cms.depagecms.net/ns/project"
     xmlns:pg="http://cms.depagecms.net/ns/page"
@@ -17,13 +18,13 @@
     <xsl:param name="type"></xsl:param>
     <xsl:param name="userid"><xsl:value-of select="$var-fb-Account" /></xsl:param>
     <xsl:param name="sitename"><xsl:value-of select="$var-Title" /></xsl:param>
-    <xsl:param name="url"><xsl:value-of select="substring(document(concat('pageref://', $currentPageId, '/', $currentLang,'/absolute'))/., 1)" /></xsl:param>
+    <xsl:param name="url"><xsl:value-of select="dp:getPageRef($currentPageId, $currentLang, true())" /></xsl:param>
     <xsl:param name="description"><xsl:value-of select="//pg:meta/pg:desc[@lang = $currentLang]/@value"/></xsl:param>
     <xsl:param name="image"></xsl:param>
 
     <xsl:variable name="ogtitle">
         <xsl:choose>
-            <xsl:when test="$title != ''"><xsl:value-of select="$title" /></xsl:when>
+            <xsl:when test="not($title = '')"><xsl:value-of select="$title" /></xsl:when>
             <xsl:otherwise>
                 <!-- get title from meta -->
                 <xsl:choose>
@@ -46,7 +47,7 @@
 
     <xsl:variable name="imageurl">
         <xsl:choose>
-            <xsl:when test="starts-with($image, 'libref:')"><xsl:value-of select="concat($baseUrl, substring(document($image)/., 2))" /></xsl:when>
+            <xsl:when test="starts-with($image, 'libref://')"><xsl:value-of select="dp:getLibRef($image)" /></xsl:when>
             <xsl:otherwise><xsl:value-of select="$image" /></xsl:otherwise>
         </xsl:choose>
     </xsl:variable>

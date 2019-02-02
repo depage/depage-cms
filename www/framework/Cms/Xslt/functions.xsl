@@ -92,8 +92,9 @@
     -->
     <func:function name="dp:getLibRef">
         <xsl:param name="url" />
+        <xsl:param name="absolute" select="false()" />
 
-        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::getLibRef', string($url))" />
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::getLibRef', string($url), $absolute)" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:getHref() -->

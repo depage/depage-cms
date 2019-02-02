@@ -614,7 +614,7 @@ abstract class Transformer
      * @param mixed $path
      * @return void
      **/
-    public function xsltGetLibRef($path)
+    public function xsltGetLibRef($path, $absolute = false)
     {
         $url = parse_url($path);
 
@@ -624,10 +624,10 @@ abstract class Transformer
             $path = "lib/" . $url['host'];
         }
 
-        if ($this->useBaseUrl) {
+        if ($absolute == "absolute" || $this->useAbsolutePaths) {
+            $path = $this->baseUrl . $path;
+        } else if ($this->useBaseUrl) {
             $path = $path;
-        } else if ($this->useAbsolutePaths) {
-            $path = $this->baseUrl . "/" . $path;
         } else {
             $url = new \Depage\Http\Url($this->currentPath);
             $path = $url->getRelativePathTo($path);
@@ -654,10 +654,10 @@ abstract class Transformer
             $path = $lang . $urlsByPageId[$pageId];
         }
 
-        if ($this->useBaseUrl) {
-            $path = $path;
-        } else if ($absolute == "absolute" || $this->useAbsolutePaths) {
+        if ($absolute == "absolute" || $this->useAbsolutePaths) {
             $path = $this->baseUrl . $path;
+        } else if ($this->useBaseUrl) {
+            $path = $path;
         } else {
             $url = new \Depage\Http\Url($this->currentPath);
             $path = $url->getRelativePathTo($path);
