@@ -781,10 +781,23 @@ class Project extends \Depage\Entity\Entity
     public function getDefaultTargetUrl()
     {
         $target = rtrim(reset($this->getPublishingTargets())->baseurl, "/");
+
+        return $target;
+
+    }
+    // }}}
+    // {{{ getDefaultLanguage()
+    /**
+     * @brief getDefaultLanguage
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getDefaultLanguage()
+    {
         $lang = reset(array_keys($this->getLanguages()));
 
-        return "$target/$lang";
-
+        return $lang;
     }
     // }}}
 

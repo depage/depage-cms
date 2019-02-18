@@ -23,6 +23,7 @@
             "chooseFileMessage" => _("Please choose a file"),
             "close" => _("Close"),
             "copy" => _("Copy"),
+            "copyUrl" => _("Copy URL to Clipboard"),
             "create" => _("New"),
             "createNew" => _("Create new:"),
             "createNewAtEnd" => _("Create new element at the end"),

@@ -63,6 +63,8 @@ var depageCMS = (function() {
 
     var currentLayout;
 
+    // various helper functions
+    // {{{ $.scrollParent
     jQuery.fn.scrollParent = function() {
         var position = this.css( "position" ),
         excludeStaticParent = position === "absolute",
@@ -76,8 +78,8 @@ var depageCMS = (function() {
 
         return position === "fixed" || !scrollParent.length ? $( this[ 0 ].ownerDocument || document ) : scrollParent;
     };
-
-    // Cross browser, backward compatible solution
+    // }}}
+    // {{{ requestAnimationFrame()
     (function( window, Date ) {
         // feature testing
         var raf = window.requestAnimationFrame     ||
@@ -111,10 +113,35 @@ var depageCMS = (function() {
             loop();
         };
     })(window, Date);
-
+    // }}}
+    // {{{ lerp()
     function lerp(min, max, fraction) {
         return (max - min) * fraction + min;
     }
+    // }}}
+    // {{{ copyToClipboard()
+    function copyToClipboard(text) {
+        if (window.clipboardData && window.clipboardData.setData) {
+            // IE specific code path to prevent textarea being shown while dialog is visible.
+            return clipboardData.setData("Text", text);
+
+        } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
+            var textarea = document.createElement("textarea");
+            textarea.textContent = text;
+            textarea.style.position = "fixed";  // Prevent scrolling to bottom of page in MS Edge.
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                return document.execCommand("copy");  // Security exception may be thrown by some browsers.
+            } catch (ex) {
+                console.warn("Copy to clipboard failed.", ex);
+                return false;
+            } finally {
+                document.body.removeChild(textarea);
+            }
+        }
+    }
+    // }}}
 
     // local Project instance that holds all variables and function
     var localJS = {
@@ -813,6 +840,12 @@ var depageCMS = (function() {
                             label: locale.delete,
                             action: function() {
                                 localJS.deleteSelectedFiles();
+                            }
+                        },
+                        _copyUrl: {
+                            label: locale.copyUrl,
+                            action: function() {
+                                copyToClipboard($thumb.attr("data-url"));
                             }
                         }
                     });

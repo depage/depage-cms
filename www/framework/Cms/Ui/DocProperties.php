@@ -351,7 +351,7 @@ class DocProperties extends Base
 
         if ($pageInfo->type == "Depage\\Cms\\XmlDocTypes\\Page") {
             // {{{ add published/release status
-            $target = $this->project->getDefaultTargetUrl();
+            $target = $this->project->getDefaultTargetUrl() . "/" . $this->project->getDefaultLanguage();
 
             $url = $target . $pageInfo->url;
             $icon = "";

@@ -18,6 +18,8 @@
     $info = $mediainfo->getInfo($imgSrc);
     $lastPublishDate = $this->project->getLastPublishDateOf("lib/" . $file);
 
+    $target = $this->project->getDefaultTargetUrl() . "/lib/";
+
     if ($lastPublishDate) {
         $class .= " published";
     } else {
@@ -27,6 +29,7 @@
 <figure <?php self::attr([
     'class' => "thumb " . $class,
     'data-libref' => $this->file,
+    'data-url' => $target . $file,
     'data-width' => $info['width'] ?? -1,
     'data-height' => $info['height'] ?? -1,
     'data-ext' => $ext,
