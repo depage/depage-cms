@@ -571,11 +571,11 @@ abstract class Transformer
      */
     public function getUrlsByPageId()
     {
-        if (empty($this->urlsByPageId)) {
+        if (empty($this->pageIdByUrl)) {
             $this->getAllUrls();
         }
 
-        return $this->urlsByPageId;
+        return array_flip($this->pageIdByUrl);
     }
     // }}}
     // {{{ getPageIdFor
@@ -649,9 +649,11 @@ abstract class Transformer
             $lang = $this->lang;
         }
         $path = "";
-        $urlsByPageId = $this->getUrlsByPageId();
-        if (isset($urlsByPageId[$pageId])) {
-            $path = $lang . $urlsByPageId[$pageId];
+
+        $this->getAllUrls();
+
+        if (isset($this->urlsByPageId[$pageId])) {
+            $path = $lang . $this->urlsByPageId[$pageId];
         }
 
         if ($absolute == "absolute" || $this->useAbsolutePaths) {

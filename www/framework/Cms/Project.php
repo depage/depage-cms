@@ -1156,6 +1156,7 @@ class Project extends \Depage\Entity\Entity
             ));
             \$project = %s;
             \$publisher = new \\Depage\\Publisher\\Publisher(%s, \$fs, %s);
+            \$urls = new \\Depage\\Publisher\\Urls(%s, %s);
             \$transformer = %s;
             \$transformCache = %s;
         ", [
@@ -1163,6 +1164,8 @@ class Project extends \Depage\Entity\Entity
             $conf->output_user,
             $conf->output_pass,
             $this,
+            $publishPdo,
+            $publishId,
             $publishPdo,
             $publishId,
             $transformer,
@@ -1202,12 +1205,15 @@ class Project extends \Depage\Entity\Entity
         foreach ($urls as $pageId => $url) {
             foreach ($languages as $lang => $name) {
                 $target = $lang . $url;
+
                 $task->addSubtask("publishing $target", "
                     \$publisher->publishString(
                         \$transformer->transformUrl(%s, %s),
                         %s,
                         \$updated
-                    ); if (%s && \$updated) {
+                    );
+                    \$urls->addUrl(%s, %s);
+                    if (%s && \$updated) {
                         \$request = new \\Depage\\Http\\Request(%s);
                         \$request->allowUnsafeSSL = true;
                         \$response = \$request->setPostData(%s)->execute();
@@ -1215,6 +1221,8 @@ class Project extends \Depage\Entity\Entity
                         $url,
                         $lang,
                         $target,
+                        $pageId,
+                        $url,
                         $apiAvailable,
                         $baseUrl . "api/search/index/",
                         ["url" => $baseUrl . $target],
@@ -1599,8 +1607,7 @@ class Project extends \Depage\Entity\Entity
         $conf = $targets[$publishId];
         $baseurl = $this->getBaseUrl($publishId);
 
-        $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $conf->template_set . "-live-" . $publishId);
-        $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
+        $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set);
         $urls = $transformer->getUrlsByPageId();
 
         $index = [];
