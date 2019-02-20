@@ -19,6 +19,11 @@ class Redirector
     protected $pages = [];
 
     /**
+     * @brief alternatePages
+     **/
+    protected $alternatePages = [];
+
+    /**
      * @brief pageTree
      **/
     protected $pageTree = [];
@@ -123,7 +128,7 @@ class Redirector
      **/
     public function setAlternatePages($urls)
     {
-
+        $this->alternatePages = $urls;
     }
     // }}}
     // {{{ setAliases()
@@ -252,6 +257,10 @@ class Redirector
     {
         $altPage = "";
         $isFallback = false;
+
+        if (isset($this->alternatePages[$request])) {
+            return new Result($this->alternatePages[$request], $isFallback);
+        }
 
         $request = explode("/", $request);
 
