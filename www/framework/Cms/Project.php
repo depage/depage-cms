@@ -1607,6 +1607,9 @@ class Project extends \Depage\Entity\Entity
         $xmlgetter = $this->getXmlGetter();
         $xml = $xmlgetter->getDocXml("pages");
 
+        $publishPdo = clone $this->pdo;
+        $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->name;
+
         $targets = $this->getPublishingTargets();
         $languages = array_keys($this->getLanguages());
         $defaultLanguage = current($languages);
@@ -1615,7 +1618,8 @@ class Project extends \Depage\Entity\Entity
         $baseurl = $this->getBaseUrl($publishId);
 
         $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set);
-        $urls = $transformer->getUrlsByPageId();
+
+        $urls = new \Depage\Publisher\Urls($publishPdo, $publishId);
 
         $index = [];
         $index[] = "<?php";
@@ -1627,7 +1631,8 @@ class Project extends \Depage\Entity\Entity
         $index[] = "\$redirector = new \\Depage\\Redirector\\Redirector(" . var_export($baseurl, true) . ");";
 
         $index[] = "\$redirector->setLanguages(" . var_export($languages, true) . ");";
-        $index[] = "\$redirector->setPages(" . var_export($urls, true) . ");";
+        $index[] = "\$redirector->setPages(" . var_export($urls->getCanonicalUrls(), true) . ");";
+        $index[] = "\$redirector->setAlternatePages(" . var_export($urls->getAlternateUrls(), true) . ");";
 
         $projectConf = $this->getProjectConfig();
         if (isset($projectConf->aliases)) {

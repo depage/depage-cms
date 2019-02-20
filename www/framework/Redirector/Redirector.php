@@ -114,6 +114,18 @@ class Redirector
         return $this;
     }
     // }}}
+    // {{{ setAlternatePages()
+    /**
+     * @brief setAlternatePages
+     *
+     * @param mixed $urls
+     * @return void
+     **/
+    public function setAlternatePages($urls)
+    {
+
+    }
+    // }}}
     // {{{ setAliases()
     /**
      * @brief setAliases
