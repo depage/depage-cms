@@ -1206,31 +1206,38 @@ class Project extends \Depage\Entity\Entity
             foreach ($languages as $lang => $name) {
                 $target = $lang . $url;
 
-                $task->addSubtask("publishing $target", "
-                    \$publisher->publishString(
+                $pubId = $task->addSubtask(
+                    "publishing $target",
+                    "\$publisher->publishString(
                         \$transformer->transformUrl(%s, %s),
                         %s,
                         \$updated
+                    );",
+                    [$url, $lang, $target],
+                    $initId
+                );
+                if ($apiAvailable) {
+                    $task->addSubtask(
+                        "indexing $target",
+                        "if (\$updated) {
+                            \$request = new \\Depage\\Http\\Request(%s);
+                            \$request->allowUnsafeSSL = true;
+                            \$response = \$request->setPostData(%s)->execute();
+                        }",
+                        [$baseUrl . "api/search/index/", ["url" => $baseUrl . $target]],
+                        $pubId
                     );
-                    \$urls->addUrl(%s, %s);
-                    if (%s && \$updated) {
-                        \$request = new \\Depage\\Http\\Request(%s);
-                        \$request->allowUnsafeSSL = true;
-                        \$response = \$request->setPostData(%s)->execute();
-                    }", [
-                        $url,
-                        $lang,
-                        $target,
-                        $pageId,
-                        $url,
-                        $apiAvailable,
-                        $baseUrl . "api/search/index/",
-                        ["url" => $baseUrl . $target],
-                ], $initId);
+                }
             }
+            $task->addSubtask(
+                "adding canonical url for $target",
+                "\$urls->addUrl(%s, %s);",
+                [$pageId, $url],
+                $pubId
+            );
         }
 
-        // @todo add files that should be generated automatically (e.g. through graohics)
+        // @todo add files that should be generated automatically (e.g. through graphics)
 
         // publish sitemap
         $task->addSubtask("publishing sitemap", "
