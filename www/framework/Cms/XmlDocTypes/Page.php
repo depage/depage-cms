@@ -189,22 +189,22 @@ class Page extends Base
 
                 // load template data
                 $xml = new \Depage\Xml\Document();
-                $xml->load($templatePath);
+                if ($xml->load($templatePath)) {
+                    $data = "";
+                    foreach ($xml->documentElement->childNodes as $node) {
+                        if ($node->nodeType != \XML_COMMENT_NODE) {
+                            $data .= $xml->saveXML($node);
+                        }
+                        if ($node->nodeType == \XML_ELEMENT_NODE) {
+                            $nodetypes[$result->id]->nodeName = $node->nodeName;
+                            $nodetypes[$result->id]->newName = $node->getAttribute("name");
+                        }
+                    }
+                    $nodetypes[$result->id]->xmlTemplateData = $data;
 
-                $data = "";
-                foreach ($xml->documentElement->childNodes as $node) {
-                    if ($node->nodeType != \XML_COMMENT_NODE) {
-                        $data .= $xml->saveXML($node);
-                    }
-                    if ($node->nodeType == \XML_ELEMENT_NODE) {
-                        $nodetypes[$result->id]->nodeName = $node->nodeName;
-                        $nodetypes[$result->id]->newName = $node->getAttribute("name");
-                    }
+                    // get date of last change
+                    $nodetypes[$result->id]->lastchange = filemtime($templatePath);
                 }
-                $nodetypes[$result->id]->xmlTemplateData = $data;
-
-                // get date of last change
-                $nodetypes[$result->id]->lastchange = filemtime($templatePath);
             }
         } while ($result);
 
