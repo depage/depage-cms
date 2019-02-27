@@ -65,7 +65,7 @@ class Application implements \Wrench\Application\DataHandlerInterface,
                 foreach ($clients as $client) {
                     try {
                         $client->send($data);
-                    } catch (\Wrench\Exception\SocketException $e) {
+                    } catch (\Wrench\Exception\SocketException | \Wrench\Exception\ConnectionException $e) {
                         $this->onDisconnect($client);
                     }
                 }
