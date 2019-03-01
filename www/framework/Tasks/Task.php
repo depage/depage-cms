@@ -55,12 +55,12 @@ class Task {
     /**
      * @brief numberOfSubtasks number of subtasks to load at the same time
      **/
-    protected $numberOfSubtasks = 100;
+    protected $numberOfSubtasks = 2000;
 
     /**
      * @brief timeToCheckSubtasks seconds after which task runner will check for new subtask
      **/
-    protected $timeToCheckSubtasks = 10;
+    protected $timeToCheckSubtasks = 30;
 
     /**
      * @brief lastCheck time of last check for new subtasks
@@ -178,8 +178,16 @@ class Task {
     static public function escapeParam($param) {
         switch (gettype($param)) {
             case 'object':
-            case 'array':
                 return "unserialize(" . var_export(serialize($param), true) . ")";
+            break;
+            case 'array':
+                $code = "";
+                foreach ($param as $key => $val) {
+                    $code .= self::escapeParam($key) . " => " . self::escapeParam($val) . ",";
+                }
+                $code = trim($code, ",");
+
+                return "[$code]";
             break;
             default:
                 return var_export($param, true);
@@ -264,7 +272,7 @@ class Task {
     public function getNextSubtask() {
         if (time() - $this->timeToCheckSubtasks > $this->lastCheck) {
             // clear subtasks so that subtask have to be reloaded
-            $this->subtasks = array();
+            $this->subtasks = [];
         }
         $subtask = current($this->subtasks);
 
@@ -549,6 +557,8 @@ class Task {
         }
 
         ksort($this->subtasks);
+
+        //$this->generateTaskRunFile();
     }
     // }}}
     // {{{ loadSubtaskById()
@@ -579,6 +589,32 @@ class Task {
                 $this->subtasks[$subtask->id] = $subtask;
             }
         }
+    }
+    // }}}
+
+    // {{{ generateTaskRunFile()
+    /**
+     * @brief generateTaskRunFile
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function generateTaskRunFile()
+    {
+        if (count($this->subtasks) == 0) {
+            return;
+        }
+
+        $file = "logs/task-" . uniqid() . ".php";
+
+        $fp = fopen($file, "w");
+
+        fwrite($fp, "<?php\n");
+        foreach ($this->subtasks as $t) {
+            fwrite($fp, $t->php . "\n");
+        }
+
+        fclose($fp);
     }
     // }}}
 }
