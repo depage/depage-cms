@@ -17,6 +17,14 @@ use \Depage\Notifications\Notification;
 
 class Project extends Base
 {
+    public $defaults = [
+        'graphics' => [
+            'extension'     => 'gd',
+            'executable'    => '',
+            'background'    => 'transparent',
+            'optimize'      => false,
+        ],
+    ];
     // {{{ _init
     public function _init(array $importVariables = []) {
         parent::_init($importVariables);
@@ -29,6 +37,7 @@ class Project extends Base
             $this->project = new \Depage\Cms\Project($this->pdo, $this->xmldbCache);
         } else {
             $this->project = $this->getProject($this->projectName);
+            $this->project->setGraphicsOptions($this->options->graphics);
         }
 
         if (!$this->project) {
