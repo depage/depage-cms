@@ -14,7 +14,7 @@ class Indexer
     /**
      * @brief xpathBase
      **/
-    protected $xpathBase = "/html/head/base/@href";
+    protected $xpathBase = "//base/@href";
 
     /**
      * @brief xpathExcluded
@@ -394,14 +394,15 @@ class Indexer
             }
         }
 
-        $this->images = array_unique($images);
+        $images = array_unique($images);
 
         // update relative image paths to be dependent on base or on current url
         $url = new \Depage\Http\Url($this->baseUrl);
-        foreach ($this->images as &$image) {
+        foreach ($images as &$image) {
             $image = $url->getAbsolutePathTo($image);
-
         }
+
+        $this->images = array_unique($images);
 
         return $this->images;
     }
