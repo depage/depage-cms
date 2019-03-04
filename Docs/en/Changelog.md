@@ -18,6 +18,23 @@ Version 2.0   {#v2-0}
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
+
+v2.0.7      {#v2-0-7}
+------
+
+**Frontend**
+
+- added option to copy live-url of published file
+
+**Backend**
+
+- enhanced publishing to allow redirect to new url when renaming published page
+- updated published to autogenerate custom image sizes
+- fixed bug when loading xml templates
+- enhanced xsl templates when generating absolute references
+- optimized performance of publishing task
+
+
 v2.0.6      {#v2-0-6}
 ------
 

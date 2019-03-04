@@ -1,6 +1,6 @@
 <div class="news-list">
     <div class="news">
-        <h2>Version 2.0.6 released</h2>
+        <h2>Version 2.0.7 released</h2>
         <p><a href="https://docs.depage.net/depage-cms-manual/<?php echo(DEPAGE_LANG); ?>/changelog.html" target="_blank">changelog</a></p>
     </div>
 </div>

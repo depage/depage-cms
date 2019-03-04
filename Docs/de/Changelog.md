@@ -19,6 +19,22 @@ Version 2.0   {#v2-0}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.0.7      {#v2-0-7}
+------
+
+**Frontend**
+
+- Option hinzugefügt, um die Live-Url veröffentlichter Bilder zu kopieren
+
+**Backend**
+
+- Veröffentlichung verbessert, um umbenannte Seiten automatisch den der neuen URL weiterzuleiten
+- Veröffentlichung verbessert, um automatisch alle benötigten Bilder zu generieren
+- Bug beim Laden der XML-Templates behoben
+- XSL Templates verbessert, um absolute Verweise zu generieren
+- Performance des Veröffentlichens optimiert
+
+
 v2.0.6      {#v2-0-6}
 ------
 
