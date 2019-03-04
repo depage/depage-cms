@@ -119,6 +119,23 @@ class XmlDbHistory implements XmlGetter
         }
     }
     // }}}
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array(
+            'pdo',
+            'xmlDb',
+            'db_ns',
+            'table_prefix',
+            'table_docs',
+            'table_history',
+            'options',
+        );
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
