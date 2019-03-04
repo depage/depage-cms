@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-18 18:36+0100\n"
+"POT-Creation-Date: 2019-03-04 19:43+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2022,41 +2022,41 @@ msgstr ""
 msgid "Shows news and version info"
 msgstr ""
 
-#: Cms/Ui/Project.php:62
+#: Cms/Ui/Project.php:71
 msgid "Project Settings"
 msgstr ""
 
-#: Cms/Ui/Project.php:63 Cms/Ui/Project.php:87 Cms/Ui/DocProperties.php:487
+#: Cms/Ui/Project.php:72 Cms/Ui/Project.php:96 Cms/Ui/DocProperties.php:487
 msgid "Tags"
 msgstr ""
 
-#: Cms/Ui/Project.php:64 Cms/Ui/Project.php:82
+#: Cms/Ui/Project.php:73 Cms/Ui/Project.php:91
 msgid "Languages"
 msgstr ""
 
-#: Cms/Ui/Project.php:65 Cms/Ui/Project.php:96
+#: Cms/Ui/Project.php:74 Cms/Ui/Project.php:105
 msgid "Variables"
 msgstr ""
 
-#: Cms/Ui/Project.php:66 Cms/Ui/Newsletter.php:48 Cms/tpl/projectlist.tpl:29
+#: Cms/Ui/Project.php:75 Cms/Ui/Newsletter.php:48 Cms/tpl/projectlist.tpl:29
 #: Cms/tpl/newsletterList.tpl:49 Cms/tpl/publish.tpl:5
 #: Cms/tpl/toolbar_main.tpl:52
 msgid "Publish"
 msgstr ""
 
-#: Cms/Ui/Project.php:67
+#: Cms/Ui/Project.php:76
 msgid "Backup"
 msgstr ""
 
-#: Cms/Ui/Project.php:68
+#: Cms/Ui/Project.php:77
 msgid "Import"
 msgstr ""
 
-#: Cms/Ui/Project.php:77
+#: Cms/Ui/Project.php:86
 msgid "New Project"
 msgstr ""
 
-#: Cms/Ui/Project.php:83
+#: Cms/Ui/Project.php:92
 msgid ""
 "depage-cms allows to have pages in multiple languages. Here you can add or "
 "edit the available languages.\n"
@@ -2064,53 +2064,53 @@ msgid ""
 "available in the users language. You can adjust the order by drag and drop."
 msgstr ""
 
-#: Cms/Ui/Project.php:88
+#: Cms/Ui/Project.php:97
 msgid ""
 "Tags help you to categorize and filter your pages. Your templates have to "
 "support them though.\n"
 "You can adjust the order by drag and drop."
 msgstr ""
 
-#: Cms/Ui/Project.php:97
+#: Cms/Ui/Project.php:106
 msgid ""
 "Variables can be used for settings and can globally change the behaviour of "
 "various templates."
 msgstr ""
 
-#: Cms/Ui/Project.php:101
+#: Cms/Ui/Project.php:110
 msgid "Publishing targets"
 msgstr ""
 
-#: Cms/Ui/Project.php:102
+#: Cms/Ui/Project.php:111
 msgid ""
 "depage-cms allows to publish you pages to either a local folder or to "
 "another webserver to serve from. The first publishing targets acts as the "
 "default target. You can adjust the order by drag and drop."
 msgstr ""
 
-#: Cms/Ui/Project.php:114
+#: Cms/Ui/Project.php:123
 #, php-format
 msgid "Project Settings: %s"
 msgstr ""
 
-#: Cms/Ui/Project.php:116
+#: Cms/Ui/Project.php:125
 msgid "Add new Project"
 msgstr ""
 
-#: Cms/Ui/Project.php:283
+#: Cms/Ui/Project.php:292
 msgid "You are not allowed to publish this project."
 msgstr ""
 
-#: Cms/Ui/Project.php:310
+#: Cms/Ui/Project.php:319
 #, php-format
 msgid "Publish Project '%s'"
 msgstr ""
 
-#: Cms/Ui/Project.php:340
+#: Cms/Ui/Project.php:349
 msgid "You are not allowed to release pages on this project."
 msgstr ""
 
-#: Cms/Ui/Project.php:366
+#: Cms/Ui/Project.php:375
 #, php-format
 msgid "Release Pages for Project '%s'"
 msgstr ""
@@ -2511,11 +2511,11 @@ msgstr ""
 msgid "Switch to preview-only layout"
 msgstr ""
 
-#: Cms/Project.php:1039
+#: Cms/Project.php:1056
 msgid "Document Release Request"
 msgstr ""
 
-#: Cms/Project.php:1040
+#: Cms/Project.php:1057
 #, php-format
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr ""

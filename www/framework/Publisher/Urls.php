@@ -117,8 +117,9 @@ class Urls
      **/
     public function getCanonicalUrls()
     {
+        // @todo fix order of canonical urls to keep order of pages in tree
         $urls = [];
-        $query = $this->pdo->prepare("SELECT pageId, url FROM {$this->tableUrls} WHERE publishId = :publishId AND canonical = 1 ORDER BY pageId ASC");
+        $query = $this->pdo->prepare("SELECT pageId, url FROM {$this->tableUrls} WHERE publishId = :publishId AND canonical = 1 ORDER BY id ASC");
         $query->execute(array(
             'publishId' => $this->publishId,
         ));
