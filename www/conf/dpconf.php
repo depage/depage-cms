@@ -108,6 +108,7 @@ $conf = array(
         'graphics' => [
             'extension' => "gm",
             'executable' => "/usr/bin/gm",
+            'optimize' => true,
         ],
         'env' => 'production',
     ),
@@ -118,6 +119,7 @@ $conf = array(
         'env' => 'production',
         'extension' => "gm",
         'executable' => "/usr/bin/gm",
+        'optimize' => true,
         'base' => 'inherit',
         'env' => 'production',
     ),
@@ -141,16 +143,18 @@ $conf = array(
         'graphics' => [
             'extension' => "gm",
             'executable' => "/usr/bin/gm",
+            'optimize' => true,
         ],
         'env' => 'production',
     ),
     // }}}
-    // {{{ edit.depage.net graphics
+    // {{{ editbeta.depage.net graphics
     'editbeta.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
         'handler' => 'Depage\Graphics\Ui\Graphics',
         'env' => 'production',
         'extension' => "gm",
         'executable' => "/usr/bin/gm",
+        'optimize' => true,
         'base' => 'inherit',
         'env' => 'production',
     ),
