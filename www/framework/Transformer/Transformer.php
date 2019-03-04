@@ -257,11 +257,6 @@ abstract class Transformer
 
         $content = $this->transformDoc($pageId, $pagedataId, $lang);
 
-        $indexer = new \Depage\Search\Indexer();
-        $images = $indexer->loadXml($content, $this->baseUrl . $this->lang . $this->currentPath)->getImages();
-        // @todo load images to have generated images forced to be generated?
-        // @todo warn about non-existant images?
-
         return $content;
     }
     // }}}
