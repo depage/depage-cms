@@ -13,6 +13,7 @@ class Imgurl
     protected $options = array();
     protected $actions = array();
     protected $invalidAction = false;
+    protected $notFound = false;
     protected $cachePath = '';
     /*
      * action aliases
@@ -49,9 +50,13 @@ class Imgurl
     /*
      * Analyzes the image url and set the path for srcImg and outImg
      */
-    protected function analyze()
+    protected function analyze($url)
     {
-        if (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
+        if (isset($this->options['baseUrl']) && isset($this->options['cachePath'])) {
+            $baseUrl = rtrim($this->options['baseUrl'], '/');
+            $this->cachePath = $this->options['cachePath'];
+            $relativePath = $this->options['relativePath'];
+        } else if (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
             // we are using depage-framework so use constants for paths
             $info = parse_url(DEPAGE_BASE);
             $baseUrl = rtrim($info['path'], '/');
@@ -87,14 +92,22 @@ class Imgurl
         }
 
         // get image name
-        $imgUrl = substr($_SERVER["REQUEST_URI"], strlen($baseUrl) + 1);
+        $imgUrl = substr($url, strlen($baseUrl) + 1);
 
         // get action parameters
         preg_match("/(.*\.(jpg|jpeg|gif|png|webp|pdf|eps|svg|tif|tiff))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);
 
-        $this->srcImg = $relativePath . rawurldecode($matches[1]);
-        $this->outImg = $this->cachePath . rawurldecode($matches[0]);
-        $this->actions = $this->analyzeActions($matches[3]);
+        $this->rendered = false;
+        $this->id = "";
+
+        if (isset($matches[3])) {
+            $this->id = rawurldecode($matches[0]);
+            $this->srcImg = $relativePath . rawurldecode($matches[1]);
+            $this->outImg = $this->cachePath . $this->id;
+            $this->actions = $this->analyzeActions($matches[3]);
+        } else {
+            $this->invalidAction = true;
+        }
     }
     // }}}
     // {{{ analyzeActions
@@ -104,6 +117,7 @@ class Imgurl
     protected function analyzeActions($actionString)
     {
         $this->invalidAction = false;
+        $this->notFound = false;
         $this->actions = array();
         $actions = explode(".", $actionString);
 
@@ -145,19 +159,26 @@ class Imgurl
     }
     // }}}
     // {{{ render
-    public function render()
+    public function render($url = null)
     {
-        $this->analyze();
+        if (is_null($url)) {
+            $url = $_SERVER["REQUEST_URI"];
+        }
+        $this->analyze($url);
 
         if ($this->invalidAction) {
-            header("HTTP/1.1 500 Internal Server Error");
-            echo("invalid image action");
-            die();
+            return $this;
         }
         // make cache diretories
         $outDir = dirname($this->outImg);
         if (!is_dir($outDir)) {
             mkdir($outDir, 0755, true);
+        }
+        if (!file_exists($this->srcImg)) {
+            // src image does not exist
+            $this->notFound = true;
+
+            return $this;
         }
         if (file_exists($this->outImg) && filemtime($this->outImg) >= filemtime($this->srcImg)) {
             // rendered image does exist already
@@ -177,14 +198,11 @@ class Imgurl
 
             // render image out
             $graphics->render($this->srcImg, $this->outImg);
+            $this->rendered = true;
         } catch (Exceptions\FileNotFound $e) {
-            header("HTTP/1.1 404 Not Found");
-            echo("File not found.");
-            die();
+            $this->notFound = true;
         } catch (Exceptions\Exception $e) {
-            header("HTTP/1.1 500 Internal Server Error");
-            echo("Invalid image action.");
-            die();
+            $this->invalidAction = true;
         }
 
         return $this;
@@ -196,6 +214,16 @@ class Imgurl
     {
         $info = pathinfo($this->outImg);
         $ext = strtolower($info['extension']);
+
+        if ($this->invalidAction) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo("invalid image action");
+            die();
+        } else if ($this->notFound) {
+            header("HTTP/1.1 404 Not Found");
+            echo("File not found.");
+            die();
+        }
 
         if ($ext == "jpg" || $ext ==  "jpeg") {
             header("Content-type: image/jpeg");
