@@ -83,4 +83,4 @@ pushtwins: all
 	    --exclude '.DS_Store' \
 	    --exclude '.git' \
 	    --exclude 'cache/' \
-	    www/framework www/conf www/index.php jonas@twins:/var/www/depagecms/net.depage.edit/
+	 \   www/framework www/conf www/index.php jonas@twins:/var/www/depagecms/net.depage.edit/
