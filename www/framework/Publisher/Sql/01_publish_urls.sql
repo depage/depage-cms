@@ -15,3 +15,9 @@ CREATE TABLE _proj_PROJECTNAME_published_urls (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
 
 CREATE INDEX publishId ON _proj_PROJECTNAME_published_urls (publishId);
+
+/*
+    @version 2.0.8
+*/
+DELETE FROM _proj_PROJECTNAME_published_urls WHERE 1=1;
+ALTER TABLE _proj_PROJECTNAME_published_urls ADD pos int(10) NOT NULL DEFAULT 0 AFTER canonical;

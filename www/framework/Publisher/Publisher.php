@@ -305,6 +305,10 @@ class Publisher
         $data = $query->fetchObject();
         if ($data) {
             $date = new \DateTime($data->lastmod);
+        } else {
+            // for projects that have never been published
+            $date = new \DateTime();
+            $date->modify("-100 years");
         }
 
         return $date;

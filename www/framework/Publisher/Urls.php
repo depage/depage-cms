@@ -39,7 +39,7 @@ class Urls
      * @param mixed $
      * @return void
      **/
-    public function addUrl($pageId, $url)
+    public function addUrl($pageId, $url, $pos)
     {
         // reset canonical entries
         $query = $this->pdo->prepare("UPDATE {$this->tableUrls}
@@ -69,13 +69,14 @@ class Urls
 
         // update canonical to current url
         $query = $this->pdo->prepare("UPDATE {$this->tableUrls}
-            SET canonical=1
+            SET canonical = 1, pos = :pos
             WHERE publishId = :publishId AND pageId = :pageId AND url = :url;
         ");
         $query->execute(array(
             'publishId' => $this->publishId,
             'pageId' => $pageId,
             'url' => $url,
+            'pos' => $pos,
         ));
     }
     // }}}
@@ -119,7 +120,7 @@ class Urls
     {
         // @todo fix order of canonical urls to keep order of pages in tree
         $urls = [];
-        $query = $this->pdo->prepare("SELECT pageId, url FROM {$this->tableUrls} WHERE publishId = :publishId AND canonical = 1 ORDER BY id ASC");
+        $query = $this->pdo->prepare("SELECT pageId, url FROM {$this->tableUrls} WHERE publishId = :publishId AND canonical = 1 ORDER BY pos ASC");
         $query->execute(array(
             'publishId' => $this->publishId,
         ));
