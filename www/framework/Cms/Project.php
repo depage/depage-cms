@@ -1227,6 +1227,7 @@ class Project extends \Depage\Entity\Entity
             'relativePath' => $projectPath,
         ];
 
+        $i = 0;
         foreach ($urls as $pageId => $url) {
             foreach ($languages as $lang => $name) {
                 $target = $lang . $url;
@@ -1272,10 +1273,11 @@ class Project extends \Depage\Entity\Entity
             }
             $task->addSubtask(
                 "adding canonical url for $target",
-                "\$urls->addUrl(%s, %s);",
-                [$pageId, $url],
+                "\$urls->addUrl(%s, %s, %s);",
+                [$pageId, $url, $i],
                 $pubId
             );
+            $i++;
         }
 
         // @todo add files that should be generated automatically (e.g. through graphics)
