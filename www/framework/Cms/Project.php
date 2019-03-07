@@ -1157,8 +1157,8 @@ class Project extends \Depage\Entity\Entity
 
         // get transformer
         //$transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, $conf->template_set . "-live-" . $publishId);
-        //$transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
-        $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, null);
+        $transformCache = null;
+        $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
         $baseUrl = $this->getBaseUrl($publishId);
         $transformer->setBaseUrl($baseUrl);
         $transformer->routeHtmlThroughPhp = $conf->mod_rewrite == "true";
@@ -1221,7 +1221,10 @@ class Project extends \Depage\Entity\Entity
             ], $initId);
         }
 
-        $graphicsOptions = $this->graphicsOptions + [
+        $graphicsOptions = [
+            'extension' => $this->graphicsOptions->extension,
+            'executable' => $this->graphicsOptions->executable,
+            'optimize' => $this->graphicsOptions->optimize,
             'baseUrl' => $baseUrl,
             'cachePath' => $projectPath . "lib/cache/graphics/",
             'relativePath' => $projectPath,
@@ -1409,6 +1412,9 @@ class Project extends \Depage\Entity\Entity
         $xmldb = $this->getXmlDb();
 
         $doc = $xmldb->getDocByNodeId($id);
+        if (!$doc) {
+            return;
+        }
         $node = $doc->getSubdocByNodeId($id);
 
         if (!$newNode = $xsltProc->transformToDoc($node)) {
@@ -1782,6 +1788,7 @@ class Project extends \Depage\Entity\Entity
             'pdo',
             'cache',
             'previewType',
+            'graphicsOptions',
         ]);
     }
     // }}}
