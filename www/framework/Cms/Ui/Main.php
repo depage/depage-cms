@@ -409,6 +409,11 @@ class Main extends Base {
                 $retVal['success'] = $project->clearTransformCache();
             }
         }
+        if ($type == "css") {
+            if ($action == "generate") {
+                $retVal['success'] = $project->generateCss();
+            }
+        }
         if ($type == "project") {
             $url = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_STRING);
 

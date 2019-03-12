@@ -1750,6 +1750,8 @@ class Project extends \Depage\Entity\Entity
             $css = $transformer->transform($xml, $parameters);
             file_put_contents($cssPath . "color_" . $colorscheme . ".css", $css);
         }
+
+        return true;
     }
     // }}}
     // {{{ removeGeneratedCss()
