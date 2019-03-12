@@ -706,6 +706,27 @@ class DocProperties extends Base
         ]);
     }
     // }}}
+    // {{{ addEditNumber()
+    /**
+     * @brief addEditNumber
+     *
+     * @param mixed $node
+     * @return void
+     **/
+    protected function addEditNumber($node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Text")));
+        $fs->addNumber("xmledit-$nodeId", [
+            'label' => $node->getAttribute("unit"),
+            'step' => $node->getAttribute("step") != '' ? $node->getAttribute("step") : null,
+            'min' => $node->getAttribute("min") != '' ? $node->getAttribute("min") : null,
+            'max' => $node->getAttribute("max") != '' ? $node->getAttribute("max") : null,
+            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+        ]);
+    }
+    // }}}
     // {{{ addEditType()
     /**
      * @brief addEditType
