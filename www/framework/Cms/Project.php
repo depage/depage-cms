@@ -926,6 +926,9 @@ class Project extends \Depage\Entity\Entity
         $this->xmldb = $this->getXmlDb();
 
         $pages = $this->xmldb->getDoc("pages");
+        if (!$pages) {
+            return false;
+        }
         $nodeIds = $pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']");
 
         return count($nodeIds) > 0 && $this->getPostTemplate();
