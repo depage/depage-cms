@@ -428,7 +428,13 @@ class Task {
 
     // {{{ getProgress()
     public function getProgress() {
-        $progress = array();
+        $progress = [
+            'percent' => 0,
+            'estimated' => 0,
+            'time_started' => 0,
+            'description' => "",
+            'status' => "",
+        ];
 
         // {{{ get progress
         $query = $this->pdo->prepare(
@@ -441,6 +447,10 @@ class Task {
             "taskId2" => $this->taskId,
         ));
         $result = $query->fetchObject();
+
+        if (!$result || $result->num == 0) {
+            return $progress;
+        }
 
         $tasksSum = $result->num;
         $tasksDone = $result->done > 0 ? $result->done : 0.0001;
@@ -480,9 +490,6 @@ class Task {
         if ($result) {
             $progress['description'] = $result->name;
             $progress['status'] = $result->status;
-        } else {
-            $progress['description'] = "";
-            $progress['status'] = "";
         }
         // }}}
 
