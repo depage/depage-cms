@@ -179,6 +179,7 @@ abstract class Transformer
                 'currentPageId' => null,
                 'depageIsLive' => null,
                 'baseUrl' => null,
+                'projectName' => null,
                 'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
             );
             $variables = array(
@@ -279,16 +280,17 @@ abstract class Transformer
 
             $this->clearUsedDocuments();
             $this->addToUsedDocuments($pagedataId);
-            $content = $this->transform($pageXml, array(
+            $content = $this->transform($pageXml, [
                 "currentLang" => $this->lang,
                 "currentPageId" => $pageId,
                 "currentPagedataId" => $pagedataId,
                 "currentContentType" => "text/html",
                 "currentEncoding" => "UTF-8",
+                "projectName" => $this->projectName,
                 "depageVersion" => \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion(),
                 "depageIsLive" => $this->isLive ? "true" : "",
                 "baseUrl" => $this->baseUrl,
-            ));
+            ]);
 
             $cleaner = new \Depage\Html\Cleaner();
             $content = $cleaner->clean($content);
