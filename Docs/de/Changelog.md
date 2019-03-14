@@ -19,6 +19,19 @@ Version 2.0   {#v2-0}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.0.8      {#v2-0-8}
+------
+
+**Frontend**
+
+- Neuer Input-Type Nummer hinzugefügt
+
+**Backend**
+
+- porjectName nun als Variable in XSL Templates verfügbar
+- Fehler im Task-Runner behoben
+- Fehler beim Parsen der Projekt Shortcuts behoben
+
 v2.0.7      {#v2-0-7}
 ------
 

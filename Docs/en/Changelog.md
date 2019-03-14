@@ -19,6 +19,19 @@ Version 2.0   {#v2-0}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.0.8      {#v2-0-8}
+------
+
+**Frontend**
+
+- added new number type to doc-properties
+
+**Backend**
+
+- made projectName available to use in xsl templates
+- fixed bug in task-runner
+- fixed bug in project shortcut handling
+
 v2.0.7      {#v2-0-7}
 ------
 
