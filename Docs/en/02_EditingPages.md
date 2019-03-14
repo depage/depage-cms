@@ -140,6 +140,10 @@ This are the document property types available:
 
     The *Table* element support editing of simple tables with styling options like the richtext component.
 
+- **Number**
+
+    *Number* is a field, where you can edit numbers with an optional unit, decimal places and min/max values.
+
 - **Date**
 
     *Date* is a field, where you can choose a date.

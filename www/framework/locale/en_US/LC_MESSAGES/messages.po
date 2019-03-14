@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-04 19:43+0100\n"
+"POT-Creation-Date: 2019-03-14 17:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -137,6 +137,7 @@ msgstr ""
 
 #: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:598
 #: Cms/Ui/DocProperties.php:642 Cms/Ui/DocProperties.php:680
+#: Cms/Ui/DocProperties.php:720
 msgid "Text"
 msgstr ""
 
@@ -178,8 +179,8 @@ msgstr ""
 msgid "(public)"
 msgstr ""
 
-#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:846
-#: Cms/Ui/DocProperties.php:944
+#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:867
+#: Cms/Ui/DocProperties.php:965
 msgid "http://domain.com"
 msgstr ""
 
@@ -2231,7 +2232,7 @@ msgstr ""
 msgid "Ask for this page the be released"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:444 Cms/Ui/DocProperties.php:835
+#: Cms/Ui/DocProperties.php:444 Cms/Ui/DocProperties.php:856
 msgid "Default"
 msgstr ""
 
@@ -2259,7 +2260,7 @@ msgstr ""
 msgid "php"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:535 Cms/Ui/DocProperties.php:826
+#: Cms/Ui/DocProperties.php:535 Cms/Ui/DocProperties.php:847
 #: Cms/Forms/Newsletter.php:54 Cms/Forms/Project/Language.php:68
 msgid "Title"
 msgstr ""
@@ -2276,84 +2277,84 @@ msgstr ""
 msgid "Headline"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:739
+#: Cms/Ui/DocProperties.php:760
 msgid "Type"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:760
+#: Cms/Ui/DocProperties.php:781
 msgid "Date"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:782
+#: Cms/Ui/DocProperties.php:803
 msgid "Time"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:804
+#: Cms/Ui/DocProperties.php:825
 msgid "Color"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:823
+#: Cms/Ui/DocProperties.php:844
 msgid "Link"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:827
+#: Cms/Ui/DocProperties.php:848
 msgid "Link title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:833
+#: Cms/Ui/DocProperties.php:854
 msgid "Target"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:836
+#: Cms/Ui/DocProperties.php:857
 msgid "New Window"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:844 Cms/Ui/DocProperties.php:942
+#: Cms/Ui/DocProperties.php:865 Cms/Ui/DocProperties.php:963
 msgid "href"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:864
+#: Cms/Ui/DocProperties.php:885
 msgid "Audio"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:868 Cms/Ui/DocProperties.php:893
-#: Cms/Ui/DocProperties.php:920
+#: Cms/Ui/DocProperties.php:889 Cms/Ui/DocProperties.php:914
+#: Cms/Ui/DocProperties.php:941
 msgid "src"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:889
+#: Cms/Ui/DocProperties.php:910
 msgid "Video"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:913
+#: Cms/Ui/DocProperties.php:934
 msgid "Image"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:930
+#: Cms/Ui/DocProperties.php:951
 msgid "title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:931
+#: Cms/Ui/DocProperties.php:952
 msgid "Image title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:936
+#: Cms/Ui/DocProperties.php:957
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:937
+#: Cms/Ui/DocProperties.php:958
 msgid "Image description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:961
+#: Cms/Ui/DocProperties.php:982
 msgid "Table"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1000
+#: Cms/Ui/DocProperties.php:1021
 msgid "Source"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1019
+#: Cms/Ui/DocProperties.php:1040
 msgid "Not allowed to edit this element."
 msgstr ""
 
@@ -2511,11 +2512,11 @@ msgstr ""
 msgid "Switch to preview-only layout"
 msgstr ""
 
-#: Cms/Project.php:1056
+#: Cms/Project.php:1059
 msgid "Document Release Request"
 msgstr ""
 
-#: Cms/Project.php:1057
+#: Cms/Project.php:1060
 #, php-format
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr ""

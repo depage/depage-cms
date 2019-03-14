@@ -24,11 +24,11 @@ v2.0.8      {#v2-0-8}
 
 **Frontend**
 
-- added new number type to doc-properties
+- added new *number* type to doc-properties
 
 **Backend**
 
-- made projectName available to use in xsl templates
+- made *$projectName* available to use in xsl templates
 - fixed bug in task-runner
 - fixed bug in project shortcut handling
 

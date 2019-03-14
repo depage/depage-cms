@@ -139,6 +139,10 @@ Es stehen folgende Eigenschaftselemente zur Verfügung:
 
     Tabelle untertützt das Editieren von einfachen Tabellen im Content mit Formatierungsmöglichkeiten wie der formatierte Text.
 
+- **Nummer**
+
+    Über *Nummer* können Zahlen bearbeiten werden. Diese Felder unterstützen optional eine Maßeinheit, die Angabe der Anzahl der Nachkommastellen und Minimum- sowie Maximumwerte.
+
 - **Datum**
 
     Über *Datum* können Datumsangaben bearbeitet werden.

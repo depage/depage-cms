@@ -24,11 +24,11 @@ v2.0.8      {#v2-0-8}
 
 **Frontend**
 
-- Neuer Input-Type Nummer hinzugefügt
+- Neuer Input-Type *Nummer* hinzugefügt
 
 **Backend**
 
-- porjectName nun als Variable in XSL Templates verfügbar
+- *$projectName* nun als Variable in XSL Templates verfügbar
 - Fehler im Task-Runner behoben
 - Fehler beim Parsen der Projekt Shortcuts behoben
 
