@@ -839,7 +839,7 @@ abstract class Transformer
      * @return    $xml (xml) file info as xml string
      */
     public function xsltAtomizeText($text) {
-        $xml = "<spans><span>" . str_replace(" ", "</span> <span>", htmlspecialchars(trim($text))) . "</span></spans>";
+        $xml = "<spans><span>" . str_replace(" ", " </span><span>", htmlspecialchars(trim($text))) . " </span></spans>";
 
         $doc = new \DOMDocument();
         $doc->loadXML($xml);
