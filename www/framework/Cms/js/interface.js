@@ -215,7 +215,29 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupLoginCheck
         setupLoginCheck: function() {
-            // @todo check if user is still logged in and show message when he isnt
+            var checkTime = 10000;
+            var lastTime = (new Date()).getTime();
+            var $input = $("#login-formCsrfToken");
+
+            setInterval(function() {
+                // renew csrfToken of login form for long open pages
+                $input.each(function() {
+                    $.get(window.location + "?ajax=true", function(data) {
+                        var $new = $($.parseHTML(data)).find("#login-formCsrfToken");
+
+                        if ($new.length == 1) {
+                            $input.attr("value", $new.attr("value"));
+                        }
+                    });
+                });
+
+                var currentTime = (new Date()).getTime();
+                if (currentTime > (lastTime + checkTime * 2)) {  // ignore small delays
+                    // Probably just woke up!
+                    setTimeout(localJS.wakeFromSleep, 100);
+                }
+                lastTime = currentTime;
+            }, checkTime);
         },
         // }}}
         // {{{ setupNotifications
@@ -1696,6 +1718,14 @@ var depageCMS = (function() {
 
                 window.location = url;
             });
+        },
+        // }}}
+
+        // {{{ wakeFromSleep
+        wakeFromSleep: function() {
+            // @todo check if user is still logged in and show message when he isnt
+            // @todo redirecto to login page when logged out?
+            console.log("woken up from sleep? -> check login");
         },
         // }}}
 
