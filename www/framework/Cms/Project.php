@@ -1432,7 +1432,9 @@ class Project extends \Depage\Entity\Entity
 
             throw new \Exception($error);
         }
-        if ($node->saveXml() != $newNode->saveXml()) {
+        if (!$newNode->hasChildNodes()) {
+            $doc->deleteNode($id);
+        } else if ($node->saveXml() != $newNode->saveXml()) {
             $doc->replaceNode($newNode, $id);
         }
     }
