@@ -77,11 +77,11 @@ class Main extends Base {
     public function login() {
         if ($this->auth->enforce()) {
             // logged in
-            if (!empty($_GET['redirectTo'])) {
-                \Depage\Depage\Runner::redirect($_GET['redirectTo']);
-            } else {
-                \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+            $redirectTo = DEPAGE_BASE;
+            if (!empty($_GET['redirectTo']) && substr($_GET['redirectTo'], 0, strlen(DEPAGE_BASE)) == DEPAGE_BASE) {
+                $redirectTo = $_GET['redirectTo'];
             }
+            \Depage\Depage\Runner::redirect($redirectTo);
         } else {
             // not logged in
             $form = new \Depage\Cms\Forms\Login("login", [
