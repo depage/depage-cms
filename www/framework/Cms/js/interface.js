@@ -142,6 +142,11 @@ var depageCMS = (function() {
         }
     }
     // }}}
+    // {{{ escapeRegExp
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    }
+    // }}}
 
     // local Project instance that holds all variables and function
     var localJS = {
@@ -229,6 +234,24 @@ var depageCMS = (function() {
                             $input.attr("value", $new.attr("value"));
                         }
                     });
+                });
+                // check if user is logged in
+                $.ajax({
+                    async: true,
+                    type: 'GET',
+                    url: baseUrl + "api/-/user/status/",
+                    success: function(data, status) {
+                        if (status == 'success' && !data.loggedin) {
+                            var unprotectedUrls = [
+                                'login',
+                                'logout'
+                            ];
+                            var action = window.location.toString().match(new RegExp(escapeRegExp(baseUrl) + "([^/]*)(/.*)?"));
+                            if (unprotectedUrls.indexOf(action[1]) == -1) {
+                                window.location = baseUrl + "login/?loggedOut&redirectTo=" + encodeURIComponent(window.location);
+                            }
+                        }
+                    }
                 });
 
                 var currentTime = (new Date()).getTime();

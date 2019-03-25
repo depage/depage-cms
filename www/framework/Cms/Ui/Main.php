@@ -95,11 +95,14 @@ class Main extends Base {
             if ($form->valid) {
                 $form->clearSession();
             } else {
-                $error = "";
+                $message = "";
                 if (!$form->isEmpty()) {
-                    $error = "<p class=\"error\">false/unknown username password combination</p>";
-                    $form->addHtml($error);
+                    $message = "<p class=\"error\">false/unknown username password combination</p>";
                 }
+                if (isset($_GET['loggedOut'])) {
+                    $message = "<p class=\"message\">" . _("Your current session expired. Please login again.") . "</p>";
+                }
+                $form->addHtml($message);
 
                 $h = new Html("scrollable.tpl", [
                     'class' => "top",
@@ -402,6 +405,18 @@ class Main extends Base {
                 $retVal['success'] = true;
             } else if ($values && $action == "unsubscribe") {
                 $retVal['success'] = $newsletter->unsubscribe($values->email, $values->lang, $values->category);
+            }
+        }
+        if ($type == "user") {
+            if ($action == "status") {
+                $retVal['loggedin'] = false;
+                $retVal['success'] = true;
+
+                $user = $this->auth->enforceLazy();
+                if ($user) {
+                    $retVal['loggedin'] = true;
+                    $retVal['user'] = $user->name;
+                }
             }
         }
         if ($type == "cache") {

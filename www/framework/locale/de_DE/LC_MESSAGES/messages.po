@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-14 17:28+0100\n"
+"POT-Creation-Date: 2019-03-25 08:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1989,39 +1989,43 @@ msgstr "Benutzer '%s' bearbeiten"
 msgid "Add new User"
 msgstr "Neuen Benutzer hinzufügen"
 
-#: Cms/Ui/Main.php:110 Cms/Forms/Login.php:22 Cms/Forms/Login.php:37
+#: Cms/Ui/Main.php:103
+msgid "Your current session expired. Please login again."
+msgstr "Ihre aktuelle Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein."
+
+#: Cms/Ui/Main.php:113 Cms/Forms/Login.php:22 Cms/Forms/Login.php:37
 msgid "Login"
 msgstr ""
 
-#: Cms/Ui/Main.php:162 Cms/tpl/toolbar_main.tpl:28
+#: Cms/Ui/Main.php:165 Cms/tpl/toolbar_main.tpl:28
 msgid "Projects"
 msgstr "Projekte"
 
-#: Cms/Ui/Main.php:163
+#: Cms/Ui/Main.php:166
 msgid "Edit, preview or changed settings for your projects"
 msgstr "Bearbeitung, Vorschau oder Änderung der Einstellungen ihrer Projekte"
 
-#: Cms/Ui/Main.php:233
+#: Cms/Ui/Main.php:236
 msgid "Tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:235
+#: Cms/Ui/Main.php:238
 msgid "Shows the currently running background tasks"
 msgstr "Zeigt die aktuell laufenden Hintergrundtasks an"
 
-#: Cms/Ui/Main.php:298
+#: Cms/Ui/Main.php:301
 msgid "Users"
 msgstr "Benutzer"
 
-#: Cms/Ui/Main.php:300
+#: Cms/Ui/Main.php:303
 msgid "Shows the users that are currently logged in"
 msgstr "Zeigt alle aktuell angemeldeten Benutzer"
 
-#: Cms/Ui/Main.php:328
+#: Cms/Ui/Main.php:331
 msgid "News"
 msgstr ""
 
-#: Cms/Ui/Main.php:329
+#: Cms/Ui/Main.php:332
 msgid "Shows news and version info"
 msgstr "News und Versionsinfo anzeigen"
 
