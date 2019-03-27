@@ -298,6 +298,10 @@ class User extends \Depage\Entity\PdoEntity
         if (isset($search['confirmId'])) {
             $where[] = self::sqlConditionFor('user.confirmId', $search['confirmId'], $params);
         }
+        if (isset($search['validated'])) {
+            $condition = $search['validated'] ? "IS NULL" : "IS NOT NULL";
+            $where[] = "user.confirmId {$condition}";
+        }
         if (isset($search['resetPasswordId'])) {
             $where[] = self::sqlConditionFor('user.resetPasswordId', $search['resetPasswordId'], $params);
         }

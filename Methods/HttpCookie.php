@@ -82,7 +82,7 @@ class HttpCookie extends Auth
 
         // test user with custom user function
         if ($this->user && !is_null($testUserFunction)) {
-            $this->user = call_user_func($testUserFunction, $this->user);
+            $this->user = $testUserFunction($this->user);
         }
 
         // redirect to login page
