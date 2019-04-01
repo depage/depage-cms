@@ -216,12 +216,33 @@ class User extends \Depage\Entity\PdoEntity
      *
      * @return      User
      */
-    static public function loadByFuzzyName($pdo, $username) {
+    static public function loadByFuzzyName($pdo, $query) {
         $users = self::loadBy($pdo, [
-            'fuzzyName' => $username,
+            'fuzzyName' => $query,
         ], [
             "user.sortname"
         ]);
+        if (strpos($query, " ") === false) {
+            // if search is only one term -> sort by word beginnings of query
+            $q = " " . $query;
+            uasort($users, function($a, $b) use ($q) {
+                $nA = " " . str_replace(["-", "_"], " ", $a->name . " " . $a->fullname);
+                $nB = " " . str_replace(["-", "_"], " ", $b->name . " " . $b->fullname);
+
+                $foundInA = stripos($nA, $q) !== false;
+                $foundInB = stripos($nB, $q) !== false;
+
+                if ($foundInA && $foundInB) {
+                    return 0;
+                } else if (!$foundInA) {
+                    return 1;
+                } else if (!$foundInB) {
+                    return -1;
+                }
+
+                return 0;
+            });
+        }
 
         return $users;
     }
