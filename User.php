@@ -222,8 +222,9 @@ class User extends \Depage\Entity\PdoEntity
         ], [
             "user.sortname"
         ]);
+
+        // if search is only one term -> sort by word beginnings of query
         if (strpos($query, " ") === false) {
-            // if search is only one term -> sort by word beginnings of query
             $q = " " . $query;
             uasort($users, function($a, $b) use ($q) {
                 $nA = " " . str_replace(["-", "_"], " ", $a->name . " " . $a->fullname);
@@ -232,15 +233,13 @@ class User extends \Depage\Entity\PdoEntity
                 $foundInA = stripos($nA, $q) !== false;
                 $foundInB = stripos($nB, $q) !== false;
 
-                if ($foundInA && $foundInB) {
-                    return 0;
-                } else if (!$foundInA) {
+                if (!$foundInA && $foundInB) {
                     return 1;
-                } else if (!$foundInB) {
+                } else if ($foundInA && !$foundInB) {
                     return -1;
                 }
 
-                return 0;
+                return strcasecmp($a->sortname, $b->sortname);
             });
         }
 
