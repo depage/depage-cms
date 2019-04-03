@@ -25,7 +25,7 @@ class ClosureLocal extends \Depage\JsMin\JsMin {
      **/
     public function minifySrc($src) {
 
-        $compiler = "{$this->java} -jar {$this->jar} -- ";
+        $compiler = "{$this->java} -jar {$this->jar} ";
         $descriptorspec = array(
             0 => array("pipe", "r"), // stdin is a pipe that the child will read from
             1 => array("pipe", "w"), // stdout is a pipe that the child will write to
