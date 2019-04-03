@@ -235,6 +235,17 @@ var depageCMS = (function() {
                         }
                     });
                 });
+
+                var currentTime = (new Date()).getTime();
+                if (currentTime > (lastTime + checkTime * 2)) {  // ignore small delays
+                    // Probably just woke up!
+                    setTimeout(localJS.wakeFromSleep, 100);
+                }
+                lastTime = currentTime;
+
+                // we already show a login box
+                if ($input.length > 0) return;
+
                 // check if user is logged in
                 $.ajax({
                     async: true,
@@ -254,12 +265,6 @@ var depageCMS = (function() {
                     }
                 });
 
-                var currentTime = (new Date()).getTime();
-                if (currentTime > (lastTime + checkTime * 2)) {  // ignore small delays
-                    // Probably just woke up!
-                    setTimeout(localJS.wakeFromSleep, 100);
-                }
-                lastTime = currentTime;
             }, checkTime);
         },
         // }}}
