@@ -19,6 +19,15 @@ Version 2.0   {#v2-0}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.0.9      {#v2-0-9}
+------
+
+**Backend**
+
+- enhanced project-update method
+- enhanced login/logout behavior
+
+
 v2.0.8      {#v2-0-8}
 ------
 

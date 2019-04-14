@@ -19,6 +19,15 @@ Version 2.0   {#v2-0}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.0.9      {#v2-0-9}
+------
+
+**Backend**
+
+- Projekt Update Funktionalität verbessert
+- Login-/Logout-Verhalten verbessert
+
+
 v2.0.8      {#v2-0-8}
 ------
 
