@@ -38,3 +38,12 @@ VALUES
     @version 1.5.3
 */
 ALTER TABLE _auth_user DROP COLUMN level;
+
+/*
+    @version 1.5.4
+*/
+ALTER TABLE auth_user
+    CHANGE `name` `name` varchar(255) NOT NULL DEFAULT '',
+    CHANGE `fullname` `fullname` varchar(255) NOT NULL DEFAULT '',
+    CHANGE `sortname` `sortname` varchar(32) NOT NULL DEFAULT '',
+    CHANGE `email` `email` varchar(255) NOT NULL DEFAULT '';
