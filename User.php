@@ -216,12 +216,32 @@ class User extends \Depage\Entity\PdoEntity
      *
      * @return      User
      */
-    static public function loadByFuzzyName($pdo, $username) {
+    static public function loadByFuzzyName($pdo, $query) {
         $users = self::loadBy($pdo, [
-            'fuzzyName' => $username,
+            'fuzzyName' => $query,
         ], [
             "user.sortname"
         ]);
+
+        // if search is only one term -> sort by word beginnings of query
+        if (strpos($query, " ") === false) {
+            $q = " " . $query;
+            uasort($users, function($a, $b) use ($q) {
+                $nA = " " . str_replace(["-", "_"], " ", $a->name . " " . $a->fullname);
+                $nB = " " . str_replace(["-", "_"], " ", $b->name . " " . $b->fullname);
+
+                $foundInA = stripos($nA, $q) !== false;
+                $foundInB = stripos($nB, $q) !== false;
+
+                if (!$foundInA && $foundInB) {
+                    return 1;
+                } else if ($foundInA && !$foundInB) {
+                    return -1;
+                }
+
+                return strcasecmp($a->sortname, $b->sortname);
+            });
+        }
 
         return $users;
     }
@@ -297,6 +317,10 @@ class User extends \Depage\Entity\PdoEntity
         }
         if (isset($search['confirmId'])) {
             $where[] = self::sqlConditionFor('user.confirmId', $search['confirmId'], $params);
+        }
+        if (isset($search['validated'])) {
+            $condition = $search['validated'] ? "IS NULL" : "IS NOT NULL";
+            $where[] = "user.confirmId {$condition}";
         }
         if (isset($search['resetPasswordId'])) {
             $where[] = self::sqlConditionFor('user.resetPasswordId', $search['resetPasswordId'], $params);
