@@ -179,7 +179,7 @@
         </xsl:if>
     </xsl:template>
 
-    <xsl:template match="pg:page[@redirect = 'true']" mode="icon-class">
+    <xsl:template match="pg:page[@redirect = 'true'] | pg:redirect" mode="icon-class">
         <xsl:text> </xsl:text>
         icon-redirect
     </xsl:template>

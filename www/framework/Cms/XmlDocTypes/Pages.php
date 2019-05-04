@@ -50,6 +50,7 @@ class Pages extends Base {
                 'attributes' => [
                     'multilang' => "true",
                     'file_type' => "php",
+                    'redirect' => "true",
                 ],
                 'docType' => 'Depage\Cms\XmlDocTypes\Page',
                 'xmlTemplate' => 'redirect.xml',

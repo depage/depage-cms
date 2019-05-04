@@ -60,19 +60,9 @@
             <xsl:if test="name(../..) = 'sec:vcard'">
                 <xsl:text disable-output-escaping="yes">&lt;p&gt;</xsl:text>
             </xsl:if>
-
             <a>
                 <!-- {{{ href -->
-                <xsl:attribute name="href">
-                    <xsl:choose>
-                        <xsl:when test="$href_id != ''">
-                            <xsl:value-of select="dp:getPageRef($href_id, $lang)" />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="dp:getRef($href)" />
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:attribute>
+                <xsl:attribute name="href"><xsl:apply-templates select="." mode="href" /></xsl:attribute>
                 <!-- }}} -->
                 <!-- {{{ attributes -->
                 <xsl:if test="$lang">
@@ -128,6 +118,21 @@
                 <xsl:text disable-output-escaping="yes">&lt;/p&gt;&lt;/li&gt;</xsl:text>
             </xsl:if>
         </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:a href -->
+    <xsl:template match="edit:a" mode="href">
+        <xsl:param name="absolute" select="false()" />
+        <xsl:param name="lang" select="$currentLang" />
+
+        <xsl:choose>
+            <xsl:when test="@href_id != ''">
+                <xsl:value-of select="dp:getPageRef(@href_id, $lang, $absolute)" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="dp:getRef(@href, $absolute)" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:img -->
@@ -532,7 +537,17 @@
 
     <!-- {{{ sec:redirect -->
     <xsl:template match="sec:redirect">
-        <xsl:apply-templates select="edit:a[@lang = $currentLang]" />
+        <xsl:variable name="url">
+            <xsl:apply-templates select="edit:a[@lang = $currentLang]" mode="href">
+                <xsl:with-param name="absolute" select="true()" />
+            </xsl:apply-templates>
+        </xsl:variable>
+        <xsl:processing-instruction name="php">
+            @header("Location: <xsl:value-of select="$url" />");
+        ?</xsl:processing-instruction>
+        Redirecting to <xsl:apply-templates select="edit:a[@lang = $currentLang]">
+            <xsl:with-param name="content" select="$url" />
+        </xsl:apply-templates>
     </xsl:template>
     <!-- }}} -->
 
