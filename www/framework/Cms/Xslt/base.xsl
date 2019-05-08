@@ -62,7 +62,16 @@
             </xsl:if>
             <a>
                 <!-- {{{ href -->
-                <xsl:attribute name="href"><xsl:apply-templates select="." mode="href" /></xsl:attribute>
+                <xsl:attribute name="href">
+                    <xsl:choose>
+                        <xsl:when test="$href_id != ''">
+                            <xsl:value-of select="dp:getPageRef($href_id, $lang)" />
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="dp:getRef($href)" />
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:attribute>
                 <!-- }}} -->
                 <!-- {{{ attributes -->
                 <xsl:if test="$lang">
