@@ -38,3 +38,8 @@ VALUES
     @version 1.5.3
 */
 ALTER TABLE _auth_user DROP COLUMN level;
+
+/*
+    @version 2.0.10
+*/
+ALTER TABLE _auth_user ADD COLUMN `lang` varchar(20) NOT NULL DEFAULT '' AFTER settings;

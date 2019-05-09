@@ -153,6 +153,12 @@ class HttpCookie extends Auth
             if ($pass->verify($user->name, $password, $user->passwordhash)) {
                 $this->updatePasswordHash($user, $password);
 
+                if (defined("DEPAGE_LANG")) {
+                    $user->lang = DEPAGE_LANG;
+                    $user->save();
+                }
+
+
                 return $user;
             } else {
                 $this->prolongLogin($user);

@@ -29,6 +29,7 @@ class User extends \Depage\Entity\PdoEntity
         "passwordhash" => "",
         "email" => "",
         "settings" => "",
+        "lang" => "",
         "dateRegistered" => null,
         "dateLastlogin" => null,
         "dateUpdated" => null,
