@@ -328,7 +328,7 @@ class User extends \Depage\Entity\Entity
                 {$pdo->prefix}_auth_sessions AS sessions
             WHERE
                 user.id=sessions.userid and
-                sessions.dateLastUpdate > DATE_SUB(NOW(), INTERVAL 3 MINUTE)
+                sessions.dateLastUpdate > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
             ORDER BY user.sortname"
         );
         $uid_query->execute();
