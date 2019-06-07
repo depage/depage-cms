@@ -178,6 +178,7 @@ abstract class Transformer
                 'currentLang' => null,
                 'currentPageId' => null,
                 'depageIsLive' => null,
+                'depagePreviewType' => null,
                 'baseUrl' => null,
                 'projectName' => null,
                 'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
@@ -289,6 +290,7 @@ abstract class Transformer
                 "projectName" => $this->projectName,
                 "depageVersion" => \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion(),
                 "depageIsLive" => $this->isLive ? "true" : "",
+                "depagePreviewType" => $this->previewType,
                 "baseUrl" => $this->baseUrl,
             ]);
 
