@@ -313,6 +313,12 @@
              * @return void
              */
             setContent : function(title, message, icon) {
+                if (typeof title == 'function') {
+                    title = title();
+                }
+                if (typeof message == 'function') {
+                    message = message();
+                }
                 var $title = $('<h1 />').text(title);
                 var $message = $('<p />').text(message);
 
