@@ -171,6 +171,7 @@ class DocProperties extends Base
             }
 
             $this->form->clearSession(false);
+            $this->clearOldFormData();
         }
 
         // @todo clean unsed session?
@@ -1057,6 +1058,30 @@ class DocProperties extends Base
             'label' => $node->getAttribute("name"),
             'dataInfo' => "//*[@db:id = '$nodeId']/@value",
         ]);
+    }
+    // }}}
+
+    // {{{ clearOldFormData()
+    /**
+     * @brief clearOldFormData
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function clearOldFormData()
+    {
+        foreach ($_SESSION as $key => $val) {
+            if (substr($key, 0, 17) != "htmlform-xmldata_") continue;
+
+            $timestamp = time();
+            $ttl = 60 * 60; // 60 minutes
+            if (
+                isset($val['formTimestamp'])
+                && ($timestamp - $val['formTimestamp'] > $ttl)
+            ) {
+                unset($_SESSION[$key]);
+            }
+        }
     }
     // }}}
 }
