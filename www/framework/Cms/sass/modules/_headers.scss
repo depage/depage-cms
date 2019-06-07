@@ -15,6 +15,11 @@ header.info {
         font-size: $fSizeXS;
         line-height: $infoHeight - 2px;
         color: #000000;
+
+        span.title {
+            margin-left: 10px;
+            color: #666666;
+        }
     }
     &.info-tree-pages,
     &.info-tree-pagedata {

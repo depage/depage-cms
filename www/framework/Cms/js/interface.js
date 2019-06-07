@@ -49,7 +49,6 @@ var depageCMS = (function() {
     var $body;
     var $previewFrame,
         $helpFrame;
-    var $upload;
     var $toolbarLeft,
         $toolbarPreview,
         $toolbarRight;
@@ -62,6 +61,7 @@ var depageCMS = (function() {
     var jstreePagedata;
 
     var currentLayout;
+    var previewUpdateTimer;
 
     // various helper functions
     // {{{ $.scrollParent
@@ -1861,6 +1861,7 @@ var depageCMS = (function() {
                     $previewFrame.remove();
                     $previewFrame = $newFrame.attr("id", "previewFrame");
                     $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
+                    $previewFrame.on("load", localJS.onPreviewUpdated);
                     $previewFrame[0].src = newUrl;
                 }
             } else {
@@ -1875,6 +1876,7 @@ var depageCMS = (function() {
 
                     $previewFrame = $("#previewFrame");
                     $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
+                    $previewFrame.on("load", localJS.onPreviewUpdated);
                     $previewFrame[0].src = unescape(url);
 
                     $window.triggerHandler("switchLayout", "split");
@@ -1961,6 +1963,25 @@ var depageCMS = (function() {
                 }
             } catch(error) {
             }
+        },
+        // }}}
+        // {{{ onPreviewUpdated
+        onPreviewUpdated: function() {
+            var title = "",
+                oldTitle;
+
+            clearTimeout(previewUpdateTimer);
+            previewUpdateTimer = setInterval(function () {
+                try {
+                    title = $previewFrame[0].contentDocument.title;
+                } catch(error) {
+                }
+
+                if (title != oldTitle) {
+                    $("div.preview header.info span.title").text(title);
+                    oldTitle = title;
+                }
+            }, 500);
         },
         // }}}
         // {{{ edit
