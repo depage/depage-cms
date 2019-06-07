@@ -39,7 +39,7 @@
         'data-live-help-class' => "icon icon-preview",
     ]); ?>>
     <header class="info">
-        <h1><?php self::e(_("Preview")); ?> <span class="title"></span></h1>
+        <h1><?php self::e(_("Preview")); ?> <span class="title" data-tooltip=""></span></h1>
     </header>
     <div class="zoomwrapper">
         <iframe id="previewFrame"></iframe>

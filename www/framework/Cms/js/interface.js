@@ -746,7 +746,7 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupTooltips
         setupTooltips: function() {
-            $("a[data-tooltip], i[data-tooltip]").each(function() {
+            $("*[data-tooltip]").each(function() {
                 var $t = $(this);
                 var dir = $t.attr("data-pos") || "BC";
 
@@ -754,7 +754,9 @@ var depageCMS = (function() {
                     direction: dir,
                     directionMarker: true,
                     positionOffset: 20,
-                    message: $t.attr("data-tooltip")
+                    message: function() {
+                        return $t.attr("data-tooltip")
+                    }
                 });
             });
         },
@@ -1978,7 +1980,9 @@ var depageCMS = (function() {
                 }
 
                 if (title != oldTitle) {
-                    $("div.preview header.info span.title").text(title);
+                    $("div.preview header.info span.title")
+                        .text(title)
+                        .attr("data-tooltip", title);
                     oldTitle = title;
                 }
             }, 500);
