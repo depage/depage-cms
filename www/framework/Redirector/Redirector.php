@@ -231,12 +231,12 @@ class Redirector
 
         $browserLanguages = explode(',', $acceptString);
 
-        foreach ($browserLanguages as $lang) {
-            $currentLanguages = explode(';', $lang);
-            $currentLanguages = explode('-', $currentLanguages[0]);
-            $currentLanguage = trim($currentLanguages[0]);
-            if (in_array($currentLanguage, $this->languages)) {
-                $language = $currentLanguage;
+        foreach ($browserLanguages as $l) {
+            $l = explode(';', $l);
+            $l = explode('-', $l[0]);
+            $l = trim($l[0]);
+            if (in_array($l, $this->languages)) {
+                $language = $l;
                 break;
             }
         }
