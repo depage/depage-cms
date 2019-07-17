@@ -1332,7 +1332,7 @@ var depageCMS = (function() {
             localJS.loadDocPropertiesNow(docref, nodeId);
         },
         // }}}
-        // {{{ loadDocProperties
+        // {{{ loadDocPropertiesNow
         loadDocPropertiesNow: function(docref, nodeId) {
             currentDocPropertyId = nodeId;
 
