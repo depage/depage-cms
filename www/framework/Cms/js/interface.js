@@ -916,7 +916,7 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupFileList
         setupFileList: function() {
-            var $form = $("#upload-to-lib");
+            var $form = $(".upload-to-lib");
             var $dropArea = $form.parents('.files');
             var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($form);
             var $fileContainer = $(".files .file-list");

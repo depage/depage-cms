@@ -150,11 +150,13 @@ class FileLibrary extends Base
     protected function upload($path = "")
     {
         $targetPath = $this->project->getProjectPath() . "lib/" . $path;
+        $pathHash = sha1($targetPath);
 
-        $form = new \Depage\Cms\Forms\Project\Upload("upload-to-lib", [
+        $form = new \Depage\Cms\Forms\Project\Upload("upload-to-lib-$pathHash", [
             'submitUrl' => DEPAGE_BASE . "project/{$this->project->name}/library/manager/" . rawurlencode($path) . "/",
             'project' => $this->project,
             'targetPath' => $path,
+            'class' => 'upload-to-lib',
         ]);
         $form->process();
         if ($form->validate()) {
