@@ -22,6 +22,10 @@ Version 2.0   {#v2-0}
 v2.0.9      {#v2-0-9}
 ------
 
+**Frontend**
+- Bedienbarkeit des Dokumentbaums nach Fokus verbessert
+- Verbesserung des Datei-Uploads
+
 **Backend**
 
 - Projekt Update Funktionalität verbessert

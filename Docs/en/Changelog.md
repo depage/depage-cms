@@ -22,6 +22,10 @@ Version 2.0   {#v2-0}
 v2.0.9      {#v2-0-9}
 ------
 
+**Frontend**
+- enhanced usability of pagedata-tree on selection
+- enhanced file upload
+
 **Backend**
 
 - enhanced project-update method
