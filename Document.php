@@ -345,7 +345,7 @@ class Document
      * @param $level (int) number of recursive getChildnodesByParentId calls.
      *        how deep to traverse the tree.
      */
-    public function getSubdocByNodeId($id, $add_id_attribute = true, $level = PHP_INT_MAX)
+    public function getSubdocByNodeId($id, $add_id_attribute = true)
     {
         $identifier = "{$this->table_docs}_d{$this->doc_id}/{$id}.xml";
         $xml_doc = new \Depage\Xml\Document();
@@ -381,14 +381,19 @@ class Document
             $this->lastchange = $result->lastchange;
             $this->lastchangeUid = $result->lastchangeUid;
 
+            $pad = 4;
             $query = $this->pdo->prepare(
-                "SELECT
-                    xml.id AS id,
-                    xml.name AS name,
-                    xml.type AS type,
-                    xml.value AS value
-                FROM {$this->table_xml} AS xml
-                WHERE xml.id = :id AND xml.id_doc = :doc_id"
+                "WITH RECURSIVE tree (id, id_parent, lvl, sortkey) AS
+                    (
+                    SELECT id, id_parent, 0, CAST('' AS CHAR(4000))
+                        FROM {$this->table_xml} AS xml
+                        WHERE id = :id AND id_doc = :doc_id
+                    UNION ALL
+                    SELECT x.id, x.id_parent, lvl + 1, CONCAT(sortkey, LPAD(IFNULL(x.pos + 1, 0), {$pad}, '0'), ' ')
+                        FROM {$this->table_xml} AS x INNER JOIN tree AS t
+                        ON x.id_parent = t.id
+                    )
+                    SELECT lvl, xml.* FROM tree JOIN {$this->table_xml} AS xml ON tree.id = xml.id ORDER BY sortkey;"
             );
             $query->execute([
                 'doc_id' => $this->doc_id,
@@ -398,30 +403,10 @@ class Document
 
             //get ROOT-NODE
             if ($result && $result->type == 'ELEMENT_NODE') {
-                //create node
-                $node_data = "<{$result->name}";
-
-                $node_data .= " xmlns:{$this->db_ns->ns}=\"{$this->db_ns->uri}\"";
-                $node_data .= " {$this->namespace_string}";
-
-                //add attributes to node
-                $node_data .= " {$result->value}";
-
-                //add id_attribute to node
-                $node_data .= " {$this->db_ns->ns}:{$this->id_attribute}=\"$result->id\"";
-
-                //add lastchange-data
-                $node_data .= " {$this->db_ns->ns}:lastchange=\"{$this->lastchange}\"";
-                $node_data .= " {$this->db_ns->ns}:lastchangeUid=\"{$this->lastchangeUid}\"";
-
-                $node_data .= ">";
-
-                $xml_str .= $node_data;
-
                 //add child_nodes
-                $xml_str .= $this->getChildnodesByParentId($result->id, $level);
-
-                $xml_str .= "</{$result->name}>";
+                list($xml_str) = $this->getChildnodesByQuery($query, $result);
+                //echo($xml_str);
+                //die();
             } else {
                 $this->endTransaction();
 
@@ -438,7 +423,7 @@ class Document
 
             // add xml to xml-cache
             // TODO bug in cache caused by saving when level is 0
-            if (is_object($xml_doc) && $xml_doc->documentElement != null && $level === PHP_INT_MAX) {
+            if (is_object($xml_doc) && $xml_doc->documentElement != null) {
                 $this->cache->set($identifier, $xml_doc->saveXML());
             }
         }
@@ -1379,6 +1364,80 @@ class Document
         }
 
         $this->free_element_ids = array_keys($free);
+    }
+    // }}}
+    // {{{ getChildnodesByQuery
+    /**
+     * gets child nodes of a node as string
+     *
+     * @param   $parent_id (int) id of parent-node
+     * @param   $level (int) number of recursive calls. how deep to traverse the tree.
+     *
+     * @return  $xml_doc (string) xml node definition of node
+     */
+    protected function getChildnodesByQuery($query, $row)
+    {
+        $xml = '';
+
+        do {
+            //get ELMEMENT_NODE
+            if ($row->type == 'ELEMENT_NODE') {
+                //create node
+                $node_data = "<{$row->name}";
+
+                if ($row->lvl == 0) {
+                    $node_data .= " xmlns:{$this->db_ns->ns}=\"{$this->db_ns->uri}\"";
+                    $node_data .= " {$this->namespace_string}";
+
+                    //add lastchange-data
+                    $node_data .= " {$this->db_ns->ns}:lastchange=\"{$this->lastchange}\"";
+                    $node_data .= " {$this->db_ns->ns}:lastchangeUid=\"{$this->lastchangeUid}\"";
+                }
+
+                //add attributes to node
+                $node_data .= " {$row->value}";
+
+                //add id_attribute to node
+                $node_data .= " {$this->db_ns->ns}:{$this->id_attribute}=\"$row->id\">";
+
+                $xml .= $node_data;
+
+            //get TEXT_NODES
+            } else if ($row->type == 'TEXT_NODE') {
+                $xml .= htmlspecialchars($row->value);
+            //get CDATA_SECTION
+            } else if ($row->type == 'CDATA_SECTION_NODE') {
+                // @todo CDATA not implemented yet
+            //get COMMENT_NODE
+            } else if ($row->type == 'COMMENT_NODE') {
+                $xml .= "<!--{$row->value}-->";
+            //get PROCESSING_INSTRUCTION
+            } else if ($row->type == 'PI_NODE') {
+                $xml .= "<?{$row->name} {$row->value}?>";
+            //get ENTITY_REF Node
+            } else if ($row->type == 'ENTITY_REF_NODE') {
+                // @todo ENTITY_REF_NODE not implemented yet
+            }
+
+            //var_dump($row->lvl . " - " . $row->type . " - " . $row->name . ": " . $row->value);
+            $lastRow = $row;
+            $row = $query->fetchObject();
+
+            if ($lastRow->type == 'ELEMENT_NODE') {
+                if ($row && $lastRow->lvl < $row->lvl) {
+                    //add child_nodes
+                    list($children, $row) = $this->getChildnodesByQuery($query, $row);
+                    $xml .= $children;
+                }
+
+                $xml .= "</{$lastRow->name}>";
+            }
+            if (!$row || $lastRow->lvl > $row->lvl) {
+                return [$xml, $row];
+            }
+        } while ($row);
+
+        return [$xml, $row];
     }
     // }}}
     // {{{ getChildnodesByParentId
