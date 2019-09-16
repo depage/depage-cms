@@ -1393,17 +1393,14 @@ class Document
                 }
 
                 //add attributes to node
-                $attributes = [];
-                $matches = preg_split('/(="|"$|" )/', $row->value);
-                $matches = array_chunk($matches, 2);
-                foreach($matches as $match) {
-                    if ($match[0] != '') {
-                        if ($ns = $this->getNamespace($match[0])) {
-                            $node->setAttributeNS($ns->uri, $match[0], htmlspecialchars_decode($match[1]));
+                $matches = array_chunk(preg_split('/(="|"$|" )/', $row->value), 2);
+                foreach($matches as $m) {
+                    if ($m[0] != '') {
+                        if ($ns = $this->getNamespace($m[0])) {
+                            $node->setAttributeNS($ns->uri, $m[0], htmlspecialchars_decode($m[1]));
                         } else {
-                            $node->setAttribute($match[0], htmlspecialchars_decode($match[1]));
+                            $node->setAttribute($m[0], htmlspecialchars_decode($m[1]));
                         }
-                        $attributes[$match[0]] = htmlspecialchars_decode($match[1]);
                     }
                 }
 
@@ -1412,8 +1409,7 @@ class Document
 
             //get TEXT_NODES
             } else if ($row->type == 'TEXT_NODE') {
-                //$node = $doc->createTextNode($row->value);
-                $node = $doc->createTextNode(str_replace("\r", " ", $row->value));
+                $node = $doc->createTextNode(strtr($row->value, "\r", " "));
                 $parentNode->appendChild($node);
             //get CDATA_SECTION
             } else if ($row->type == 'CDATA_SECTION_NODE') {
@@ -1482,7 +1478,7 @@ class Document
     {
         $parts = explode(":", $name, 2);
 
-        if (count($parts) == 1) {
+        if (!isset($parts[1])) {
             return false;
         }
 
