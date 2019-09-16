@@ -342,21 +342,16 @@ class Document
      * @param $id (int) db-id of node to get
      * @param $add_id_attribute (bool) true, if you want to add the db-id
      *        attributes to xml-definition, false to remove them.
-     * @param $level (int) number of recursive getChildnodesByParentId calls.
-     *        how deep to traverse the tree.
      */
     public function getSubdocByNodeId($id, $add_id_attribute = true)
     {
         $identifier = "{$this->table_docs}_d{$this->doc_id}/{$id}.xml";
-        $xml_doc = new \Depage\Xml\Document();
-        $xml_str = $this->cache->get($identifier);
+        $xmlDoc = new \Depage\Xml\Document();
 
-        if ($xml_str) {
+        if ($xmlStr = $this->cache->get($identifier)) {
             // read from cache
-            $xml_doc->loadXML($xml_str);
+            $xmlDoc->loadXML($xmlStr);
         } else {
-            $xml_str = "";
-
             // read from database
             $this->beginTransactionNonAltering();
 
@@ -403,7 +398,7 @@ class Document
 
             //get ROOT-NODE
             if ($row && $row->type == 'ELEMENT_NODE') {
-                $this->getChildnodesByQuery($query, $row, $xml_doc);
+                $this->addChildnodesByQuery($query, $row, $xmlDoc);
             } else {
                 $this->endTransaction();
 
@@ -414,22 +409,21 @@ class Document
             $this->endTransaction();
 
             $dth = $this->getDoctypeHandler();
-            if ($dth->testDocument($xml_doc)) { // test whether the document was altered
-                $this->saveNode($xml_doc);
+            if ($dth->testDocument($xmlDoc)) { // test whether the document was altered
+                $this->saveNode($xmlDoc);
             }
 
             // add xml to xml-cache
-            // TODO bug in cache caused by saving when level is 0
-            if (is_object($xml_doc) && $xml_doc->documentElement != null) {
-                $this->cache->set($identifier, $xml_doc->saveXML());
+            if (is_object($xmlDoc) && $xmlDoc->documentElement != null) {
+                $this->cache->set($identifier, $xmlDoc->saveXML());
             }
         }
 
-        if (is_a($xml_doc, 'DOMDocument') && $xml_doc->documentElement != null && !$add_id_attribute) {
-            $this->removeIdAttr($xml_doc);
+        if (is_a($xmlDoc, 'DOMDocument') && $xmlDoc->documentElement != null && !$add_id_attribute) {
+            $this->removeIdAttr($xmlDoc);
         }
 
-        return $xml_doc;
+        return $xmlDoc;
     }
     // }}}
     // {{{ getSubdocByXpath
@@ -757,8 +751,8 @@ class Document
         $dth = $this->getDoctypeHandler();
 
         if ($dth->isAllowedMove($node_id, $target_id)) {
-            $xml_doc = $this->getSubdocByNodeId($node_id, false);
-            $root_node = $xml_doc;
+            $xmlDoc = $this->getSubdocByNodeId($node_id, false);
+            $root_node = $xmlDoc;
 
             $this->clearCache();
             $this->beginTransactionAltering();
@@ -1109,8 +1103,8 @@ class Document
      */
     protected function copyNodePrivate($node_id, $target_id, $target_pos)
     {
-        $xml_doc = $this->getSubdocByNodeId($node_id, false);
-        $root_node = $xml_doc;
+        $xmlDoc = $this->getSubdocByNodeId($node_id, false);
+        $root_node = $xmlDoc;
         $save_id = $this->saveNodeIn($root_node, $target_id, $target_pos, true);
 
         return $save_id;
@@ -1363,16 +1357,17 @@ class Document
         $this->free_element_ids = array_keys($free);
     }
     // }}}
-    // {{{ getChildnodesByQuery
+    // {{{ addChildnodesByQuery
     /**
-     * gets child nodes of a node as string
+     * add child nodes of a node to DOMDocument
      *
-     * @param   $parent_id (int) id of parent-node
-     * @param   $level (int) number of recursive calls. how deep to traverse the tree.
+     * @param   $query (object) database query to get next row
+     * @param   $row (object) last result row for parent
+     * @param   $parentNode (object) DOMElement of parent node or empty DOMDocument
      *
-     * @return  $xml_doc (string) xml node definition of node
+     * @return  $row (object) values of last queried row
      */
-    protected function getChildnodesByQuery($query, $row, $parentNode)
+    protected function addChildnodesByQuery($query, $row, $parentNode)
     {
         $doc = $parentNode->ownerDocument ?? $parentNode;
 
@@ -1442,7 +1437,7 @@ class Document
             if ($lastRow->type == 'ELEMENT_NODE') {
                 if ($row && $lastRow->lvl < $row->lvl) {
                     //add child_nodes
-                    $row = $this->getChildnodesByQuery($query, $row, $node);
+                    $row = $this->addChildnodesByQuery($query, $row, $node);
                 }
             }
             if (!$row || $lastRow->lvl > $row->lvl) {
@@ -1451,76 +1446,6 @@ class Document
         } while ($row);
 
         return $row;
-    }
-    // }}}
-    // {{{ getChildnodesByParentId
-    /**
-     * gets child nodes of a node as string
-     *
-     * @param   $parent_id (int) id of parent-node
-     * @param   $level (int) number of recursive calls. how deep to traverse the tree.
-     *
-     * @return  $xml_doc (string) xml node definition of node
-     */
-    protected function getChildnodesByParentId($parent_id, $level = PHP_INT_MAX)
-    {
-        // prepare query
-        if (is_null($this->childNodeQuery)) {
-            $this->childNodeQuery = $this->pdo->prepare(
-                "SELECT xml.id AS id, xml.name AS name, xml.type AS type, xml.value AS value
-                FROM {$this->table_xml} AS xml
-                WHERE xml.id_parent = :parent_id AND xml.id_doc = :doc_id
-                ORDER BY xml.pos"
-            );
-        }
-
-        $xml_doc = '';
-
-        $this->childNodeQuery->execute([
-            'doc_id' => $this->doc_id,
-            'parent_id' => $parent_id,
-        ]);
-        $results = $this->childNodeQuery->fetchAll(\PDO::FETCH_OBJ);
-
-        foreach ($results as $row) {
-            //get ELMEMENT_NODE
-            if ($row->type == 'ELEMENT_NODE') {
-                //create node
-                $node_data = "<{$row->name}";
-
-                //add attributes to node
-                $node_data .= " {$row->value}";
-
-                //add id_attribute to node
-                $node_data .= " {$this->db_ns->ns}:{$this->id_attribute}=\"$row->id\">";
-
-                $xml_doc .= $node_data;
-
-                //add child_nodes
-                if ($level > 0) {
-                    $xml_doc .= $this->getChildnodesByParentId($row->id, $level - 1);
-                }
-
-                $xml_doc .= "</{$row->name}>";
-                //get TEXT_NODES
-            } else if ($row->type == 'TEXT_NODE') {
-                $xml_doc .= htmlspecialchars($row->value);
-                //get CDATA_SECTION
-            } else if ($row->type == 'CDATA_SECTION_NODE') {
-                // @todo CDATA not implemented yet
-                //get COMMENT_NODE
-            } else if ($row->type == 'COMMENT_NODE') {
-                $xml_doc .= "<!--{$row->value}-->";
-                //get PROCESSING_INSTRUCTION
-            } else if ($row->type == 'PI_NODE') {
-                $xml_doc .= "<?{$row->name} {$row->value}?>";
-                //get ENTITY_REF Node
-            } else if ($row->type == 'ENTITY_REF_NODE') {
-                // @todo ENTITY_REF_NODE not implemented yet
-            }
-        }
-
-        return $xml_doc;
     }
     // }}}
     // {{{ getTargetPos
