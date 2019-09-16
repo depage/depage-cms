@@ -377,7 +377,7 @@ class Document
             $this->entities = $result->entities;
             $this->namespace_string = $result->namespaces;
             $this->namespaces = $this->extractNamespaces($this->namespace_string);
-            $this->namespaces[] = $this->db_ns;
+            $this->namespaces[$this->db_ns->ns] = $this->db_ns;
             $this->lastchange = $result->lastchange;
             $this->lastchangeUid = $result->lastchangeUid;
 
@@ -399,21 +399,18 @@ class Document
                 'doc_id' => $this->doc_id,
                 'id' => $id,
             ]);
-            $result = $query->fetchObject();
+            $row = $query->fetchObject();
 
             //get ROOT-NODE
-            if ($result && $result->type == 'ELEMENT_NODE') {
-                //add child_nodes
-                list($xml_str) = $this->getChildnodesByQuery($query, $result);
-                //echo($xml_str);
-                //die();
+            if ($row && $row->type == 'ELEMENT_NODE') {
+                $this->getChildnodesByQuery($query, $row, $xml_doc);
             } else {
                 $this->endTransaction();
 
                 throw new Exceptions\XmlDbException('This node is no ELEMENT_NODE or node does not exist' . " {$this->doc_id}/{$id}");
             }
 
-            $success = $xml_doc->loadXML($xml_str);
+            $success = true;
             $this->endTransaction();
 
             $dth = $this->getDoctypeHandler();
@@ -1375,69 +1372,85 @@ class Document
      *
      * @return  $xml_doc (string) xml node definition of node
      */
-    protected function getChildnodesByQuery($query, $row)
+    protected function getChildnodesByQuery($query, $row, $parentNode)
     {
-        $xml = '';
+        $doc = $parentNode->ownerDocument ?? $parentNode;
 
         do {
             //get ELMEMENT_NODE
             if ($row->type == 'ELEMENT_NODE') {
                 //create node
-                $node_data = "<{$row->name}";
+                if ($ns = $this->getNamespace($row->name)) {
+                    $node = $doc->createElementNS($ns->uri, $row->name);
+                } else {
+                    $node = $doc->createElement($row->name);
+                }
+                $parentNode->appendChild($node);
 
                 if ($row->lvl == 0) {
-                    $node_data .= " xmlns:{$this->db_ns->ns}=\"{$this->db_ns->uri}\"";
-                    $node_data .= " {$this->namespace_string}";
+                    foreach($this->namespaces as $n) {
+                        $node->setAttributeNS('http://www.w3.org/2000/xmlns/', "xmlns:{$n->ns}", $n->uri);
+                    }
 
                     //add lastchange-data
-                    $node_data .= " {$this->db_ns->ns}:lastchange=\"{$this->lastchange}\"";
-                    $node_data .= " {$this->db_ns->ns}:lastchangeUid=\"{$this->lastchangeUid}\"";
+                    $node->setAttributeNS($this->db_ns->uri, "{$this->db_ns->ns}:lastchange", $this->lastchange);
+                    $node->setAttributeNS($this->db_ns->uri, "{$this->db_ns->ns}:lastchangeUid", $this->lastchangeUid);
                 }
 
                 //add attributes to node
-                $node_data .= " {$row->value}";
+                $attributes = [];
+                $matches = preg_split('/(="|"$|" )/', $row->value);
+                $matches = array_chunk($matches, 2);
+                foreach($matches as $match) {
+                    if ($match[0] != '') {
+                        if ($ns = $this->getNamespace($match[0])) {
+                            $node->setAttributeNS($ns->uri, $match[0], htmlspecialchars_decode($match[1]));
+                        } else {
+                            $node->setAttribute($match[0], htmlspecialchars_decode($match[1]));
+                        }
+                        $attributes[$match[0]] = htmlspecialchars_decode($match[1]);
+                    }
+                }
 
                 //add id_attribute to node
-                $node_data .= " {$this->db_ns->ns}:{$this->id_attribute}=\"$row->id\">";
-
-                $xml .= $node_data;
+                $node->setAttributeNS($this->db_ns->uri, "{$this->db_ns->ns}:{$this->id_attribute}", $row->id);
 
             //get TEXT_NODES
             } else if ($row->type == 'TEXT_NODE') {
-                $xml .= htmlspecialchars($row->value);
+                //$node = $doc->createTextNode($row->value);
+                $node = $doc->createTextNode(str_replace("\r", " ", $row->value));
+                $parentNode->appendChild($node);
             //get CDATA_SECTION
             } else if ($row->type == 'CDATA_SECTION_NODE') {
                 // @todo CDATA not implemented yet
             //get COMMENT_NODE
             } else if ($row->type == 'COMMENT_NODE') {
-                $xml .= "<!--{$row->value}-->";
+                $node = $doc->createComment($row->value);
+                $parentNode->appendChild($node);
             //get PROCESSING_INSTRUCTION
             } else if ($row->type == 'PI_NODE') {
-                $xml .= "<?{$row->name} {$row->value}?>";
+                $node = $doc->createProcessingInstruction($row->value);
+                $parentNode->appendChild($node);
             //get ENTITY_REF Node
             } else if ($row->type == 'ENTITY_REF_NODE') {
                 // @todo ENTITY_REF_NODE not implemented yet
             }
 
-            //var_dump($row->lvl . " - " . $row->type . " - " . $row->name . ": " . $row->value);
             $lastRow = $row;
             $row = $query->fetchObject();
 
             if ($lastRow->type == 'ELEMENT_NODE') {
                 if ($row && $lastRow->lvl < $row->lvl) {
                     //add child_nodes
-                    list($children, $row) = $this->getChildnodesByQuery($query, $row);
-                    $xml .= $children;
+                    $row = $this->getChildnodesByQuery($query, $row, $node);
                 }
-
-                $xml .= "</{$lastRow->name}>";
             }
             if (!$row || $lastRow->lvl > $row->lvl) {
-                return [$xml, $row];
+                return $row;
             }
         } while ($row);
 
-        return [$xml, $row];
+        return $row;
     }
     // }}}
     // {{{ getChildnodesByParentId
@@ -1533,6 +1546,24 @@ class Document
     }
     // }}}
 
+    // {{{ parseNodename()
+    /**
+     * @brief parseNodename
+     *
+     * @param mixed $name
+     * @return void
+     **/
+    protected function getNamespace($name)
+    {
+        $parts = explode(":", $name, 2);
+
+        if (count($parts) == 1) {
+            return false;
+        }
+
+        return $this->namespaces[$parts[0]];
+    }
+    // }}}
     // {{{ extractNamespaces
     protected function extractNamespaces($str)
     {
@@ -1542,7 +1573,7 @@ class Document
         preg_match_all("/xmlns:$pName=\"$pAttr\"/", $str, $ns_elements, PREG_SET_ORDER);
 
         foreach ($ns_elements AS $ns_element) {
-            $namespaces[] = new XmlNs($ns_element[1], $ns_element[2]);
+            $namespaces[$ns_element[1]] = new XmlNs($ns_element[1], $ns_element[2]);
         }
 
         return $namespaces;
