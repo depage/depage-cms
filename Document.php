@@ -388,8 +388,8 @@ class Document
                         FROM {$this->table_xml} AS x INNER JOIN tree AS t
                         ON x.id_parent = t.id
                     )
-                    SELECT lvl, xml.* FROM tree JOIN {$this->table_xml} AS xml ON tree.id = xml.id ORDER BY sortkey;"
-            );
+                    SELECT lvl, xml.* FROM tree JOIN {$this->table_xml} AS xml ON tree.id = xml.id ORDER BY sortkey;",
+                [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
             $query->execute([
                 'doc_id' => $this->doc_id,
                 'id' => $id,
@@ -1305,36 +1305,33 @@ class Document
             $free = [];
         }
 
-        do {
-            // @todo for some reason preparing before the loop does not work with native prepared statements
-            $query = $this->pdo->prepare(
-                "SELECT row AS id FROM
-                    (SELECT
-                        @row := @row + 1 as row, xml.id
-                    FROM
-                        {$this->table_xml} as xml,
-                        (SELECT @row := :start) r
-                    WHERE @row <> id
-                    ORDER BY xml.id) AS seq
-                WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM {$this->table_xml} as xml
-                    WHERE xml.id = row
-                ) LIMIT :maxCount;"
-            );
+        // @todo for some reason preparing before the loop does not work with native prepared statements
+        $query = $this->pdo->prepare(
+            "SELECT row AS id FROM
+                (SELECT
+                    @row := @row + 1 as row, xml.id
+                FROM
+                    {$this->table_xml} as xml,
+                    (SELECT @row := :start) r
+                WHERE @row <> id
+                ORDER BY xml.id) AS seq
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM {$this->table_xml} as xml
+                WHERE xml.id = row
+            ) LIMIT :maxCount;",
+            [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
 
+        do {
             $query->execute([
                 'start' => $lastMax,
                 'maxCount' => $needed,
             ]);
 
-            $results = $query->fetchAll(\PDO::FETCH_COLUMN);
-            foreach ($results as $row) {
+            while ($row = $query->fetchColumn()) {
                 $id = (int) $row;
-                $free[$id] = null;
-            }
-            if (count($results) > 0) {
                 $lastMax = $id;
+                $free[$id] = null;
             }
         } while (count($free) < $needed && count($results) > 0);
 
