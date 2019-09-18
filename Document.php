@@ -1330,10 +1330,8 @@ class Document
 
             while ($row = $query->fetchColumn()) {
                 $id = (int) $row;
-                $free[$id] = null;
-            }
-            if (count($results) > 0) {
                 $lastMax = $id;
+                $free[$id] = null;
             }
         } while (count($free) < $needed && count($results) > 0);
 
