@@ -27,7 +27,7 @@ class DoctypeHandlerTestClass extends Base
         parent::__construct($xmlDb, $document);
 
         $testNode = new \stdClass();
-        $testNode->new = 'customNameAttribute';
+        $testNode->newName = 'customNameAttribute';
         $testNode->attributes = [
             'attr1' => 'value1',
             'attr2' => 'value2',

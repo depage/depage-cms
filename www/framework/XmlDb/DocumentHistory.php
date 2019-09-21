@@ -56,7 +56,7 @@ class DocumentHistory
 
         if ($published !== null) {
             $query .= ' AND h.published = :published';
-            $params['published'] = $published == true;
+            $params['published'] = $published ? 1 : 0;
         }
 
         $query .= ' ORDER BY h.last_saved_at DESC';
@@ -148,12 +148,12 @@ class DocumentHistory
      *
      * load xml from last published version from history
      */
-    public function getLastPublishedXml() {
+    public function getLastPublishedXml($add_id_attribute = true) {
         $versions = $this->getVersions(true, 1);
         reset($versions);
         $latest = key($versions);
 
-        return $this->getXml($latest);
+        return $this->getXml($latest, $add_id_attribute);
     }
     // }}}
 
@@ -198,7 +198,7 @@ class DocumentHistory
                 'timestamp1' => date($this->dateFormat, $timestamp),
                 'timestamp2' => date($this->dateFormat, $timestamp),
                 'user_id' => $user_id,
-                'published' => $published,
+                'published' => $published ? 1 : 0,
             ];
 
             $query->execute($params);

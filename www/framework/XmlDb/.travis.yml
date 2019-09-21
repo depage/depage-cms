@@ -1,17 +1,15 @@
 language: php
 php:
-    - 7.0
-    - 5.6
-    - 5.5
-    - 5.4
+    - 7.3
+    - 7.2
 
-services:
-    - mysql
+addons:
+    mariadb: '10.2'
 
 before_script:
     - mysql -e 'create database test_db;'
     - echo "GRANT ALL PRIVILEGES ON test_db.* TO 'test_db_user'@'localhost' IDENTIFIED BY 'test_db_password' WITH GRANT OPTION;" | mysql -u root
     - composer install
 
-script: phpunit --configuration Tests/PhpUnit.xml Tests/
+script: phpunit --configuration Tests/PhpUnit.xml --process-isolation Tests/
 

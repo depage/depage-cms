@@ -9,7 +9,7 @@ class DocumentTransactionTest extends XmlDbTestCase
     protected $doc;
     // }}}
     // {{{ setUp
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
 
