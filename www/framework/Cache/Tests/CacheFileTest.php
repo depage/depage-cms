@@ -3,7 +3,7 @@
 /**
  * Blackbox tests for all extensions, compares imagesizes/filesizes
  **/
-class CacheFileTest extends \PHPUnit_Framework_TestCase
+class CacheFileTest extends \PHPUnit\Framework\TestCase
 {
     protected $cache;
 
@@ -11,7 +11,7 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
     /**
      * setup function
      **/
-    public function setUp()
+    public function setUp():void
     {
         $this->clean();
 
@@ -25,7 +25,7 @@ class CacheFileTest extends \PHPUnit_Framework_TestCase
     /**
      * setup function
      **/
-    public function tearDown()
+    public function tearDown():void
     {
         $this->clean();
     }

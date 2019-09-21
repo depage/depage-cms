@@ -11,7 +11,7 @@ class CacheRedisTest extends CacheFileTest
     /**
      * setup function
      **/
-    public function setUp()
+    public function setUp():void
     {
         $this->clean();
 
@@ -25,7 +25,7 @@ class CacheRedisTest extends CacheFileTest
     /**
      * setup function
      **/
-    public function tearDown()
+    public function tearDown():void
     {
         $this->clean();
     }
