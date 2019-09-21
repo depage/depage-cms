@@ -3,13 +3,13 @@
 /**
  * Blackbox tests for all extensions, compares imagesizes/filesizes
  **/
-class CacheUncachedTest extends \PHPUnit_Framework_TestCase
+class CacheUncachedTest extends \PHPUnit\Framework\TestCase
 {
     // {{{ setUp
     /**
-     * setup function 
+     * setup function
      **/
-    public function setUp()
+    public function setUp():void
     {
         $this->cache = \Depage\Cache\Cache::factory("test", array(
             'disposition' => 'uncached',

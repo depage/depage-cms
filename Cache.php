@@ -16,8 +16,8 @@ abstract class Cache
     protected $cachepath;
     protected $baseurl;
     protected $defaults = array(
-        'cachepath' => DEPAGE_CACHE_PATH,
-        'baseurl' => DEPAGE_BASE,
+        'cachepath' => "",
+        'baseurl' => "",
         'disposition' => "file",
     );
     // }}}
@@ -53,6 +53,13 @@ abstract class Cache
     {
         $class_vars = get_class_vars('\Depage\Cache\Cache');
         $options = array_merge($class_vars['defaults'], $options);
+
+        if (empty($options['cachepath']) && defined('DEPAGE_CACHE_PATH')) {
+            $options['cachepath'] = DEPAGE_CACHE_PATH;
+        }
+        if (empty($options['baseurl']) && defined('DEPAGE_BASE')) {
+            $options['baseurl'] = DEPAGE_BASE;
+        }
 
         $this->prefix = $prefix;
         $this->cachepath = "{$options['cachepath']}/{$this->prefix}/";
