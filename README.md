@@ -11,10 +11,8 @@ Features
 - different interchangable backends:
   - File
   - Redis
-  - Memcache
-  - Memcached
+  - Uncached
 - transparent fallback to file caching if memory caching is not available with the disposition "memory" option
-- same calls with memcache and memcached extensions
 - unit tested
 
 [![Build Status](https://travis-ci.org/depage/depage-cache.png?branch=master)](https://travis-ci.org/depage/depage-cache)
@@ -23,10 +21,8 @@ Features
 Prerequisites
 -------------
 
-- PHP >= 5.3
+- PHP >= 7.2
 - redis extension for redis provider
-- Memcache extension for memcache provider
-- Memcached extension for memcached provider
 
 For more information
 --------------------
