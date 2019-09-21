@@ -56,7 +56,7 @@ class Redis extends \Depage\Cache\Cache
      */
     public function exist($key)
     {
-        return $this->redis->exists($key);
+        return (bool) $this->redis->exists($key);
     }
     // }}}
     // {{{ age */
