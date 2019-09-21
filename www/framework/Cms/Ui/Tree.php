@@ -282,7 +282,7 @@ class Tree extends Base {
     {
         $status = false;
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-        $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+        $name = filter_input(INPUT_POST, 'name', FILTER_UNSAFE_RAW);
 
         $this->doc->setAttribute($id, "name", $name);
         $parent_id = $this->doc->getParentIdById($id);
