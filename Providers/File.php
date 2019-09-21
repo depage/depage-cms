@@ -181,6 +181,7 @@ class File extends \Depage\Cache\Cache
     {
         // @todo throw error if there are wildcards in identifier to be compatioble with memcached
 
+        clearstatcache();
         $files = array_merge(
             (array) glob($this->cachepath . $key),
             (array) glob($this->cachepath . $key . ".gz")
@@ -189,6 +190,7 @@ class File extends \Depage\Cache\Cache
         foreach ($files as $file) {
             $this->rmr($file);
         }
+        clearstatcache();
     }
     // }}}
     // {{{ clear */
@@ -199,11 +201,13 @@ class File extends \Depage\Cache\Cache
      */
     public function clear()
     {
+        clearstatcache();
         $files = (array) glob($this->cachepath . "/*");
 
         foreach ($files as $file) {
             $this->rmr($file);
         }
+        clearstatcache();
     }
     // }}}
 }

@@ -1,13 +1,11 @@
 {
     "name": "depage/cache",
     "description": "depage-cache is a simple caching class with different backends that are interchangable.",
-    "version": "1.4.2",
+    "version": "1.5.0",
     "type": "library",
     "keywords": [
         "cache",
         "caching",
-        "memcache",
-        "memcached",
         "redis"
     ],
     "require": {
