@@ -670,9 +670,9 @@ class Document
         $dth = $this->getDoctypeHandler();
 
         if ($dth->isAllowedAdd($node, $target_id)) {
-            $this->beginTransactionAltering();
-
             $dth->onAddNode($node, $target_id, $target_pos, $extras);
+
+            $this->beginTransactionAltering();
 
             $success = $this->saveNodeIn($node, $target_id, $target_pos, true);
 
@@ -1152,9 +1152,9 @@ class Document
             || !isset($attributes[$attr_name])
         ) {
             $dth = $this->getDoctypeHandler();
-            $dth->onSetAttribute($node_id, $attr_name, $attributes[$attr_name], $attr_value);
 
             $attributes[$attr_name] = $attr_value;
+            $dth->onSetAttribute($node_id, $attr_name, $attributes[$attr_name], $attr_value);
             $success = $this->saveAttributes($node_id, $attributes);
         }
 
@@ -1226,10 +1226,10 @@ class Document
 
             $xpath = new \DOMXPath($xml);
             $xpath->registerNamespace($db_ns->ns, $db_ns->uri);
-            $xp_result = $xpath->query("./descendant-or-self::node()[@{$db_ns->ns}:{$attribute}]", $node);
+            $xp_result = $xpath->query(".//@{$db_ns->ns}:{$attribute}", $node);
 
             foreach ($xp_result as $node) {
-                $node->removeAttributeNS($db_ns->uri, $attribute);
+                $node->parentNode->removeAttributeNode($node);
             }
         }
     }
@@ -1328,12 +1328,14 @@ class Document
                 'maxCount' => $needed,
             ]);
 
+            $found = false;
             while ($row = $query->fetchColumn()) {
                 $id = (int) $row;
+                $found = true;
                 $lastMax = $id;
                 $free[$id] = null;
             }
-        } while (count($free) < $needed && count($results) > 0);
+        } while (count($free) < $needed && $found);
 
         $num = count($free);
 
@@ -1417,7 +1419,7 @@ class Document
                 $parentNode->appendChild($node);
             //get PROCESSING_INSTRUCTION
             } else if ($row->type == 'PI_NODE') {
-                $node = $doc->createProcessingInstruction($row->value);
+                $node = $doc->createProcessingInstruction($row->name, $row->value);
                 $parentNode->appendChild($node);
             //get ENTITY_REF Node
             } else if ($row->type == 'ENTITY_REF_NODE') {
@@ -1599,6 +1601,7 @@ class Document
 
         // save root node
         $node_array[0]['id'] = $this->saveNodeToDb($node_array[0]['node'], $node_array[0]['id'], $target_id, $target_pos, true);
+        $this->insertNodeQuery = null;
 
         if ($inc_children) {
             // save element nodes
@@ -1622,6 +1625,7 @@ class Document
                 $node_array[$i]['id'] = $this->saveNodeToDb($node_array[$i]['node'], $node_array[$i]['id'], $node_array[$node_array[$i]['parent_index']]['id'], $node_array[$i]['pos']);
             }
         }
+        $this->insertNodeQuery = null;
     }
     // }}}
     // {{{ getNodeArrayForSaving

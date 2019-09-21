@@ -5,7 +5,7 @@ namespace Depage\XmlDb\Tests;
 class XpathXmlDbTest extends XpathTestCase
 {
     // {{{ setUp
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
 

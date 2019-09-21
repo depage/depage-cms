@@ -10,7 +10,7 @@ abstract class XpathTestCase extends XmlDbTestCase
     protected $testObject;
 
     // {{{ setUp
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
 
@@ -307,13 +307,12 @@ abstract class XpathTestCase extends XmlDbTestCase
     // }}}
 
     // {{{ testInvalidXpathOperator
-    /**
-     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage Invalid XPath syntax
-     */
     public function testInvalidXpathOperator()
     {
-       $this->testObject->getNodeIdsByXpath('//pg:page[@file_type = \'html\' op @multilang = \'true\']');
+        $this->expectException(\Depage\XmlDb\Exceptions\XmlDbException::class);
+        $this->expectExceptionMessage("Invalid XPath syntax");
+
+        $this->testObject->getNodeIdsByXpath('//pg:page[@file_type = \'html\' op @multilang = \'true\']');
     }
     // }}}
 }

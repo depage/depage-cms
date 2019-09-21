@@ -86,9 +86,7 @@ class XmlDbHistory implements XmlGetter
         $xml = false;
 
         if ($doc_id = $this->docExists($doc_id_or_name)) {
-            $doc = new Document($this, $doc_id);
-            $history = $doc->getHistory();
-            $xmlFull = $history->getLastPublishedXml($add_id_attribute);
+            $xmlFull = $this->getDocXml($doc_id_or_name, $add_id_attribute);
 
             $domXpath = new \DomXpath($xmlFull);
             $list = $domXpath->query($xpath);
@@ -117,6 +115,23 @@ class XmlDbHistory implements XmlGetter
         if (property_exists($this, $property)) {
             return $this->$property;
         }
+    }
+    // }}}
+    // {{{ __sleep()
+    /**
+     * allows Depage\Db\Pdo-object to be serialized
+     */
+    public function __sleep()
+    {
+        return array(
+            'pdo',
+            'xmlDb',
+            'db_ns',
+            'table_prefix',
+            'table_docs',
+            'table_history',
+            'options',
+        );
     }
     // }}}
 }
