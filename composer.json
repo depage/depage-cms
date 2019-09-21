@@ -1,5 +1,5 @@
 {
-    "name": "Depage/Mail",
+    "name": "depage/mail",
     "description": "depage-mail is a small simple mail generator and sender and a more convinient wrapper for the mail() function, when something bigger is unnecessary or not required.",
     "version": "1.4.3",
     "type": "library",
@@ -8,7 +8,7 @@
         "email"
     ],
     "require": {
-        "php": " >= 5.3"
+        "php": " >= 7.2"
     },
     "require-dev": {
         "phpunit": "*",
