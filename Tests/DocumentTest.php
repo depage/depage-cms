@@ -9,7 +9,7 @@ class DocumentTest extends XmlDbTestCase
     protected $doc;
     // }}}
     // {{{ setUp
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
 
@@ -55,12 +55,11 @@ class DocumentTest extends XmlDbTestCase
     }
     // }}}
     // {{{ testGetDoctypeHandlerFail
-    /**
-     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage Doctype handler must implement DoctypeInterface
-     */
     public function testGetDoctypeHandlerFail()
     {
+        $this->expectException(\Depage\XmlDb\Exceptions\XmlDbException::class);
+        $this->expectExceptionMessage("Doctype handler must implement DoctypeInterface");
+
         // set doctype handler to class that doesn't implement doctype handler interface
         $this->pdo->exec('UPDATE xmldb_proj_test_xmldocs SET type=\'Depage\\\\XmlDb\\\\Document\' WHERE id=\'3\'');
 
@@ -87,12 +86,11 @@ class DocumentTest extends XmlDbTestCase
     }
     // }}}
     // {{{ testGetSubdocByNodeIdNodeDoesntExist
-    /**
-     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage This node is no ELEMENT_NODE or node does not exist
-     */
     public function testGetSubdocByNodeIdNodeDoesntExist()
     {
+        $this->expectException(\Depage\XmlDb\Exceptions\XmlDbException::class);
+        $this->expectExceptionMessage("This node is no ELEMENT_NODE or node does not exist");
+
         $this->doc->getSubdocByNodeId(1000);
     }
     // }}}
@@ -114,19 +112,6 @@ class DocumentTest extends XmlDbTestCase
         $expected = '<page/>';
 
         $this->assertXmlStringEqualsXmlString($expected, $doc->getSubdocByNodeId(2));
-    }
-    // }}}
-    // {{{ testGetSubdocByNodeIdWrongNodeType
-    /**
-     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage This node is no ELEMENT_NODE or node does not exist
-     */
-    public function testGetSubdocByNodeIdWrongNodeType()
-    {
-        // set up document type
-        $this->pdo->exec('UPDATE xmldb_proj_test_xmltree SET type=\'WRONG_NODE\' WHERE id=\'1\'');
-
-        $this->doc->getSubdocByNodeId(1);
     }
     // }}}
     // {{{ testGetSubdocByNodeIdChangedDoc
@@ -935,12 +920,11 @@ class DocumentTest extends XmlDbTestCase
     }
     // }}}
     // {{{ testSaveNodeToDbUnknownNodeType
-    /**
-     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage Unknown DOM node type: "11".
-     */
     public function testSaveNodeToDbUnknownNodeType()
     {
+        $this->expectException(\Depage\XmlDb\Exceptions\XmlDbException::class);
+        $this->expectExceptionMessage("Unknown DOM node type: \"11\".");
+
         $doc = new \DomDocument();
         $nodeElement = $doc->createDocumentFragment();
 

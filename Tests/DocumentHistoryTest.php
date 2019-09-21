@@ -8,24 +8,9 @@ class DocumentHistoryTest extends XmlDbTestCase
     protected $xmlDb;
     protected $doc;
     protected $history;
-    protected $ver1 = [
-        'last_saved_at' => '2016-02-03 16:01:00',
-        'user_id' => '1',
-        'published' => '0',
-        'hash' => '5ceae27386aa1518d346c3129ef9c2d530c18769',
-    ];
-    protected $ver2 = [
-        'last_saved_at' => '2016-02-03 16:02:00',
-        'user_id' => '1',
-        'published' => '1',
-        'hash' => 'a6493f0261f1287b62fa0585a16c8a0d43cf73b8',
-    ];
-    protected $ver3 = [
-        'last_saved_at' => '2016-02-03 16:03:00',
-        'user_id' => '1',
-        'published' => '0',
-        'hash' => 'c8780f81274114f9f97771cd2e1428d2c39c2961',
-    ];
+    protected $ver1;
+    protected $ver2;
+    protected $ver3;
 
     protected $xml1 = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver1" db:docid="3" db:id="4" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home3" db:id="5"><pg:page name="P3.1" db:id="6">bla bla blub <pg:page name="P3.1.2" db:id="7"/></pg:page><pg:page name="P3.2" db:id="8"/></pg:page></dpg:pages>';
     protected $xml2 = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="ver2" db:docid="3" db:id="4" db:lastchange="2016-02-03 16:02:00" db:lastchangeUid=""><pg:page name="Home3" db:id="5"><pg:page name="P3.1" db:id="6">bla bla blub <pg:page name="P3.1.2" db:id="7"/></pg:page><pg:page name="P3.2" db:id="8"/></pg:page></dpg:pages>';
@@ -37,7 +22,7 @@ class DocumentHistoryTest extends XmlDbTestCase
 
     // }}}
     // {{{ setUp
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
 
@@ -52,6 +37,27 @@ class DocumentHistoryTest extends XmlDbTestCase
 
         $this->doc = new DocumentTestClass($this->xmlDb, 3);
         $this->history = $this->doc->getHistory();
+        $this->ver1 = (object)[
+            'lastsaved' => new \DateTime('2016-02-03 16:01:00'),
+            'firstsaved' => new \DateTime('2016-02-03 16:01:00'),
+            'userId' => 1,
+            'published' => 0,
+            'hash' => '5ceae27386aa1518d346c3129ef9c2d530c18769',
+        ];
+        $this->ver2 = (object)[
+            'lastsaved' => new \DateTime('2016-02-03 16:02:00'),
+            'firstsaved' => new \DateTime('2016-02-03 16:02:00'),
+            'userId' => 1,
+            'published' => 1,
+            'hash' => 'f80107795f6da964ce7e3ccf472b42931ea0884eb15dd40d0bc718d71ba94bf5',
+        ];
+        $this->ver3 = (object)[
+            'lastsaved' => new \DateTime('2016-02-03 16:03:00'),
+            'firstsaved' => new \DateTime('2016-02-03 16:03:00'),
+            'userId' => 1,
+            'published' => 0,
+            'hash' => 'c8780f81274114f9f97771cd2e1428d2c39c2961',
+        ];
     }
     // }}}
 
@@ -125,7 +131,7 @@ class DocumentHistoryTest extends XmlDbTestCase
     // {{{ testGetLatestVersion
     public function testGetLatestVersion()
     {
-        $this->assertEquals($this->ver3, $this->history->getLatestVersion());
+        $this->assertEquals($this->ver2, $this->history->getLatestVersion());
 
         $newXml = '<root/>';
         $expected = '<root xmlns:db="http://cms.depagecms.net/ns/database" db:docid="3" db:id="4"/>';
@@ -136,7 +142,7 @@ class DocumentHistoryTest extends XmlDbTestCase
         $this->setForeignKeyChecks(true);
 
         $latestVersion = $this->history->getLatestVersion();
-        $newTimestamp = strtotime($latestVersion['last_saved_at']);
+        $newTimestamp = $latestVersion->lastsaved->getTimestamp();
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->history->getXml($newTimestamp));
     }
     // }}}
@@ -180,16 +186,16 @@ class DocumentHistoryTest extends XmlDbTestCase
         $newXml = '<root/>';
         $this->addTestDoc($newXml);
 
+        $oldRowNum = count($this->history->getVersions());
+
         $this->setForeignKeyChecks(false);
         $timestamp = $this->history->save(42, true);
         $this->setForeignKeyChecks(true);
 
-        $historyTable = $this->getConnection()->createQueryTable('xmldb_proj_test_history', 'SELECT * FROM xmldb_proj_test_history');
         $expected = '<root xmlns:db="http://cms.depagecms.net/ns/database" db:id="4" db:lastchangeUid=""></root>';
 
-        $rows = $historyTable->getRowCount();
-        $lastRowNumber = $rows - 1;
-        $this->assertXmlStringEqualsXmlString($expected, $historyTable->getValue($lastRowNumber,'xml'));
+        $newRowNum = count($this->history->getVersions());
+        $this->assertEquals($oldRowNum + 1, $newRowNum);
     }
     // }}}
     // {{{ testSaveUserId
@@ -203,7 +209,7 @@ class DocumentHistoryTest extends XmlDbTestCase
         $this->setForeignKeyChecks(true);
 
         $versions = $this->history->getVersions();
-        $this->assertEquals(42, $versions[$timestamp]['user_id']);
+        $this->assertEquals(42, $versions[$timestamp]->userId);
     }
     // }}}
     // {{{ testSavePublished
@@ -217,7 +223,7 @@ class DocumentHistoryTest extends XmlDbTestCase
         $this->setForeignKeyChecks(true);
 
         $versions = $this->history->getVersions();
-        $this->assertEquals(1, $versions[$timestamp]['published']);
+        $this->assertEquals(1, $versions[$timestamp]->published);
     }
     // }}}
     // {{{ testSaveUnpublished
@@ -231,22 +237,23 @@ class DocumentHistoryTest extends XmlDbTestCase
         $this->setForeignKeyChecks(true);
 
         $versions = $this->history->getVersions();
-        $this->assertEquals(0, $versions[$timestamp]['published']);
+        $this->assertEquals(0, $versions[$timestamp]->published);
     }
     // }}}
     // {{{ testSaveDuplicate
     public function testSaveDuplicate()
     {
         $latestVersion = $this->history->getLatestVersion();
-        $beforeDate = $latestVersion['last_saved_at'];
+        $date1 = $latestVersion->firstsaved;
 
         $this->setForeignKeyChecks(false);
         $afterTimestamp = $this->history->save(42, true);
         $this->setForeignKeyChecks(true);
 
-        $afterDate = date('Y-m-d H:i:s', $afterTimestamp);
+        $latestVersion = $this->history->getLatestVersion();
+        $date2 = $latestVersion->firstsaved;
 
-        $this->assertEquals($beforeDate, $afterDate);
+        $this->assertEquals($date1, $date2);
     }
     // }}}
 

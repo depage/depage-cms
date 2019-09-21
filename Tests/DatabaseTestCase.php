@@ -2,26 +2,19 @@
 
 namespace Depage\XmlDb\Tests;
 
-class XmlDbTestCase extends \PHPUnit\Framework\TestCase
+class DatabaseTestCase extends \PHPUnit_Extensions_Database_TestCase
 {
     // {{{ variables
     protected $pdo = null;
     protected $conn = null;
-    protected $namespaces = 'xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page"';
     // }}}
 
     // {{{ setUp
-    protected function setUp():void {
+    protected function setUp() {
         $this->getConnection();
         $this->setForeignKeyChecks(false);
         parent::setUp();
-        exec("mysql -u test_db_user --password=test_db_password test_db < Tests/dataset.sql");
         $this->setForeignKeyChecks(true);
-    }
-    // }}}
-    // {{{ tearTown
-    protected function tearTown():void {
-        $this->pdo = null;
     }
     // }}}
     // {{{ getSetUpOperation
@@ -31,10 +24,10 @@ class XmlDbTestCase extends \PHPUnit\Framework\TestCase
     public function getSetUpOperation()
     {
         return new \PHPUnit_Extensions_Database_Operation_Composite(
-            [
+            array(
                 new PHPUnit_Extensions_Database_Operation_MySQL55Truncate(false),
                 \PHPUnit_Extensions_Database_Operation_Factory::INSERT(),
-            ]
+            )
         );
     }
     // }}}
@@ -46,12 +39,19 @@ class XmlDbTestCase extends \PHPUnit\Framework\TestCase
             $GLOBALS['DB_DSN'],
             $GLOBALS['DB_USER'],
             $GLOBALS['DB_PASSWD'],
-            [
+            array(
                 'prefix' => 'xmldb',
                 \PDO::ATTR_PERSISTENT => true,
-            ]
+            )
         );
-        return $this->pdo;
+        $this->conn = $this->createDefaultDBConnection($this->pdo->getPdoObject(), $GLOBALS['DB_DBNAME']);
+
+        return $this->conn;
+    }
+    // }}}
+    // {{{ getDataSet
+    protected function getDataSet() {
+        return $this->createXMLDataSet(__DIR__.'/dataset.xml');
     }
     // }}}
 
@@ -150,55 +150,16 @@ class XmlDbTestCase extends \PHPUnit\Framework\TestCase
     }
     // }}}
 
-    // {{{ removeAttribute
-    protected function removeAttribute($attribute, $xmlString)
-    {
-        $regex = ' ' . preg_quote($attribute .'=') . '"[^"]*"';
-        $result = preg_replace('#' . $regex . '#', '', $xmlString);
-
-        return $result;
-    }
-    // }}}
-    // {{{ removeAttributes
-    protected function removeAttributes($attributes, $xmlString)
+    // {{{ assertXmlStringEqualsXmlStringIgnoreAttributes
+    protected function assertXmlStringEqualsXmlStringIgnoreAttributes($expected, $actual, $attributes = array(), $message = '')
     {
         foreach ($attributes as $attribute) {
-            $xmlString = $this->removeAttribute($attribute, $xmlString);
+            $regex = preg_quote($attribute .'=') . '"[^"]*"';
+            $actual = preg_replace('#' . $regex . '#', '', $actual);
+            $expected = preg_replace('#' . $regex . '#', '', $expected);
         }
 
-        return $xmlString;
-    }
-    // }}}
-    // {{{ assertEqualsIgnoreAttributes
-    protected function assertEqualsIgnoreAttributes($expected, $actual, $attributes = [], $message = '')
-    {
-        $expectedWithoutAttributes = $this->removeAttributes($attributes, $expected);
-        $actualWithoutAttributes = $this->removeAttributes($attributes, $actual);
-
-        return $this->assertEquals($expectedWithoutAttributes, $actualWithoutAttributes, $message);
-    }
-    // }}}
-    // {{{ assertEqualsIgnoreLastchange
-    protected function assertEqualsIgnoreLastchange($expected, $actual, $message = '')
-    {
-        return $this->assertEqualsIgnoreAttributes(
-            $expected,
-            $actual,
-            [
-                'db:lastchange',
-                'db:lastchangeUid',
-            ],
-            $message
-        );
-    }
-    // }}}
-    // {{{ assertXmlStringEqualsXmlStringIgnoreAttributes
-    protected function assertXmlStringEqualsXmlStringIgnoreAttributes($expected, $actual, $attributes = [], $message = '')
-    {
-        $expectedWithoutAttributes = $this->removeAttributes($attributes, $expected);
-        $actualWithoutAttributes = $this->removeAttributes($attributes, $actual);
-
-        return $this->assertXmlStringEqualsXmlString($expectedWithoutAttributes, $actualWithoutAttributes, $message);
+        return $this->assertXmlStringEqualsXmlString($expected, $actual, $message);
     }
     // }}}
     // {{{ assertXmlStringEqualsXmlStringIgnoreLastchange
@@ -207,22 +168,12 @@ class XmlDbTestCase extends \PHPUnit\Framework\TestCase
         return $this->assertXmlStringEqualsXmlStringIgnoreAttributes(
             $expected,
             $actual,
-            [
+            array(
                 'db:lastchange',
                 'db:lastchangeUid',
-            ],
+            ),
             $message
         );
-    }
-    // }}}
-
-    // {{{ generateDomDocument
-    protected function generateDomDocument($xml)
-    {
-        $doc = new \DomDocument();
-        $doc->loadXml($xml);
-
-        return $doc;
     }
     // }}}
 }

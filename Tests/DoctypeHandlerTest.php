@@ -13,7 +13,7 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
         $this->availableNodes = [];
 
         $testNode = new \stdClass();
-        $testNode->new = 'customNameAttribute';
+        $testNode->newName = 'customNameAttribute';
         $testNode->attributes = [
             'attr1' => 'value1',
             'attr2' => 'value2',
@@ -83,7 +83,7 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
 
         $this->doc->save($xml);
 
-        $expected = '<?xml version="1.0"?>' . "\n" .
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" .
             '<node xmlns:db="http://cms.depagecms.net/ns/database"><subnode/></node>' . "\n";
 
         $this->assertEqualsIgnoreLastchange($expected, $this->doc->getXml(false));
@@ -102,7 +102,7 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
 
         $this->doc->save($xml);
 
-        $expected = '<?xml version="1.0"?>' . "\n" .
+        $expected = '<?xml version="1.0" encoding="UTF-8"?>' . "\n" .
             '<node xmlns:db="http://cms.depagecms.net/ns/database">' . "   \t  " .
             '<subnode/>' . "   \t  " .
             '</node>' . "\n";

@@ -8,7 +8,7 @@ class XmlDbTest extends XmlDbTestCase
     protected $xmlPages = '<dpg:pages xmlns:db="http://cms.depagecms.net/ns/database" xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" name="" db:lastchange="2016-02-03 16:09:05" db:lastchangeUid=""><pg:page name="Home3"><pg:page name="P3.1">bla bla blub <pg:page name="P3.1.2"/></pg:page><pg:page name="P3.2"/></pg:page></dpg:pages>';
 
     // {{{ setUp
-    protected function setUp()
+    protected function setUp():void
     {
         parent::setUp();
 
@@ -114,12 +114,11 @@ class XmlDbTest extends XmlDbTestCase
     }
     // }}}
     // {{{ testGetDocXmlEmpty
-    /**
-     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage Trying to get contents of empty document.
-     */
     public function testGetDocXmlEmpty()
     {
+        $this->expectException(\Depage\XmlDb\Exceptions\XmlDbException::class);
+        $this->expectExceptionMessage("Trying to get contents of empty document.");
+
         $doc = $this->xmlDb->createDoc();
 
         $this->xmlDb->getDocXml($doc->getDocId());
@@ -146,12 +145,11 @@ class XmlDbTest extends XmlDbTestCase
     }
     // }}}
     // {{{ testCreateDocInvalidName
-    /**
-     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage Invalid or duplicate document name ""
-     */
     public function testCreateDocInvalidName()
     {
+        $this->expectException(\Depage\XmlDb\Exceptions\XmlDbException::class);
+        $this->expectExceptionMessage("Invalid or duplicate document name \"\"");
+
         $doc = $this->xmlDb->createDoc('Depage\XmlDb\XmlDoctypes\Base', false);
     }
     // }}}
@@ -213,8 +211,8 @@ class XmlDbTest extends XmlDbTestCase
     public function testClearTables()
     {
         // @todo foreign key constraints
-        $this->insertDummyDataIntoTable('xmldb_proj_test_xmlnodetypes');
-        $this->insertDummyDataIntoTable('xmldb_proj_test_xmldocs');
+        //$this->insertDummyDataIntoTable('xmldb_proj_test_xmlnodetypes');
+        //$this->insertDummyDataIntoTable('xmldb_proj_test_xmldocs');
 
         $this->xmlDb->clearTables();
 
@@ -230,12 +228,11 @@ class XmlDbTest extends XmlDbTestCase
     // }}}
 
     // {{{ testCreateDocExisting
-    /**
-     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage Invalid or duplicate document name "pages"
-     */
     public function testCreateDocExisting()
     {
+        $this->expectException(\Depage\XmlDb\Exceptions\XmlDbException::class);
+        $this->expectExceptionMessage("Invalid or duplicate document name \"pages\"");
+
         $this->xmlDb->createDoc('Depage\XmlDb\XmlDoctypes\Base', 'pages');
     }
     // }}}
@@ -253,12 +250,11 @@ class XmlDbTest extends XmlDbTestCase
     }
     // }}}
     // {{{ testCleanOperatorFail
-    /**
-     * @expectedException Depage\XmlDb\Exceptions\XmlDbException
-     * @expectedExceptionMessage Invalid XPath operator "'"
-     */
     public function testCleanOperatorFail()
     {
+        $this->expectException(\Depage\XmlDb\Exceptions\XmlDbException::class);
+        $this->expectExceptionMessage("Invalid XPath operator \"'\"");
+
         $this->xmlDb->cleanOperator('\'');
     }
     // }}}

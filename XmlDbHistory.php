@@ -86,9 +86,7 @@ class XmlDbHistory implements XmlGetter
         $xml = false;
 
         if ($doc_id = $this->docExists($doc_id_or_name)) {
-            $doc = new Document($this, $doc_id);
-            $history = $doc->getHistory();
-            $xmlFull = $history->getLastPublishedXml($add_id_attribute);
+            $xmlFull = $this->getDocXml($doc_id_or_name, $add_id_attribute);
 
             $domXpath = new \DomXpath($xmlFull);
             $list = $domXpath->query($xpath);
