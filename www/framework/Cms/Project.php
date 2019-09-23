@@ -1523,6 +1523,65 @@ class Project extends \Depage\Entity\Entity
     }
     // }}}
 
+    // {{{ emptyPageTrash()
+    /**
+     * @brief emptyPageTrash
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function emptyPageTrash()
+    {
+        $toDelete = [];
+        $pages = [];
+        $this->xmldb = $this->getXmlDb();
+
+        $xml = $this->xmldb->getDocXml("pages");
+
+        $xpath = new \DOMXPath($xml);
+        $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
+        $nodelist = $xpath->query("//pg:*[@db:docref]");
+
+        for ($i = 0; $i < $nodelist->length; $i++) {
+            $node = $nodelist->item($i);
+            $currentDocId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
+
+            if ($currentDocId) {
+                $docInfo = $this->xmldb->getDoc($currentDocId)->getDocInfo();
+
+                $pages[] = $docInfo;
+            }
+        }
+
+        $docs = $this->xmldb->getDocuments(null, "Depage\\Cms\\XmlDocTypes\\Page") +
+            $this->xmldb->getDocuments(null, "Depage\\Cms\\XmlDocTypes\\Folder");
+
+        foreach ($docs as $doc) {
+            $found = false;
+            $docId = $doc->getDocId();
+            foreach ($pages as $page) {
+                if ($docId == $page->id) {
+                    $found = true;
+
+                    break;
+                }
+            }
+
+            if ($found === false) {
+                $toDelete[] = $docId;
+            }
+        }
+
+        $deletedCount = count($toDelete);
+
+        foreach ($toDelete as $docId) {
+            $this->xmldb->removeDoc($docId);
+        }
+
+        return $deletedCount;
+    }
+    // }}}
+
     // {{{ generateSitemap()
     /**
      * @brief generateSitemap
