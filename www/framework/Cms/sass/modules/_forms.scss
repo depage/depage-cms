@@ -522,5 +522,16 @@
     }
 }
 // }}}
+// {{{
+#backup-restore-file  {
+    .depage-label {
+        width: 100%;
+    }
+    span > span {
+        display: block;
+        width: 100%;
+    }
+}
+// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

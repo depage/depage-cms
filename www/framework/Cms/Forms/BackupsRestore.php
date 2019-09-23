@@ -42,6 +42,7 @@ class BackupsRestore extends \Depage\HtmlForm\HtmlForm
             $options[$backup->file] = sprintf("Backup from %s", $backup->date->format("Y-m-d H:i:s"));
         }
 
+        $this->addHtml("<h1>" . _("Backups") . "</h1>");
         $this->addSingle("file", [
             'label' => _("Restore Backup from:"),
             'list' => $options,

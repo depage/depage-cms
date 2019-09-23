@@ -73,7 +73,7 @@ class Project extends Base
             "languages" => _("Languages"),
             "variables" => _("Variables"),
             "publishs" => _("Publish"),
-            "backup" => _("Backup"),
+            "maintainance" => _("Maintainance"),
             "import" => _("Import"),
         ];
         if (!$this->authUser->canEditTemplates()) {
@@ -113,7 +113,9 @@ class Project extends Base
             $html .= $this->settingsXmlForms("publish");
         } else if ($type == "import") {
             $html .= $this->import();
-        } else if ($type == "backup") {
+        } else if ($type == "maintainance") {
+            $html .= $this->pageTrash();
+            $html .= "<hr>";
             $html .= $this->backups();
         } else {
             $html .= $this->settings_basic();
@@ -479,12 +481,28 @@ class Project extends Base
     // }}}
     // {{{ add-new-post()
     function add_new_post() {
-        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-            //die();
-        }
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') return $this->notallowed();
 
         return new \Depage\Json\Json([
             "pageId" => $this->project->addNewPost(),
+        ]);
+    }
+    // }}}
+    // {{{ empty_page_trash()
+    /**
+     * @brief test
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function empty_page_trash()
+    {
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') return $this->notallowed();
+
+        $count = $this->project->emptyPageTrash();
+
+        return new \Depage\Json\Json([
+            "count" => $count,
         ]);
     }
     // }}}
@@ -575,6 +593,29 @@ class Project extends Base
         die();
     }
     // }}}
+    // {{{ pageTrash()
+    /**
+     * @brief pageTrash
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function pageTrash()
+    {
+        $form = new \Depage\Cms\Forms\PageTrash("empty-page-trash");
+        $form->process();
+
+        if ($form->validate()) {
+            $count = $this->project->emptyPageTrash();
+
+            $form->addHtml(sprintf(_("Deleted %d pages."), $count));
+
+            $form->clearSession();
+        }
+
+        return $form;
+    }
+    // }}}
     // {{{ backups()
     /**
      * @brief backup
@@ -585,7 +626,6 @@ class Project extends Base
     {
         $backup = new \Depage\Cms\Backup($this->pdo, $this->project);
         //$backup->makeAutoBackup();
-
 
         $form = new \Depage\Cms\Forms\BackupsRestore("backup-restore", [
             'backups' => $backup->getAutoBackups(),
