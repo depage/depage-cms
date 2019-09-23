@@ -73,13 +73,11 @@ class Project extends Base
             "languages" => _("Languages"),
             "variables" => _("Variables"),
             "publishs" => _("Publish"),
-            "maintainance" => _("Maintainance"),
-            "import" => _("Import"),
+            "maintenance" => _("Maintenance"),
         ];
         if (!$this->authUser->canEditTemplates()) {
             unset($tabTitles["variables"]);
-            unset($tabTitles["backup"]);
-            unset($tabTitles["import"]);
+            unset($tabTitles["maintenance"]);
         }
         if ($this->projectName == "+") {
             $tabTitles = [
@@ -111,12 +109,12 @@ class Project extends Base
             $infoText = _("depage-cms allows to publish you pages to either a local folder or to another webserver to serve from. The first publishing targets acts as the default target. You can adjust the order by drag and drop.");
 
             $html .= $this->settingsXmlForms("publish");
-        } else if ($type == "import") {
-            $html .= $this->import();
-        } else if ($type == "maintainance") {
+        } else if ($type == "maintenance") {
             $html .= $this->pageTrash();
             $html .= "<hr>";
             $html .= $this->backups();
+            $html .= "<hr>";
+            $html .= $this->import();
         } else {
             $html .= $this->settings_basic();
         }
@@ -255,6 +253,12 @@ class Project extends Base
      **/
     private function import()
     {
+        $importFile = "projects/{$this->project->name}/import/backup_full.xml";
+
+        if (!file_exists($importFile)) {
+            return "";
+        }
+
         $form = new \Depage\Cms\Forms\Project\Import("import-project-" . $this->project->id, [
             'project' => $this->project,
         ]);
@@ -269,7 +273,7 @@ class Project extends Base
             //$value = $import->importProject("projects/{$this->project->name}/import/backup_full.xml");
             //return;
 
-            $task = $import->addImportTask("Import Project '{$this->project->name}'", "projects/{$this->project->name}/import/backup_full.xml");
+            $task = $import->addImportTask("Import Project '{$this->project->name}'", $importFile);
 
             $form->clearSession();
 
@@ -625,10 +629,15 @@ class Project extends Base
     private function backups()
     {
         $backup = new \Depage\Cms\Backup($this->pdo, $this->project);
+        $availableBackups = $backup->getAutoBackups();
+
+        if (count($availableBackups) == 0) {
+            return "";
+        }
         //$backup->makeAutoBackup();
 
         $form = new \Depage\Cms\Forms\BackupsRestore("backup-restore", [
-            'backups' => $backup->getAutoBackups(),
+            'backups' => $availableBackups,
         ]);
         $form->process();
 

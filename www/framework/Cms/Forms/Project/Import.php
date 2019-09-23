@@ -17,17 +17,22 @@ class Import extends Base
      **/
     public function __construct($name, $params = [])
     {
-        $params['submitLabel'] = _("Import Now");
-
-        $params['cancelUrl'] = DEPAGE_BASE;
-        $params['cancelLabel'] = _("Cancel");
+        $params['label'] = _("Import Now");
 
         parent::__construct($name, $params);
-
-        $this->addHidden("action", [
-            'defaultValue' => "import",
-        ]);
-
+    }
+    // }}}
+    // {{{ addChildElements()
+    /**
+     * @brief addChildElements
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function addChildElements()
+    {
+        $this->addHtml("<h1>" . _("Project Import") . "</h1>");
+        $this->addHtml("<p>" . _("Import xml dataset from depage-cms 1.5") . "</p>");
     }
     // }}}
 }

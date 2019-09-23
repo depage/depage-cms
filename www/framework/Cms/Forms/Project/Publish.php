@@ -18,6 +18,7 @@ class Publish extends Base
     public function __construct($name, $params)
     {
         $params['label'] = _("Save Publish Settings");
+        $params['autocomplete'] = false;
 
         parent::__construct($name, $params);
     }
@@ -64,7 +65,7 @@ class Publish extends Base
         $this->addPassword("output_password-$nodeId", [
             "label" => _("Password"),
             "placeholder" => _("Password"),
-            "autocomplete" => "new-password",
+            "autocomplete" => false,
             "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_pass",
         ]);
         $this->addSingle("template_set-$nodeId", [
