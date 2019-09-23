@@ -1394,11 +1394,14 @@ class Document
                 //add attributes to node
                 $matches = array_chunk(preg_split('/(="|"$|" )/', $row->value), 2);
                 foreach($matches as $m) {
-                    if ($m[0] != '') {
-                        if ($ns = $this->getNamespace($m[0])) {
-                            $node->setAttributeNS($ns->uri, $m[0], htmlspecialchars_decode($m[1]));
+                    $attrName = trim($m[0]);
+                    $attrValue = htmlspecialchars_decode($m[1] ?? '');
+
+                    if ($attrName != '') {
+                        if ($ns = $this->getNamespace($attrName)) {
+                            $node->setAttributeNS($ns->uri, $attrName, $attrValue);
                         } else {
-                            $node->setAttribute($m[0], htmlspecialchars_decode($m[1]));
+                            $node->setAttribute($attrName, $attrValue);
                         }
                     }
                 }
