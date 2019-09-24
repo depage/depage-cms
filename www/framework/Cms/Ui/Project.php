@@ -111,10 +111,16 @@ class Project extends Base
             $html .= $this->settingsXmlForms("publish");
         } else if ($type == "maintenance") {
             $html .= $this->pageTrash();
-            $html .= "<hr>";
-            $html .= $this->backups();
-            $html .= "<hr>";
-            $html .= $this->import();
+
+            if (!empty($h = $this->backups())) {
+                $html .= "<hr>";
+                $html .= $h;
+            }
+
+            if (!empty($h = $this->import())) {
+                $html .= "<hr>";
+                $html .= $h;
+            }
         } else {
             $html .= $this->settings_basic();
         }
@@ -612,7 +618,7 @@ class Project extends Base
         if ($form->validate()) {
             $count = $this->project->emptyPageTrash();
 
-            $form->addHtml(sprintf(_("Deleted %d pages."), $count));
+            $form->addHtml("<p>" . sprintf(_("Deleted %d pages."), $count) . "</p>");
 
             $form->clearSession();
         }

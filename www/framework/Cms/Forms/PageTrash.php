@@ -35,7 +35,7 @@ class PageTrash extends \Depage\HtmlForm\HtmlForm
     public function addChildElements()
     {
         $this->addHtml("<h1>" . _("Page Trash") . "</h1>");
-        $this->addHtml("<p>" . _("This will deleted all deleted pages from the page trash.") . "</p>");
+        $this->addHtml("<p>" . _("This will finally remove all deleted pages from the page trash.") . "</p>");
     }
     // }}}
 }

@@ -176,17 +176,20 @@ class Backup
     public function getAutoBackups($path = null)
     {
         $backups = [];
-        $path = $this->getBackupPath($path);
+        try {
+            $path = $this->getBackupPath($path);
 
-        $files = array_reverse(glob("{$path}/backup_*_*.zip"));
+            $files = array_reverse(glob("{$path}/backup_*_*.zip"));
 
-        foreach ($files as $file) {
-            preg_match("/\/backup_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})_([a-f0-9]+)\.zip/", $file, $m);
-            $backups[] = (object) [
-                "file" => $file,
-                "date" => new \DateTime("{$m[1]}-{$m[2]}-{$m[3]} {$m[4]}:{$m[5]}:{$m[6]}"),
-                "hash" => $m[7],
-            ];
+            foreach ($files as $file) {
+                preg_match("/\/backup_(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})_([a-f0-9]+)\.zip/", $file, $m);
+                $backups[] = (object) [
+                    "file" => $file,
+                    "date" => new \DateTime("{$m[1]}-{$m[2]}-{$m[3]} {$m[4]}:{$m[5]}:{$m[6]}"),
+                    "hash" => $m[7],
+                ];
+            }
+        } catch (\Exception $e) {
         }
 
         return $backups;
