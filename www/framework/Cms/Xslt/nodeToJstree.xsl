@@ -124,6 +124,11 @@
        <xsl:text> </xsl:text>
     </xsl:template>
 
+    <xsl:template match="edit:date" mode="hint">
+        <xsl:value-of select="translate(@value, '/', '-')"/>
+        <xsl:text> </xsl:text>
+    </xsl:template>
+
     <xsl:template match="pg:* | edit:*" mode="hint" />
 
     <xsl:template match="sec:separator" mode="hint">—</xsl:template>
