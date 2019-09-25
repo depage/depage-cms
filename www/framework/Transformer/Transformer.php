@@ -33,6 +33,8 @@ abstract class Transformer
             return new Live($xmlGetter, $projectName, $template, $transformCache);
         } elseif ($previewType == "pre" || $previewType == "preview") {
             return new Preview($xmlGetter, $projectName, $template, $transformCache);
+        } elseif ($previewType == "history") {
+            return new History($xmlGetter, $projectName, $template, $transformCache);
         } else {
             return new Dev($xmlGetter, $projectName, $template, $transformCache);
         }

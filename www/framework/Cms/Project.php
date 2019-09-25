@@ -432,7 +432,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getXmlGetter($userId = null)
     {
-        if ($this->previewType == "live") {
+        if ($this->previewType == "live" || $this->previewType == "history") {
             $prefix = $this->pdo->prefix . "_proj_" . $this->name;
 
             $projectPath = $this->getProjectPath();

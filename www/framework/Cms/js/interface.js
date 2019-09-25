@@ -1395,6 +1395,13 @@ var depageCMS = (function() {
                         $details.parent().toggleClass("open");
                     });
                 });
+                $form.find(".doc-property-meta select[name='pageVersions']").on("change", function() {
+
+                    var regex = new RegExp('project/' + projectName + '/preview/html/([^/]*)');
+                    var url = currentPreviewUrl.replace(regex, 'project/' + projectName + '/preview/html/' + this.value);
+
+                    localJS.preview(url);
+                });
                 $form.find(".edit-src").each(function() {
                     var $input = $(this).find("input");
                     var $button = $("<a class=\"button choose-file\">…</a>").insertAfter($input.parent());

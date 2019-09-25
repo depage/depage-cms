@@ -111,6 +111,7 @@ class DocProperties extends Base
         $h = "";
         $doc = $this->xmldb->getDocByNodeId($this->nodeId);
         $xml = $doc->getSubdocByNodeId($this->nodeId);
+        $this->doc = $doc;
 
         $xpath = new \DOMXPath($xml);
         $xpath->registerNamespace("db", "http://cms.depagecms.net/ns/database");
@@ -409,6 +410,28 @@ class DocProperties extends Base
                     'defaultValue' => $url,
                 ]);
                 // }}}
+            // {{{ add restore from history interface
+            if ($this->authUser->canEditTemplates()) {
+                $history = $this->doc->getHistory();
+                $list = [
+                    '' => _("Earlier page versions"),
+                    'pre' => _("Current Version"),
+                ];
+
+                foreach ($history->getVersions() as $timestamp => $version) {
+                    $list["history-" . $version->lastsaved->format("Y-m-d-H:i:s")] = $version->lastsaved->format("Y-m-d H:i:s");
+                }
+
+                if (count($list) > 0) {
+                    $fs->addSingle("pageVersions", [
+                        'label' => _("Earlier page versions"),
+                        'skin' => 'select',
+                        'list' => $list,
+                    ]);
+                    $fs->addHtml("<p class=\"restore\"><a class=\"button\">" . _("Rollback") . "</a></p>");
+                }
+            }
+            // }}}
             $fs->addHtml("</div>");
 
             // {{{ add release button

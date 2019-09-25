@@ -100,7 +100,12 @@ class Preview extends \Depage\Depage\Ui\Base
 
         // get parameters
         $this->template = array_shift($args);
+        $this->timestamp = time();
         $this->previewType = array_shift($args);
+        if (preg_match("/^(history)-(\d{4}-\d{2}-\d{2})-(\d{2}:\d{2}:\d{2})$/", $this->previewType, $m)) {
+            $this->previewType = $m[1];
+            $this->timestamp = strtotime("{$m[2]} {$m[3]}");
+        }
         if (empty($this->previewType)) {
             $this->previewType = "pre";
         }
@@ -164,10 +169,11 @@ class Preview extends \Depage\Depage\Ui\Base
         $transformCache = null;
         $this->project->setPreviewType($this->previewType);
 
-        if ($this->previewType != "dev" && $this->template != "newsletter") {
+        if ($this->previewType != "dev" && $this->previewType != "history" && $this->template != "newsletter") {
             $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, $this->template . "-" . $this->previewType);
         }
         $xmlGetter = $this->project->getXmlGetter();
+        $xmlGetter->timestamp = $this->timestamp;
 
         $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlGetter, $this->projectName, $this->template, $transformCache);
         $transformer->routeHtmlThroughPhp = true;
