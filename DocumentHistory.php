@@ -121,7 +121,9 @@ class DocumentHistory
                 h.user_id as uid
             FROM {$this->table_history} AS h
             WHERE h.doc_id = :doc_id
-                AND h.last_saved_at = :timestamp"
+                AND h.last_saved_at <= :timestamp
+            ORDER BY h.last_saved_at DESC
+            LIMIT 1"
         );
 
         $params = [
