@@ -33,10 +33,14 @@ abstract class Transformer
             return new Live($xmlGetter, $projectName, $template, $transformCache);
         } elseif ($previewType == "pre" || $previewType == "preview") {
             return new Preview($xmlGetter, $projectName, $template, $transformCache);
-        } elseif ($previewType == "history") {
-            return new History($xmlGetter, $projectName, $template, $transformCache);
+        } elseif ($previewType == "history" || preg_match("/^(history).*$/", $previewType)) {
+            $t = new History($xmlGetter, $projectName, $template, null);
+            $t->previewType = $previewType;
+            $t->baseUrl = DEPAGE_BASE . "project/{$projectName}/preview/{$template}/{$previewType}/";
+
+            return $t;
         } else {
-            return new Dev($xmlGetter, $projectName, $template, $transformCache);
+            return new Dev($xmlGetter, $projectName, $template, null);
         }
     }
     // }}}

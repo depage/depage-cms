@@ -21,3 +21,8 @@ ALTER TABLE `_proj_PROJECTNAME_transform_used_docs` CHANGE `template` `template`
 ALTER TABLE `_proj_PROJECTNAME_transform_used_docs` DROP KEY `ids`;
 ALTER TABLE `_proj_PROJECTNAME_transform_used_docs` DROP KEY `template`;
 ALTER TABLE `_proj_PROJECTNAME_transform_used_docs` ADD UNIQUE `unique_index`(`transformId`, `docId`, `template`);
+
+/*
+    @version 2.1
+*/
+ALTER TABLE `_proj_PROJECTNAME_transform_used_docs` CHANGE `template` `template` varchar(45) NOT NULL DEFAULT '';
