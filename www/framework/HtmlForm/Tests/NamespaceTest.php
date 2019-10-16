@@ -9,7 +9,7 @@ use Depage\HtmlForm\Elements\Url;
 class NamespaceTest extends TestCase
 {
     // {{{ setUp()
-    public function setUp()
+    public function setUp():void
     {
         $this->form = new \Depage\HtmlForm\HtmlForm('testForm');
     }
@@ -29,12 +29,12 @@ class NamespaceTest extends TestCase
     // {{{ testAddElementsFail
     /**
      * test if element from unregistered namespace fails
-     *
-     * @expectedException Depage\HtmlForm\Exceptions\UnknownElementTypeException
-     * @expectedExceptionMessage Unknown element type 'NamespaceTestClass
      */
     public function testAddElementsFail()
     {
+        $this->expectException(\Depage\HtmlForm\Exceptions\UnknownElementTypeException::class);
+        $this->expectExceptionMessage("Unknown element type 'NamespaceTestClass");
+
         $text = $this->form->addNamespaceTestClass('testText');
     }
     // }}}

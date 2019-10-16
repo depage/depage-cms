@@ -16,7 +16,7 @@ class htmlformTest extends TestCase
      * @param mixed
      * @return void
      **/
-    public function tearDown()
+    public function tearDown():void
     {
         $_GET = [];
         $_POST = [];
@@ -26,11 +26,11 @@ class htmlformTest extends TestCase
     // {{{ testDuplicateElementNameException()
     /**
      * Throw exception when subelements have the same name.
-     *
-     * @expectedException \Depage\HtmlForm\Exceptions\DuplicateElementNameException
      **/
     public function testDuplicateElementNameException()
     {
+        $this->expectException(\Depage\HtmlForm\Exceptions\DuplicateElementNameException::class);
+
         $this->form = new HtmlForm('formName');
 
         $this->form->addFieldset('duplicate');

@@ -35,7 +35,7 @@ class prgTest extends TestCase
      * @param mixed
      * @return void
      **/
-    public function tearDown()
+    public function tearDown():void
     {
         $_GET = [];
         $_REQUEST = [];
@@ -77,7 +77,7 @@ class prgTest extends TestCase
         // tests post-data value
         $this->assertEquals($postedTextElement->getValue(), 'submitted');
         // tests value that hasn't been posted (set to null, then converted to empty string by setValue())
-        $this->assertInternalType('string', $unpostedTextElement->getValue());
+        $this->assertIsString($unpostedTextElement->getValue());
         $this->assertEquals('', $unpostedTextElement->getValue());
 
         $form->process();

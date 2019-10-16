@@ -9,7 +9,7 @@ use Depage\HtmlForm\Elements\Url;
 class urlTest extends TestCase
 {
     // {{{ setUp()
-    public function setUp()
+    public function setUp():void
     {
         $this->form = new nameTestForm;
         $this->url  = new Url('urlName', array(), $this->form);
@@ -36,7 +36,7 @@ class urlTest extends TestCase
         $this->assertEquals('valueString', $this->url->getValue());
 
         $this->url->setValue(42);
-        $this->assertInternalType('string', $this->url->getValue());
+        $this->assertIsString($this->url->getValue());
         $this->assertEquals('42', $this->url->getValue());
     }
     // }}}

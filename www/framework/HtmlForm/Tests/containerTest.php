@@ -45,7 +45,7 @@ class testElement
 class containerTest extends TestCase
 {
     // {{{ setUp()
-    protected function setUp()
+    protected function setUp():void
     {
         $this->form         = new nameTestForm;
         $this->container    = new containerTestClass('containerName', array(), $this->form);
@@ -91,11 +91,11 @@ class containerTest extends TestCase
     // {{{ testcheckElementType()
     /**
      * Exception on unknown element type.
-     *
-     * @expectedException \Depage\HtmlForm\Exceptions\UnknownElementTypeException
      **/
     public function testcheckElementType()
     {
+        $this->expectException(\Depage\HtmlForm\Exceptions\UnknownElementTypeException::class);
+
         $this->container->addElement('bogusType', 'elementName');
     }
     // }}}

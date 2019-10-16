@@ -615,7 +615,7 @@
 
             return {
                 top: top,
-                left: left,
+                left: left
             };
         };
         // }}}

@@ -9,7 +9,7 @@ use Depage\HtmlForm\Elements\Email;
 class emailTest extends TestCase
 {
     // {{{ setUp()
-    public function setUp()
+    public function setUp():void
     {
         $this->form     = new nameTestForm;
         $this->email    = new Email('emailName', array(), $this->form);
@@ -28,7 +28,7 @@ class emailTest extends TestCase
 
         // tests type casting
         $this->email->setValue(42);
-        $this->assertInternalType('string', $this->email->getValue());
+        $this->assertIsString($this->email->getValue());
         $this->assertEquals('42', $this->email->getValue());
     }
     // }}}
