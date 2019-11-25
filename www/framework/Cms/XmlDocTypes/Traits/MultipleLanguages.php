@@ -32,6 +32,10 @@ trait MultipleLanguages
     {
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
+        if (count($languages) == 0) {
+            return false;
+        }
+
         $changed = false;
         $actual_languages = [];
         $temp_nodes = [];
