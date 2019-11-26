@@ -1398,13 +1398,19 @@ var depageCMS = (function() {
                     var timestamp = $pageVersionSelect[0].value.substring(8);
 
                     xmldb.rollbackDocument(timestamp, function() {
-                        $pageVersionSelect[0].selectize.setValue("pre", false);
+                        $pageVersionSelect[0].selectize.setValue("", false);
                     });
 
                     return false;
                 });
                 $pageVersionSelect.on("change", function() {
-                    $rollbackButton.toggleClass("disabled", this.value == "pre" || this.value == "");
+                    var previewType = this.value || "pre";
+                    $rollbackButton.toggleClass("disabled", previewType == "pre");
+
+                    var regex = new RegExp('project/' + projectName + '/preview/html/([^/]*)');
+                    var url = currentPreviewUrl.replace(regex, 'project/' + projectName + '/preview/html/' + previewType);
+
+                    localJS.preview(url);
                 });
                 $form.find(".doc-property-meta .details").each(function() {
                     var $details = $(this);
@@ -1413,13 +1419,6 @@ var depageCMS = (function() {
                     $button.on("click", function() {
                         $details.parent().toggleClass("open");
                     });
-                });
-                $form.find(".doc-property-meta select[name='pageVersions']").on("change", function() {
-
-                    var regex = new RegExp('project/' + projectName + '/preview/html/([^/]*)');
-                    var url = currentPreviewUrl.replace(regex, 'project/' + projectName + '/preview/html/' + this.value);
-
-                    localJS.preview(url);
                 });
                 $form.find(".edit-src").each(function() {
                     var $input = $(this).find("input");
