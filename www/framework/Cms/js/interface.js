@@ -1397,7 +1397,9 @@ var depageCMS = (function() {
                     var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
                     var timestamp = $pageVersionSelect[0].value.substring(8);
 
-                    xmldb.rollbackDocument(timestamp);
+                    xmldb.rollbackDocument(timestamp, function() {
+                        $pageVersionSelect[0].selectize.setValue("pre", false);
+                    });
 
                     return false;
                 });
