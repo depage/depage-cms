@@ -392,11 +392,11 @@
         color: $textBrightColor;
         font-weight: bold;
     }
-    p.release a.disabled {
+    p.release a.disabled,
+    p.rollback a.disabled {
         background-color: transparent;
         color: $textDisabledColor;
         font-weight: normal;
-        //opacity: 0.5;
     }
 
     > p.input-url input {

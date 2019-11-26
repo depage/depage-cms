@@ -1088,6 +1088,24 @@ class Project extends \Depage\Entity\Entity
         return true;
     }
     // }}}
+    // {{{ rollbackDocument()
+    /**
+     * @brief rollbackDocument
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function rollbackDocument($docId, $timestamp)
+    {
+        // @todo set userId correctly
+        $doc = $this->xmldb->getDoc($docId);
+        $doc->getHistory()->restore($timestamp);
+
+        $doc->clearCache();
+
+        return $doc->getDocInfo()->rootid;
+    }
+    // }}}
     // {{{ addPublishTask()
     /**
      * @brief addPublishTask

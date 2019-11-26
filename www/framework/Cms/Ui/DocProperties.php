@@ -428,7 +428,7 @@ class DocProperties extends Base
                         'skin' => 'select',
                         'list' => $list,
                     ]);
-                    $fs->addHtml("<p class=\"restore\"><a class=\"button\">" . _("Rollback") . "</a></p>");
+                    $fs->addHtml("<p class=\"rollback\"><a class=\"button disabled\">" . _("Rollback") . "</a></p>");
                 }
             }
             // }}}

@@ -561,6 +561,31 @@ class Tree extends Base {
         return new \Depage\Json\Json(array("status" => $status));
     }
     // }}}
+    // {{{ rollbackDocument
+    /**
+     * rolls document back to old point in history
+     *
+     * @return \json
+     */
+    public function rollbackDocument()
+    {
+        $status = false;
+        $timestamp = isset($_POST['timestamp']) ? filter_var($_POST['timestamp'], FILTER_SANITIZE_STRING) : null;
+        if (preg_match("/^(\d{4}-\d{2}-\d{2})-(\d{2}:\d{2}:\d{2})$/", $timestamp, $m)) {
+            $timestamp = strtotime("{$m[1]} {$m[2]}");
+
+            if ($this->authUser->canEditProject($this->project)) {
+                $status = $this->project->rollbackDocument($this->docName, $timestamp);
+
+                if ($status) {
+                    $this->recordChange($this->docId, [$this->docInfo->rootid]);
+                }
+            }
+        }
+
+        return new \Depage\Json\Json(array("status" => $status));
+    }
+    // }}}
 
     // {{{ treeSettings
     /**

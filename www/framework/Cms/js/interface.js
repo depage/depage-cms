@@ -1387,6 +1387,23 @@ var depageCMS = (function() {
 
                     return false;
                 });
+                var $rollbackButton = $form.find(".doc-property-meta p.rollback a");
+                var $pageVersionSelect = $form.find(".doc-property-meta select[name='pageVersions']");
+                $rollbackButton.on("click", function() {
+                    if ($(this).hasClass("disabled")) return;
+
+                    $(this).addClass("disabled");
+                    var docRef = $(this).parents("fieldset").data("docref");
+                    var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
+                    var timestamp = $pageVersionSelect[0].value.substring(8);
+
+                    xmldb.rollbackDocument(timestamp);
+
+                    return false;
+                });
+                $pageVersionSelect.on("change", function() {
+                    $rollbackButton.toggleClass("disabled", this.value == "pre" || this.value == "");
+                });
                 $form.find(".doc-property-meta .details").each(function() {
                     var $details = $(this);
                     var $button = $("<span class=\"opener\"></span>").insertBefore($details);
