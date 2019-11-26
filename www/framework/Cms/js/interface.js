@@ -1387,30 +1387,32 @@ var depageCMS = (function() {
 
                     return false;
                 });
-                var $rollbackButton = $form.find(".doc-property-meta p.rollback a");
-                var $pageVersionSelect = $form.find(".doc-property-meta select[name='pageVersions']");
-                $rollbackButton.on("click", function() {
-                    if ($(this).hasClass("disabled")) return;
+                $form.find(".doc-property-meta .page-versions").each(function() {
+                    var $pageVersionSelect = $(this).find("select[name='pageVersions']");
+                    var $rollbackButton = $("<a class=\"button disabled\">" + "Rollback" + "</a>").appendTo(this);
+                    $rollbackButton.on("click", function() {
+                        if ($(this).hasClass("disabled")) return;
 
-                    $(this).addClass("disabled");
-                    var docRef = $(this).parents("fieldset").data("docref");
-                    var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
-                    var timestamp = $pageVersionSelect[0].value.substring(8);
+                        $(this).addClass("disabled");
+                        var docRef = $(this).parents("fieldset").data("docref");
+                        var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
+                        var timestamp = $pageVersionSelect[0].value.substring(8);
 
-                    xmldb.rollbackDocument(timestamp, function() {
-                        $pageVersionSelect[0].selectize.setValue("", false);
+                        xmldb.rollbackDocument(timestamp, function() {
+                            $pageVersionSelect[0].selectize.setValue("", false);
+                        });
+
+                        return false;
                     });
+                    $pageVersionSelect.on("change", function() {
+                        var previewType = this.value || "pre";
+                        $rollbackButton.toggleClass("disabled", previewType == "pre");
 
-                    return false;
-                });
-                $pageVersionSelect.on("change", function() {
-                    var previewType = this.value || "pre";
-                    $rollbackButton.toggleClass("disabled", previewType == "pre");
+                        var regex = new RegExp('project/' + projectName + '/preview/html/([^/]*)');
+                        var url = currentPreviewUrl.replace(regex, 'project/' + projectName + '/preview/html/' + previewType);
 
-                    var regex = new RegExp('project/' + projectName + '/preview/html/([^/]*)');
-                    var url = currentPreviewUrl.replace(regex, 'project/' + projectName + '/preview/html/' + previewType);
-
-                    localJS.preview(url);
+                        localJS.preview(url);
+                    });
                 });
                 $form.find(".doc-property-meta .details").each(function() {
                     var $details = $(this);

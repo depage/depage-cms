@@ -427,8 +427,9 @@ class DocProperties extends Base
                         'label' => _("Earlier page versions"),
                         'skin' => 'select',
                         'list' => $list,
+                        'class' => "page-versions",
                     ]);
-                    $fs->addHtml("<p class=\"rollback\"><a class=\"button disabled\">" . _("Rollback") . "</a></p>");
+                    //$fs->addHtml("<p class=\"rollback\"><a class=\"button disabled\">" . _("Rollback") . "</a></p>");
                 }
             }
             // }}}

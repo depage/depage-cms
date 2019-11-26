@@ -393,10 +393,25 @@
         font-weight: bold;
     }
     p.release a.disabled,
-    p.rollback a.disabled {
+    p.page-versions a.disabled {
         background-color: transparent;
         color: $textDisabledColor;
         font-weight: normal;
+    }
+    p.page-versions {
+        position: relative;
+
+        select,
+        .selectize-control {
+            margin-right: 70px;
+        }
+
+        a.button {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding-top: 3px;
+        }
     }
 
     > p.input-url input {
