@@ -147,11 +147,15 @@ class Preview extends \Depage\Depage\Ui\Base
     public function error($error, $env) {
         $content = parent::error($error, $env);
 
-        $h = new Html("box.tpl", [
-            'id' => "error",
-            'class' => "first",
-            'content' => new Html([
-                'content' => $content,
+        $h = new Html("html.tpl", [
+            'title' => $this->basetitle,
+            'subtitle' => $output->title,
+            'content' => new Html("box.tpl", [
+                'id' => "error",
+                'class' => "box-error",
+                'content' => new Html([
+                    'content' => nl2br($content),
+                ]),
             ]),
         ], $this->htmlOptions);
 

@@ -429,7 +429,6 @@ class DocProperties extends Base
                         'list' => $list,
                         'class' => "page-versions",
                     ]);
-                    //$fs->addHtml("<p class=\"rollback\"><a class=\"button disabled\">" . _("Rollback") . "</a></p>");
                 }
             }
             // }}}

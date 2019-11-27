@@ -200,6 +200,9 @@ abstract class Transformer
 
             // add variables from settings
             $settings = $this->xmlGetter->getDocXml("settings");
+            if (!$settings) {
+                throw new \Exception("no settings document");
+            }
 
             $xpath = new \DOMXPath($settings);
             $nodelist = $xpath->query("//proj:variable");

@@ -117,6 +117,19 @@
     padding-bottom: 0;
 }
 // }}}
+// {{{ .box-error
+.box-error {
+    @extend .box;
+
+    .content {
+        width: 100%;
+        max-width: 3 * $treeWidth;
+    }
+
+    padding-left: 0;
+    padding-bottom: 0;
+}
+// }}}
 
 // {{{ box with icons
 .box-aside,
