@@ -36,7 +36,7 @@ class Navigation extends Base
         $this->addText("name-$nodeId", [
             "label" => _("Name"),
             "placeholder" => _("Navigation filter name"),
-            "dataInfo" => "//proj:navigation[@db:id = '$nodeId']/@name",
+            "dataPath" => "//proj:navigation[@db:id = '$nodeId']/@name",
             "required" => true,
             "class" => "node-name",
             "dataAttr" => [
@@ -47,7 +47,7 @@ class Navigation extends Base
         $this->addText("localized-$nodeId-shortname", [
             "label" => _("Shortname"),
             "placeholder" => _("Template name"),
-            "dataInfo" => "//proj:navigation[@db:id = '$nodeId']/@shortname",
+            "dataPath" => "//proj:navigation[@db:id = '$nodeId']/@shortname",
             "required" => true,
             "validator" => "/[-_a-zA-Z0-9]+/",
         ]);
@@ -62,7 +62,7 @@ class Navigation extends Base
             $fs->addText("localized-$nodeId-$lang", [
                 "label" => $lang,
                 "placeholder" => _("Localized name") . " ($lang)",
-                "dataInfo" => "//proj:navigation[@db:id = '$nodeId']/localized[@lang = '$lang']",
+                "dataPath" => "//proj:navigation[@db:id = '$nodeId']/localized[@lang = '$lang']",
             ]);
         }
     }

@@ -53,7 +53,7 @@ class Newsletter extends \Depage\Cms\Forms\XmlForm
             $this->addText("title-$lang", [
                 'label' => _("Title") . " ($lang)",
                 'required' => true,
-                'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+                'dataPath' => "//*[@db:id = '$nodeId']/@value",
             ]);
         }
 
@@ -65,7 +65,7 @@ class Newsletter extends \Depage\Cms\Forms\XmlForm
             $this->addText("subject-$lang", [
                 'label' => _("Subject") . " ($lang)",
                 'required' => true,
-                'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+                'dataPath' => "//*[@db:id = '$nodeId']/@value",
             ]);
         }
 
@@ -76,7 +76,7 @@ class Newsletter extends \Depage\Cms\Forms\XmlForm
 
             $this->addText("description-$lang", [
                 'label' => _("Description") . " ($lang)",
-                'dataInfo' => "//*[@db:id = '$nodeId']",
+                'dataPath' => "//*[@db:id = '$nodeId']",
             ]);
         }
 

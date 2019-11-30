@@ -36,7 +36,7 @@ class Variable extends Base
         $this->addText("name-$nodeId", [
             "label" => _("Name"),
             "placeholder" => _("Variable name"),
-            "dataInfo" => "//proj:variable[@db:id = '$nodeId']/@name",
+            "dataPath" => "//proj:variable[@db:id = '$nodeId']/@name",
             "validator" => "/[-_a-zA-Z0-9]+/",
             "required" => true,
             "class" => "node-name",
@@ -49,7 +49,7 @@ class Variable extends Base
         $this->addText("value-$nodeId", [
             "label" => _("Value"),
             "placeholder" => _("Variable value"),
-            "dataInfo" => "//proj:variable[@db:id = '$nodeId']/@value",
+            "dataPath" => "//proj:variable[@db:id = '$nodeId']/@value",
             "class" => "node-value",
             "dataAttr" => [
                 "nodeid" => $nodeId,

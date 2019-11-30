@@ -36,7 +36,7 @@ class Language extends Base
         $this->addText("name-$nodeId", [
             "label" => _("Name"),
             "placeholder" => _("Language name"),
-            "dataInfo" => "//proj:language[@db:id = '$nodeId']/@name",
+            "dataPath" => "//proj:language[@db:id = '$nodeId']/@name",
             //"validator" => "/[-_a-zA-Z0-9]+/",
             "required" => true,
             "class" => "node-name",
@@ -49,7 +49,7 @@ class Language extends Base
         $this->addText("shortname-$nodeId", [
             "label" => _("Language code"),
             "placeholder" => _("Short name"),
-            "dataInfo" => "//proj:language[@db:id = '$nodeId']/@shortname",
+            "dataPath" => "//proj:language[@db:id = '$nodeId']/@shortname",
             "validator" => "/[-_a-zA-Z0-9]{2}/",
             "required" => true,
             "class" => "node-value",

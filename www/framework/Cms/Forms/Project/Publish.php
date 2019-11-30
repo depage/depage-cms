@@ -37,7 +37,7 @@ class Publish extends Base
         $this->addText("name-$nodeId", [
             "label" => _("Name"),
             "placeholder" => _("Name of publishing target"),
-            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@name",
+            "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@name",
             "required" => true,
             "class" => "node-name",
             "dataAttr" => [
@@ -49,24 +49,24 @@ class Publish extends Base
             "label" => _("Output folder"),
             "placeholder" => _("URL, where to publish project to"),
             "required" => true,
-            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_folder",
+            "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@output_folder",
         ]);
         $this->addUrl("baseurl-$nodeId", [
             "label" => _("Base Url"),
             "placeholder" => _("Base URL of publish target"),
-            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@baseurl",
+            "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@baseurl",
         ]);
         $this->addText("output_user-$nodeId", [
             "label" => _("Username"),
             "placeholder" => _("Username"),
             "autocomplete" => "new-password",
-            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_user",
+            "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@output_user",
         ]);
         $this->addPassword("output_password-$nodeId", [
             "label" => _("Password"),
             "placeholder" => _("Password"),
             "autocomplete" => "new-password",
-            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@output_pass",
+            "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@output_pass",
         ]);
         $this->addSingle("template_set-$nodeId", [
             "label" => _("Template Set"),
@@ -74,20 +74,20 @@ class Publish extends Base
                 "html" => "html",
             ],
             "skin" => "select",
-            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@template_set",
+            "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@template_set",
         ]);
         $this->addBoolean("mod_rewrite-$nodeId", [
             "label" => _("Server supports mod rewrite"),
-            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@mod_rewrite",
+            "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@mod_rewrite",
         ]);
         $this->addBoolean("search-index-$nodeId", [
             "label" => _("Index this target for search"),
-            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@index",
+            "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@index",
         ]);
         /*
         $this->addBoolean("default-$nodeId", [
             "label" => _("Publish to this target as default"),
-            "dataInfo" => "//proj:publishTarget[@db:id = '$nodeId']/@default",
+            "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@default",
         ]);
          */
     }

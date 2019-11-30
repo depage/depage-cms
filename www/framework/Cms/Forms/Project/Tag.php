@@ -36,7 +36,7 @@ class Tag extends Base
         $this->addText("name-$nodeId", [
             "label" => _("Name"),
             "placeholder" => _("Tag name"),
-            "dataInfo" => "//proj:tag[@db:id = '$nodeId']/@name",
+            "dataPath" => "//proj:tag[@db:id = '$nodeId']/@name",
             "validator" => "/[-_a-zA-Z0-9]+/",
             "required" => true,
             "class" => "node-name",
@@ -56,7 +56,7 @@ class Tag extends Base
             $fs->addText("localized-$nodeId-$lang", [
                 "label" => $lang,
                 "placeholder" => _("Localized name") . " ($lang)",
-                "dataInfo" => "//proj:tag[@db:id = '$nodeId']/localized[@lang = '$lang']",
+                "dataPath" => "//proj:tag[@db:id = '$nodeId']/localized[@lang = '$lang']",
             ]);
         }
     }

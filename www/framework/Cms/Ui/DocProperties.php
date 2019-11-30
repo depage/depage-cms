@@ -474,7 +474,7 @@ class DocProperties extends Base
                 'label' => "",
                 'list' => $list,
                 'skin' => "select",
-                'dataInfo' => "//*[@db:id = '$nodeId']/@colorscheme",
+                'dataPath' => "//*[@db:id = '$nodeId']/@colorscheme",
             ]);
         }
 
@@ -560,7 +560,7 @@ class DocProperties extends Base
         $fs->addText("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
             'lang' => $node->getAttribute("lang"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            'dataPath' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}
@@ -579,7 +579,7 @@ class DocProperties extends Base
         $fs->addText("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
             'lang' => $node->getAttribute("lang"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            'dataPath' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}
@@ -598,7 +598,7 @@ class DocProperties extends Base
         $fs->addRichtext("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
             'lang' => $node->getAttribute("lang"),
-            'dataInfo' => "//*[@db:id = '$nodeId']",
+            'dataPath' => "//*[@db:id = '$nodeId']",
             'autogrow' => true,
             'allowedTags' => [
                 "p",
@@ -623,7 +623,7 @@ class DocProperties extends Base
         $fs->addText("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
             'lang' => $node->getAttribute("lang"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            'dataPath' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}
@@ -642,7 +642,7 @@ class DocProperties extends Base
 
         $fs->addRichtext("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
-            'dataInfo' => "//*[@db:id = '$nodeId']",
+            'dataPath' => "//*[@db:id = '$nodeId']",
             'lang' => $node->getAttribute("lang"),
             'autogrow' => true,
             'allowedTags' => [
@@ -670,7 +670,7 @@ class DocProperties extends Base
             'label' => $node->getAttribute("lang"),
             'autogrow' => true,
             'lang' => $node->getAttribute("lang"),
-            'dataInfo' => "//*[@db:id = '$nodeId']",
+            'dataPath' => "//*[@db:id = '$nodeId']",
             'allowedTags' => [
                 // inline elements
                 "a",
@@ -708,7 +708,7 @@ class DocProperties extends Base
             'label' => $node->getAttribute("lang"),
             'autogrow' => true,
             'lang' => $node->getAttribute("lang"),
-            'dataInfo' => "//*[@db:id = '$nodeId']",
+            'dataPath' => "//*[@db:id = '$nodeId']",
             'allowedTags' => [
                 // inline elements
                 "a",
@@ -747,7 +747,7 @@ class DocProperties extends Base
             'step' => $node->getAttribute("step") != '' ? $node->getAttribute("step") : null,
             'min' => $node->getAttribute("min") != '' ? $node->getAttribute("min") : null,
             'max' => $node->getAttribute("max") != '' ? $node->getAttribute("max") : null,
-            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            'dataPath' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}
@@ -787,7 +787,7 @@ class DocProperties extends Base
             'list' => $list,
             'class' => $class,
             'skin' => $skin,
-            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            'dataPath' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}
@@ -805,7 +805,7 @@ class DocProperties extends Base
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Date")));
         $fs->addDate("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            'dataPath' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}
@@ -827,7 +827,7 @@ class DocProperties extends Base
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Time")));
         $fs->addText("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            'dataPath' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}
@@ -849,7 +849,7 @@ class DocProperties extends Base
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Color")));
         $fs->addColor("xmledit-$nodeId", [
             'label' => "",
-            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            'dataPath' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}
@@ -870,7 +870,7 @@ class DocProperties extends Base
         $fs->addText("xmledit-$nodeId-title", [
             'label' => !empty($lang) ? $lang : _("Title"),
             'placeholder' => _("Link title"),
-            'dataInfo' => "//*[@db:id = '$nodeId']",
+            'dataPath' => "//*[@db:id = '$nodeId']",
         ]);
 
         // @todo leave only one target setting for multiple links
@@ -882,14 +882,14 @@ class DocProperties extends Base
             ],
             'skin' => "radio",
             'class' => "edit-type edit-target",
-            'dataInfo' => "//*[@db:id = '$nodeId']/@target",
+            'dataPath' => "//*[@db:id = '$nodeId']/@target",
         ]);
 
         $fs->addText("xmledit-$nodeId-href", [
             'label' => _("href"),
             'class' => "edit-href",
             'placeholder' => _("http://domain.com"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@href",
+            'dataPath' => "//*[@db:id = '$nodeId']/@href",
         ]);
 
     }
@@ -915,7 +915,7 @@ class DocProperties extends Base
             'dataAttr' => [
                 'accept' => ".mp3,.m4a,.ogg,.wav,.flac",
             ],
-            'dataInfo' => "//*[@db:id = '$nodeId']/@src",
+            'dataPath' => "//*[@db:id = '$nodeId']/@src",
         ]);
     }
     // }}}
@@ -940,7 +940,7 @@ class DocProperties extends Base
             'dataAttr' => [
                 'accept' => ".mp4,.m4v,.ogv,.webm",
             ],
-            'dataInfo' => "//*[@db:id = '$nodeId']/@src",
+            'dataPath' => "//*[@db:id = '$nodeId']/@src",
         ]);
     }
     // }}}
@@ -968,26 +968,26 @@ class DocProperties extends Base
                 'accept' => ".jpg,.jpeg,.png,.gif,.svg,.pdf",
                 'forceSize' => $this->getForceSize($node),
             ],
-            'dataInfo' => "//*[@db:id = '$nodeId']/@src",
+            'dataPath' => "//*[@db:id = '$nodeId']/@src",
         ]);
 
         $fs->addText("xmledit-$nodeId-title", [
             'label' => _("title"),
             'placeholder' => _("Image title"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@title",
+            'dataPath' => "//*[@db:id = '$nodeId']/@title",
         ]);
 
         $fs->addText("xmledit-$nodeId-alt", [
             'label' => _("alt"),
             'placeholder' => _("Image description"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@alt",
+            'dataPath' => "//*[@db:id = '$nodeId']/@alt",
         ]);
         if ($node->hasAttribute("href") || $node->hasAttribute("href_id")) {
             $fs->addText("xmledit-$nodeId-href", [
                 'label' => _("href"),
                 'class' => "edit-href",
                 'placeholder' => _("http://domain.com"),
-                'dataInfo' => "//*[@db:id = '$nodeId']/@href",
+                'dataPath' => "//*[@db:id = '$nodeId']/@href",
             ]);
         }
     }
@@ -1007,7 +1007,7 @@ class DocProperties extends Base
         $fs->addRichtext("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
             'lang' => $node->getAttribute("lang"),
-            'dataInfo' => "//*[@db:id = '$nodeId']",
+            'dataPath' => "//*[@db:id = '$nodeId']",
             'class' => "edit-table",
             'lang' => $node->getAttribute("lang"),
             'autogrow' => true,
@@ -1046,7 +1046,7 @@ class DocProperties extends Base
 
         $fs->addTextarea("xmledit-$nodeId", [
             'label' => "",
-            'dataInfo' => "//*[@db:id = '$nodeId']",
+            'dataPath' => "//*[@db:id = '$nodeId']",
             'autogrow' => true,
             'class' => "edit-source"
         ]);
@@ -1079,7 +1079,7 @@ class DocProperties extends Base
 
         $this->form->addText("xmledit-$nodeId", [
             'label' => $node->getAttribute("name"),
-            'dataInfo' => "//*[@db:id = '$nodeId']/@value",
+            'dataPath' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }
     // }}}

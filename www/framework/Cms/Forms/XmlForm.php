@@ -54,11 +54,11 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
         }
 
         foreach ($this->getElements() as $element) {
-            if (empty($element->dataInfo)) {
+            if (empty($element->dataPath)) {
                 continue;
             }
             $value = "";
-            preg_match("/(.*?)(\/@([-_a-z0-9]+))?$/i", $element->dataInfo, $matches);
+            preg_match("/(.*?)(\/@([-_a-z0-9]+))?$/i", $element->dataPath, $matches);
             list($xpath, $nodeXpath, $attrXpath, $attrName) = $matches;
 
             $nodes = $this->dataNodeXpath->query($xpath);
@@ -130,14 +130,14 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
             return;
         }
         foreach ($this->getElements() as $element) {
-            if (empty($element->dataInfo)) {
+            if (empty($element->dataPath)) {
                 continue;
             }
-            $nodes = $this->dataNodeXpath->query($element->dataInfo);
+            $nodes = $this->dataNodeXpath->query($element->dataPath);
 
-            if ($nodes->length == 0 && substr($element->dataInfo, -6) == "/@href") {
+            if ($nodes->length == 0 && substr($element->dataPath, -6) == "/@href") {
                 // handle @href and @href_id attributes
-                $nodes = $this->dataNodeXpath->query($element->dataInfo . "_id");
+                $nodes = $this->dataNodeXpath->query($element->dataPath . "_id");
             }
             if ($nodes->length == 0) {
                 // @todo throw warning if nodelist is empty?
