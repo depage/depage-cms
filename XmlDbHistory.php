@@ -94,6 +94,9 @@ class XmlDbHistory implements XmlGetter
 
         if ($doc_id = $this->docExists($doc_id_or_name)) {
             $xmlFull = $this->getDocXml($doc_id_or_name, $add_id_attribute);
+            if ($xmlFull === false) {
+                throw new \Exception("Document could not be read from history");
+            }
 
             $domXpath = new \DomXpath($xmlFull);
             $list = $domXpath->query($xpath);
