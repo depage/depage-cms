@@ -561,6 +561,9 @@ abstract class Transformer
             empty($this->pageIdByUrl)
         ) {
             $pages = $this->xmlGetter->getDocXml("pages");
+            if ($pages === false) {
+                throw new \Exception("Page structure could not be read");
+            }
 
             $xmlnav = new \Depage\Cms\XmlNav();
             list($this->urlsByPageId, $this->pageIdByUrl, $this->pagedataIdByPageId) = $xmlnav->getAllUrls($pages);
