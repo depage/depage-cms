@@ -54,7 +54,7 @@ run-socketserver:
 	cd $(WWWPATH) ; sudo -u nobody $(PHP) -f framework/WebSocket/Server.php -- --dp-path $(WWWPATH) --conf-url https://localhost/depage-cms/
 
 run-scheduler:
-	cd /var/www/depage-cms/ ; sudo -u nobody $(PHP) -f framework/Cms/Scheduler.php  -- --dp-path $(WWWPATH) --conf-url https://localhost/depage-cms/
+	cd $(WWWPATH) ; sudo -u nobody $(PHP) -f framework/Cms/Scheduler.php  -- --dp-path $(WWWPATH) --conf-url https://localhost/depage-cms/
 
 push: pushlive
 
