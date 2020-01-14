@@ -291,6 +291,15 @@
     }
     .jstree-copy {
         margin: 0 2px 0 2px;
+        font-weight: bold;
+        color: $textBrightColor;
+        background-color: $insertMarkerBackground;
+        border-radius: 50%;
+        text-align: center;
+        font-size: 1.4em;
+        line-height: 20px;
+        width: 24px;
+        height: 24px;
     }
 }
 // }}}
