@@ -38,7 +38,7 @@ class History extends Transformer
         try {
             return parent::display($urlPath, $lang);
         } catch (\Exception $e) {
-            throw new \Exception("Could not display old version\nsdjfgh");
+            throw new \Exception("Could not display old version\n");
         }
     }
     // }}}
