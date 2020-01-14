@@ -494,7 +494,7 @@ class Project extends Base
         if ($_SERVER['REQUEST_METHOD'] != 'POST') return $this->notallowed();
 
         return new \Depage\Json\Json([
-            "pageId" => $this->project->addNewPost(),
+            "pageId" => $this->project->addNewPost($this->authUser->id),
         ]);
     }
     // }}}

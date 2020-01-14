@@ -38,7 +38,7 @@ class Tree extends Base {
         if (!empty($this->urlSubArgs[1])) {
             //@todo throw error if urlSubArgs is not set or document does not exist
             $this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-            $this->xmldb = $this->project->getXmlDb();
+            $this->xmldb = $this->project->getXmlDb($this->authUser->id);
 
             $this->docName = $this->urlSubArgs[1];
             $this->doc = $this->xmldb->getDoc($this->docName);

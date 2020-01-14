@@ -941,9 +941,9 @@ class Project extends \Depage\Entity\Entity
      * @param mixed
      * @return void
      **/
-    public function addNewPost()
+    public function addNewPost($userId = null)
     {
-        $this->xmldb = $this->getXmlDb();
+        $this->xmldb = $this->getXmlDb($userId);
 
         $year = date("Y");
         $month = date("m");
