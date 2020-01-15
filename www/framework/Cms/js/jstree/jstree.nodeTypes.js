@@ -250,7 +250,9 @@
             // in case of 'rename_node' node_position is filled with the new node name
 
             // hard coded defaults
-            if (node.li_attr.rel == 'pg:meta') {
+            if (node.data.protected === true) {
+                return false;
+            } else if (node.li_attr.rel == 'pg:meta') {
                 return false;
             } else if ((operation == "move_node" || operation == "copy_node") && typeof node_parent.li_attr != 'undefined' && (node_parent.li_attr.rel == 'pg:meta' || node_parent.li_attr.rel == 'sec:separator')) {
                 return false;

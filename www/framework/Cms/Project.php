@@ -514,6 +514,7 @@ class Project extends \Depage\Entity\Entity
                 $docInfo->fileType = $node->getAttribute("file_type");
                 $docInfo->published = $node->getAttribute("db:published") == "true";
                 $docInfo->released = $node->getAttribute("db:released") == "true";
+                $docInfo->protected = $node->getAttribute("db:protected") == "true";
 
                 $docInfo->nav = [];
                 $docInfo->tags = [];

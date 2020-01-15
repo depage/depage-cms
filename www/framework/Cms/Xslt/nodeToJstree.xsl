@@ -66,7 +66,8 @@
             id="{$id}"
             data-doc-ref="{@db:docref}"
             data-url="{@url}"
-            data-node-id="{@db:id}">
+            data-node-id="{@db:id}"
+            data-protected="{@db:protected}">
             <a href="{$href}" class="{$icon}" title="{$title}">
                 <xsl:value-of select="$name" />
                 <xsl:apply-templates select="." mode="hint" />
@@ -158,6 +159,7 @@
 
     <xsl:template match="pg:folder | pg:page" mode="title">
         <xsl:value-of select="@name" />
+        <xsl:if test="@db:procted = 'true'"> – protected</xsl:if>
         <xsl:if test="@db:released = 'false'"> – changed ⤶</xsl:if>
     </xsl:template>
 
@@ -181,6 +183,10 @@
         <xsl:if test="@db:released = 'false'">
             <xsl:text> </xsl:text>
             page-unreleased
+        </xsl:if>
+        <xsl:if test="@db:protected = 'true'">
+            <xsl:text> </xsl:text>
+            page-protected
         </xsl:if>
     </xsl:template>
 

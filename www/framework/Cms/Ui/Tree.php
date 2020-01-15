@@ -598,6 +598,19 @@ class Tree extends Base {
     protected function treeSettings()
     {
         $permissions = $this->doc->getPermissions();
+        if ($this->docInfo->type == 'Depage\Cms\XmlDocTypes\Page') {
+            $pageInfo = $this->project->getPages($this->docName)[0];
+            //if ($pageInfo->protected && !$this->authUser->canEditTemplates()) {
+            if ($pageInfo->protected) {
+                return [
+                    "maxDepth" => -2,
+                    "maxChildren" => -2,
+                    "validParents" => [],
+                    "availableNodes" => [],
+                    "userCanPublish" => $this->authUser->canPublishProject(),
+                ];
+            }
+        }
         return [
             "maxDepth" => -2,
             "maxChildren" => -2,

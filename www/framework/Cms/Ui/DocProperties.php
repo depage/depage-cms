@@ -348,6 +348,7 @@ class DocProperties extends Base
             'class' => "doc-property-fieldset doc-property-meta " . ($currentNode->prefix == 'pg' ? "open" : ""),
             'dataAttr' => [
                 'docref' => $this->docRef,
+                'protected' => $pageInfo->protected,
             ],
         ]);
 
@@ -513,7 +514,6 @@ class DocProperties extends Base
             ]);
             $fs->addMultiple("xmledit-$nodeId-tags", [
                 'label' => "",
-                //'skin' => "tags",
                 'list' => $tags,
                 'class' => 'page-tags',
                 'defaultValue' => $defaults,
@@ -523,6 +523,30 @@ class DocProperties extends Base
             ]);
         }
 
+        if ($this->authUser->canProtectPages()) {
+            $fs = $this->form->addFieldset("xmledit-$nodeId-protected-fs", [
+                'label' => _("Protection"),
+                'class' => "doc-property-fieldset",
+            ]);
+            $fs->addMultiple("xmledit-$nodeId-protected", [
+                'label' => "",
+                'class' => 'page-protected',
+                'class' => 'page-protection',
+                'defaultValue' => $pageInfo->protected ? ['protected'] : [],
+                'list' => [
+                    'protected' => _("Page protected"),
+                ],
+                'dataAttr' => [
+                    'pageId' => $pageInfo->pageId,
+                ],
+            ]);
+        } else if ($pageInfo->protected) {
+            $fs = $this->form->addFieldset("xmledit-$nodeId-protected-fs", [
+                'label' => _("Protection"),
+                'class' => "doc-property-fieldset",
+            ]);
+            $fs->addHtml("<p>" . _("Page is protected and cannot be changed.") . "</p>");
+        }
         if ($pageInfo->type == "Depage\\Cms\\XmlDocTypes\\Page") {
             $fs = $this->form->addFieldset("xmledit-$nodeId-pagetype-fs", [
                 'label' => _("Pagetype"),

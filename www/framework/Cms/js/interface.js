@@ -1371,6 +1371,15 @@ var depageCMS = (function() {
 
                     xmldb.setAttribute(pageId, attrName, attrValue);
                 });
+                $form.find(".page-protection input").on("change", function() {
+                    var pageId = $(this).parents("p").data("pageid");
+                    var attrName = "db:protected";
+                    var attrValue = this.checked ? 'true' : 'false';
+
+                    localJS.setFormState($form, this.checked);
+
+                    xmldb.setAttribute(pageId, attrName, attrValue);
+                });
                 $form.find(".page-type select").on("change", function() {
                     var pageId = $(this).parents("p").data("pageid");
                     var attrName = "file_type";
@@ -1459,6 +1468,7 @@ var depageCMS = (function() {
                     showSelectionPalette: false
                 });
 
+                localJS.setFormState($form, $form.find(".doc-property-meta").data("protected") == 1);
 
                 // @todo add ui for editing table columns and rows
                 // @todo keep squire from merging cells when deleting at the beginning or end of cell
@@ -1774,6 +1784,35 @@ var depageCMS = (function() {
                 var url = baseUrl + "project/" + projectName + "/edit/" + data.pageId + "/";
 
                 window.location = url;
+            });
+        },
+        // }}}
+
+        // {{{ disableForm()
+        disableForm: function($form) {
+            localJS.setFormState($form, true);
+        },
+        // }}}
+        // {{{ enableForm()
+        enableForm: function($form) {
+            localJS.setFormState($form, false);
+        },
+        // }}}
+        // {{{ setFormState()
+        setFormState: function($form, disabled) {
+            var $protectionInput = $form.find(".page-protection input");
+
+            $form.find("input, select, textarea").not($protectionInput)
+                .attr('disabled', disabled);
+            $form.find(".textarea-content")
+                .attr('contenteditable', !disabled)
+                .parent().toggleClass('disabled', disabled);
+            $form.find("select").each(function() {
+                if (disabled) {
+                    this.selectize.disable();
+                } else {
+                    this.selectize.enable();
+                }
             });
         },
         // }}}

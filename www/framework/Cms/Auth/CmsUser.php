@@ -94,6 +94,17 @@ class CmsUser extends \Depage\Auth\User
         return $this->level <= 2;
     }
     // }}}
+    // {{{ canProtectPages()
+    /**
+     * @brief canProtectPages
+     *
+     * @return bool true of false if the user can protect pages
+     **/
+    public function canProtectPages()
+    {
+        return $this->level <= 2;
+    }
+    // }}}
     // {{{ canPublishProject()
     /**
      * @brief canPublishProject

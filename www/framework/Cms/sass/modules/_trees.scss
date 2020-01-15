@@ -537,15 +537,23 @@
 
 .icon-pg_page,
 .icon-pg_folder {
+    &.page-protected,
+    &.page-unreleased {
+        > .jstree-icon::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+    }
     &.page-unreleased > .jstree-icon::after {
-        content: " ";
-        display: block;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
         @include icon-base("unreleased-small", $iconSize);
+    }
+    &.page-protected > .jstree-icon::after {
+        @include icon-base("protected-small", $iconSize);
     }
 }
 
