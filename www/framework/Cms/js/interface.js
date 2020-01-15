@@ -1445,6 +1445,8 @@ var depageCMS = (function() {
                         });
                     });
                     $button.on("click", function() {
+                        if ($(this).hasClass("disabled")) return;
+
                         localJS.loadFileChooser($input);
                     });
                 });
@@ -1453,6 +1455,8 @@ var depageCMS = (function() {
                     var $button = $("<a class=\"button choose-file\">…</a>").insertAfter($input.parent());
 
                     $button.on("click", function() {
+                        if ($(this).hasClass("disabled")) return;
+
                         localJS.loadFileChooser($input);
                     });
                 });
@@ -1788,25 +1792,19 @@ var depageCMS = (function() {
         },
         // }}}
 
-        // {{{ disableForm()
-        disableForm: function($form) {
-            localJS.setFormState($form, true);
-        },
-        // }}}
-        // {{{ enableForm()
-        enableForm: function($form) {
-            localJS.setFormState($form, false);
-        },
-        // }}}
         // {{{ setFormState()
         setFormState: function($form, disabled) {
             var $protectionInput = $form.find(".page-protection input");
 
-            $form.find("input, select, textarea").not($protectionInput)
+            $form.find("input, select, textarea, button").not($protectionInput)
                 .attr('disabled', disabled);
+
             $form.find(".textarea-content")
                 .attr('contenteditable', !disabled)
                 .parent().toggleClass('disabled', disabled);
+
+            $form.find("a.choose-file").toggleClass('disabled', disabled);
+
             $form.find("select").each(function() {
                 if (disabled) {
                     this.selectize.disable();
