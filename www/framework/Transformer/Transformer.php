@@ -531,6 +531,7 @@ abstract class Transformer
             "getLibRef" => [$this, "xsltGetLibRef"],
             "getPageRef" => [$this, "xsltGetPageRef"],
             "phpEscape" => [$this, "xsltPhpEscape"],
+            "jsEscape" => [$this, "xsltJsEscape"],
             "replaceEmailChars" => [$this, "xsltReplaceEmailChars"],
             "urlencode" => "rawurlencode",
             "useAbsolutePaths" => [$this, "xsltUseAbsolutePaths"],
@@ -873,6 +874,22 @@ abstract class Transformer
      */
     public function xsltPhpEscape($string) {
         $value = var_export($string, true);
+
+        return $value;
+    }
+    // }}}
+    // {{{ xsltJsEscape()
+    /**
+     * gets fileinfo for libref path
+     *
+     * @public
+     *
+     * @param    $path (string) libref path to target file
+     *
+     * @return    $xml (xml) file info as xml string
+     */
+    public function xsltJsEscape($string) {
+        $value = json_encode($string, \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_NUMERIC_CHECK);
 
         return $value;
     }

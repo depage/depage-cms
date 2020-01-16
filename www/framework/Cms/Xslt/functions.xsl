@@ -253,6 +253,18 @@
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::phpEscape', string($string))" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:jsEscape() -->
+    <!--
+        dp:jsEscape(text)
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:jsEscape">
+        <xsl:param name="string" />
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::jsEscape', string($string))" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:formatDate() -->
     <!--
         dp:formatDate(date)
