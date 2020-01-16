@@ -1261,11 +1261,15 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ loadPagedataTree
-        loadPagedataTree: function(docref) {
-            if ($pagedataTreeContainer.length === 0 || currentDocId == docref) return false;
+        loadPagedataTree: function(docref, forceReload) {
+            if ($pagedataTreeContainer.length === 0) return false;
+            if (!forceReload && currentDocId == docref) return false;
 
             $pagedataTreeContainer.empty();
-            $docPropertiesContainer.empty();
+
+            if (!forceReload) {
+                $docPropertiesContainer.empty();
+            }
 
             currentDocId = docref;
 
@@ -1378,7 +1382,9 @@ var depageCMS = (function() {
 
                     localJS.setFormState($form, this.checked);
 
-                    xmldb.setAttribute(pageId, attrName, attrValue);
+                    xmldb.setAttribute(pageId, attrName, attrValue, function() {
+                        localJS.loadPagedataTree(currentDocId, true);
+                    });
                 });
                 $form.find(".page-type select").on("change", function() {
                     var pageId = $(this).parents("p").data("pageid");

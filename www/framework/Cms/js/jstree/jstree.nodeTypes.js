@@ -250,7 +250,7 @@
             // in case of 'rename_node' node_position is filled with the new node name
 
             // hard coded defaults
-            if (node.data.protected === true) {
+            if (typeof node.data != 'undefined' && node.data.protected === true) {
                 return false;
             } else if (node.li_attr.rel == 'pg:meta') {
                 return false;
