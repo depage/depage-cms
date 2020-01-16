@@ -3,7 +3,7 @@ Versionshistorie     {#changelog}
 
 [TOC]
 
-Version 2.0   {#v2-0}
+Version 2.1   {#v2-1}
 ===========
 
 **User Interface Highlights**
@@ -17,6 +17,26 @@ Version 2.0   {#v2-0}
 - Verbesserung der [Vorschau](@ref page-preview), so dass diese automatisch in der gerade bearbeiteten Sprache angezeigt wird
 - Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.1.0      {#v2-1-0}
+------
+
+**Frontend**
+- Funktion zum Schutz von Seiten hinzugefügt
+- Funktion zur Vorschau und zum Zurücksetzen der Seiten aus der Seitenhistorie
+- Styling des Dokumentenbaums verbessert
+- Aktualisierung und Verbesserung des Einstellungsdialogs
+- Fehler beim automatischen Speichern der Formulare behoben
+
+**Backend**
+
+- Aktualisierung und Verbesserung der *XmlDb*
+- Optimierung der Performance der *XmlDb*
+- Vorschau der Seitenhistorie hinzugefügt
+- Funktion zum Leeren des Seitenpapierkorbs hinzugefügt
+- Support Pakete aktualisiert
+- Fehler bei der Zuweisung von Benutzern beim Erstellung neuer Seiten behoben
 
 
 v2.0.9      {#v2-0-9}

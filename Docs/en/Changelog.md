@@ -3,7 +3,7 @@ Changelog     {#changelog}
 
 [TOC]
 
-Version 2.0   {#v2-0}
+Version 2.1   {#v2-1}
 ===========
 
 **User Interface Highlights**
@@ -17,6 +17,26 @@ Version 2.0   {#v2-0}
 - Enhanced [preview](@ref page-preview) to automatically show currently edited language
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.1.0      {#v2-1-0}
+------
+
+**Frontend**
+- added ability to protect pages from changes
+- added ability to browse and rollback page data from history
+- enhanced styling of tree component
+- updated and enhanced setting dialogs
+- fixed autosaving of forms
+
+**Backend**
+
+- Updated and enhanced *XmlDb*
+- Optimized performance of *XmlDb*
+- added page history browser
+- added ability to clear page trash
+- updated support packages
+- fixed bug where user for new pages was not assigned correctly
 
 
 v2.0.9      {#v2-0-9}
