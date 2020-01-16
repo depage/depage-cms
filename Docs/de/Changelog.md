@@ -36,6 +36,7 @@ v2.1.0      {#v2-1-0}
 - Vorschau der Seitenhistorie hinzugefügt
 - Funktion zum Leeren des Seitenpapierkorbs hinzugefügt
 - Support Pakete aktualisiert
+- Integration des depage-analytics Plugins hinzugefügt
 - Fehler bei der Zuweisung von Benutzern beim Erstellung neuer Seiten behoben
 
 

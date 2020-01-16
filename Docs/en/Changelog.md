@@ -36,6 +36,7 @@ v2.1.0      {#v2-1-0}
 - added page history browser
 - added ability to clear page trash
 - updated support packages
+- added integration of the depage-analytics plugin
 - fixed bug where user for new pages was not assigned correctly
 
 
