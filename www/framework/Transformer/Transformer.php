@@ -196,6 +196,11 @@ abstract class Transformer
                 'languages' => "\$settings/proj:settings/proj:languages",
                 'currentPage' => "\$navigation//pg:page[@status = 'active']",
                 'libPath' => "'" . htmlspecialchars('file://' . str_replace(" ", "%20", realpath($this->libPath))) . "'",
+                'var-ga-Account' => "''",
+                'var-ga-Domain' => "''",
+                'var-pa-siteId' => "''",
+                'var-pa-Domain' => "''",
+                'var-fb-Account' => "''",
             );
 
             // add variables from settings
