@@ -248,9 +248,20 @@
         @todo define these automatically
     -->
     <func:function name="dp:phpEscape">
-        <xsl:param name="string" />
+        <xsl:param name="arg" />
 
-        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::phpEscape', string($string))" />
+        <xsl:choose>
+            <xsl:when test="$arg = true() and string($arg) = 'true'">
+                <func:result select="'true'" />
+            </xsl:when>
+            <xsl:when test="$arg = false() and string($arg) = 'false'">
+                <func:result select="'false'" />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::phpEscape', string($arg))" />
+            </xsl:otherwise>
+        </xsl:choose>
+
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:jsEscape() -->
@@ -260,9 +271,19 @@
         @todo define these automatically
     -->
     <func:function name="dp:jsEscape">
-        <xsl:param name="string" />
+        <xsl:param name="arg" />
 
-        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::jsEscape', string($string))" />
+        <xsl:choose>
+            <xsl:when test="$arg = true() and string($arg) = 'true'">
+                <func:result select="'true'" />
+            </xsl:when>
+            <xsl:when test="$arg = false() and string($arg) = 'false'">
+                <func:result select="'false'" />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::jsEscape', string($arg))" />
+            </xsl:otherwise>
+        </xsl:choose>
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:formatDate() -->
