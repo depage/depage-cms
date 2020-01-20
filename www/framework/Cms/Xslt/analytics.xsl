@@ -22,6 +22,7 @@
 
         <script type="text/javascript">
             (function(w) { var c = w.depageAnalyticsConfig || {};
+            c.depageIsLive = <xsl:value-of select="dp:jsEscape(boolean($depageIsLive = 'true'))" />;
             c.privacyPolicyLink = <xsl:value-of select="dp:jsEscape($privacyPolicyLink)" />;
             <xsl:if test="$var-pa-siteId != ''">
                 c.matomo = { url: <xsl:value-of select="dp:jsEscape($matomoUrl)" />, siteId: <xsl:value-of select="dp:jsEscape($var-pa-siteId)" />, domain: <xsl:value-of select="dp:jsEscape($var-pa-Domain)" /> };
