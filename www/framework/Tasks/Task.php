@@ -10,6 +10,8 @@
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  * @author    Lion Vollnhals [lion.vollnhals@googlemail.com]
+ *
+ * @todo optimized task queue
  */
 
 namespace Depage\Tasks;
@@ -55,7 +57,7 @@ class Task {
     /**
      * @brief numberOfSubtasks number of subtasks to load at the same time
      **/
-    protected $numberOfSubtasks = 2000;
+    protected $numberOfSubtasks = 200;
 
     /**
      * @brief timeToCheckSubtasks seconds after which task runner will check for new subtask
@@ -263,7 +265,7 @@ class Task {
             WHERE id = :id"
         );
         $query->execute(array(
-            "status" => $status,
+            "status" => mb_substr($status, 0, 250),
             "id" => $subtask->id,
         ));
     }
@@ -304,6 +306,7 @@ class Task {
         $_tmpnames = array_keys(get_defined_vars());
         foreach ($_tmpnames as $_tmpname)
         {
+            // @todo only save in tempvars if task has subtask?
             $this->tmpvars[$_tmpname] = &$$_tmpname;
         }
 
