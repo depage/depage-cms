@@ -1195,8 +1195,10 @@ class Project extends \Depage\Entity\Entity
                 'pass' => %s,
             ));
             \$project = %s;
-            \$publisher = new \\Depage\\Publisher\\Publisher(%s, \$fs, %s);
-            \$urls = new \\Depage\\Publisher\\Urls(%s, %s);
+            \$pdo = %s;
+            \$publishId = %s;
+            \$publisher = new \\Depage\\Publisher\\Publisher(\$pdo, \$fs, \$publishId);
+            \$urls = new \\Depage\\Publisher\\Urls(\$pdo, \$publishId);
             \$transformer = %s;
             \$transformCache = %s;
             \$indexer = new \\Depage\\Search\\Indexer();
@@ -1205,8 +1207,6 @@ class Project extends \Depage\Entity\Entity
             $conf->output_user,
             $conf->output_pass,
             $this,
-            $publishPdo,
-            $publishId,
             $publishPdo,
             $publishId,
             $transformer,
@@ -1362,17 +1362,19 @@ class Project extends \Depage\Entity\Entity
 
         // publish newsletters if available
         if ($this->hasNewsletter()) {
+            // @todo check for number of connections
             $newsletters = \Depage\Cms\Newsletter::loadReleased($this->pdo, $this);
 
             foreach ($newsletters as $newsletter) {
                 // @todo check if newsletter has been published
                 foreach ($languages as $lang => $name) {
                     $task->addSubtask("publishing newsletter {$newsletter->name}", "
+                        \$newsletter = \Depage\Cms\Newsletter::loadByName(\$pdo, \$project, %s);
                         \$publisher->publishString(
-                            %s->transform(\"live\", \"$lang\"),
+                            \$newsletter->transform(\"live\", \"$lang\"),
                             %s
                         );", [
-                            $newsletter,
+                            $newsletter->name,
                             "$lang/newsletter/{$newsletter->name}.html",
                     ], $initId);
                 }
