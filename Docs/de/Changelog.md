@@ -19,6 +19,17 @@ Version 2.1   {#v2-1}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.1      {#v2-1-1}
+------
+
+**Frontend**
+- Option den Puplikations-Cache vor der Veröffentlichung zu leeren
+
+**Backend**
+
+- Veröffentlichungsprozess optimiert
+
+
 v2.1.0      {#v2-1-0}
 ------
 
