@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-15 17:00+0100\n"
+"POT-Creation-Date: 2020-01-24 13:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: WebSocket/Notifications/Application.php:104
+#: WebSocket/Notifications/Application.php:105
+#, fuzzy, php-format
+msgid "starting '%s'"
+msgstr "Einstellungen"
+
+#: WebSocket/Notifications/Application.php:107
 #, php-format
 msgid "'%s' will finish in %s"
 msgstr "'%s' wird in %s abgeschlossen sein"
 
-#: WebSocket/Notifications/Application.php:107
+#: WebSocket/Notifications/Application.php:111
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
@@ -2124,22 +2129,22 @@ msgstr "Neues Projekt hinzufügen"
 msgid "You are not allowed to publish this project."
 msgstr "Sie haben keine Authentifizierung, diese Projekt zu veröffentlichen."
 
-#: Cms/Ui/Project.php:331
+#: Cms/Ui/Project.php:336
 #, php-format
 msgid "Publish Project '%s'"
 msgstr "Publizieren von Projekt '%s'"
 
-#: Cms/Ui/Project.php:361
+#: Cms/Ui/Project.php:366
 msgid "You are not allowed to release pages on this project."
 msgstr ""
 "Sie haben keine Authentifizierung, Seiten in diesem Projekt freizugeben."
 
-#: Cms/Ui/Project.php:387
+#: Cms/Ui/Project.php:392
 #, php-format
 msgid "Release Pages for Project '%s'"
 msgstr "Seiten freigeben für Projekt '%s'"
 
-#: Cms/Ui/Project.php:621
+#: Cms/Ui/Project.php:626
 #, php-format
 msgid "Deleted %d pages."
 msgstr "%d Seiten gelöscht."
@@ -2922,6 +2927,21 @@ msgstr "Jetzt veröffentlichen"
 msgid "Publish to"
 msgstr "Publizieren nach"
 
+#: Cms/Forms/Publish.php:51
+msgid "Transform Cache"
+msgstr "Publikations-Cache"
+
+#: Cms/Forms/Publish.php:53
+msgid ""
+"If not all changes are visible on the live site after publishing, you may "
+"choose to clear the transform cache before publishing.<br>Usually this is "
+"not necessary."
+msgstr "Wenn nicht alle Änderungen auf der Live-Seite nach der Veröffentlichung sichtbar werden, können Sie den Publikations-Cache vor der Veröffentlichung leeren.<br>Normalerweise ist dies nicht notwendig."
+
+#: Cms/Forms/Publish.php:55
+msgid "Clear transform cache before publishing"
+msgstr "Publikations-Cache vor der Veröffentlichung leeren."
+
 #: Cms/Forms/ReleasePages.php:30
 msgid "Release Pages Now"
 msgstr "Seiten jetzt freigeben"
@@ -3639,9 +3659,6 @@ msgstr "Unbenannt"
 
 #~ msgid "pages"
 #~ msgstr "Seiten"
-
-#~ msgid "settings"
-#~ msgstr "Einstellungen"
 
 #~ msgid "templates"
 #~ msgstr "Templates"

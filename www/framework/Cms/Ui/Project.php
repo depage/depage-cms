@@ -313,6 +313,11 @@ class Project extends Base
             $values = $form->getValues();
             $publishId = $values['publishId'];
 
+            if ($values['clearTransformCache']) {
+                $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->project->name, "html-live-" . $publishId);
+                $transformCache->clearAll();
+            }
+
             // release pages
             foreach ($values as $key => $value) {
                 if ($value == true && preg_match('/page-(.*)/', $key, $matches)) {

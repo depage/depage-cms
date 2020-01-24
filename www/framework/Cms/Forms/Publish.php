@@ -46,6 +46,16 @@ class Publish extends ReleasePages
         ]);
 
         parent::addChildElements();
+
+        $fs = $this->addFieldset("transformCache", [
+            'label' => _("Transform Cache"),
+        ]);
+        $fs->addHtml("<p>" . _("If not all changes are visible on the live site after publishing, you may choose to clear the transform cache before publishing.<br>Usually this is not necessary.") . "</p>");
+        $fs->addBoolean("clearTransformCache", [
+            'label' => _("Clear transform cache before publishing"),
+            'defaultValue' => false,
+        ]);
+
     }
     // }}}
 }
