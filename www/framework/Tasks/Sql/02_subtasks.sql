@@ -17,3 +17,8 @@ CREATE TABLE `_subtasks` (
   KEY `task_id` (`task_id`),
   CONSTRAINT `_subtasks_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `_tasks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*
+    @version 2.1.1
+*/
+ALTER TABLE `_subtasks` ADD KEY `status` (`status`);

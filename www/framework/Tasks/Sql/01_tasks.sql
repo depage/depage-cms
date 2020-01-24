@@ -14,3 +14,8 @@ CREATE TABLE `_tasks` (
   `time_started` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+/*
+    @version 2.1.1
+*/
+ALTER TABLE `_tasks` ADD KEY `scondary` (`name`, `status`);
