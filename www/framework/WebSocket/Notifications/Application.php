@@ -101,7 +101,11 @@ class Application implements \Wrench\Application\DataHandlerInterface,
 
         foreach ($tasks as $task) {
             $progress = $task->getProgress();
-            $description = sprintf(_("'%s' will finish in %s"), $progress->description, $this->timeFormatter->format($progress->estimated));
+            if ($progress->estimated == -1) {
+                $description = sprintf(_("starting '%s'"), $progress->description);
+            } else {
+                $description = sprintf(_("'%s' will finish in %s"), $progress->description, $this->timeFormatter->format($progress->estimated));
+            }
 
             if ($task->status == 'failed') {
                 $description = _("Failed");
