@@ -24,6 +24,8 @@ class XmlDbHistory implements XmlGetter
     protected $table_docs;
 
     protected $options;
+
+    public $timestamp = null;
     // }}}
 
     // {{{ constructor
@@ -74,7 +76,12 @@ class XmlDbHistory implements XmlGetter
         if ($doc_id = $this->docExists($doc_id_or_name)) {
             $doc = new Document($this, $doc_id);
             $history = $doc->getHistory();
-            $xml = $history->getLastPublishedXml($add_id_attribute);
+
+            if (!is_null($this->timestamp)) {
+                $xml = $history->getXml($this->timestamp, $add_id_attribute);
+            } else {
+                $xml = $history->getLastPublishedXml($add_id_attribute);
+            }
         }
 
         return $xml;
@@ -87,6 +94,9 @@ class XmlDbHistory implements XmlGetter
 
         if ($doc_id = $this->docExists($doc_id_or_name)) {
             $xmlFull = $this->getDocXml($doc_id_or_name, $add_id_attribute);
+            if ($xmlFull === false) {
+                throw new \Exception("Document could not be read from history");
+            }
 
             $domXpath = new \DomXpath($xmlFull);
             $list = $domXpath->query($xpath);

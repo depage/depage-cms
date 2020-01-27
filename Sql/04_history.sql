@@ -30,3 +30,14 @@ ALTER TABLE _history MODIFY `hash` varchar(64) NOT NULL DEFAULT '';
 /*
     @version 2.0.0
 */
+
+/*
+    @version 2.1.2
+*/
+ALTER TABLE _history ADD KEY `SECONDARY` (`doc_id`, `hash`, `last_saved_at`, `published`);
+
+/*
+    @version 2.1.2.1
+*/
+ALTER TABLE _history DROP KEY `SECONDARY`;
+ALTER TABLE _history ADD KEY `SECONDARY` (`doc_id`, `published`, `last_saved_at`, `hash`);
