@@ -211,11 +211,47 @@ class DocumentTest extends XmlDbTestCase
         $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
     }
     // }}}
+    // {{{ testSaveElementNodesWithAttributeSpecialCharacters
+    public function testSaveElementNodesWithAttributeSpecialCharacters()
+    {
+        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">' .
+            '<child attr="a &gt; b"></child>' .
+            '<child attr="a &lt; b"></child>' .
+            '<child attr="a &amp; b"></child>' .
+            '<child attr="a &quot; b"></child>' .
+            '<child attr="a &apos; b"></child>' .
+            '<child attr="a \' b"></child>' .
+        '</root>';
+
+        $xml = $this->generateDomDocument($xmlStr);
+        $this->doc->save($xml);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
+    }
+    // }}}
     // {{{ testSaveTextNodes
     public function testSaveTextNodes()
     {
         $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">' .
             '<child>bla</child>blub<b/><c/><child>bla</child>' .
+        '</root>';
+
+        $xml = $this->generateDomDocument($xmlStr);
+        $this->doc->save($xml);
+
+        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($xmlStr, $this->doc->getXml(false));
+    }
+    // }}}
+    // {{{ testSaveTextNodesSpecialCharacters
+    public function testSaveTextNodesSpecialCharacters()
+    {
+        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">' .
+            '<child>a &gt; b</child>' .
+            '<child>a &lt; b</child>' .
+            '<child>a &amp; b</child>' .
+            '<child>a &quot; b</child>' .
+            '<child>a &apos; b</child>' .
+            '<child>a \' b</child>' .
         '</root>';
 
         $xml = $this->generateDomDocument($xmlStr);
