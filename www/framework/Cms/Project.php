@@ -1793,7 +1793,7 @@ class Project extends \Depage\Entity\Entity
         $index[] = "}";
 
 
-        return implode($index, "\n");
+        return implode("\n", $index);
     }
     // }}}
     // {{{ generateCss()

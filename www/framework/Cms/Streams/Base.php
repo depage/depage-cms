@@ -98,6 +98,12 @@ function stream_seek($offset, $whence)
         return [];
     }
     // }}}
+    // {{{ stream_set_option()
+    public function stream_set_option($option, $arg1, $arg2)
+    {
+        return false;
+    }
+    // }}}
     // {{{ url_stat()
     public function url_stat(){
         return [];
