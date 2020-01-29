@@ -4,11 +4,7 @@
  *
  * depage database module
  *
-<<<<<<< HEAD
- * @author    Frank Hellenkamp [jonas@depagecms.net]
-=======
  * @author    Frank Hellenkamp [jonas@depage.net]
->>>>>>> origin/merge
  * @author    Sebastian Reinhold [sebastian@bitbernd.de]
  */
 
