@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-24 13:22+0100\n"
+"POT-Creation-Date: 2020-01-31 19:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2572,11 +2572,11 @@ msgstr "Zum geteilten Layout wechseln"
 msgid "Switch to preview-only layout"
 msgstr "Zum Nur-Vorschau Layout wechseln"
 
-#: Cms/Project.php:1060
+#: Cms/Project.php:1098
 msgid "Document Release Request"
 msgstr "Anfrage zur Seitenfreigabe: "
 
-#: Cms/Project.php:1061
+#: Cms/Project.php:1099
 #, php-format
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr "%s bittet um eine Seitenfreigabe von '%s' für Projekt '%s'."
@@ -2843,8 +2843,8 @@ msgstr "Benutzer bearbeiten"
 msgid "Basics"
 msgstr "Grundeinstellungen"
 
-#: Cms/Forms/User.php:36 Cms/Forms/Project/Publish.php:60
-#: Cms/Forms/Project/Publish.php:61
+#: Cms/Forms/User.php:36 Cms/Forms/Project/Publish.php:65
+#: Cms/Forms/Project/Publish.php:66
 msgid "Username"
 msgstr "Benutzername"
 
@@ -2856,8 +2856,8 @@ msgstr "Anzeigename"
 msgid "Change Password"
 msgstr "Passwort ändern"
 
-#: Cms/Forms/User.php:55 Cms/Forms/Project/Publish.php:66
-#: Cms/Forms/Project/Publish.php:67
+#: Cms/Forms/User.php:55 Cms/Forms/Project/Publish.php:71
+#: Cms/Forms/Project/Publish.php:72
 msgid "Password"
 msgstr "Passwort"
 
@@ -2936,7 +2936,10 @@ msgid ""
 "If not all changes are visible on the live site after publishing, you may "
 "choose to clear the transform cache before publishing.<br>Usually this is "
 "not necessary."
-msgstr "Wenn nicht alle Änderungen auf der Live-Seite nach der Veröffentlichung sichtbar werden, können Sie den Publikations-Cache vor der Veröffentlichung leeren.<br>Normalerweise ist dies nicht notwendig."
+msgstr ""
+"Wenn nicht alle Änderungen auf der Live-Seite nach der Veröffentlichung "
+"sichtbar werden, können Sie den Publikations-Cache vor der Veröffentlichung "
+"leeren.<br>Normalerweise ist dies nicht notwendig."
 
 #: Cms/Forms/Publish.php:55
 msgid "Clear transform cache before publishing"
@@ -3042,19 +3045,27 @@ msgstr "Base-Url"
 msgid "Base URL of publish target"
 msgstr "Base-Url des Publizierungsziels"
 
-#: Cms/Forms/Project/Publish.php:72
+#: Cms/Forms/Project/Publish.php:60
+msgid "Base Url static content"
+msgstr "Base-Url statischer Content"
+
+#: Cms/Forms/Project/Publish.php:61
+msgid "Leave empty to use Base Url"
+msgstr "Leer lassen, um die Base-Url zu benutzen"
+
+#: Cms/Forms/Project/Publish.php:77
 msgid "Template Set"
 msgstr "Template-Set"
 
-#: Cms/Forms/Project/Publish.php:80
+#: Cms/Forms/Project/Publish.php:85
 msgid "Server supports mod rewrite"
 msgstr "Server unterstützt mod-rewrite"
 
-#: Cms/Forms/Project/Publish.php:84
+#: Cms/Forms/Project/Publish.php:89
 msgid "Index this target for search"
 msgstr "Dieses Ziel für die Textsuche indizieren"
 
-#: Cms/Forms/Project/Publish.php:105
+#: Cms/Forms/Project/Publish.php:110
 msgid "Add new publishing target"
 msgstr "Neue Publizierungsziel hinzufügen"
 
@@ -3222,6 +3233,10 @@ msgstr "(Unbenanntes Farbschema)"
 #: Cms/XmlDocTypes/Library.php:22
 msgid "Untitled"
 msgstr "Unbenannt"
+
+#, fuzzy
+#~ msgid "Base URL for static content"
+#~ msgstr "Base-Url für statischen Content"
 
 #~ msgid "Project '%s' Settings"
 #~ msgstr "Projekteinstellung von '%s'"

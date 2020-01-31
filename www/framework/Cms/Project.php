@@ -693,6 +693,10 @@ class Project extends \Depage\Entity\Entity
         foreach ($nodes as $nodeId) {
             $attr = $settings->getAttributes($nodeId);
             $targets[$nodeId] = (object) $attr;
+
+            if (!isset($targets[$nodeId]->baseurlStatic)) {
+                $targets[$nodeId]->baseurlStatic = "";
+            }
         }
 
         return $targets;
@@ -855,6 +859,40 @@ class Project extends \Depage\Entity\Entity
 
             // get base-url
             $parts = parse_url(rtrim($conf->baseurl, "/"));
+            if (!isset($parts['path'])) {
+                $parts['path'] = "/";
+            } else {
+                $parts['path'] .= "/";
+            }
+            $baseurl = $parts['scheme'] . "://" . $parts['host'] . $parts['path'];
+
+            return $baseurl;
+        }
+    }
+    // }}}
+    // {{{ getBaseUrlStatic()
+    /**
+     * @brief getBaseUrlStatic
+     *
+     * @param mixed $publishId
+     * @return void
+     **/
+    public function getBaseUrlStatic($publishId)
+    {
+        if (is_null($publishId)) {
+            // @todo check template path
+            return DEPAGE_BASE . "project/{$this->name}/preview/html/{$this->previewType}";
+        } else {
+            $targets = $this->getPublishingTargets();
+            $conf = $targets[$publishId];
+            $baseurl = $conf->baseurl;
+
+            if (!empty($conf->baseurlStatic) && $conf->baseurl != $conf->baseurlStatic) {
+                $baseurl = $conf->baseurlStatic;
+            }
+
+            // get base-url
+            $parts = parse_url(rtrim($baseurl, "/"));
             if (!isset($parts['path'])) {
                 $parts['path'] = "/";
             } else {
@@ -1182,7 +1220,9 @@ class Project extends \Depage\Entity\Entity
         //$transformCache = null;
         $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set, $transformCache);
         $baseUrl = $this->getBaseUrl($publishId);
+        $baseUrlStatic = $this->getBaseUrlStatic($publishId);
         $transformer->setBaseUrl($baseUrl);
+        $transformer->setBaseUrlStatic($baseUrlStatic);
         $transformer->routeHtmlThroughPhp = $conf->mod_rewrite == "true";
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-24 13:22+0100\n"
+"POT-Creation-Date: 2020-01-31 19:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2545,11 +2545,11 @@ msgstr ""
 msgid "Switch to preview-only layout"
 msgstr ""
 
-#: Cms/Project.php:1060
+#: Cms/Project.php:1098
 msgid "Document Release Request"
 msgstr ""
 
-#: Cms/Project.php:1061
+#: Cms/Project.php:1099
 #, php-format
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr ""
@@ -2801,8 +2801,8 @@ msgstr ""
 msgid "Basics"
 msgstr ""
 
-#: Cms/Forms/User.php:36 Cms/Forms/Project/Publish.php:60
-#: Cms/Forms/Project/Publish.php:61
+#: Cms/Forms/User.php:36 Cms/Forms/Project/Publish.php:65
+#: Cms/Forms/Project/Publish.php:66
 msgid "Username"
 msgstr ""
 
@@ -2814,8 +2814,8 @@ msgstr ""
 msgid "Change Password"
 msgstr ""
 
-#: Cms/Forms/User.php:55 Cms/Forms/Project/Publish.php:66
-#: Cms/Forms/Project/Publish.php:67
+#: Cms/Forms/User.php:55 Cms/Forms/Project/Publish.php:71
+#: Cms/Forms/Project/Publish.php:72
 msgid "Password"
 msgstr ""
 
@@ -3000,19 +3000,27 @@ msgstr ""
 msgid "Base URL of publish target"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:72
+#: Cms/Forms/Project/Publish.php:60
+msgid "Base Url static content"
+msgstr ""
+
+#: Cms/Forms/Project/Publish.php:61
+msgid "Leave empty to use Base Url"
+msgstr ""
+
+#: Cms/Forms/Project/Publish.php:77
 msgid "Template Set"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:80
+#: Cms/Forms/Project/Publish.php:85
 msgid "Server supports mod rewrite"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:84
+#: Cms/Forms/Project/Publish.php:89
 msgid "Index this target for search"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:105
+#: Cms/Forms/Project/Publish.php:110
 msgid "Add new publishing target"
 msgstr ""
 

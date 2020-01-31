@@ -56,6 +56,11 @@ class Publish extends Base
             "placeholder" => _("Base URL of publish target"),
             "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@baseurl",
         ]);
+        $this->addUrl("baseurl-static-$nodeId", [
+            "label" => _("Base Url static content"),
+            "placeholder" => _("Leave empty to use Base Url"),
+            "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@baseurlStatic",
+        ]);
         $this->addText("output_user-$nodeId", [
             "label" => _("Username"),
             "placeholder" => _("Username"),

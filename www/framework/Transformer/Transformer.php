@@ -17,6 +17,7 @@ abstract class Transformer
     protected $usedDocuments = array();
     protected $aliases = [];
     public $baseUrl = "";
+    public $baseUrlStatic = "";
     public $useAbsolutePaths = false;
     public $useBaseUrl = false;
     public $routeHtmlThroughPhp = false;
@@ -37,13 +38,14 @@ abstract class Transformer
             $t = new History($xmlGetter, $projectName, $template, null);
             $t->previewType = $previewType;
             $t->baseUrl = DEPAGE_BASE . "project/{$projectName}/preview/{$template}/{$previewType}/";
+            $t->baseUrlStatic = DEPAGE_BASE . "project/{$projectName}/preview/{$template}/{$previewType}/";
 
             return $t;
         } else {
             return new Dev($xmlGetter, $projectName, $template, null);
         }
     }
-    // }}}
+   // }}}
     // {{{ constructor()
     public function __construct($xmlGetter, $projectName, $template, $transformCache = null)
     {
@@ -55,6 +57,7 @@ abstract class Transformer
         // @todo complete baseurl this in a better way, also based on previewTyoe
         // @todo fix this for live view !important
         $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
+        $this->baseUrlStatic = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
     }
     // }}}
     // {{{ lateInitialize()
@@ -86,6 +89,18 @@ abstract class Transformer
     public function setBaseUrl($url)
     {
         $this->baseUrl = $url;
+    }
+    // }}}
+    // {{{ setBaseUrlStatic()
+    /**
+     * @brief setBaseUrlStatic
+     *
+     * @param mixed $url
+     * @return void
+     **/
+    public function setBaseUrlStatic($url)
+    {
+        $this->baseUrlStatic = $url;
     }
     // }}}
     // {{{ initXsltProc()
@@ -186,6 +201,7 @@ abstract class Transformer
                 'depageIsLive' => null,
                 'depagePreviewType' => null,
                 'baseUrl' => null,
+                'baseUrlStatic' => null,
                 'projectName' => null,
                 'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
             );
@@ -306,6 +322,7 @@ abstract class Transformer
                 "depageIsLive" => $this->isLive ? "true" : "",
                 "depagePreviewType" => $this->previewType,
                 "baseUrl" => $this->baseUrl,
+                "baseUrlStatic" => $this->baseUrlStatic,
             ]);
 
             $cleaner = new \Depage\Html\Cleaner();
@@ -641,9 +658,11 @@ abstract class Transformer
             $path = "lib/" . $url['host'];
         }
 
-        if ($absolute == "absolute" || $this->useAbsolutePaths) {
+        if ($absolute != "relative" && !empty($this->baseUrlStatic) && $this->baseUrl != $this->baseUrlStatic) {
+            $path = $this->baseUrlStatic . $path;
+        } else if ($absolute == "absolute" || $this->useAbsolutePaths) {
             $path = $this->baseUrl . $path;
-        } else if ($this->useBaseUrl) {
+        } else if ($absolute != "relative" && $this->useBaseUrl) {
             $path = $path;
         } else {
             $url = new \Depage\Http\Url($this->currentPath);
@@ -997,6 +1016,7 @@ abstract class Transformer
             'xmlPath',
             'transformCache',
             'baseUrl',
+            'baseUrlStatic',
         );
     }
     // }}}
