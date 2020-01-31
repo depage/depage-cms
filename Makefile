@@ -18,7 +18,7 @@ min: sassc
 locale:
 	cd www/framework/ ; $(I18N)
 	php www/framework/Cms/js/locale.php
-	sudo port reload php73-fpm
+	reload-php
 
 tags:  $(wildcard www/framework/**/*.php)
 	phpctags -R -C tags-cache
