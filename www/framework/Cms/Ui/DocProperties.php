@@ -877,6 +877,31 @@ class DocProperties extends Base
         ]);
     }
     // }}}
+    // {{{ addEditColorscheme()
+    /**
+     * @brief addEditColor
+     *
+     * @param mixed $node
+     * @return void
+     **/
+    protected function addEditColorscheme($node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        if (!$node->hasAttribute("value")) {
+            $node->setAttribute("value", "");
+        }
+
+        $list = ['' => _("Default")] + $this->project->getColorschemes();
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Colorscheme")));
+        $fs->addSingle("colorscheme-$nodeId", [
+            'label' => "",
+            'list' => $list,
+            'skin' => "select",
+            'dataPath' => "//*[@db:id = '$nodeId']/@colorscheme",
+        ]);
+    }
+    // }}}
     // {{{ addEditA()
     /**
      * @brief addEditA
