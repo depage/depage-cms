@@ -307,7 +307,7 @@ class Mail
         } else {
             $headers .=
                 "MIME-Version: 1.0{$this->eol}" .
-                "Content-Type: multipart/alternative; {$this->eol}\tboundary=\"{$this->boundary}\"{$this->eol}";
+                "Content-Type: multipart/mixed; {$this->eol}\tboundary=\"{$this->boundary}\"{$this->eol}";
         }
 
         return $headers;
