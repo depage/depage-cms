@@ -47,10 +47,10 @@ class MailTestClass extends Mail
 /**
  * General tests for the input class.
  **/
-class MailTest extends PHPUnit_Framework_TestCase
+class MailTest extends \PHPUnit\Framework\TestCase
 {
     // {{{ setUp()
-    public function setUp()
+    public function setUp():void
     {
         $this->mail     = new MailTestClass("sender@domain.com");
     }
@@ -171,13 +171,13 @@ class MailTest extends PHPUnit_Framework_TestCase
         $eml = $this->mail->getEml();
         $parts = $this->parseMailParts($eml);
 
-        $plainText = $this->getBodyForPart($eml, '1.1');
-        $htmlText = $this->getBodyForPart($eml, '1.2');
+        $plainText = $this->getBodyForPart($eml, '1.1.1');
+        $htmlText = $this->getBodyForPart($eml, '1.1.2');
 
-        $this->assertEquals("text/plain; charset=\"UTF-8\"", $parts['1.1']['headers']['content-type']);
+        $this->assertEquals("text/plain; charset=\"UTF-8\"", $parts['1.1.1']['headers']['content-type']);
         $this->assertEquals("This is the text with a text line longer than the maximum text width of 75\ncharacters\nSpecial Chars: äöüß\n", $plainText);
 
-        $this->assertEquals("text/html; charset=\"UTF-8\"", $parts['1.2']['headers']['content-type']);
+        $this->assertEquals("text/html; charset=\"UTF-8\"", $parts['1.1.2']['headers']['content-type']);
         $this->assertEquals("<p>This is the text with a text line longer than the maximum text width of\n75 characters</p>\n<p>Special Chars: äöüß</p>", $htmlText);
     }
     // }}}

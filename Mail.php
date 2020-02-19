@@ -51,7 +51,7 @@ namespace Depage\Mail;
  */
 class Mail
 {
-    protected $version = "1.4.2";
+    protected $version = "2.0.0";
     protected $sender;
     protected $recipients;
     protected $cc;
@@ -77,7 +77,8 @@ class Mail
     {
         $this->sender = $sender;
         $this->returnPath = $sender;
-        $this->boundary = "depage-mail=" . hash("sha1", date("r") . mt_rand()) . "=";
+        $this->boundary = "depage-att=" . hash("sha1", date("r") . mt_rand()) . "=";
+        $this->boundary2 = "depage-mail=" . hash("sha1", date("r") . mt_rand()) . "=";
     }
     // }}}
 
@@ -241,7 +242,7 @@ class Mail
             "Content-type: $mimetype{$this->eol}" .
             "Content-transfer-encoding: base64{$this->eol}" .
             "Content-disposition: attachement;{$this->eol} filename=\"$filename\"{$this->eol}{$this->eol}";
-        $astring .= chunk_split(base64_encode($string)) . "{$this->eol}";
+        $astring .= chunk_split(base64_encode($string), 76, $this->eol) . "{$this->eol}";
 
         $this->attachements[] = $astring;
 
@@ -306,8 +307,6 @@ class Mail
         } else {
             $headers .=
                 "MIME-Version: 1.0{$this->eol}" .
-                // @todo add to boundaries (mixed/alternative) depending on attachements
-                //"Content-Type: multipart/mixed; {$this->eol}\tboundary=\"{$this->boundary}\"{$this->eol}";
                 "Content-Type: multipart/alternative; {$this->eol}\tboundary=\"{$this->boundary}\"{$this->eol}";
         }
 
@@ -330,8 +329,14 @@ class Mail
             $message .=
                 _("This is a MIME encapsulated multipart message.") . $this->eol .
                 _("Please use a MIME-compliant e-mail program to open it.") . $this->eol . $this->eol;
+
             $message .=
                 "--{$this->boundary}{$this->eol}" .
+                "Content-Type: multipart/alternative; {$this->eol}" .
+                "\tboundary=\"{$this->boundary2}\"{$this->eol}{$this->eol}";
+
+            $message .=
+                "--{$this->boundary2}{$this->eol}" .
                 "Content-type: text/plain; charset=\"{$this->encoding}\"{$this->eol}" .
                 "Content-transfer-encoding: quoted-printable{$this->eol}{$this->eol}";
             $message .= $this->quotedPrintableEncode($this->wordwrap($this->text));
@@ -340,11 +345,12 @@ class Mail
                 $htmlText = str_replace("<title></title>", "<title>" . htmlspecialchars($this->subject) . "</title>", $this->htmlText);
 
                 $message .= "{$this->eol}{$this->eol}";
-                $message .= "--{$this->boundary}{$this->eol}" .
+                $message .= "--{$this->boundary2}{$this->eol}" .
                     "Content-type: text/html; charset=\"{$this->encoding}\"{$this->eol}" .
                     "Content-Transfer-encoding: quoted-printable{$this->eol}{$this->eol}";
                 $message .= $this->quotedPrintableEncode($this->wordwrap($htmlText)) . $this->eol;
             }
+            $message .= "--{$this->boundary2}--{$this->eol}";
 
             foreach ($this->attachements as $att) {
                 $message .= "{$this->eol}{$this->eol}$att";
