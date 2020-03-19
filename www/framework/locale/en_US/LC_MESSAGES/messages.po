@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 19:28+0100\n"
+"POT-Creation-Date: 2020-03-19 18:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -184,8 +184,8 @@ msgstr ""
 msgid "(public)"
 msgstr ""
 
-#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:915
-#: Cms/Ui/DocProperties.php:1013
+#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:940
+#: Cms/Ui/DocProperties.php:1038
 msgid "http://domain.com"
 msgstr ""
 
@@ -2254,11 +2254,13 @@ msgstr ""
 msgid "Ask for this page the be released"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:469 Cms/Ui/DocProperties.php:904
+#: Cms/Ui/DocProperties.php:469 Cms/Ui/DocProperties.php:895
+#: Cms/Ui/DocProperties.php:929
 msgid "Default"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:471 Cms/XmlDocTypes/Colors.php:15
+#: Cms/Ui/DocProperties.php:471 Cms/Ui/DocProperties.php:896
+#: Cms/XmlDocTypes/Colors.php:15
 msgid "Colorscheme"
 msgstr ""
 
@@ -2294,7 +2296,7 @@ msgstr ""
 msgid "php"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:583 Cms/Ui/DocProperties.php:895
+#: Cms/Ui/DocProperties.php:583 Cms/Ui/DocProperties.php:920
 #: Cms/Forms/Newsletter.php:54 Cms/Forms/Project/Language.php:68
 msgid "Title"
 msgstr ""
@@ -2327,68 +2329,68 @@ msgstr ""
 msgid "Color"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:892
+#: Cms/Ui/DocProperties.php:917
 msgid "Link"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:896
+#: Cms/Ui/DocProperties.php:921
 msgid "Link title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:902
+#: Cms/Ui/DocProperties.php:927
 msgid "Target"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:905
+#: Cms/Ui/DocProperties.php:930
 msgid "New Window"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:913 Cms/Ui/DocProperties.php:1011
+#: Cms/Ui/DocProperties.php:938 Cms/Ui/DocProperties.php:1036
 msgid "href"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:933
+#: Cms/Ui/DocProperties.php:958
 msgid "Audio"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:937 Cms/Ui/DocProperties.php:962
-#: Cms/Ui/DocProperties.php:989
+#: Cms/Ui/DocProperties.php:962 Cms/Ui/DocProperties.php:987
+#: Cms/Ui/DocProperties.php:1014
 msgid "src"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:958
+#: Cms/Ui/DocProperties.php:983
 msgid "Video"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:982
+#: Cms/Ui/DocProperties.php:1007
 msgid "Image"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:999
+#: Cms/Ui/DocProperties.php:1024
 msgid "title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1000
+#: Cms/Ui/DocProperties.php:1025
 msgid "Image title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1005
+#: Cms/Ui/DocProperties.php:1030
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1006
+#: Cms/Ui/DocProperties.php:1031
 msgid "Image description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1030
+#: Cms/Ui/DocProperties.php:1055
 msgid "Table"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1069
+#: Cms/Ui/DocProperties.php:1094
 msgid "Source"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1088
+#: Cms/Ui/DocProperties.php:1113
 msgid "Not allowed to edit this element."
 msgstr ""
 
@@ -2545,13 +2547,24 @@ msgstr ""
 msgid "Switch to preview-only layout"
 msgstr ""
 
-#: Cms/Project.php:1098
+#: Cms/Project.php:1125
 msgid "Document Release Request"
 msgstr ""
 
-#: Cms/Project.php:1099
+#: Cms/Project.php:1126
 #, php-format
 msgid "%s is requesting a document release for '%s' on project '%s'."
+msgstr ""
+
+#: Cms/Project.php:1501
+#, php-format
+msgid "%s published"
+msgstr ""
+
+#: Cms/Project.php:1503
+msgid ""
+"The following pages got published:\n"
+"\n"
 msgstr ""
 
 #: Cms/tpl/settings.tpl:5 Cms/tpl/projectlist.tpl:44
@@ -3165,7 +3178,7 @@ msgstr ""
 msgid "(Untitled Page)"
 msgstr ""
 
-#: Cms/XmlDocTypes/Pages.php:40 Cms/XmlDocTypes/Library.php:21
+#: Cms/XmlDocTypes/Pages.php:40 Cms/XmlDocTypes/Library.php:22
 msgid "Folder"
 msgstr ""
 
@@ -3185,6 +3198,6 @@ msgstr ""
 msgid "(Untitled Colorscheme)"
 msgstr ""
 
-#: Cms/XmlDocTypes/Library.php:22
+#: Cms/XmlDocTypes/Library.php:23
 msgid "Untitled"
 msgstr ""
