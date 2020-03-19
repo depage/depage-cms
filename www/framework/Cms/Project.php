@@ -1251,8 +1251,15 @@ class Project extends \Depage\Entity\Entity
         $transformer->setBaseUrl($baseUrl);
         $transformer->setBaseUrlStatic($baseUrlStatic);
         $transformer->routeHtmlThroughPhp = $conf->mod_rewrite == "true";
-        $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();
+
+        // get pages/urls to publish
+        $urls = [];
+        foreach ($this->getRecentlyChangedPages() as $p) {
+            if ($p->released) {
+                $urls[$p->pageId] = $p->url;
+            }
+        }
 
         // prepare project published notification
         $newlyPublishedPages = [];
