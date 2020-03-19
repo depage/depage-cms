@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-19 18:32+0100\n"
+"POT-Creation-Date: 2020-03-19 18:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2583,16 +2583,18 @@ msgstr "Anfrage zur Seitenfreigabe: "
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr "%s bittet um eine Seitenfreigabe von '%s' für Projekt '%s'."
 
-#: Cms/Project.php:1501
+#: Cms/Project.php:1505
 #, php-format
 msgid "%s published"
 msgstr "%s veröffentlicht"
 
-#: Cms/Project.php:1503
+#: Cms/Project.php:1507
 msgid ""
 "The following pages got published:\n"
 "\n"
-msgstr "Die folgenden Seiten wurden veröffentlicht:\n\n"
+msgstr ""
+"Die folgenden Seiten wurden veröffentlicht:\n"
+"\n"
 
 #: Cms/tpl/settings.tpl:5 Cms/tpl/projectlist.tpl:44
 #: Cms/tpl/toolbar_main.tpl:55 Cms/tpl/toolbar_main.tpl:68
@@ -3059,8 +3061,8 @@ msgid "Base URL of publish target"
 msgstr "Base-Url des Publizierungsziels"
 
 #: Cms/Forms/Project/Publish.php:60
-msgid "Base Url static content"
-msgstr "Base-Url statischer Content"
+msgid "Static Base Url"
+msgstr "Statische Base-Url"
 
 #: Cms/Forms/Project/Publish.php:61
 msgid "Leave empty to use Base Url"
@@ -3246,6 +3248,9 @@ msgstr "(Unbenanntes Farbschema)"
 #: Cms/XmlDocTypes/Library.php:23
 msgid "Untitled"
 msgstr "Unbenannt"
+
+#~ msgid "Base Url static content"
+#~ msgstr "Base-Url statischer Content"
 
 #, fuzzy
 #~ msgid "Base URL for static content"

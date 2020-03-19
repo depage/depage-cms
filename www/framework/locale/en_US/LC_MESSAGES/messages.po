@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-19 18:32+0100\n"
+"POT-Creation-Date: 2020-03-19 18:44+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2556,12 +2556,12 @@ msgstr ""
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr ""
 
-#: Cms/Project.php:1501
+#: Cms/Project.php:1505
 #, php-format
 msgid "%s published"
 msgstr ""
 
-#: Cms/Project.php:1503
+#: Cms/Project.php:1507
 msgid ""
 "The following pages got published:\n"
 "\n"
@@ -3014,7 +3014,7 @@ msgid "Base URL of publish target"
 msgstr ""
 
 #: Cms/Forms/Project/Publish.php:60
-msgid "Base Url static content"
+msgid "Static Base Url"
 msgstr ""
 
 #: Cms/Forms/Project/Publish.php:61
