@@ -583,6 +583,33 @@ class Project extends \Depage\Entity\Entity
         return $pages;
     }
     // }}}
+    // {{{ getUnpublishedPages()
+    /**
+     * @brief getUnpublishedPages
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getUnpublishedPages($released = null)
+    {
+        $pages = $this->getRecentlyChangedPages();
+        $date = $this->getLastPublishDate();
+
+        if (!$date) {
+            return $pages;
+        }
+
+        $pages = array_filter($pages, function($page) use ($date, $released) {
+            $r = true;
+            if ($released === true) {
+                $r = $page->released == $released;
+            }
+            return $page->lastrelease->getTimestamp() > $date->getTimestamp() && $r;
+        });
+
+        return $pages;
+    }
+    // }}}
     // {{{ getProjectPath()
     /**
      * @brief getProjectPath
@@ -1227,6 +1254,12 @@ class Project extends \Depage\Entity\Entity
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();
 
+        $newlyPublishedPages = [];
+        $baseUrl = $this->getBaseUrl($publishId);
+        foreach($this->getUnpublishedPages(true) as $p) {
+            $newlyPublishedPages[] = trim($baseUrl, "/") . $p->url;
+        }
+
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->name);
         $initId = $task->addSubtask("init", "
             clearstatcache();
@@ -1242,6 +1275,8 @@ class Project extends \Depage\Entity\Entity
             \$transformer = %s;
             \$transformCache = %s;
             \$indexer = new \\Depage\\Search\\Indexer();
+            \$newlyPublishedPages = %s;
+
         ", [
             $conf->output_folder,
             $conf->output_user,
@@ -1251,6 +1286,7 @@ class Project extends \Depage\Entity\Entity
             $publishId,
             $transformer,
             $transformCache,
+            $newlyPublishedPages,
         ]);
 
         $task->addSubtask("testing publish target", "\$publisher->testConnection();", [], $initId);
@@ -1400,6 +1436,12 @@ class Project extends \Depage\Entity\Entity
                 "publishInfo.txt",
         ], $initId);
 
+        // notify user
+        $task->addSubtask("notifying", "
+            \$project->sendPublishingFinishedNotification(
+                \$newlyPublishedPages
+            );", [], $initId);
+
         // publish newsletters if available
         if ($this->hasNewsletter()) {
             // @todo check for number of connections
@@ -1440,6 +1482,43 @@ class Project extends \Depage\Entity\Entity
         $task->begin();
 
         return $task;
+    }
+    // }}}
+    // {{{ sendPublishingFinishedNotification()
+    /**
+     * @brief sendPublishingFinishedNotification
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function sendPublishingFinishedNotification($pages)
+    {
+        if (empty($pages)) {
+            return;
+        }
+        $conf = $this->getProjectConfig();
+
+        $title = sprintf(_("%s published"), $this->fullname);
+
+        $message = _("The following pages got published:\n\n") .
+            implode("\n", $pages);
+
+        foreach($conf->publishNotifications as $email) {
+            try {
+                $user = \Depage\Auth\User::loadByEmail($this->pdo, $email);
+
+                $newN = new Notification($this->pdo);
+                $newN->setData([
+                    'uid' => $user->id,
+                    'tag' => "mail.project-published",
+                    'title' => $title,
+                    'message' => $message,
+                ])
+                ->save();
+            } catch (\Exception $e) {
+                break;
+            }
+        }
     }
     // }}}
 
@@ -1547,6 +1626,7 @@ class Project extends \Depage\Entity\Entity
             'aliases' => [],
             'rootAliases' => [],
             'routeHtmlThroughPhp' => false,
+            'publishNotifications' => [],
             'version' => 1,
         ]);
 
