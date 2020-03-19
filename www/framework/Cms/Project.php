@@ -1254,12 +1254,16 @@ class Project extends \Depage\Entity\Entity
         $urls = $transformer->getUrlsByPageId();
         $languages = $this->getLanguages();
 
+        // prepare project published notification
         $newlyPublishedPages = [];
         $baseUrl = $this->getBaseUrl($publishId);
         foreach($this->getUnpublishedPages(true) as $p) {
-            $newlyPublishedPages[] = trim($baseUrl, "/") . $p->url;
+            foreach ($languages as $lang => $name) {
+                $newlyPublishedPages[] = $baseUrl . $lang . $p->url;
+            }
         }
 
+        // added init task
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->name);
         $initId = $task->addSubtask("init", "
             clearstatcache();
