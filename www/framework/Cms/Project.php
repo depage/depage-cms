@@ -604,6 +604,9 @@ class Project extends \Depage\Entity\Entity
             if ($released === true) {
                 $r = $page->released == $released;
             }
+            if (!$page->lastrelease) {
+                return false;
+            }
             return $page->lastrelease->getTimestamp() > $date->getTimestamp() && $r;
         });
 
