@@ -5,6 +5,7 @@ namespace Depage\Cms\XmlDocTypes;
 // TODO configure
 
 class Library extends Base {
+    // @todo check uniqure names with folder updates!!!
     use Traits\UniqueNames;
 
     const XML_TEMPLATE_DIR = __DIR__ . '/LibraryXml/';
