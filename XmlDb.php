@@ -213,6 +213,22 @@ class XmlDb implements XmlGetter
         return $doc;
     }
     // }}}
+    // {{{ getDocInfo()
+    /**
+     * @brief getDocInfo
+     *
+     * @param mixed $doc_id_or_name
+     * @return void
+     **/
+    public function getDocInfo($doc_id_or_name)
+    {
+        if ($doc = $this->getDoc($doc_id_or_name)) {
+            return $doc->getDocInfo();
+        }
+
+        return false;
+    }
+    // }}}
 
     // {{{ getDocXml
     /**

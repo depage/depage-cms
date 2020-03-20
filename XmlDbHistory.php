@@ -68,6 +68,18 @@ class XmlDbHistory implements XmlGetter
         return $result;
     }
     // }}}
+    // {{{ getDocInfo()
+    /**
+     * @brief getDocInfo
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function getDocInfo($doc_id_or_name)
+    {
+        return $this->xmlDb->getDocInfo($doc_id_or_name);
+    }
+    // }}}
     // {{{ getDocXml
     public function getDocXml($doc_id_or_name, $add_id_attribute = true)
     {
