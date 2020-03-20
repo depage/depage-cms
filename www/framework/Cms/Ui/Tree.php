@@ -599,7 +599,7 @@ class Tree extends Base {
     {
         $permissions = $this->doc->getPermissions();
         if ($this->docInfo->type == 'Depage\Cms\XmlDocTypes\Page') {
-            $pageInfo = $this->project->getPages($this->docName)[0];
+            $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docName);
             //if ($pageInfo->protected && !$this->authUser->canEditTemplates()) {
             if ($pageInfo->protected) {
                 return [

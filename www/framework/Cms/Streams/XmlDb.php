@@ -30,8 +30,8 @@ class XmlDb extends Base {
             if ($this->data->documentElement->nodeName == "proj:pages_struct" && isset($this->transformer)) {
                 // add status attributes for page tree
                 $xmlnav = new \Depage\Cms\XmlNav();
-
-                $xmlnav->addStatusAttributes($this->data, $this->transformer->currentPath);
+                $xmlnav->setPageXml($this->data);
+                $xmlnav->addStatusAttributes($xmlnav->getPageXml(), $this->transformer->currentPath);
             }
 
             return true;

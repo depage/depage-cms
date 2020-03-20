@@ -589,7 +589,8 @@ abstract class Transformer
             }
 
             $xmlnav = new \Depage\Cms\XmlNav();
-            list($this->urlsByPageId, $this->pageIdByUrl, $this->pagedataIdByPageId) = $xmlnav->getAllUrls($pages);
+            $xmlnav->setPageXml($pages);
+            list($this->urlsByPageId, $this->pageIdByUrl, $this->pagedataIdByPageId) = $xmlnav->getAllUrls();
 
             foreach($this->pagedataIdByPageId as &$value) {
                 $value = $this->xmlGetter->docExists($value);
@@ -597,19 +598,6 @@ abstract class Transformer
         }
 
         return array_keys($this->pageIdByUrl);
-    }
-    // }}}
-    // {{{ getUrlsByPageId()
-    /**
-     * @return  null
-     */
-    public function getUrlsByPageId()
-    {
-        if (empty($this->pageIdByUrl)) {
-            $this->getAllUrls();
-        }
-
-        return array_flip($this->pageIdByUrl);
     }
     // }}}
     // {{{ getPageIdFor

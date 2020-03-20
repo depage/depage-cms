@@ -392,9 +392,8 @@ class Project extends Base
         $title = sprintf(_("Release Pages for Project '%s'"), $this->project->name);
         $previewUrl = "";
 
-        $pages = $this->project->getPages($docId);
-        if (count($pages) == 1) {
-            $previewUrl = $this->project->getPreviewPath() . $pages[0]->url;
+        if ($pageInfo = $this->project->getXmlNav()->getPageInfo($docId)) {
+            $previewUrl = $this->project->getPreviewPath() . $pageInfo->url;
         }
 
         $h = new Html("publish.tpl", [
@@ -688,7 +687,7 @@ class Project extends Base
     // }}}
     // {{{ recent-changes()
     function recent_changes($max = null) {
-        $pages = $this->project->getRecentlyChangedPages($max);
+        $pages = $this->project->getXmlNav()->getRecentlyChangedPages($max);
         $date = $this->project->getLastPublishDate();
 
         $h = new Html("changelist.tpl", [

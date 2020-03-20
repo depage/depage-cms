@@ -6,49 +6,133 @@ class XmlNav {
     const ACTIVE_STATUS = 'active';
     const PARENT_STATUS = 'parent-of-active';
 
-    private $xslDOM;
-    private $xmlDOM;
+    private $xml;
 
     /**
      * @brief rout
      **/
     public $routeHtmlThroughPhp = false;
 
+    protected $xmldb = null;
+
+    protected $urlsByPageId = [];
+    protected $pageIdByUrl = [];
+    protected $docrefByPageId = [];
+    protected $pageInfoByDocRef = [];
+
     // {{{ constructor
     /**
      * initializes xmlnav object
      *
-     * @param $xsl  filename to load as xsl template or xsl template as \DOMDocument
      * @param $xml  filename to load as navigation xml or navigation as \DOMDocument
      */
-    public function __construct($xsl = '', $xml = '') {
-        if ($xsl != '' && is_string($xsl)) {
-            $this->loadXslFromFile($xsl);
-        } else if ($xsl instanceof \DOMDocument) {
-            $this->xslDOM = $xsl;
+    public function __construct($xmlgetter = null, $xml = '') {
+        if (!empty($xmlgetter)) {
+            $this->setXmlGetter($xmlgetter);
         }
+        if (!empty($xml)) {
+            $this->setPageXml($xml);
+        }
+    }
+    // }}}
+    // {{{ setXmlGetter()
+    /**
+     * @brief setXmlGetter
+     *
+     * @param mixed $xmlgetter
+     * @return void
+     **/
+    public function setXmlGetter($xmlgetter)
+    {
+        $this->xmldb = $xmlgetter;
+    }
+    // }}}
+    // {{{ setPageXml()
+    /**
+     * @brief setPageXml
+     *
+     * @param mixed $xml
+     * @return void
+     **/
+    public function setPageXml($xml)
+    {
         if ($xml != '' && is_string($xml)) {
             $this->loadXmlFromFile($xml);
         } else if ($xml instanceof \DOMDocument) {
-            $this->xmlDOM = $xml;
+            $this->xml = $xml;
+        }
+
+        $this->urlsByPageId = [];
+        $this->pageIdByUrl = [];
+        $this->docrefByPageId = [];
+        $this->pageInfoByDocRef = [];
+
+        list($xml, $node) = \Depage\Xml\Document::getDocAndNode($this->xml);
+
+        $xpath = new \DOMXPath($xml);
+        $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
+        $pages = $xpath->query("//pg:*[@url]");
+
+        if ($pages->length == 0) {
+            // url attribute not available -> add now
+            $this->addUrlAttributes($xml);
+            $pages = $xpath->query("//pg:*[@url]");
+        }
+
+        foreach ($pages as $node) {
+            $id = (int) $node->getAttribute("db:id");
+            $docref = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
+
+            // base mappings
+            $this->urlsByPageId[$id] = $node->getAttribute("url");
+            $this->docrefByPageId[$id] = $docref;
+
+            // only for pages and redirects
+            if ($node->nodeName != "pg:page" && $node->nodeName != "pg:redirect") {
+                continue;
+            }
+            $this->pageIdByUrl[$node->getAttribute("url")] = $id;
+
+            // only if xmlgetter is set and has docref
+            if (!$docref || !$this->xmldb) {
+                continue;
+            }
+            $docInfo = $this->xmldb->getDoc($docref)->getDocInfo();
+            $docInfo->pageId = $node->getAttribute("db:id");
+            $docInfo->url = $node->getAttribute("url");
+            $docInfo->fileType = $node->getAttribute("file_type");
+            $docInfo->published = $node->getAttribute("db:published") == "true";
+            $docInfo->released = $node->getAttribute("db:released") == "true";
+            $docInfo->protected = $node->getAttribute("db:protected") == "true";
+
+            $docInfo->nav = [];
+            $docInfo->tags = [];
+            foreach ($node->attributes as $name => $attrNode) {
+                if (substr($name, 0, 4) == 'nav_') {
+                    $docInfo->nav[substr($name, 4)] = $attrNode->value;
+                } else if (substr($name, 0, 4) == 'tag_') {
+                    $docInfo->tags[substr($name, 4)] = $attrNode->value;
+                }
+            }
+
+            $this->pageInfoByDocRef[$docref] = $docInfo;
         }
     }
     // }}}
-
-    // {{{ loadXslFromFile()
+    // {{{ getPageXml()
     /**
-     * loads xsl template from filename
+     * @brief getPageXml
      *
-     * @param string $path
-     */
-    public function loadXslFromFile($path) {
-        $this->xslDOM = new \DOMDocument();
+     * @param mixed
+     * @return void
+     **/
+    public function getPageXml()
+    {
+        return $this->xml;
 
-        if (!$this->xslDOM->load($path)) {
-            throw new \exception('Could not load the navigation XSL file.');
-        }
     }
     // }}}
+
     // {{{ loadXmlFromFile()
     /**
      * loads navigation xml from file
@@ -56,11 +140,115 @@ class XmlNav {
      * @param string $path
      */
     public function loadXmlFromFile($path) {
-        $this->xmlDOM = new \DOMDocument();
+        $this->xml = new \DOMDocument();
 
-        if (!$this->xmlDOM->load($path)) {
+        if (!$this->xml->load($path)) {
             throw new \exception('Could not load the navigation XML file.');
         }
+    }
+    // }}}
+
+    // {{{ getPages()
+    /**
+     * @brief getPages
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getPages()
+    {
+        return $this->pageInfoByDocRef;
+    }
+    // }}}
+    // {{{ getRecentlyChangedPages()
+    /**
+     * @brief getRecentlyChangedPages
+     *
+     * @param max
+     * @return array
+     **/
+    public function getRecentlyChangedPages($max = null)
+    {
+        $pages = $this->getPages();
+
+        usort($pages, function($a, $b) {
+            if (!$a->released && $b->released) {
+                return -1;
+            } else if ($a->released && !$b->released) {
+                return 1;
+            }
+            $aTi = $a->lastchange->getTimestamp();
+            $bTi = $b->lastchange->getTimestamp();
+            if ($aTi == $bTi) {
+                return 0;
+            }
+            return ($aTi > $bTi) ? -1 : 1;
+        });
+
+        if ($max > 0) {
+            $pages = array_splice($pages, 0, $max);
+        }
+
+        return $pages;
+    }
+    // }}}
+    // {{{ getUnreleasedPages()
+    /**
+     * @brief getUnreleasedPages
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getUnreleasedPages()
+    {
+        $pages = $this->getRecentlyChangedPages();
+
+        $pages = array_filter($pages, function($page) {
+            return $page->released == false;
+        });
+
+        return $pages;
+    }
+    // }}}
+    // {{{ getUnpublishedPages()
+    /**
+     * @brief getUnpublishedPages
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getUnpublishedPages($lastpublishDate, $released = null)
+    {
+        $pages = $this->getRecentlyChangedPages();
+
+        if ($lastpublishDate === false) {
+            return $pages;
+        }
+
+        $pages = array_filter($pages, function($page) use ($lastpublishDate, $released) {
+            $r = true;
+            if ($released === true) {
+                $r = $page->released == $released;
+            }
+            if (!$page->lastrelease) {
+                return false;
+            }
+            return $page->lastrelease->getTimestamp() > $lastpublishDate->getTimestamp() && $r;
+        });
+
+        return $pages;
+    }
+    // }}}
+    // {{{ getPageInfo()
+    /**
+     * @brief getPageInfo
+     *
+     * @param mixed $docref
+     * @return void
+     **/
+    public function getPageInfo($docref)
+    {
+        return $this->pageInfoByDocRef[$docref] ?? false;
     }
     // }}}
 
@@ -72,33 +260,8 @@ class XmlNav {
      *
      * @return (array) array of nodes
      */
-    public function getAllUrls(\DOMNode $node, $url = "") {
-        $urlsByPageId = [];
-        $pageIdByUrl = [];
-        $pagedataIdByPageId = [];
-
-        list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
-
-        $xpath = new \DOMXPath($xml);
-        $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
-        $pages = $xpath->query("//pg:*[@url]");
-
-        if ($pages->length == 0) {
-            // attribute not available -> add now
-            $this->addUrlAttributes($xml);
-            $pages = $xpath->query("//pg:*[@url]");
-        }
-
-        foreach ($pages as $page) {
-            $id = (int) $page->getAttribute("db:id");
-            $urlsByPageId[$id] = $page->getAttribute("url");
-            $pagedataIdByPageId[$id] = $page->getAttribute("db:docref");
-            if ($page->nodeName == "pg:page" || $page->nodeName == "pg:redirect") {
-                $pageIdByUrl[$page->getAttribute("url")] = $id;
-            }
-        }
-
-        return [$urlsByPageId, $pageIdByUrl, $pagedataIdByPageId];
+    public function getAllUrls($url = "") {
+        return [$this->urlsByPageId, $this->pageIdByUrl, $this->docrefByPageId];
     }
     // }}}
 
@@ -164,7 +327,7 @@ class XmlNav {
         }
     }
     // }}}
-    // addStatusAttributes() {{{
+    // {{{ addStatusAttributes()
     /**
      * Add Status
      *
@@ -197,7 +360,7 @@ class XmlNav {
         }
     }
     // }}}
-    // addLocalizedAttributes() {{{
+    // {{{ addLocalizedAttributes()
     /**
      * Add localized name
      *
@@ -211,51 +374,6 @@ class XmlNav {
         foreach ($nodes as $node) {
             $node->setAttribute('localized', _($node->getAttribute('name')));
         }
-    }
-    // }}}
-
-    // {{{ transform()
-    /**
-     * Transform
-     *
-     * Transforms the XML navigation to an HTML format
-     * according to the XSL provided.
-     *
-     * @param \DOMDocument $xml
-     * @param \DOMDocument $xslt
-     *
-     * @return (string) $html
-     */
-    public function transform($activeUrl, $lang, $xslParam = []) {
-        if (!($this->xslDOM instanceof \DOMDocument)) {
-            throw new \exception('You have to load a navigation xsl-template.');
-        }
-        if (!($this->xmlDOM instanceof \DOMDocument)) {
-            throw new \exception('You have to load a navigation xml-file.');
-        }
-
-        // add attributes to dom tree
-        $this->addUrlAttributes($this->xmlDOM, $lang);
-        $this->addStatusAttributes($this->xmlDOM, $lang . "/" . $activeUrl);
-        $this->addLocalizedAttributes($this->xmlDOM, $lang);
-
-        // initialize processor and transform
-        $xslt = new \XSLTProcessor();
-        $xslt->setParameter("", $xslParam);
-        $xslt->importStylesheet($this->xslDOM);
-
-        libxml_use_internal_errors(true);
-
-        if (!$html = $xslt->transformToXml($this->xmlDOM)) {
-            var_dump(libxml_get_errors());
-
-            $error = libxml_get_last_error();
-            $error = empty($error)? 'Could not transform the navigation XML document.' : $error->message;
-
-            throw new \exception($error);
-        }
-
-        return $html;
     }
     // }}}
 }

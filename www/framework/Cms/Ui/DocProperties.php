@@ -163,7 +163,7 @@ class DocProperties extends Base
 
                 if ($released) {
                     // get pageId correctly
-                    $pageInfo = $this->project->getPages($this->docRef)[0];
+                    $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docRef);
                     $pageDoc = $this->xmldb->getDoc("pages");
                     $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $pageDoc->getDocId(), $this->projectName, 0);
                     $parentId = $pageDoc->getParentIdById($pageInfo->pageId);
@@ -326,7 +326,7 @@ class DocProperties extends Base
      **/
     protected function addPgRelease($currentNode)
     {
-        $pageInfo = $this->project->getPages($this->docRef)[0];
+        $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docRef);
         $lastchangeUser = \Depage\Auth\User::loadById($this->pdo, $pageInfo->lastchangeUid);
         $dateFormatter = new \Depage\Formatters\DateNatural();
 
@@ -460,10 +460,8 @@ class DocProperties extends Base
      **/
     protected function addPgMeta($node)
     {
-        $pageInfo = $this->project->getPages($this->docRef)[0];
+        $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docRef);
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
-        $pageInfo = $this->project->getPages($this->docRef)[0];
-
 
         if ($pageInfo->type == "Depage\\Cms\\XmlDocTypes\\Page") {
             $list = ['' => _("Default")] + $this->project->getColorschemes();

@@ -40,7 +40,7 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
     {
         $formatter = new \Depage\Formatters\DateNatural();
 
-        $pages = $this->project->getUnreleasedPages();
+        $pages = $this->project->getXmlNav()->getUnreleasedPages();
         $previewPath = $this->project->getPreviewPath();
 
         $fs = $this->addFieldset("recentChanges", [

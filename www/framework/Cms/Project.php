@@ -479,138 +479,21 @@ class Project extends \Depage\Entity\Entity
         return $this->xmldb->getDoc("settings");
     }
     // }}}
-    // {{{ getPages()
+    // {{{ getXmlNav()
     /**
-     * @brief getPages
+     * @brief getXmlNav
      *
      * @param mixed
      * @return void
      **/
-    public function getPages($docId = null)
+    public function getXmlNav()
     {
-        $pages = [];
-
         $this->xmldb = $this->getXmlDb();
 
-        $xml = $this->xmldb->getDocXml("pages");
-
-        $xpath = new \DOMXPath($xml);
-        $xpath->registerNamespace("pg", "http://cms.depagecms.net/ns/page");
-
-        if (!is_null($docId)) {
-            $nodelist = $xpath->query("//pg:*[@db:docref='$docId']");
-        } else {
-            $nodelist = $xpath->query("//pg:page");
-        }
-
-        for ($i = 0; $i < $nodelist->length; $i++) {
-            $node = $nodelist->item($i);
-            $currentDocId = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
-
-            if ($currentDocId) {
-                $docInfo = $this->xmldb->getDoc($currentDocId)->getDocInfo();
-                $docInfo->pageId = $node->getAttribute("db:id");
-                $docInfo->url = $node->getAttribute("url");
-                $docInfo->fileType = $node->getAttribute("file_type");
-                $docInfo->published = $node->getAttribute("db:published") == "true";
-                $docInfo->released = $node->getAttribute("db:released") == "true";
-                $docInfo->protected = $node->getAttribute("db:protected") == "true";
-
-                $docInfo->nav = [];
-                $docInfo->tags = [];
-                foreach ($node->attributes as $name => $attrNode) {
-                    if (substr($name, 0, 4) == 'nav_') {
-                        $docInfo->nav[substr($name, 4)] = $attrNode->value;
-                    } else if (substr($name, 0, 4) == 'tag_') {
-                        $docInfo->tags[substr($name, 4)] = $attrNode->value;
-                    }
-                }
-
-                $pages[] = $docInfo;
-            }
-        }
-
-        return $pages;
-    }
-    // }}}
-    // {{{ getRecentlyChangedPages
-    /**
-     * @brief getRecentlyChangedPages
-     *
-     * @param max
-     * @return array
-     **/
-    public function getRecentlyChangedPages($max = null)
-    {
-        $pages = $this->getPages();
-
-        usort($pages, function($a, $b) {
-            if (!$a->released && $b->released) {
-                return -1;
-            } else if ($a->released && !$b->released) {
-                return 1;
-            }
-            $aTi = $a->lastchange->getTimestamp();
-            $bTi = $b->lastchange->getTimestamp();
-            if ($aTi == $bTi) {
-                return 0;
-            }
-            return ($aTi > $bTi) ? -1 : 1;
-        });
-
-        if ($max > 0) {
-            $pages = array_splice($pages, 0, $max);
-        }
-
-        return $pages;
-    }
-    // }}}
-    // {{{ getUnreleasedPages()
-    /**
-     * @brief getUnreleasedPages
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function getUnreleasedPages()
-    {
-        $pages = $this->getRecentlyChangedPages();
-
-        $pages = array_filter($pages, function($page) {
-            return $page->released == false;
-        });
-
-        return $pages;
-    }
-    // }}}
-    // {{{ getUnpublishedPages()
-    /**
-     * @brief getUnpublishedPages
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function getUnpublishedPages($released = null)
-    {
-        $pages = $this->getRecentlyChangedPages();
-        $date = $this->getLastPublishDate();
-
-        if (!$date) {
-            return $pages;
-        }
-
-        $pages = array_filter($pages, function($page) use ($date, $released) {
-            $r = true;
-            if ($released === true) {
-                $r = $page->released == $released;
-            }
-            if (!$page->lastrelease) {
-                return false;
-            }
-            return $page->lastrelease->getTimestamp() > $date->getTimestamp() && $r;
-        });
-
-        return $pages;
+        return new XmlNav(
+            $this->xmldb,
+            $this->xmldb->getDocXml("pages")
+        );
     }
     // }}}
     // {{{ getProjectPath()
@@ -1124,9 +1007,9 @@ class Project extends \Depage\Entity\Entity
             return false;
         });
 
-        $pages = $this->getPages($docId);
+        $pageInfo = $this->getXmlNav->getPageInfo($docId);
         $title = _("Document Release Request");
-        $text = sprintf(_("%s is requesting a document release for '%s' on project '%s'."), $requestingUser->fullname, $pages[0]->url, $this->name);
+        $text = sprintf(_("%s is requesting a document release for '%s' on project '%s'."), $requestingUser->fullname, $pageInfo->url, $this->name);
 
         foreach ($users as $u) {
             $newN = new Notification($this->pdo);
@@ -1258,7 +1141,7 @@ class Project extends \Depage\Entity\Entity
 
         // get pages/urls to publish
         $urls = [];
-        foreach ($this->getRecentlyChangedPages() as $p) {
+        foreach ($this->getXmlNav()->getRecentlyChangedPages() as $p) {
             if ($p->released) {
                 $urls[$p->pageId] = $p->url;
             }
@@ -1267,7 +1150,11 @@ class Project extends \Depage\Entity\Entity
         // prepare project published notification
         $newlyPublishedPages = [];
         $baseUrl = $this->getBaseUrl($publishId);
-        foreach($this->getUnpublishedPages(true) as $p) {
+        $unpublishedPages = $this->getXmlNav()->getUnpublishedPages(
+            $this->getLastPublishDate(),
+            true
+        );
+        foreach($unpublishedPages as $p) {
             foreach ($languages as $lang => $name) {
                 $newlyPublishedPages[] = $baseUrl . $lang . $p->url;
             }
