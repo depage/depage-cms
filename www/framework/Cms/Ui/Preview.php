@@ -22,8 +22,6 @@ class Preview extends \Depage\Depage\Ui\Base
     protected $projectName = "";
     protected $template = "";
     protected $lang = "";
-    protected $urlsByPageId = [];
-    protected $pageIdByUrl = [];
     public $routeThroughIndex = true;
     public $defaults = [
         'cache' => [

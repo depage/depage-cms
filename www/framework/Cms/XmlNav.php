@@ -17,7 +17,8 @@ class XmlNav {
 
     protected $urlsByPageId = [];
     protected $pageIdByUrl = [];
-    protected $docrefByPageId = [];
+    protected $docRefByPageId = [];
+    protected $pagedataIdByPageId = [];
     protected $pageInfoByDocRef = [];
 
     // {{{ constructor
@@ -64,7 +65,8 @@ class XmlNav {
 
         $this->urlsByPageId = [];
         $this->pageIdByUrl = [];
-        $this->docrefByPageId = [];
+        $this->docRefByPageId = [];
+        $this->pagedataIdByPageId = [];
         $this->pageInfoByDocRef = [];
 
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($this->xml);
@@ -85,7 +87,7 @@ class XmlNav {
 
             // base mappings
             $this->urlsByPageId[$id] = $node->getAttribute("url");
-            $this->docrefByPageId[$id] = $docref;
+            $this->docRefByPageId[$id] = $docref;
 
             // only for pages and redirects
             if ($node->nodeName != "pg:page" && $node->nodeName != "pg:redirect") {
@@ -97,7 +99,8 @@ class XmlNav {
             if (!$docref || !$this->xmldb) {
                 continue;
             }
-            $docInfo = $this->xmldb->getDoc($docref)->getDocInfo();
+            $docInfo = $this->xmldb->getDocInfo($docref);
+            $this->pagedataIdByPageId[$id] = $docInfo->id;
             $docInfo->pageId = $node->getAttribute("db:id");
             $docInfo->url = $node->getAttribute("url");
             $docInfo->fileType = $node->getAttribute("file_type");
@@ -239,6 +242,56 @@ class XmlNav {
         return $pages;
     }
     // }}}
+
+    // {{{ getUrl()
+    /**
+     * @brief getUrl
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function getUrl($pageId)
+    {
+        return $this->urlsByPageId[$pageId] ?? false;
+    }
+    // }}}
+    // {{{ getPageId()
+    /**
+     * @brief getPageId
+     *
+     * @param mixed $url
+     * @return void
+     **/
+    public function getPageId($url)
+    {
+        return $this->pageIdByUrl[$url] ?? false;
+    }
+    // }}}
+    // {{{ getPageDataId()
+    /**
+     * @brief getPageDataId
+     *
+     * @param mixed $pageId
+     * @return void
+     **/
+    public function getPageDataId($pageId)
+    {
+        return $this->pagedataIdByPageId[$pageId] ?? false;
+
+    }
+    // }}}
+    // {{{ getDocRef()
+    /**
+     * @brief getDocRef
+     *
+     * @param mixed getDocRef
+     * @return void
+     **/
+    public function getDocRef($pageId)
+    {
+        return $this->docRefByPageId[$pageId] ?? false;
+    }
+    // }}}
     // {{{ getPageInfo()
     /**
      * @brief getPageInfo
@@ -252,22 +305,9 @@ class XmlNav {
     }
     // }}}
 
-    // getAllUrls() {{{
-    /**
-     * gets urls for all nodes
-     *
-     * @param \DOMNode $xml
-     *
-     * @return (array) array of nodes
-     */
-    public function getAllUrls($url = "") {
-        return [$this->urlsByPageId, $this->pageIdByUrl, $this->docrefByPageId];
-    }
-    // }}}
-
     // addUrlAttributes() {{{
     /**
-     * Add Urls Attributes
+     *zM Add Urls Attributes
      *
      * Adds a url attribute to each page in the XML DOM tree.
      * The url is built from the page name and the names of ancestor folders.

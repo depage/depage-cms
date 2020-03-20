@@ -12,9 +12,10 @@ abstract class Transformer
     protected $xsltPath;
     protected $xmlPath;
     protected $xsltProc = null;
+    protected $xmlnav = null;
     protected $isLive = false;
     protected $profiling = false;
-    protected $usedDocuments = array();
+    protected $usedDocuments = [];
     protected $aliases = [];
     public $baseUrl = "";
     public $baseUrlStatic = "";
@@ -23,9 +24,6 @@ abstract class Transformer
     public $routeHtmlThroughPhp = false;
     public $lang = "";
     public $currentPath = "";
-    public $urlsByPageId = array();
-    public $pageIdByUrl = array();
-    public $pagedataIdByPageId = array();
 
     // {{{ factory()
     static public function factory($previewType, $xmlGetter, $projectName, $template, $transformCache = null)
@@ -574,58 +572,31 @@ abstract class Transformer
     }
     // }}}
 
-    // {{{ getAllUrls
-    /**
-     * @return  null
-     */
-    public function getAllUrls()
-    {
-        if (empty($this->urlsByPageId) ||
-            empty($this->pageIdByUrl)
-        ) {
-            $pages = $this->xmlGetter->getDocXml("pages");
-            if ($pages === false) {
-                throw new \Exception("Page structure could not be read");
-            }
-
-            $xmlnav = new \Depage\Cms\XmlNav();
-            $xmlnav->setPageXml($pages);
-            list($this->urlsByPageId, $this->pageIdByUrl, $this->pagedataIdByPageId) = $xmlnav->getAllUrls();
-
-            foreach($this->pagedataIdByPageId as &$value) {
-                $value = $this->xmlGetter->docExists($value);
-            }
-        }
-
-        return array_keys($this->pageIdByUrl);
-    }
-    // }}}
     // {{{ getPageIdFor
     /**
      * @return  null
      */
     public function getPageIdFor($urlPath)
     {
-        $this->getAllUrls();
+        $xmlnav = $this->getXmlNav();
 
-        if (!isset($this->pageIdByUrl[$urlPath]) && $this->routeHtmlThroughPhp) {
+        if (!$xmlnav->getPageId($urlPath) && $this->routeHtmlThroughPhp) {
             $urlPath = preg_replace("/\.html$/", ".php", $urlPath);
         }
-        if (!isset($this->pageIdByUrl[$urlPath]) && !empty($this->aliases)) {
+        if (!$xmlnav->getPageId($urlPath) && !empty($this->aliases)) {
             foreach ($this->aliases as $regex => $repl) {
                 $regex = "/" . str_replace("/", "\/", $regex) . "/";
                 $urlPath = preg_replace($regex, $repl, $urlPath);
             }
         }
 
-        if (isset($this->pageIdByUrl[$urlPath])) {
-            $pageId = $this->pageIdByUrl[$urlPath];
-            $docRef = $this->pagedataIdByPageId[$pageId];
+        if ($pageId = $xmlnav->getPageId($urlPath)) {
+            $docRef = $xmlnav->getPageDataId($pageId);
 
-            return array($pageId, $docRef, $urlPath);
-        } else {
-            return array(false, false, false);
+            return [$pageId, $docRef, $urlPath];
         }
+
+        return [false, false, false];
     }
     // }}}
 
@@ -674,10 +645,10 @@ abstract class Transformer
         }
         $path = "";
 
-        $this->getAllUrls();
+        $xmlnav = $this->getXmlNav();
 
-        if (isset($this->urlsByPageId[$pageId])) {
-            $path = $lang . $this->urlsByPageId[$pageId];
+        if ($url = $xmlnav->getUrl($pageId)) {
+            $path = $lang . $url;
         }
 
         if ($absolute == "absolute" || $this->useAbsolutePaths) {
@@ -963,6 +934,25 @@ abstract class Transformer
     }
     // }}}
 
+    // {{{ getXmlNav()
+    /**
+     * @brief getXmlNav
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function getXmlNav()
+    {
+        if (is_null($this->xmlnav)) {
+            $this->xmlnav = new \Depage\Cms\XmlNav();
+            $this->xmlnav->routeHtmlThroughPhp = $this->routeHtmlThroughPhp;
+            $this->xmlnav->setXmlGetter($this->xmlGetter);
+            $this->xmlnav->setPageXml($this->xmlGetter->getDocXml('pages'));
+        }
+
+        return $this->xmlnav;
+    }
+    // }}}
     // {{{ extractWords()
     /**
      * @brief extractWords
