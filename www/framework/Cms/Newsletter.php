@@ -178,6 +178,7 @@ class Newsletter
     public function getCandidates($xpath = "//sec:news")
     {
         $candidates = [];
+        $xmldb = $this->project->getXmlDb();
         $pages = $this->project->getXmlNav()->getPages();
         $usedPages = [];
 

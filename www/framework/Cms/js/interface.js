@@ -680,6 +680,7 @@ var depageCMS = (function() {
                 var $form = $(this);
 
                 $form.on("depageForm.autosaved", function() {
+                    // @todo set language correctly
                     var matches = window.location.href.match(/project\/([^\/]*)\/newsletter\/([^\/]*)\//);
                     var url = baseUrl + "project/" + matches[1] + "/preview/newsletter/pre/" + currentPreviewLang + "/" + matches[2] + ".html";
 
