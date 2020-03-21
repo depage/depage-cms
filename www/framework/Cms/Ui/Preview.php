@@ -185,7 +185,6 @@ class Preview extends \Depage\Depage\Ui\Base
         }
 
         if ($this->template == "newsletter") {
-            $lang = $this->project->getDefaultLanguage();
             preg_match("/\/(_Newsletter_([a-z0-9]*))\.html/", $urlPath, $matches);
             $newsletterName = $matches[1];
             $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $this->project, $newsletterName);

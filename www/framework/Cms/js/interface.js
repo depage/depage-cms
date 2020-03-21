@@ -38,7 +38,7 @@ var depageCMS = (function() {
     var currentPreviewUrl,
         currentDocId,
         currentDocPropertyId,
-        currentPreviewLang = "",
+        currentPreviewLang = lang,
         currentLibPath = "",
         currentLibAccept = "",
         currentLibForceSize = "",
@@ -679,8 +679,13 @@ var depageCMS = (function() {
             $("form.newsletter.edit").each(function() {
                 var $form = $(this);
 
+                $form.find("input").on("focus", function() {
+                    var lang = $(this).parents("p[lang]").attr("lang");
+                    if (typeof lang == "undefined" || lang == "") return;
+
+                    currentPreviewLang = lang;
+                });
                 $form.on("depageForm.autosaved", function() {
-                    // @todo set language correctly
                     var matches = window.location.href.match(/project\/([^\/]*)\/newsletter\/([^\/]*)\//);
                     var url = baseUrl + "project/" + matches[1] + "/preview/newsletter/pre/" + currentPreviewLang + "/" + matches[2] + ".html";
 
