@@ -1941,7 +1941,23 @@ var depageCMS = (function() {
                 previewLoading = true;
 
                 if (oldUrl == newUrl) {
-                    $previewFrame[0].contentWindow.location.reload();
+                    var $iframe = $previewFrame.contents();
+                    var $current = $iframe.find("*[data-db-id='" + currentDocPropertyId + "']");
+
+                    if ($current.length == 1) {
+                        $.get(newUrl, function(data) {
+                            var $new = $($.parseHTML(data)).find("*[data-db-id='" + currentDocPropertyId + "']");
+
+                            if ($new.length == 1) {
+                                $current.replaceWith($new);
+                                localJS.onPreviewUpdated();
+                            } else {
+                                $previewFrame[0].contentWindow.location.reload();
+                            }
+                        });
+                    } else {
+                        $previewFrame[0].contentWindow.location.reload();
+                    }
                 } else {
                     var $newFrame = $("<iframe />").insertAfter($previewFrame);
                     $previewFrame.remove();
@@ -1987,7 +2003,7 @@ var depageCMS = (function() {
             }
             // @todo update throttle to just reload when old page has already been loaded -> test performance esp. on iOS
             this.preview(currentPreviewUrl);
-        }, 1000, {
+        }, 500, {
             leading: false,
             trailing: true
         }),
