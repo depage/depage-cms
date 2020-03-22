@@ -43,7 +43,11 @@ var depageCMS = (function() {
         currentLibAccept = "",
         currentLibForceSize = "",
         currentTasksTimeout = null,
-        currentTasks = {};
+        currentTasks = {},
+        previewStarted = 0,
+        previewLoading = false,
+        previewLoadTime = 1000,
+        previewUpdateTimer;
     var $html;
     var $window;
     var $body;
@@ -61,7 +65,6 @@ var depageCMS = (function() {
     var jstreePagedata;
 
     var currentLayout;
-    var previewUpdateTimer;
 
     // various helper functions
     // {{{ $.scrollParent
@@ -1932,6 +1935,11 @@ var depageCMS = (function() {
                     return;
                 }
 
+                clearTimeout(previewUpdateTimer);
+
+                previewStarted = Date.now();
+                previewLoading = true;
+
                 if (oldUrl == newUrl) {
                     $previewFrame[0].contentWindow.location.reload();
                 } else {
@@ -1940,6 +1948,9 @@ var depageCMS = (function() {
                     $previewFrame = $newFrame.attr("id", "previewFrame");
                     $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
                     $previewFrame.on("load", localJS.onPreviewUpdated);
+                    $previewFrame[0].contentWindow.addEventListener('DOMContentLoaded', function() {
+                        localJS.onPreviewUpdated();
+                    });
                     $previewFrame[0].src = newUrl;
                 }
             } else {
@@ -1955,6 +1966,9 @@ var depageCMS = (function() {
                     $previewFrame = $("#previewFrame");
                     $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
                     $previewFrame.on("load", localJS.onPreviewUpdated);
+                    $previewFrame[0].contentWindow.addEventListener('DOMContentLoaded', function() {
+                        localJS.onPreviewUpdated();
+                    });
                     $previewFrame[0].src = unescape(url);
 
                     $window.triggerHandler("switchLayout", "split");
@@ -1964,10 +1978,17 @@ var depageCMS = (function() {
         // }}}
         // {{{ updatePreview
         updatePreview: _.throttle(function() {
+            if (previewLoading) {
+                setTimeout(function() {
+                    localJS.updatePreview();
+                }, previewLoadTime);
+
+                return;
+            }
             // @todo update throttle to just reload when old page has already been loaded -> test performance esp. on iOS
             this.preview(currentPreviewUrl);
-        }, 3000, {
-            leading: true,
+        }, 1000, {
+            leading: false,
             trailing: true
         }),
         // }}}
@@ -2046,9 +2067,18 @@ var depageCMS = (function() {
         // {{{ onPreviewUpdated
         onPreviewUpdated: function() {
             var title = "",
-                oldTitle;
+                oldTitle,
+                lastLoadTime;
 
-            clearTimeout(previewUpdateTimer);
+            if (!previewLoading) {
+                return;
+            }
+
+            previewLoading = false;
+            lastLoadTime = Date.now() - previewStarted;
+            previewLoadTime = Math.min(4000, Math.max(1000, lastLoadTime));
+            console.log("load times: " + lastLoadTime + "/" + previewLoadTime);
+
             previewUpdateTimer = setInterval(function () {
                 try {
                     title = $previewFrame[0].contentDocument.title;
