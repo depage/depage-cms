@@ -1941,12 +1941,28 @@ var depageCMS = (function() {
                 previewLoading = true;
 
                 if (oldUrl == newUrl) {
+                    var dynamicClasses = [];
                     var $iframe = $previewFrame.contents();
                     var $current = $iframe.find("*[data-db-id='" + currentDocPropertyId + "']");
+                    $iframe.find("html[data-dynamic-classes]").each(function() {
+                        dynamicClasses = $(this).attr("data-dynamic-classes").split(" ") || [];
+                    });
 
                     if ($current.length == 1) {
                         $.get(newUrl, function(data) {
                             var $new = $($.parseHTML(data)).find("*[data-db-id='" + currentDocPropertyId + "']");
+
+                            for (var i in dynamicClasses) {
+                                var c = dynamicClasses[i];
+                                if ($current.hasClass(c)) {
+                                    $new.addClass(c);
+                                }
+                                $current.find("." + c).each(function() {
+                                    var $sub = $(this);
+                                    var selector = localJS.buildSelector($sub[0], $current[0], c);
+                                    $new.find(selector).addClass(c);
+                                });
+                            }
 
                             if ($new.length == 1) {
                                 $current.replaceWith($new);
@@ -2007,6 +2023,27 @@ var depageCMS = (function() {
             leading: false,
             trailing: true
         }),
+        // }}}
+        // {{{ buildSelector
+        buildSelector: function(el, pa, c) {
+            var selector = "";
+
+            if (el != pa) {
+                selector = el.nodeName;
+
+                if (el.id != "") {
+                    selector += "#" + el.id;
+                }
+                for (var i = 0; i < el.classList.length; i++) {
+                    if (el.classList.item(i) != c) {
+                        selector += "." + el.classList.item(i);
+                    }
+                }
+                selector = localJS.buildSelector(el.parentNode, pa, c) + " " + selector;
+            }
+
+            return selector.trim();
+        },
         // }}}
         // {{{ help
         help: function(url) {

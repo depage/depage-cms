@@ -644,5 +644,13 @@
         </xsl:if>
     </xsl:template>
 
+    <xsl:template name="dynamic-classes">
+        <xsl:param name="classes" select="''" />
+
+        <xsl:if test="not($depageIsLive)">
+            <xsl:attribute name="data-dynamic-classes"><xsl:value-of select="$classes" /></xsl:attribute>
+        </xsl:if>
+    </xsl:template>
+
     <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>
