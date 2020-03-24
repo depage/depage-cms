@@ -1309,8 +1309,8 @@ var depageCMS = (function() {
                         });
                         jstreePagedata.activate_node($tree.find("ul:first li:first")[0]);
                     })
-                    .on("refresh.jstree refresh_node.jstree", function () {
-                        localJS.updatePreview();
+                    .on("refresh.jstree refresh_node.jstree", function (e, updatedIds) {
+                        localJS.updatePreview(updatedIds);
                     })
                     .on("destroy.jstree", function () {
                         console.log("destroyed");
@@ -1912,8 +1912,9 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ preview
-        preview: function(url) {
+        preview: function(url, updatedIds) {
             if (typeof url == 'undefined' || url[0] == "/") return;
+            updatedIds = updatedIds || [];
 
             if (parent != window) {
                 parent.depageCMS.preview(url);
@@ -1941,37 +1942,38 @@ var depageCMS = (function() {
                 previewLoading = true;
 
                 if (oldUrl == newUrl) {
-                    var dynamicClasses = [];
-                    var $iframe = $previewFrame.contents();
-                    var $current = $iframe.find("*[data-db-id='" + currentDocPropertyId + "']");
-                    $iframe.find("html[data-dynamic-classes]").each(function() {
-                        dynamicClasses = $(this).attr("data-dynamic-classes").split(" ") || [];
-                    });
+                    try {
+                        var $iframe = $previewFrame.contents();
 
-                    if ($current.length == 1) {
+                        // only use live updated when changes are inside elements themselves
+                        if (updatedIds.length == 0) {
+                            $previewFrame[0].contentWindow.location.reload();
+
+                            return;
+                        }
                         $.get(newUrl, function(data) {
-                            var $new = $($.parseHTML(data)).find("*[data-db-id='" + currentDocPropertyId + "']");
+                            var $loaded = $.parseHTML(data);
+                            var found = 0;
 
-                            for (var i in dynamicClasses) {
-                                var c = dynamicClasses[i];
-                                if ($current.hasClass(c)) {
-                                    $new.addClass(c);
+                            for (var i in updatedIds) {
+                                var id = updatedIds[i];
+                                var $current = $iframe.find("*[data-db-id='" + id + "']");
+                                var $new = $($loaded).find("*[data-db-id='" + id + "']");
+
+                                $new.find("*").andSelf().addClass("depage-live-edit-updated");
+
+                                if ($current.length == 1 && $new.length == 1) {
+                                    $current.replaceWith($new);
+                                    found++;
                                 }
-                                $current.find("." + c).each(function() {
-                                    var $sub = $(this);
-                                    var selector = localJS.buildSelector($sub[0], $current[0], c);
-                                    $new.find(selector).addClass(c);
-                                });
                             }
-
-                            if ($new.length == 1) {
-                                $current.replaceWith($new);
+                            if (found == updatedIds.length) {
                                 localJS.onPreviewUpdated();
                             } else {
                                 $previewFrame[0].contentWindow.location.reload();
                             }
                         });
-                    } else {
+                    } catch(error) {
                         $previewFrame[0].contentWindow.location.reload();
                     }
                 } else {
@@ -2009,16 +2011,16 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ updatePreview
-        updatePreview: _.throttle(function() {
+        updatePreview: _.throttle(function(updatedIds) {
             if (previewLoading) {
                 setTimeout(function() {
-                    localJS.updatePreview();
+                    localJS.updatePreview(updatedIds);
                 }, previewLoadTime);
 
                 return;
             }
             // @todo update throttle to just reload when old page has already been loaded -> test performance esp. on iOS
-            this.preview(currentPreviewUrl);
+            this.preview(currentPreviewUrl, updatedIds);
         }, 500, {
             leading: false,
             trailing: true
@@ -2129,7 +2131,7 @@ var depageCMS = (function() {
 
             previewLoading = false;
             lastLoadTime = Date.now() - previewStarted;
-            previewLoadTime = Math.min(4000, Math.max(1000, lastLoadTime));
+            previewLoadTime = Math.min(4000, Math.max(500, lastLoadTime));
             console.log("load times: " + lastLoadTime + "/" + previewLoadTime);
 
             previewUpdateTimer = setInterval(function () {

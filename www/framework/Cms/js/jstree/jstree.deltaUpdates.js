@@ -221,7 +221,7 @@
             // @todo add fallback when websocket is not available or cannot connect
         };
         // }}}
-        // {{{
+        // {{{ onmessage
         this.onmessage = $.proxy( function(event) {
             if (event.data) {
                 this._data.deltaUpdates.pending_updates.push(event);
@@ -235,7 +235,7 @@
             }
         }, this);
         // }}}
-        // {{{
+        // {{{ applyDeltaUpdates
         this.applyDeltaUpdates = function() {
             var $tree = this.element;
             var inst = this;
@@ -257,6 +257,7 @@
                 if (new_seq_nr > old_seq_nr) {
                     // remember which tree nodes were open
                     var state = inst.get_state();
+                    var updatedIds = [];
 
                     // @todo fix urls for newly loaded nodes? -> do that in php origin
                     // @todo add reload on error/problem
@@ -264,6 +265,8 @@
                         if (data.nodes[id]) {
                             var parentNode = inst.get_node(id);
                             var html = $(data.nodes[id]);
+
+                            updatedIds.push(Number.parseInt(id, 10));
 
                             if (!parentNode && id == $tree.attr("data-node-id")) {
                                 parentNode = inst.element;
@@ -282,7 +285,7 @@
 
                     $tree.attr("data-seq-nr", new_seq_nr);
 
-                    inst.trigger("refresh");
+                    inst.trigger("refresh", [updatedIds]);
                 }
             });
 
