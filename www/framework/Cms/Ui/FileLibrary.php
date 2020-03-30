@@ -165,7 +165,14 @@ class FileLibrary extends Base
             if (!empty($values['file']) && is_dir($targetPath)) {
                 $_SESSION['dpLibraryUploadedFiles'] = [];
                 foreach ($values['file'] as $file) {
-                    $filename = \Depage\Html\Html::getEscapedUrl($file['name']);
+                    // normalize extension to lowercase and escape filename
+                    $filename = preg_replace_callback(
+                        '/\.([^\.]*)$/',
+                        function ($matches) {
+                            return strtolower($matches[0]);
+                        },
+                        \Depage\Html\Html::getEscapedUrl($file['name'])
+                    );
                     rename($file['tmp_name'], $targetPath . "/" . $filename);
                     $_SESSION['dpLibraryUploadedFiles'][] = $path . $filename;
 
