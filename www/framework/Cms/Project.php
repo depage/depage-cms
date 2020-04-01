@@ -1142,7 +1142,7 @@ class Project extends \Depage\Entity\Entity
         // get pages/urls to publish
         $urls = [];
         foreach ($this->getXmlNav()->getRecentlyChangedPages() as $p) {
-            if ($p->released) {
+            if ($p->released || $p->published) {
                 $urls[$p->pageId] = $p->url;
             }
         }
