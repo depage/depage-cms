@@ -107,7 +107,7 @@
                 });
 
                 // stop propagation of hide when clicking inside the wrapper or input
-                base.$wrapper.click(function(e) {
+                base.$wrapper.on("click.shydialogue", function(e) {
                     e.stopPropagation();
                 });
 
@@ -117,9 +117,17 @@
                     });
                 }
 
+                var ignoreClickEvent = false;
+
                 // hide dialog when clicked outside
+				base.$wrapper.on("mouseup.shydialogue touchend.shydialogue", function() {
+                    ignoreClickEvent = true;
+                });
                 $(document).on("click.shydialogue", function() {
-                    base.hideDialogue();
+                    if (!ignoreClickEvent) {
+                        base.hideDialogue();
+                    }
+                    ignoreClickEvent = false;
                 });
 
             }, 10);
