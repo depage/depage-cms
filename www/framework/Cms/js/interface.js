@@ -2003,7 +2003,9 @@ var depageCMS = (function() {
                     $previewFrame[0].contentWindow.addEventListener('DOMContentLoaded', function() {
                         localJS.onPreviewUpdated();
                     });
-                    $previewFrame[0].src = unescape(url);
+                    currentPreviewUrl = unescape(newUrl);
+                    $previewFrame[0].src = unescape(currentPreviewUrl);
+
 
                     $window.triggerHandler("switchLayout", "split");
                 });
@@ -2019,33 +2021,11 @@ var depageCMS = (function() {
 
                 return;
             }
-            // @todo update throttle to just reload when old page has already been loaded -> test performance esp. on iOS
             this.preview(currentPreviewUrl, updatedIds);
         }, 500, {
             leading: false,
             trailing: true
         }),
-        // }}}
-        // {{{ buildSelector
-        buildSelector: function(el, pa, c) {
-            var selector = "";
-
-            if (el != pa) {
-                selector = el.nodeName;
-
-                if (el.id != "") {
-                    selector += "#" + el.id;
-                }
-                for (var i = 0; i < el.classList.length; i++) {
-                    if (el.classList.item(i) != c) {
-                        selector += "." + el.classList.item(i);
-                    }
-                }
-                selector = localJS.buildSelector(el.parentNode, pa, c) + " " + selector;
-            }
-
-            return selector.trim();
-        },
         // }}}
         // {{{ help
         help: function(url) {
@@ -2131,7 +2111,7 @@ var depageCMS = (function() {
 
             previewLoading = false;
             lastLoadTime = Date.now() - previewStarted;
-            previewLoadTime = Math.min(4000, Math.max(500, lastLoadTime));
+            previewLoadTime = Math.min(4000, Math.max(200, lastLoadTime));
             console.log("load times: " + lastLoadTime + "/" + previewLoadTime);
 
             previewUpdateTimer = setInterval(function () {
