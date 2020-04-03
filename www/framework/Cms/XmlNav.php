@@ -81,6 +81,7 @@ class XmlNav {
             $pages = $xpath->query("//pg:*[@url]");
         }
 
+        $i = 0;
         foreach ($pages as $node) {
             $id = (int) $node->getAttribute("db:id");
             $docref = $node->getAttributeNS("http://cms.depagecms.net/ns/database", "docref");
@@ -102,6 +103,7 @@ class XmlNav {
             $docInfo = $this->xmldb->getDocInfo($docref);
             $this->pagedataIdByPageId[$id] = $docInfo->id;
             $docInfo->pageId = $node->getAttribute("db:id");
+            $docInfo->pageOrder = $i;
             $docInfo->url = $node->getAttribute("url");
             $docInfo->fileType = $node->getAttribute("file_type");
             $docInfo->published = $node->getAttribute("db:published") == "true";
@@ -119,6 +121,8 @@ class XmlNav {
             }
 
             $this->pageInfoByDocRef[$docref] = $docInfo;
+
+            $i++;
         }
     }
     // }}}

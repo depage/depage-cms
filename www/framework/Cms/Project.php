@@ -1141,17 +1141,11 @@ class Project extends \Depage\Entity\Entity
 
         // get pages/urls to publish
         $urls = [];
+        $pageOrder = [];
         foreach ($this->getXmlNav()->getRecentlyChangedPages() as $p) {
             if ($p->released || $p->published) {
                 $urls[$p->pageId] = $p->url;
-            }
-        }
-        $pageOrder = [];
-        $i = 0;
-        foreach ($this->getXmlNav()->getPages() as $p) {
-            if ($p->released || $p->published) {
-                $pageOrder[$p->pageId] = $i;
-                $i++;
+                $pageOrder[$p->pageId] = $p->pageOrder;
             }
         }
 
