@@ -793,7 +793,6 @@ var depageCMS = (function() {
                     }
                 })
                 .on('dnd_stop.vakata.jstree', function (e, data) {
-                    console.log(e);
                     var $target = $(data.event.target);
                     var $parent = $target.parent().parent();
 
