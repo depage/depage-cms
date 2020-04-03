@@ -19,6 +19,24 @@ Version 2.1   {#v2-1}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.2      {#v2-1-2}
+------
+
+**Frontend**
+- Vorschau optimiert, so dass manche Änderungen direkt in der html dom aktualisiert werden
+- Performance der Vorschau optimiert
+- Problem mit der Link Dialog Box in Google Chrome behoben
+- Problem bei der Vorschau des Newsletters behoben
+- Problem im Richtext Editor behoben
+
+**Backend**
+- Veröffentlichungsbenachrichtigung mit den URLs geänderter Seiten hinzugefügt
+- Reihenfolge beim Veröffentlichen geändert, so dass zuletzt geänderte Seiten zuerst veröffentlicht werden
+- Problem bei der Dateivorschau behoben
+- Refactoring der XML Navigtion vorgenommen
+- PHP 7.4 bezogene Änderungen hinzugefügt
+
+
 v2.1.1      {#v2-1-1}
 ------
 
@@ -26,7 +44,6 @@ v2.1.1      {#v2-1-1}
 - Option den Puplikations-Cache vor der Veröffentlichung zu leeren
 
 **Backend**
-
 - Veröffentlichungsprozess optimiert
 
 

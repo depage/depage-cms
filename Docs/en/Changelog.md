@@ -19,6 +19,24 @@ Version 2.1   {#v2-1}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.2      {#v2-1-2}
+------
+
+**Frontend**
+- enhanced preview to updated some changes directly in html dom
+- enhanced performance of preview updates
+- fixed bug with link dialog in Google Chrome
+- fixed bug in newsletter preview
+- fixed bugs in richtext editor
+
+**Backend**
+- added publish notification with urls of changed pages
+- updated publishing order to upload last changes first
+- fixed bug with file previews
+- refactored xml navigation related code
+- added php 7.4 related changes
+
+
 v2.1.1      {#v2-1-1}
 ------
 
@@ -26,7 +44,6 @@ v2.1.1      {#v2-1-1}
 - added ability to clear transform cache before publishing
 
 **Backend**
-
 - optimized publishing process
 
 
