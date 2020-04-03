@@ -43,7 +43,11 @@ var depageCMS = (function() {
         currentLibAccept = "",
         currentLibForceSize = "",
         currentTasksTimeout = null,
-        currentTasks = {};
+        currentTasks = {},
+        previewStarted = 0,
+        previewLoading = false,
+        previewLoadTime = 1000,
+        previewUpdateTimer;
     var $html;
     var $window;
     var $body;
@@ -61,7 +65,6 @@ var depageCMS = (function() {
     var jstreePagedata;
 
     var currentLayout;
-    var previewUpdateTimer;
 
     // various helper functions
     // {{{ $.scrollParent
@@ -1306,8 +1309,8 @@ var depageCMS = (function() {
                         });
                         jstreePagedata.activate_node($tree.find("ul:first li:first")[0]);
                     })
-                    .on("refresh.jstree refresh_node.jstree", function () {
-                        localJS.updatePreview();
+                    .on("refresh.jstree refresh_node.jstree", function (e, updatedIds) {
+                        localJS.updatePreview(updatedIds);
                     })
                     .on("destroy.jstree", function () {
                         console.log("destroyed");
@@ -1909,8 +1912,9 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ preview
-        preview: function(url) {
+        preview: function(url, updatedIds) {
             if (typeof url == 'undefined' || url[0] == "/") return;
+            updatedIds = updatedIds || [];
 
             if (parent != window) {
                 parent.depageCMS.preview(url);
@@ -1932,14 +1936,55 @@ var depageCMS = (function() {
                     return;
                 }
 
+                clearTimeout(previewUpdateTimer);
+
+                previewStarted = Date.now();
+                previewLoading = true;
+
                 if (oldUrl == newUrl) {
-                    $previewFrame[0].contentWindow.location.reload();
+                    try {
+                        var $iframe = $previewFrame.contents();
+
+                        // only use live updated when changes are inside elements themselves
+                        if (updatedIds.length == 0) {
+                            $previewFrame[0].contentWindow.location.reload();
+
+                            return;
+                        }
+                        $.get(newUrl, function(data) {
+                            var $loaded = $.parseHTML(data);
+                            var found = 0;
+
+                            for (var i in updatedIds) {
+                                var id = updatedIds[i];
+                                var $current = $iframe.find("*[data-db-id='" + id + "']");
+                                var $new = $($loaded).find("*[data-db-id='" + id + "']");
+
+                                $new.find("*").andSelf().addClass("depage-live-edit-updated");
+
+                                if ($current.length == 1 && $new.length == 1) {
+                                    $current.replaceWith($new);
+                                    found++;
+                                }
+                            }
+                            if (found == updatedIds.length) {
+                                localJS.onPreviewUpdated();
+                            } else {
+                                $previewFrame[0].contentWindow.location.reload();
+                            }
+                        });
+                    } catch(error) {
+                        $previewFrame[0].contentWindow.location.reload();
+                    }
                 } else {
                     var $newFrame = $("<iframe />").insertAfter($previewFrame);
                     $previewFrame.remove();
                     $previewFrame = $newFrame.attr("id", "previewFrame");
                     $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
                     $previewFrame.on("load", localJS.onPreviewUpdated);
+                    $previewFrame[0].contentWindow.addEventListener('DOMContentLoaded', function() {
+                        localJS.onPreviewUpdated();
+                    });
                     $previewFrame[0].src = newUrl;
                 }
             } else {
@@ -1955,7 +2000,12 @@ var depageCMS = (function() {
                     $previewFrame = $("#previewFrame");
                     $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
                     $previewFrame.on("load", localJS.onPreviewUpdated);
-                    $previewFrame[0].src = unescape(url);
+                    $previewFrame[0].contentWindow.addEventListener('DOMContentLoaded', function() {
+                        localJS.onPreviewUpdated();
+                    });
+                    currentPreviewUrl = unescape(newUrl);
+                    $previewFrame[0].src = unescape(currentPreviewUrl);
+
 
                     $window.triggerHandler("switchLayout", "split");
                 });
@@ -1963,11 +2013,17 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ updatePreview
-        updatePreview: _.throttle(function() {
-            // @todo update throttle to just reload when old page has already been loaded -> test performance esp. on iOS
-            this.preview(currentPreviewUrl);
-        }, 3000, {
-            leading: true,
+        updatePreview: _.throttle(function(updatedIds) {
+            if (previewLoading) {
+                setTimeout(function() {
+                    localJS.updatePreview(updatedIds);
+                }, previewLoadTime);
+
+                return;
+            }
+            this.preview(currentPreviewUrl, updatedIds);
+        }, 500, {
+            leading: false,
             trailing: true
         }),
         // }}}
@@ -2046,9 +2102,18 @@ var depageCMS = (function() {
         // {{{ onPreviewUpdated
         onPreviewUpdated: function() {
             var title = "",
-                oldTitle;
+                oldTitle,
+                lastLoadTime;
 
-            clearTimeout(previewUpdateTimer);
+            if (!previewLoading) {
+                return;
+            }
+
+            previewLoading = false;
+            lastLoadTime = Date.now() - previewStarted;
+            previewLoadTime = Math.min(4000, Math.max(200, lastLoadTime));
+            console.log("load times: " + lastLoadTime + "/" + previewLoadTime);
+
             previewUpdateTimer = setInterval(function () {
                 try {
                     title = $previewFrame[0].contentDocument.title;
