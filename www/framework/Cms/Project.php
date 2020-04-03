@@ -1146,6 +1146,14 @@ class Project extends \Depage\Entity\Entity
                 $urls[$p->pageId] = $p->url;
             }
         }
+        $pageOrder = [];
+        $i = 0;
+        foreach ($this->getXmlNav()->getPages() as $p) {
+            if ($p->released || $p->published) {
+                $pageOrder[$p->pageId] = $i;
+                $i++;
+            }
+        }
 
         // prepare project published notification
         $newlyPublishedPages = [];
@@ -1234,12 +1242,15 @@ class Project extends \Depage\Entity\Entity
             foreach ($languages as $lang => $name) {
                 $target = $lang . $url;
 
+                // transform page
                 $pubId = $task->addSubtask(
                     "transforming $target",
                     "\$html = \$transformer->transformUrl(%s, %s);",
                     [$url, $lang],
                     $initId
                 );
+
+                // generate and add images that are generated automatically
                 $task->addSubtask(
                     "generating images for $target",
                     "\$images = \$indexer->loadXml(\$html, %s)->getImages();
@@ -1254,12 +1265,16 @@ class Project extends \Depage\Entity\Entity
                     [$baseUrl . $target, $graphicsOptions, $projectPath],
                     $pubId
                 );
+
+                // publish page
                 $task->addSubtask(
                     "publishing $target",
                     "\$publisher->publishString(\$html, %s, \$updated);",
                     [$target],
                     $pubId
                 );
+
+                // index page
                 if ($apiAvailable) {
                     $task->addSubtask(
                         "indexing $target",
@@ -1273,16 +1288,16 @@ class Project extends \Depage\Entity\Entity
                     );
                 }
             }
+
+            // add canonical urls
             $task->addSubtask(
                 "adding canonical url for $target",
                 "\$urls->addUrl(%s, %s, %s);",
-                [$pageId, $url, $i],
+                [$pageId, $url, $pageOrder[$pageId]],
                 $pubId
             );
             $i++;
         }
-
-        // @todo add files that should be generated automatically (e.g. through graphics)
 
         // publish sitemap
         $task->addSubtask("publishing sitemap", "
