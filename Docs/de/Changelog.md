@@ -19,8 +19,8 @@ Version 2.1   {#v2-1}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
-v2.1.2      {#v2-1-2}
-------
+v2.1.2 / 03.04.2020      {#v2-1-2}
+-------------------
 
 **Frontend**
 - Vorschau optimiert, so dass manche Änderungen direkt in der html dom aktualisiert werden
@@ -37,8 +37,8 @@ v2.1.2      {#v2-1-2}
 - PHP 7.4 bezogene Änderungen hinzugefügt
 
 
-v2.1.1      {#v2-1-1}
-------
+v2.1.1 / 24.01.2020      {#v2-1-1}
+-------------------
 
 **Frontend**
 - Option den Puplikations-Cache vor der Veröffentlichung zu leeren
@@ -47,8 +47,8 @@ v2.1.1      {#v2-1-1}
 - Veröffentlichungsprozess optimiert
 
 
-v2.1.0      {#v2-1-0}
-------
+v2.1.0 / 22.01.2020      {#v2-1-0}
+-------------------
 
 **Frontend**
 - Funktion zum Schutz von Seiten hinzugefügt
@@ -68,8 +68,8 @@ v2.1.0      {#v2-1-0}
 - Fehler bei der Zuweisung von Benutzern beim Erstellung neuer Seiten behoben
 
 
-v2.0.9      {#v2-0-9}
-------
+v2.0.9 / 25.11.2019      {#v2-0-9}
+-------------------
 
 **Frontend**
 - Bedienbarkeit des Dokumentbaums nach Fokus verbessert
@@ -81,8 +81,8 @@ v2.0.9      {#v2-0-9}
 - Login-/Logout-Verhalten verbessert
 
 
-v2.0.8      {#v2-0-8}
-------
+v2.0.8 / 14.03.2019      {#v2-0-8}
+-------------------
 
 **Frontend**
 
@@ -94,8 +94,8 @@ v2.0.8      {#v2-0-8}
 - Fehler im Task-Runner behoben
 - Fehler beim Parsen der Projekt Shortcuts behoben
 
-v2.0.7      {#v2-0-7}
-------
+v2.0.7 / 07.03.2019      {#v2-0-7}
+-------------------
 
 **Frontend**
 
@@ -110,24 +110,24 @@ v2.0.7      {#v2-0-7}
 - Performance des Veröffentlichens optimiert
 
 
-v2.0.6      {#v2-0-6}
-------
+v2.0.6 / 31.01.2019      {#v2-0-6}
+-------------------
 
 **Frontend**
 
 - Fehler beim Autospeichern der Dokumenteigenschaften behoben
 
 
-v2.0.5      {#v2-0-5}
-------
+v2.0.5 / 18.01.2019      {#v2-0-5}
+-------------------
 
 **Backend**
 
 - Fehler in XmlForm behoben, wenn Attribute mit Sonderzeichen gespeichert werden
 
 
-v2.0.4      {#v2-0-4}
-------
+v2.0.4 / 26.12.2018      {#v2-0-4}
+-------------------
 
 **Backend**
 
@@ -135,8 +135,8 @@ v2.0.4      {#v2-0-4}
 - Fehler in XmlDb behoben
 
 
-v2.0.3      {#v2-0-3}
-------
+v2.0.3 / 10.12.2018      {#v2-0-3}
+-------------------
 
 **Backend**
 
@@ -144,8 +144,8 @@ v2.0.3      {#v2-0-3}
 - Fehlende Übersetzungen hinzugefügt
 
 
-v2.0.2      {#v2-0-2}
-------
+v2.0.2 / 06.12.2018      {#v2-0-2}
+-------------------
 
 **User Interface**
 
@@ -158,8 +158,8 @@ v2.0.2      {#v2-0-2}
 
 - Performance-Optimierung der XSL Basis-Vorlagen
 
-v2.0.1      {#v2-0-1}
-------
+v2.0.1 / 20.11.2018      {#v2-0-1}
+-------------------
 
 **User Interface**
 
@@ -167,8 +167,9 @@ v2.0.1      {#v2-0-1}
 - Aktualisierung der Seitenbibliotek zu Anzeige des Veröffentlichungsstatus der jeweilgen Datei
 - Verbesserung des Löschen-Dialogs
 
-v2.0.0      {#v2-0-0}
-------
+
+v2.0.0 / 03.11.2018      {#v2-0-0}
+-------------------
 
 **User Interface**
 

@@ -19,8 +19,8 @@ Version 2.1   {#v2-1}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
-v2.1.2      {#v2-1-2}
-------
+v2.1.2 / 03.04.2020      {#v2-1-2}
+-------------------
 
 **Frontend**
 - enhanced preview to updated some changes directly in html dom
@@ -37,8 +37,8 @@ v2.1.2      {#v2-1-2}
 - added php 7.4 related changes
 
 
-v2.1.1      {#v2-1-1}
-------
+v2.1.1 / 24.01.2020      {#v2-1-1}
+-------------------
 
 **Frontend**
 - added ability to clear transform cache before publishing
@@ -47,8 +47,8 @@ v2.1.1      {#v2-1-1}
 - optimized publishing process
 
 
-v2.1.0      {#v2-1-0}
-------
+v2.1.0 / 22.01.2020      {#v2-1-0}
+-------------------
 
 **Frontend**
 - added ability to protect pages from changes
@@ -68,8 +68,8 @@ v2.1.0      {#v2-1-0}
 - fixed bug where user for new pages was not assigned correctly
 
 
-v2.0.9      {#v2-0-9}
-------
+v2.0.9 / 25.11.2019      {#v2-0-9}
+-------------------
 
 **Frontend**
 - enhanced usability of pagedata-tree on selection
@@ -81,8 +81,8 @@ v2.0.9      {#v2-0-9}
 - enhanced login/logout behavior
 
 
-v2.0.8      {#v2-0-8}
-------
+v2.0.8 / 14.03.2019      {#v2-0-8}
+-------------------
 
 **Frontend**
 
@@ -94,8 +94,8 @@ v2.0.8      {#v2-0-8}
 - fixed bug in task-runner
 - fixed bug in project shortcut handling
 
-v2.0.7      {#v2-0-7}
-------
+v2.0.7 / 07.03.2019      {#v2-0-7}
+-------------------
 
 **Frontend**
 
@@ -110,24 +110,24 @@ v2.0.7      {#v2-0-7}
 - optimized performance of publishing task
 
 
-v2.0.6      {#v2-0-6}
-------
+v2.0.6 / 31.01.2019      {#v2-0-6}
+-------------------
 
 **Frontend**
 
 - Fixed bug in autosaving doc-properties
 
 
-v2.0.5      {#v2-0-5}
-------
+v2.0.5 / 18.01.2019      {#v2-0-5}
+-------------------
 
 **Backend**
 
 - Fixed a bug in XmlForm when saving attribute nodes with special characters
 
 
-v2.0.4      {#v2-0-4}
-------
+v2.0.4 / 26.12.2018      {#v2-0-4}
+-------------------
 
 **Backend**
 
@@ -135,8 +135,8 @@ v2.0.4      {#v2-0-4}
 - Fixed bug in XmlDb
 
 
-v2.0.3      {#v2-0-3}
-------
+v2.0.3 / 10.12.2018      {#v2-0-3}
+-------------------
 
 **Backend**
 
@@ -144,8 +144,8 @@ v2.0.3      {#v2-0-3}
 - Added missing translations
 
 
-v2.0.2      {#v2-0-2}
-------
+v2.0.2 / 06.12.2018      {#v2-0-2}
+-------------------
 
 **User Interface**
 
@@ -158,8 +158,9 @@ v2.0.2      {#v2-0-2}
 
 - Optimized base xsl template for performance
 
-v2.0.1      {#v2-0-1}
-------
+
+v2.0.1 / 20.11.2018      {#v2-0-1}
+-------------------
 
 **User Interface**
 
@@ -167,8 +168,9 @@ v2.0.1      {#v2-0-1}
 - Update of file library to show publishing state of current file
 - Optimization of delete dialog
 
-v2.0.0      {#v2-0-0}
-------
+
+v2.0.0 / 03.11.2018      {#v2-0-0}
+-------------------
 
 **User Interface**
 
