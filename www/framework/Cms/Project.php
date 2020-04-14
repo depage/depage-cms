@@ -488,11 +488,11 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getXmlNav()
     {
-        $this->xmldb = $this->getXmlDb();
+        $xmldb = $this->getXmlGetter();
 
         return new XmlNav(
-            $this->xmldb,
-            $this->xmldb->getDocXml("pages")
+            $xmldb,
+            $xmldb->getDocXml("pages")
         );
     }
     // }}}
