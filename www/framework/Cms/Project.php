@@ -1007,7 +1007,7 @@ class Project extends \Depage\Entity\Entity
             return false;
         });
 
-        $pageInfo = $this->getXmlNav->getPageInfo($docId);
+        $pageInfo = $this->getXmlNav()->getPageInfo($docId);
         $title = _("Document Release Request");
         $text = sprintf(_("%s is requesting a document release for '%s' on project '%s'."), $requestingUser->fullname, $pageInfo->url, $this->name);
 
