@@ -19,6 +19,13 @@ Version 2.1   {#v2-1}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.3 / 16.04.2020      {#v2-1-3}
+-------------------
+
+**Backend**
+- Verschiedene Bugfixes
+
+
 v2.1.2 / 03.04.2020      {#v2-1-2}
 -------------------
 
