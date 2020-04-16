@@ -2003,8 +2003,8 @@ var depageCMS = (function() {
                     $previewFrame[0].contentWindow.addEventListener('DOMContentLoaded', function() {
                         localJS.onPreviewUpdated();
                     });
-                    currentPreviewUrl = unescape(newUrl);
-                    $previewFrame[0].src = unescape(currentPreviewUrl);
+                    currentPreviewUrl = unescape(url);
+                    $previewFrame[0].src = currentPreviewUrl;
 
 
                     $window.triggerHandler("switchLayout", "split");
