@@ -166,47 +166,42 @@ class Page extends Base
     // }}}
     // {{{ getNodeTypes
     public function getNodeTypes() {
-        // @todo get these from xml files instead of from database
         $nodetypes = [];
-        $query = $this->xmlDb->pdo->prepare(
-            "SELECT
-                id,
-                name as name,
-                newname as newName,
-                validparents as validParents,
-                icon as icon,
-                xmltemplate as xmlTemplate
-            FROM {$this->table_nodetypes} ORDER BY pos;"
-        );
-        $query->execute();
+        $templates = $this->project->getXmlTemplates();
 
-        do {
-            $result = $query->fetchObject();
-
-            if ($result) {
-                $nodetypes[$result->id] = $result;
-                $templatePath = $this->pathXMLtemplate . $result->xmlTemplate;
-
-                // load template data
-                $xml = new \Depage\Xml\Document();
-                if ($xml->load($templatePath)) {
-                    $data = "";
-                    foreach ($xml->documentElement->childNodes as $node) {
-                        if ($node->nodeType != \XML_COMMENT_NODE) {
-                            $data .= $xml->saveXML($node);
-                        }
-                        if ($node->nodeType == \XML_ELEMENT_NODE) {
-                            $nodetypes[$result->id]->nodeName = $node->nodeName;
-                            $nodetypes[$result->id]->newName = $node->getAttribute("name");
-                        }
-                    }
-                    $nodetypes[$result->id]->xmlTemplateData = $data;
-
-                    // get date of last change
-                    $nodetypes[$result->id]->lastchange = filemtime($templatePath);
+        foreach ($templates as $id => $t) {
+            $xml = \Depage\Xml\Document::load($this->pathXMLtemplate . $t);
+            if (!$xml) {
+                continue;
+            }
+            if ($xml->documentElement->getAttribute("valid-parents") == "") {
+                continue;
+            }
+            $data = (object)[
+                'id' => $id,
+                'icon' => "",
+                'xmlTemplate' => $t,
+                'validParents' => $xml->documentElement->getAttribute("valid-parents"),
+                'pos' => (int) $xml->documentElement->getAttribute("pos"),
+                'lastchange' => filemtime($this->pathXMLtemplate . $t),
+            ];
+            $data->xmlTemplateData = "";
+            foreach ($xml->documentElement->childNodes as $node) {
+                if ($node->nodeType != \XML_COMMENT_NODE) {
+                    $data->xmlTemplateData .= $xml->saveXML($node);
+                }
+                if ($node->nodeType == \XML_ELEMENT_NODE) {
+                    $data->nodeName = $node->nodeName;
+                    $data->name = $node->getAttribute("name");
+                    $data->newName = $node->getAttribute("name");
                 }
             }
-        } while ($result);
+            $nodetypes[$id] = $data;
+        }
+
+        uasort($nodetypes, function($a, $b) {
+            return $a->pos <=> $b->pos;
+        });
 
         return $nodetypes;
     }

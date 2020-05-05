@@ -298,8 +298,6 @@ class Project extends \Depage\Entity\Entity
      **/
     public function initProject()
     {
-        $this->updateProjectSchema();
-
         $projectPath = $this->getProjectPath();
 
         $this->createProjectDir($projectPath);
@@ -308,6 +306,8 @@ class Project extends \Depage\Entity\Entity
         $this->createProjectDir($projectPath . "xml/");
         $this->createProjectDir($projectPath . "xslt/");
         $this->createProjectDir($projectPath . "backups/");
+
+        $this->updateProjectSchema();
     }
     // }}}
     // {{{ updateProjectSchema()
@@ -319,6 +319,10 @@ class Project extends \Depage\Entity\Entity
     public function updateProjectSchema()
     {
         $projectName = $this->name;
+
+        foreach ($this->getXmlTemplates() as $t) {
+            $this->updateXmlTemplate($t);
+        }
 
         $xmldb = $this->getXmlDb();
         $xmldb->updateSchema();
@@ -335,16 +339,7 @@ class Project extends \Depage\Entity\Entity
         $files = array_merge(
             glob(__DIR__ . "/../Comments/Sql/*.sql"),
             glob(__DIR__ . "/../Publisher/Sql/*.sql"),
-            glob(__DIR__ . "/../Transformer/Sql/*.sql")
-        );
-        sort($files);
-        foreach ($files as $file) {
-            $schema->loadFile($file);
-            $schema->update();
-        }
-
-        // update schema for newsletter
-        $files = array_merge(
+            glob(__DIR__ . "/../Transformer/Sql/*.sql"),
             glob(__DIR__ . "/Sql/Newsletter/*.sql")
         );
         sort($files);
@@ -542,6 +537,67 @@ class Project extends \Depage\Entity\Entity
         }
 
         return $templates;
+    }
+    // }}}
+    // {{{ getXmlTemplates()
+    /**
+     * @brief getXmlTemplates
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getXmlTemplates()
+    {
+        $templates = [];
+
+        $files = glob($this->getProjectPath() . "xml/*.xml");
+
+        foreach ($files as $file) {
+            $templates[] = basename($file);
+        }
+
+        return $templates;
+    }
+    // }}}
+    // {{{ updateXmlTemplate()
+    /**
+     * @brief updateXmlTemplate
+     *
+     * @param mixed
+     * @return void
+     **/
+    private function updateXmlTemplate($template)
+    {
+        $file = $this->getProjectPath() . "xml/$template";
+        $xml = \Depage\Xml\Document::load($file);
+        $this->xmldb = $this->getXmlDb();
+
+        if (!$xml) {
+            return false;
+        }
+        $node = $xml->documentElement;
+
+        if ($node->getAttributeNode("valid-parents")) {
+            return false;
+        }
+
+        $query = $this->xmlDb->pdo->prepare(
+            "SELECT
+                pos as pos,
+                validparents as validParents
+            FROM {$this->xmlDb->table_nodetypes}
+            WHERE
+                xmltemplate = :template
+            ;"
+        );
+        $query->execute(['template' => $template]);
+
+        if ($result = $query->fetchObject()) {
+            $node->setAttribute("pos", $result->pos);
+            $node->setAttribute("valid-parents", str_replace(" ", "", $result->validParents));
+
+            $xml->save($file);
+        }
     }
     // }}}
 
