@@ -379,6 +379,13 @@
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
+    <!-- {{{ edit:text_headline p -->
+    <xsl:template match="edit:text_headline" mode="p">
+        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+            <p><xsl:apply-templates mode="linebreaks" /></p>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
     <!-- {{{ p -->
     <xsl:template match="p">
         <xsl:param name="class" />
