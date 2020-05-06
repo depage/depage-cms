@@ -164,6 +164,7 @@
         <xsl:param name="alt" select="@alt"/>
         <xsl:param name="title" select="@title"/>
         <xsl:param name="img_name" select="@img_name"/>
+        <xsl:param name="loading" select="@loading"/>
 
         <xsl:choose>
             <!-- {{{ image with link -->
@@ -216,6 +217,7 @@
                         <xsl:with-param name="alt" select="$alt"/>
                         <xsl:with-param name="title" select="$title"/>
                         <xsl:with-param name="img_name" select="$img_name"/>
+                        <xsl:with-param name="loading" select="$loading"/>
                     </xsl:call-template>
                 </a>
             </xsl:when>
@@ -247,6 +249,7 @@
                     <xsl:if test="$img_name != ''"><xsl:attribute name="name"><xsl:value-of select="$img_name"/></xsl:attribute></xsl:if>
                     <xsl:if test="$width != ''"><xsl:attribute name="width"><xsl:value-of select="$width"/></xsl:attribute></xsl:if>
                     <xsl:if test="$height != ''"><xsl:attribute name="height"><xsl:value-of select="$height"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$loading != ''"><xsl:attribute name="loading"><xsl:value-of select="$loading"/></xsl:attribute></xsl:if>
                 </img>
             </xsl:when>
             <xsl:otherwise>
