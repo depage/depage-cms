@@ -231,14 +231,12 @@ class Main extends Base {
 
         // construct template
         $h = new Html("box.tpl", [
-            //'id' => "box-tasks",
             'class' => "box-tasks",
             'title' => _("Tasks"),
             'updateUrl' => "tasks/",
             'liveHelp' => _("Shows the currently running background tasks"),
             'content' => new Html("taskProgress.tpl", [
                 'tasks' => $tasks,
-                'taskForm' => $taskForm,
             ]),
         ], $this->htmlOptions);
 
