@@ -120,6 +120,9 @@ class Application implements \Wrench\Application\DataHandlerInterface,
                 'status' => $task->status,
             ];
         }
+        if (empty($taskInfo)) {
+            return;
+        }
         foreach ($this->clients as $id => $client) {
             if (empty($task->projectName) || isset($this->projects[$id][$task->projectName])) {
                 $client->send(json_encode($taskInfo));
