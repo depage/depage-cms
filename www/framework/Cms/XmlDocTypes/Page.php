@@ -170,8 +170,8 @@ class Page extends Base
         $templates = $this->project->getXmlTemplates();
 
         foreach ($templates as $id => $t) {
-            $xml = \Depage\Xml\Document::load($this->pathXMLtemplate . $t);
-            if (!$xml) {
+            $xml = new \Depage\Xml\Document();
+            if (!$xml->load($this->pathXMLtemplate . $t)) {
                 continue;
             }
             if ($xml->documentElement->getAttribute("valid-parents") == "") {
