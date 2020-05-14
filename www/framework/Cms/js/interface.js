@@ -38,7 +38,7 @@ var depageCMS = (function() {
     var currentPreviewUrl,
         currentDocId,
         currentDocPropertyId,
-        currentPreviewLang = lang,
+        currentPreviewLang,
         currentLibPath = "",
         currentLibAccept = "",
         currentLibForceSize = "",
@@ -46,7 +46,7 @@ var depageCMS = (function() {
         currentTasks = {},
         previewStarted = 0,
         previewLoading = false,
-        previewLoadTime = 1000,
+        previewLoadTime = 0,
         previewUpdateTimer;
     var $html;
     var $window;
@@ -682,6 +682,11 @@ var depageCMS = (function() {
             $("form.newsletter.edit").each(function() {
                 var $form = $(this);
 
+                if (!currentPreviewLang) {
+                    currentPreviewLang = $form.find("p[lang]").first().attr("lang");
+                    console.log(currentPreviewLang);
+                }
+
                 $form.find("input").on("focus", function() {
                     var lang = $(this).parents("p[lang]").attr("lang");
                     if (typeof lang == "undefined" || lang == "") return;
@@ -1209,9 +1214,10 @@ var depageCMS = (function() {
                 $pageTreeContainer.addClass("loaded");
                 $tree = $pageTreeContainer.children(".jstree-container");
 
-                if (currentPreviewLang == "") {
+                if (!currentPreviewLang) {
                     currentPreviewLang = $tree.data("previewlang");
                 }
+
 
                 jstreePages = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {
@@ -2111,7 +2117,8 @@ var depageCMS = (function() {
 
             previewLoading = false;
             lastLoadTime = Date.now() - previewStarted;
-            previewLoadTime = Math.min(4000, Math.max(200, lastLoadTime));
+            previewLoadTime = lastLoadTime - 1000;
+            previewLoadTime = Math.min(4000, Math.max(200, previewLoadTime));
             console.log("load times: " + lastLoadTime + "/" + previewLoadTime);
 
             previewUpdateTimer = setInterval(function () {
