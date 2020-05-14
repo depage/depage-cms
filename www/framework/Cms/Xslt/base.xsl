@@ -239,13 +239,13 @@
                     </xsl:choose>
 
                     <xsl:attribute name="alt"><xsl:value-of select="$alt"/></xsl:attribute>
-                    <xsl:if test="$srcset != ''"><xsl:attribute name="srcset"><xsl:value-of select="$srcset"/></xsl:attribute></xsl:if>
-                    <xsl:if test="$sizes != ''"><xsl:attribute name="sizes"><xsl:value-of select="$sizes"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$srcset != ''"><xsl:attribute name="srcset"><xsl:value-of select="normalize-space($srcset)"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$sizes != ''"><xsl:attribute name="sizes"><xsl:value-of select="normalize-space($sizes)"/></xsl:attribute></xsl:if>
                     <xsl:if test="$border != ''"><xsl:attribute name="border"><xsl:value-of select="$border"/></xsl:attribute></xsl:if>
-                    <xsl:if test="$class != ''"><xsl:attribute name="class"><xsl:value-of select="$class"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$class != ''"><xsl:attribute name="class"><xsl:value-of select="normalize-space($class)"/></xsl:attribute></xsl:if>
                     <xsl:if test="$id != ''"><xsl:attribute name="id"><xsl:value-of select="$id"/></xsl:attribute></xsl:if>
-                    <xsl:if test="$style != ''"><xsl:attribute name="style"><xsl:value-of select="$style"/></xsl:attribute></xsl:if>
-                    <xsl:if test="$title != ''"><xsl:attribute name="title"><xsl:value-of select="$title"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$style != ''"><xsl:attribute name="style"><xsl:value-of select="normalize-space($style)"/></xsl:attribute></xsl:if>
+                    <xsl:if test="$title != ''"><xsl:attribute name="title"><xsl:value-of select="normalize-space($title)"/></xsl:attribute></xsl:if>
                     <xsl:if test="$img_name != ''"><xsl:attribute name="name"><xsl:value-of select="$img_name"/></xsl:attribute></xsl:if>
                     <xsl:if test="$width != ''"><xsl:attribute name="width"><xsl:value-of select="$width"/></xsl:attribute></xsl:if>
                     <xsl:if test="$height != ''"><xsl:attribute name="height"><xsl:value-of select="$height"/></xsl:attribute></xsl:if>
