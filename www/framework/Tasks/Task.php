@@ -431,7 +431,7 @@ class Task {
 
     // {{{ getProgress()
     public function getProgress() {
-        $progress = [
+        $progress = (object) [
             'percent' => 0,
             'estimated' => 0,
             'time_started' => 0,
@@ -452,14 +452,14 @@ class Task {
         $result = $query->fetchObject();
 
         if (!$result || $result->num == 0) {
-            return (object) $progress;
+            return $progress;
         }
 
         $tasksSum = $result->num;
         $tasksDone = $result->done;
         $tasksPlanned = $tasksSum - $tasksDone;
 
-        $progress['percent'] = (int) ($tasksDone / $tasksSum * 100);
+        $progress->percent = (int) ($tasksDone / $tasksSum * 100);
         // }}}
         // {{{ get estimated times
         $query = $this->pdo->prepare(
@@ -473,11 +473,11 @@ class Task {
         $result = $query->fetchObject();
 
         if ($tasksDone == 0) {
-            $progress['estimated'] = -1;
+            $progress->estimated = -1;
         } else {
-            $progress['estimated'] = (int) (($result->time / $tasksDone) * $tasksPlanned) * 1.2 + 1;
+            $progress->estimated = (int) (($result->time / $tasksDone) * $tasksPlanned) * 1.2 + 1;
         }
-        $progress['time_started'] = (int) $result->time_started;
+        $progress->time_started = (int) $result->time_started;
         // }}}
         // {{{ get name and status of running subtask
         $query = $this->pdo->prepare(
@@ -495,12 +495,12 @@ class Task {
         $result = $query->fetchObject();
 
         if ($result) {
-            $progress['description'] = $result->name;
-            $progress['status'] = $result->status;
+            $progress->description = $result->name;
+            $progress->status = $result->status;
         }
         // }}}
 
-        return (object) $progress;
+        return $progress;
     }
     // }}}
 
