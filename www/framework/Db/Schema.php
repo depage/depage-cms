@@ -271,7 +271,7 @@ class Schema
 
         $values = array_values($comments);
         $values = array_shift($values);
-        $comment = $values['string'];
+        $comment = $values['string'] ?? "";
 
         foreach ($tags as $tag) {
             if (
