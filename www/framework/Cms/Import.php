@@ -386,25 +386,19 @@ class Import
             $pos = $i;
 
             $validParentsNode = $node->getElementsByTagNameNS("http://cms.depagecms.net/ns/edit", "newnode_valid_parents")->item(0);
-            $validParents = explode(",", $validParentsNode->nodeValue);
 
             $contentNode = $node->getElementsByTagNameNS("http://cms.depagecms.net/ns/edit", "newnode")->item(0);
             $contentDoc = new \Depage\Xml\Document();
-            //$contentDoc->preserveWhiteSpace = false;
-            //$contentDoc->formatOutput = true;
             $contentDoc->loadXML($this->xmlHeader . trim($contentNode->nodeValue) . $this->xmlFooter);
 
             $nodeTypes = new \Depage\Cms\XmlDocTypes\Page($this->xmldb, $this->docNavigation->getDocId());
 
-            $nodeTypes->addNodeType($contentDoc->documentElement->nodeName, [
-                'pos' => $pos,
-                'name' => $name,
-                'newName' => $contentDoc->documentElement->getAttribute("name"),
-                'icon' => $contentDoc->documentElement->getAttribute("icon"),
-                'validParents' => $validParents,
-                'xmlTemplate' => Html::getEscapedUrl($name) . ".xml",
-                'xmlTemplateData' => $contentDoc->saveXML(),
-            ]);
+            $nodeTypes->addNodeType(
+                $name,
+                $contentDoc,
+                $validParentsNode->nodeValue,
+                $pos
+            );
         }
     }
     // }}}

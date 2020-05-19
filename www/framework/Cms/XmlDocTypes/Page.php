@@ -126,42 +126,14 @@ class Page extends Base
     // }}}
 
     // {{{ addNodeType
-    public function addNodeType($nodeName, $options) {
-        $name = $options['name'];
-        $data = [
-            'pos' => 0,
-            'name' => $name,
-            'newName' => $name,
-            'icon' => '',
-            'xmlTemplate' => '',
-        ];
-        foreach ($data as $key => $value) {
-            if (isset($options[$key])) {
-                $data[$key] = $options[$key];
-            }
-        }
-        $data['nodeName'] = $nodeName;
-        if (isset($options['validParents'])) {
-            $data['validParents'] = implode(",", $options['validParents']);
-        } else {
-            $data['validParents'] = "*";
-        }
+    public function addNodeType($name, $xml, $validParents, $pos) {
+        $filename = \Depage\Html\Html::getEscapedUrl($name) . ".xml";
 
-        $query = $this->xmlDb->pdo->prepare(
-            "INSERT {$this->table_nodetypes} SET
-                pos = :pos,
-                nodename = :nodeName,
-                name = :name,
-                newname = :newName,
-                validparents = :validParents,
-                icon = :icon,
-                xmltemplate = :xmlTemplate;"
-        );
-        $query->execute($data);
+        $rootNode = $xml->documentElement;
+        $rootNode->setAttribute("valid-parents", $validParents);
+        $rootNode->setAttribute("pos", $pos);
 
-        if (!empty($options['xmlTemplateData']) && (!empty($options['xmlTemplate']))) {
-            file_put_contents($this->pathXMLtemplate . $options['xmlTemplate'], $options['xmlTemplateData']);
-        }
+        $xml->save($this->pathXMLtemplate . $filename);
     }
     // }}}
     // {{{ getNodeTypes
