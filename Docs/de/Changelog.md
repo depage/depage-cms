@@ -19,6 +19,18 @@ Version 2.1   {#v2-1}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.4 / 19.05.2020      {#v2-1-4}
+-------------------
+
+**Frontend**
+- Fehler in der Vorschausprache behoben
+
+**Backend**
+- Definition der xml templates aktualisiert
+- Basis xsl template verbessert
+- Verschiedene Bugfixes
+
+
 v2.1.3 / 16.04.2020      {#v2-1-3}
 -------------------
 
