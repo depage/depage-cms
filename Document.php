@@ -1153,9 +1153,10 @@ class Document
         ) {
             $dth = $this->getDoctypeHandler();
 
+            $attributes[$attr_name] = $attr_value;
+
             $dth->onSetAttribute($node_id, $attr_name, $attributes[$attr_name], $attr_value);
 
-            $attributes[$attr_name] = $attr_value;
             $success = $this->saveAttributes($node_id, $attributes);
         }
 
