@@ -452,7 +452,7 @@ class Task {
         $result = $query->fetchObject();
 
         if (!$result || $result->num == 0) {
-            return $progress;
+            return (object) $progress;
         }
 
         $tasksSum = $result->num;
