@@ -41,7 +41,7 @@
             <xsl:variable name="pgmeta" select="exslt:node-set($pgmetaText)/pg:meta" />
             <xsl:variable name="linkdesc" select="dp:value(
                 $pgmeta/pg:linkdesc[@lang = $lang]/@value,
-                key('navigation', $href_id)/@name
+                dp:getPageNode($href_id)/@name
             )" />
             <xsl:variable name="title" select="$pgmeta/pg:title[@lang = $lang]/@value" />
 
