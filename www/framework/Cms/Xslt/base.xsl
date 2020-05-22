@@ -39,20 +39,11 @@
                 </xsl:if>
             </xsl:variable>
             <xsl:variable name="pgmeta" select="exslt:node-set($pgmetaText)/pg:meta" />
-            <xsl:variable name="linkdesc">
-                <xsl:if test="$pgmeta">
-                    <xsl:value-of select="dp:choose(
-                        $pgmeta/pg:linkdesc[@lang = $lang]/@value,
-                        $pgmeta/pg:linkdesc[@lang = $lang]/@value,
-                        key('navigation', $href_id)/@name
-                        )"/>
-                </xsl:if>
-            </xsl:variable>
-            <xsl:variable name="title">
-                <xsl:if test="$pgmeta">
-                    <xsl:value-of select="$pgmeta/pg:title[@lang = $lang]/@value"/>
-                </xsl:if>
-            </xsl:variable>
+            <xsl:variable name="linkdesc" select="dp:value(
+                $pgmeta/pg:linkdesc[@lang = $lang]/@value,
+                key('navigation', $href_id)/@name
+            )" />
+            <xsl:variable name="title" select="$pgmeta/pg:title[@lang = $lang]/@value" />
 
             <xsl:if test="name(../..) = 'sec:unordered_list'">
                 <xsl:text disable-output-escaping="yes">&lt;li&gt;&lt;p&gt;&lt;span&gt;&lt;/span&gt;</xsl:text>
@@ -595,8 +586,7 @@
             <xsl:variable name="lang"><xsl:value-of select="@shortname" /></xsl:variable>
 
             <xsl:if test="$lang != $currentLang and dp:pageVisible($currentPage, $lang)">
-                <xsl:variable name="linkdesc" select="dp:choose(
-                    $pgmeta/pg:linkdesc[@lang = $lang]/@value,
+                <xsl:variable name="linkdesc" select="dp:value(
                     $pgmeta/pg:linkdesc[@lang = $lang]/@value,
                     $currentPage/@name
                 )"/>

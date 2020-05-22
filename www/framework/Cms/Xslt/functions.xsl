@@ -46,28 +46,55 @@
         </xsl:choose>
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:value() -->
+    <!--
+        dp:value(value, fallback)
 
+    -->
+    <func:function name="dp:value">
+        <xsl:param name="a" />
+        <xsl:param name="b" />
+
+        <xsl:choose>
+            <xsl:when test="not($a = '') and not($a = false())">
+                <func:result select="$a" />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="$b" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </func:function>
+    <!-- }}} -->
+
+    <!-- {{{ dp:getDocument() -->
+    <!--
+        dp:getDocument(pageid, xpath)
+
+    -->
+    <func:function name="dp:getDocument">
+        <xsl:param name="docref" />
+        <xsl:param name="xpath" select="''" />
+
+        <func:result select="document(concat('xmldb://', $docref, '/', $xpath))" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:getPage() -->
     <!--
-        dp:getPage(pageid)
+        dp:getPage(pageid, xpath)
 
     -->
     <func:function name="dp:getPage">
         <xsl:param name="pageid" />
         <xsl:param name="xpath" select="''" />
-        <!--
-             fallback to base select when key is not returning value
-        -->
         <xsl:variable name="docref" select="key('navigation', $pageid)/@db:docref" />
-        <xsl:variable name="pagedataid" select="dp:choose($docref, $docref, $navigation//*[@db:id = $pageid]/@db:docref)" />
 
         <xsl:choose>
-            <xsl:when test="$pagedataid = ''">
-                <xsl:message terminate="no">dp:getPage unknown page id '<xsl:value-of select="$pagedataid" />'</xsl:message>
-                <error>dp:getPage unknown page id '<xsl:value-of select="$pagedataid" />'</error>
+            <xsl:when test="$docref = ''">
+                <xsl:message terminate="no">dp:getPage unknown page id '<xsl:value-of select="$docref" />'</xsl:message>
+                <error>dp:getPage unknown page id '<xsl:value-of select="$docref" />'</error>
             </xsl:when>
             <xsl:otherwise>
-                <func:result select="document(concat('xmldb://', $pagedataid, '/', $xpath))" />
+                <func:result select="dp:getDocument($docref, $xpath)" />
             </xsl:otherwise>
         </xsl:choose>
     </func:function>
@@ -97,9 +124,9 @@
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::getLibRef', string($url), $absolute)" />
     </func:function>
     <!-- }}} -->
-    <!-- {{{ dp:getHref() -->
+    <!-- {{{ dp:getRef() -->
     <!--
-        dp:getHref(pageid)
+        dp:getRef(pageid)
 
     -->
     <func:function name="dp:getRef">
