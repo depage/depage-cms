@@ -45,12 +45,6 @@
             )" />
             <xsl:variable name="title" select="$pgmeta/pg:title[@lang = $lang]/@value" />
 
-            <xsl:if test="name(../..) = 'sec:unordered_list'">
-                <xsl:text disable-output-escaping="yes">&lt;li&gt;&lt;p&gt;&lt;span&gt;&lt;/span&gt;</xsl:text>
-            </xsl:if>
-            <xsl:if test="name(../..) = 'sec:vcard'">
-                <xsl:text disable-output-escaping="yes">&lt;p&gt;</xsl:text>
-            </xsl:if>
             <a>
                 <!-- {{{ href -->
                 <xsl:attribute name="href">
@@ -95,28 +89,25 @@
                 <!-- {{{ content -->
                 <xsl:value-of select="$pretext" disable-output-escaping="yes" />
                 <xsl:choose>
-                    <xsl:when test="$content != '' and not($justapply)">
+                    <xsl:when test="$justapply">
+                        <xsl:apply-templates />
+                    </xsl:when>
+                    <xsl:when test="$content != ''">
                         <xsl:value-of select="$content"/>
                     </xsl:when>
-                    <xsl:when test="$href_id and not($linkdesc = '') and not($justapply)">
+                    <xsl:when test="$href_id and not($linkdesc = '')">
                         <xsl:value-of select="$linkdesc"/>
                     </xsl:when>
-                    <xsl:when test="$altcontent != '' and not($justapply)">
+                    <xsl:when test="$altcontent != ''">
                         <xsl:value-of select="$altcontent"/>
                     </xsl:when>
                     <xsl:otherwise>
-                        <xsl:apply-templates/>
+                        <xsl:apply-templates />
                     </xsl:otherwise>
                 </xsl:choose>
                 <xsl:value-of select="$aptext" disable-output-escaping="yes" />
                 <!-- }}} -->
             </a>
-            <xsl:if test="name(../..) = 'sec:vcard'">
-                <xsl:text disable-output-escaping="yes">&lt;/p&gt;</xsl:text>
-            </xsl:if>
-            <xsl:if test="name(../..) = 'sec:unordered_list'">
-                <xsl:text disable-output-escaping="yes">&lt;/p&gt;&lt;/li&gt;</xsl:text>
-            </xsl:if>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
@@ -638,11 +629,28 @@
     </xsl:template>
     <!-- }}} -->
 
+    <!-- {{{ highlight -->
     <xsl:template match="@db:id" mode="highlight">
         <xsl:if test="not($depageIsLive)">
             <xsl:attribute name="data-db-id"><xsl:value-of select="." /></xsl:attribute>
         </xsl:if>
     </xsl:template>
+    <!-- }}} -->
+
+    <!-- {{{ sec:vcard/sec:a -->
+    <xsl:template match="sec:vcard/sec:a">
+        <p>
+            <xsl:apply-templates select="*" />
+        </p>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ sec:unordered_list/sec:a -->
+    <xsl:template match="sec:unordered_list/sec:a">
+        <li><span></span>
+            <xsl:apply-templates select="*" />
+        </li>
+    </xsl:template>
+    <!-- }}} -->
 
     <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker : -->
 </xsl:stylesheet>
