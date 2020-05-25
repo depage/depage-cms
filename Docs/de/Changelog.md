@@ -19,6 +19,14 @@ Version 2.1   {#v2-1}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.5 / 25.05.2020      {#v2-1-5}
+-------------------
+
+**Backend**
+- Neue Helferfunktionen zu xsl templates hinzugefügt
+- Performance der Basis-xsl templates optimiert
+
+
 v2.1.4 / 19.05.2020      {#v2-1-4}
 -------------------
 
