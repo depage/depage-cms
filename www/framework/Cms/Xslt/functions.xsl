@@ -69,7 +69,6 @@
     <!-- {{{ dp:getDocument() -->
     <!--
         dp:getDocument(pageid, xpath)
-
     -->
     <func:function name="dp:getDocument">
         <xsl:param name="docref" />
@@ -81,29 +80,24 @@
     <!-- {{{ dp:getPageNode() -->
     <!--
         dp:getPageNode(pageid)
-
     -->
     <func:function name="dp:getPageNode">
         <xsl:param name="pageid" />
 
         <xsl:for-each select="$navigation">
-            <func:result select="key('navigation',$pageid)" />
+            <func:result select="key('page-by-id',$pageid)" />
         </xsl:for-each>
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:getPage() -->
     <!--
         dp:getPage(pageid, xpath)
-
     -->
     <func:function name="dp:getPage">
         <xsl:param name="pageid" />
         <xsl:param name="xpath" select="''" />
-        <xsl:variable name="docref">
-            <xsl:for-each select="$navigation">
-                <xsl:value-of select="dp:getPageNode($pageid)/@db:docref" />
-            </xsl:for-each>
-        </xsl:variable>
+        <xsl:variable name="docref" select="dp:getPageNode($pageid)/@db:docref" />
+
         <xsl:choose>
             <xsl:when test="$docref = ''">
                 <xsl:message terminate="no">dp:getPage unknown page id '<xsl:value-of select="$docref" />'</xsl:message>
@@ -118,7 +112,6 @@
     <!-- {{{ dp:getPageRef() -->
     <!--
         dp:getPageRef(pageid)
-
     -->
     <func:function name="dp:getPageRef">
         <xsl:param name="pageid" />
