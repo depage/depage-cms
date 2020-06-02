@@ -32,15 +32,19 @@ figure.thumb.color {
         width: $treeWidth;
         max-width: 100%;
     }
-    .colorscheme {
+    .colorscheme,
+    .colorprops {
         left: $treeWidth;
-        right: $treeWidth;
+        right: 0;
+    }
+    .colorscheme {
+        bottom: $treeWidth * 2;
     }
     .colorprops {
-        width: $treeWidth;
-        max-width: 100%;
-        right: 0;
-        border-left: 1px solid $borderColor;
+        top: auto;
+        height: $treeWidth * 2;
+        bottom: 0;
+        border-top: 1px solid $borderColor;
         background: $backgroundLighterColor;
     }
 
@@ -54,17 +58,6 @@ figure.thumb.color {
         bottom: 0;
     }
 }
-.toolbar ~ .colorschemes {
-    .trees,
-    .colorscheme,
-    .colorprops {
-        top: $toolbarHeight;
-
-        @media (pointer:coarse) {
-            top: $toolbarHeight * $touchScale;
-        }
-    }
-}
 // }}}
 // {{{ .colorschemes .color-list
 .colorschemes .color-list {
@@ -74,6 +67,10 @@ figure.thumb.color {
 // {{{ .colorschemes .color-property
 .colorschemes .color-property {
     padding: 15px;
+
+    .sp-container {
+        max-width: $treeWidth;
+    }
 }
 // }}}
 

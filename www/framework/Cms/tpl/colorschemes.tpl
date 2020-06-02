@@ -1,5 +1,5 @@
 <div <?php self::attr([
-        "class" => "colorschemes",
+        "class" => "colorschemes layout-left",
     ]); ?>>
     <div class="trees">
         <header class="info info-tree-colors">
@@ -35,6 +35,18 @@
             'data-live-help-class' => "icon icon-colors",
         ]); ?>>
         </div>
+    </div>
+</div>
+<div <?php self::attr([
+        'class' => "preview layout layout-right zoom100",
+        'data-live-help' => _("The preview of the currently selected page."),
+        'data-live-help-class' => "icon icon-preview",
+    ]); ?>>
+    <header class="info">
+        <h1><?php self::e(_("Preview")); ?> <span class="title" data-tooltip=""></span></h1>
+    </header>
+    <div class="zoomwrapper">
+        <iframe id="previewFrame"></iframe>
     </div>
 </div>
 <?php // vim:set ft=php sw=4 sts=4 fdm=marker et :

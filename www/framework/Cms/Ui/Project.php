@@ -479,7 +479,6 @@ class Project extends Base
 
         // construct template
         $hProject = new Html("projectmain.tpl", [
-            'previewUrl' => $this->project->getPreviewPath(),
             'projectName' => $this->project->name,
             'pageId' => $pageId,
         ], $this->htmlOptions);
