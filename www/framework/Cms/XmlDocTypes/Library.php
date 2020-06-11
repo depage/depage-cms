@@ -26,6 +26,7 @@ class Library extends Base {
         ];
 
         foreach ($this->availableNodes as $nodeName => &$node) {
+            $node->id = $nodeName;
             $node->nodeName = $nodeName;
         }
 

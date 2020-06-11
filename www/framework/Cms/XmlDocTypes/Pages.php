@@ -64,6 +64,7 @@ class Pages extends Base {
         ];
 
         foreach ($this->availableNodes as $nodeName => &$node) {
+            $node->id = $nodeName;
             $node->nodeName = $nodeName;
         }
 
@@ -285,6 +286,7 @@ class Pages extends Base {
     private function loadXmlTemplate($template) {
         $doc = new \DOMDocument();
         $doc->load(self::XML_TEMPLATE_DIR . $template);
+
         return $doc;
     }
     // }}}

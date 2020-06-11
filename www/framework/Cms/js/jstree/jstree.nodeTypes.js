@@ -137,7 +137,11 @@
                             this._data.nodeTypes.validParents['*'].indexOf('*') != -1)
                     )
                 ) {
-                    available.push(this._data.nodeTypes.availableNodes[nodeName]);
+                    for (var j in this._data.nodeTypes.availableNodes) {
+                        if (this._data.nodeTypes.availableNodes[j].nodeName == nodeName) {
+                            available.push(this._data.nodeTypes.availableNodes[j]);
+                        }
+                    }
                 }
             }
 
@@ -154,6 +158,7 @@
                     text: data.item.newName,
                     li_attr: {
                         rel: data.item.nodeName,
+                        newNodeId: data.item.id,
                         xmlTemplate: data.item.xmlTemplate,
                         xmlTemplateData: data.item.xmlTemplateData || ""
                     },
@@ -186,6 +191,7 @@
 
                 menu[node.name] = {
                     label: node.name,
+                    id: node.id,
                     nodeName: node.nodeName,
                     newName: node.newName,
                     xmlTemplate: node.xmlTemplate,
@@ -198,6 +204,7 @@
                         menu[node.subTypes[j].name] = {
                             // four non-breakable spaces for intendation
                             label: "    " + node.subTypes[j].name,
+                            id: node.id,
                             nodeName: node.nodeName,
                             newName: node.newName,
                             xmlTemplate: node.xmlTemplate,
