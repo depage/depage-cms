@@ -61,8 +61,10 @@ var depageCMS = (function() {
         $pagedataTreeContainer,
         $docPropertiesContainer;
 
-    var jstreePages;
-    var jstreePagedata;
+    var jstreePages,
+        jstreePagedata,
+        jstreeLibrary,
+        jstreeColors;
 
     var currentLayout;
 
@@ -817,7 +819,7 @@ var depageCMS = (function() {
             var $deleteButton = localJS.addToolbarButton($toolbar, locale.delete, "icon-delete", localJS.deleteSelectedFiles);
             var last = false;
 
-            $libraryTreeContainer
+            jstreeLibrary = $libraryTreeContainer.depageTree()
                 .on("activate_node.jstree", function(e, data) {
                     var path = data.node.a_attr.href.replace(/libref:\/\//, "");
 
@@ -828,7 +830,7 @@ var depageCMS = (function() {
                     }
                 })
                 .on("refresh.jstree", function(e, data) {
-                    var selected = data.instance.get_selected(true);
+                    var selected = jstreeLibrary.get_selected(true);
 
                     if (typeof selected[0] == 'undefined') return;
                     var path = selected[0].a_attr.href.replace(/libref:\/\//, "");
@@ -846,7 +848,7 @@ var depageCMS = (function() {
                     $fileContainer.removeClass("focus");
                     $toolbar.removeClass("visible");
                 })
-                .depageTree();
+                .jstree(true);
 
             $fileContainer
                 .on("selectionChange.depage", function() {
@@ -965,7 +967,7 @@ var depageCMS = (function() {
 
             var xmldb = new DepageXmldb(baseUrl, projectName, "colors");
 
-            $colorTreeContainer
+            jstreeColors = $colorTreeContainer.depageTree()
                 .on("activate_node.jstree", function(e, data) {
                     var nodeId = null;
                     if (typeof data.node.data !== 'undefined') {
@@ -992,7 +994,7 @@ var depageCMS = (function() {
                     $colorContainer.removeClass("focus");
                     $toolbar.removeClass("visible");
                 })
-                .depageTree();
+                .jstree(true);
 
             $colorContainer
                 .on("selectionChange.depage", function() {
