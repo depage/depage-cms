@@ -693,10 +693,13 @@ class Document
     {
         $success = false;
         $dth = $this->getDoctypeHandler();
-        $newNode = $dth->getNewNodeFor($name);
+        $newNodes = $dth->getNewNodeFor($name);
 
-        if ($newNode) {
-            $success = $this->addNode($newNode, $target_id, $target_pos, $extras);
+        for ($i = $newNodes->length - 1; $i >= 0; $i--) {
+            $node = $newNodes->item($i);
+            if ($node->nodeType == \XML_ELEMENT_NODE) {
+                $success = $this->addNode($node, $target_id, $target_pos, $extras);
+            }
         }
 
         return $success;
