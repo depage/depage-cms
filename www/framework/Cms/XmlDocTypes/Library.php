@@ -26,6 +26,7 @@ class Library extends Base {
         ];
 
         foreach ($this->availableNodes as $nodeName => &$node) {
+            $node->id = $nodeName;
             $node->nodeName = $nodeName;
         }
 
@@ -59,9 +60,9 @@ class Library extends Base {
         return true;
     }
     // }}}
-    // {{{ name()
+    // {{{ onMoveNode()
     /**
-     * @brief name
+     * @brief onMoveNode
      *
      * @param mixed $param
      * @return void
@@ -73,7 +74,7 @@ class Library extends Base {
         $targetPath = $this->getPathById($nodeId);
 
         if ($srcPath != $targetPath) {
-            $this->fs()->mv($srcPath, $targetPath);
+            $success = $this->fs()->mv($srcPath, $targetPath);
             $this->clearGraphicsCache($srcPath);
         }
 

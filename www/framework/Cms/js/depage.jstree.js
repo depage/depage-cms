@@ -196,12 +196,12 @@
             var parentId = jstree.get_parent(nodeId);
 
             if (typeof prevId !== 'undefined') {
-                xmldb.createNodeAfter(param.node.li_attr.rel, prevId, base.afterCreate, param.node.li_attr.xmlTemplateData);
+                xmldb.createNodeAfter(param.node.li_attr.newNodeId, prevId, base.afterCreate, param.node.li_attr.xmlTemplateData);
             } else if (typeof nextId !== 'undefined') {
-                xmldb.createNodeBefore(param.node.li_attr.rel, nextId, base.afterCreate, param.node.li_attr.xmlTemplateData);
+                xmldb.createNodeBefore(param.node.li_attr.newNodeId, nextId, base.afterCreate, param.node.li_attr.xmlTemplateData);
             } else {
                 jstree.open_node(parentId);
-                xmldb.createNodeIn(param.node.li_attr.rel, parentId, base.afterCreate, param.node.li_attr.xmlTemplateData);
+                xmldb.createNodeIn(param.node.li_attr.newNodeId, parentId, base.afterCreate, param.node.li_attr.xmlTemplateData);
             }
 
             jstree.disable_node(param.node);

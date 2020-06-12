@@ -155,6 +155,7 @@ class Tree extends Base {
     {
         $status = false;
 
+        $position = -1;
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
         $type = isset($_POST['node']) ? filter_var($_POST['node'], FILTER_SANITIZE_STRING) : null;
         $extra = isset($_POST['extra']) ? filter_var($_POST['extra'], FILTER_UNSAFE_RAW) : null;

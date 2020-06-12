@@ -19,6 +19,11 @@ class Colors extends Base {
             ],
         ];
 
+        foreach ($this->availableNodes as $nodeName => &$node) {
+            $node->id = $nodeName;
+            $node->nodeName = $nodeName;
+        }
+
         // list of valid parents given by nodename
         $this->validParents = [
             'proj:colorscheme' => [
