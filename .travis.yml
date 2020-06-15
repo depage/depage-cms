@@ -11,5 +11,5 @@ before_script:
     - echo "GRANT ALL PRIVILEGES ON test_db.* TO 'test_db_user'@'localhost' IDENTIFIED BY 'test_db_password' WITH GRANT OPTION;" | mysql -u root
     - composer install
 
-script: phpunit --configuration Tests/PhpUnit.xml --process-isolation Tests/
+script: vendor/bin/phpunit --configuration Tests/PhpUnit.xml --process-isolation Tests/
 
