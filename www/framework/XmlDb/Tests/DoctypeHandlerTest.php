@@ -26,13 +26,13 @@ class DoctypeHandlerTest extends DoctypeHandlerBaseTest
     // {{{ testGetNewNodeFor
     public function testGetNewNodeFor()
     {
-        $node = $this->dth->getNewNodeFor('testNode');
+        $nodes = $this->dth->getNewNodeFor('testNode');
 
         $expected = '<testNode xmlns:dpg="http://www.depagecms.net/ns/depage" xmlns:pg="http://www.depagecms.net/ns/page" attr1="value1" attr2="value2" name="customNameAttribute"/>';
 
         // convert node to xml string
         $doc = new \DOMDocument;
-        $doc->appendChild($doc->importNode($node));
+        $doc->appendChild($doc->importNode($nodes->item(0)));
         $xml = $doc->saveHTML();
 
         $this->assertXmlStringEqualsXmlString($expected, $xml);
