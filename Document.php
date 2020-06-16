@@ -376,15 +376,15 @@ class Document
             $this->lastchange = $result->lastchange;
             $this->lastchangeUid = $result->lastchangeUid;
 
-            $pad = 4;
+            $pad = 5;
             $query = $this->pdo->prepare(
                 "WITH RECURSIVE tree (id, id_parent, lvl, sortkey) AS
                     (
-                    SELECT id, id_parent, 0, CAST('' AS CHAR(4000))
+                    SELECT id, id_parent, 0, CAST('' AS CHAR(5000))
                         FROM {$this->table_xml} AS xml
                         WHERE id = :id AND id_doc = :doc_id
                     UNION ALL
-                    SELECT x.id, x.id_parent, lvl + 1, CONCAT(sortkey, LPAD(IFNULL(x.pos + 1, 0), {$pad}, '0'), ' ')
+                    SELECT x.id, x.id_parent, lvl + 1, CONCAT(sortkey, LPAD(IFNULL(x.pos + 1, 0), {$pad}, '0'))
                         FROM {$this->table_xml} AS x INNER JOIN tree AS t
                         ON x.id_parent = t.id
                     )
@@ -694,6 +694,10 @@ class Document
         $success = false;
         $dth = $this->getDoctypeHandler();
         $newNodes = $dth->getNewNodeFor($name);
+
+        if (!$newNodes) {
+            return false;
+        }
 
         for ($i = $newNodes->length - 1; $i >= 0; $i--) {
             $node = $newNodes->item($i);
@@ -1156,7 +1160,7 @@ class Document
         ) {
             $dth = $this->getDoctypeHandler();
 
-            $dth->onSetAttribute($node_id, $attr_name, $attributes[$attr_name], $attr_value);
+            $dth->onSetAttribute($node_id, $attr_name, $attributes[$attr_name] ?? null, $attr_value);
 
             $attributes[$attr_name] = $attr_value;
 
