@@ -306,6 +306,7 @@ class Project extends Base
         $form = new \Depage\Cms\Forms\Publish("publish-project-" . $this->project->id, [
             'project' => $this->project,
             'users' => \Depage\Auth\User::loadAll($this->pdo),
+            'canPublish' => true,
         ]);
         $form->process();
 
@@ -357,18 +358,17 @@ class Project extends Base
      *
      * @param mixed
      * @return void
-     *
-     * @todo implement adding documents to xmldb history when publishing and using these for xsl transformations
      **/
     public function release_pages($docId = null)
     {
         if (!$this->authUser->canPublishProject()) {
-            return $this->notAllowed(_("You are not allowed to release pages on this project."));
+            return $this->unreleased_pages($docId);
         }
         $form = new \Depage\Cms\Forms\ReleasePages("release-pages-" . $this->project->id, [
             'project' => $this->project,
             'users' => \Depage\Auth\User::loadAll($this->pdo),
             'selectedDocId' => $docId,
+            'canPublish' => true,
         ]);
         $form->process();
 
@@ -390,6 +390,53 @@ class Project extends Base
         }
 
         $title = sprintf(_("Release Pages for Project '%s'"), $this->project->name);
+        $previewUrl = "";
+
+        if ($pageInfo = $this->project->getXmlNav()->getPageInfo($docId)) {
+            $previewUrl = $this->project->getPreviewPath() . $pageInfo->url;
+        }
+
+        $h = new Html("publish.tpl", [
+            'previewUrl' => $previewUrl,
+            'content' => new Html("box.tpl", [
+                'id' => "projects",
+                'icon' => "framework/Cms/images/icon_projects.gif",
+                'class' => "box-publish",
+                'title' => $title,
+                'content' => [
+                    $this->toolbar(),
+                    $form,
+                ],
+            ]),
+        ], $this->htmlOptions);
+
+        return $h;
+    }
+    // }}}
+    // {{{ unreleased_pages()
+    /**
+     * @brief unreleased_pages
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function unreleased_pages($docId = null)
+    {
+        $form = new \Depage\Cms\Forms\ReleasePages("release-pages-" . $this->project->id, [
+            'project' => $this->project,
+            'users' => \Depage\Auth\User::loadAll($this->pdo),
+            'selectedDocId' => $docId,
+            'canPublish' => false,
+        ]);
+        $form->process();
+
+        if ($form->validate()) {
+            $form->clearSession();
+
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+        }
+
+        $title = sprintf(_("Unreleased Pages for Project '%s'"), $this->project->name);
         $previewUrl = "";
 
         if ($pageInfo = $this->project->getXmlNav()->getPageInfo($docId)) {

@@ -1053,9 +1053,15 @@ class Project extends \Depage\Entity\Entity
     {
         $users = \Depage\Auth\User::loadAll($this->pdo);
 
+        $conf = $this->getProjectConfig();
+
         $requestingUser = $users[$userId];
-        $users = array_filter($users, function($u) {
-            if ($u->canPublishProject()) {
+        $releaseRequestNotifications = $conf->releaseRequestNotifications->toArray();
+        $users = array_filter($users, function($u) use ($releaseRequestNotifications) {
+            if ($u == $requestingUser) {
+                return false;
+            }
+            if ($u->canPublishProject() || in_array($u->email, $releaseRequestNotifications)) {
                 $userProjects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $u);
 
                 return in_array($this->name, $userProjects);
@@ -1593,6 +1599,7 @@ class Project extends \Depage\Entity\Entity
             'rootAliases' => [],
             'routeHtmlThroughPhp' => false,
             'publishNotifications' => [],
+            'releaseRequestNotifications' => [],
             'version' => 1,
         ]);
 

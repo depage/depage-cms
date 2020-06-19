@@ -1,7 +1,12 @@
 // {{{ publish-form
 form.lastchanged_pages {
+    legend {
+        width: 100%;
+    }
     p.select-all {
         width: 100%;
+        margin-top: 20px;
+        margin-bottom: 20px;
 
         button {
             display: block;
@@ -11,16 +16,32 @@ form.lastchanged_pages {
             padding: 0;
             margin: 0;
             outline: 0;
+            width: auto;
             text-decoration: underline;
         }
     }
     .input-boolean {
         width: 75%;
     }
-    a.preview {
+    a.button {
         margin-top: 3px;
         display: block;
         float: right;
+        line-height: 20px;
+        height: 26px;
+        padding: 1px 7px;
+        border: 1px solid transparent;
+
+        @media (pointer:coarse) {
+            line-height: 20px * $touchScale;
+            height: 26px * $touchScale;
+        }
+        color: $textLighterColor;
+
+        &:hover {
+            background: $selectionBackgroundColor;
+            color: $selectionTextColor;
+        }
     }
     p.small {
         margin-left: $checkboxSize * 1.25;
