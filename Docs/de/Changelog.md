@@ -19,6 +19,13 @@ Version 2.1   {#v2-1}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.7 / 19.06.2020      {#v2-1-7}
+-------------------
+
+**Backend**
+- Neue Benachrichtigung zur Anfrage der Seitenfreigabe für Editoren
+
+
 v2.1.6 / 12.06.2020      {#v2-1-6}
 -------------------
 
