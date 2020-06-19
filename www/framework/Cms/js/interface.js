@@ -1220,7 +1220,7 @@ var depageCMS = (function() {
                 jstreePages = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {
                         if (typeof window.history != 'undefined') {
-                            window.history.pushState(null, null, baseUrl + "project/" + projectName + "/edit/" + data.node.id + "/");
+                            window.history.replaceState(null, null, baseUrl + "project/" + projectName + "/edit/" + data.node.id + "/");
                         }
                         localJS.loadPagedataTree(data.node.data.docRef);
 
