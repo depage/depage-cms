@@ -15,11 +15,14 @@ class XmlNav {
 
     protected $xmldb = null;
 
-    protected $urlsByPageId = [];
-    protected $pageIdByUrl = [];
     protected $docRefByPageId = [];
-    protected $pagedataIdByPageId = [];
+    protected $nodeByDocRef = [];
+    protected $pageIdByUrl = [];
+    protected $pageIdByDocRef = [];
     protected $pageInfoByDocRef = [];
+    protected $pageOrderByDocRef = [];
+    protected $pagedataIdByPageId = [];
+    protected $urlsByPageId = [];
 
     // {{{ constructor
     /**
@@ -63,11 +66,14 @@ class XmlNav {
             $this->xml = $xml;
         }
 
-        $this->urlsByPageId = [];
-        $this->pageIdByUrl = [];
         $this->docRefByPageId = [];
-        $this->pagedataIdByPageId = [];
+        $this->nodeByDocRef = [];
+        $this->pageIdByUrl = [];
+        $this->pageIdByDocRef = [];
         $this->pageInfoByDocRef = [];
+        $this->pageOrderByDocRef = [];
+        $this->pagedataIdByPageId = [];
+        $this->urlsByPageId = [];
 
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($this->xml);
 
@@ -89,38 +95,15 @@ class XmlNav {
             // base mappings
             $this->urlsByPageId[$id] = $node->getAttribute("url");
             $this->docRefByPageId[$id] = $docref;
+            $this->pageIdByDocRef[$docref] = $id;
 
             // only for pages and redirects
             if ($node->nodeName != "pg:page" && $node->nodeName != "pg:redirect") {
                 continue;
             }
             $this->pageIdByUrl[$node->getAttribute("url")] = $id;
-
-            // only if xmlgetter is set and has docref
-            if (!$docref || !$this->xmldb) {
-                continue;
-            }
-            $docInfo = $this->xmldb->getDocInfo($docref);
-            $this->pagedataIdByPageId[$id] = $docInfo->id;
-            $docInfo->pageId = $node->getAttribute("db:id");
-            $docInfo->pageOrder = $i;
-            $docInfo->url = $node->getAttribute("url");
-            $docInfo->fileType = $node->getAttribute("file_type");
-            $docInfo->published = $node->getAttribute("db:published") == "true";
-            $docInfo->released = $node->getAttribute("db:released") == "true";
-            $docInfo->protected = $node->getAttribute("db:protected") == "true";
-
-            $docInfo->nav = [];
-            $docInfo->tags = [];
-            foreach ($node->attributes as $name => $attrNode) {
-                if (substr($name, 0, 4) == 'nav_') {
-                    $docInfo->nav[substr($name, 4)] = $attrNode->value;
-                } else if (substr($name, 0, 4) == 'tag_') {
-                    $docInfo->tags[substr($name, 4)] = $attrNode->value;
-                }
-            }
-
-            $this->pageInfoByDocRef[$docref] = $docInfo;
+            $this->nodeByDocRef[$docref] = $node;
+            $this->pageOrderByDocRef[$docref] = $i;
 
             $i++;
         }
@@ -164,6 +147,9 @@ class XmlNav {
      **/
     public function getPages()
     {
+        foreach ($this->nodeByDocRef as $docref => $pos) {
+            $this->getPageInfo($docref);
+        }
         return $this->pageInfoByDocRef;
     }
     // }}}
@@ -280,8 +266,9 @@ class XmlNav {
      **/
     public function getPageDataId($pageId)
     {
-        return $this->pagedataIdByPageId[$pageId] ?? false;
+        $this->getPageInfo($this->getDocRef($pageId));
 
+        return $this->pagedataIdByPageId[$pageId] ?? false;
     }
     // }}}
     // {{{ getDocRef()
@@ -305,6 +292,40 @@ class XmlNav {
      **/
     public function getPageInfo($docref)
     {
+        if (!$this->xmldb) {
+            return false;
+        }
+        if (!empty($this->pageInfoByDocRef[$docref])) {
+            return $this->pageInfoByDocRef[$docref];
+        }
+        if (empty($this->nodeByDocRef[$docref])) {
+            return false;
+        }
+
+        $node = $this->nodeByDocRef[$docref];
+        $docInfo = $this->xmldb->getDocInfo($docref);
+
+        $this->pagedataIdByPageId[$this->pageIdByDocRef[$docref]] = $docInfo->id;
+        $docInfo->pageId = $node->getAttribute("db:id");
+        $docInfo->pageOrder = $this->pageOrderByDocRef[$docref];
+        $docInfo->url = $node->getAttribute("url");
+        $docInfo->fileType = $node->getAttribute("file_type");
+        $docInfo->published = $node->getAttribute("db:published") == "true";
+        $docInfo->released = $node->getAttribute("db:released") == "true";
+        $docInfo->protected = $node->getAttribute("db:protected") == "true";
+
+        $docInfo->nav = [];
+        $docInfo->tags = [];
+        foreach ($node->attributes as $name => $attrNode) {
+            if (substr($name, 0, 4) == 'nav_') {
+                $docInfo->nav[substr($name, 4)] = $attrNode->value;
+            } else if (substr($name, 0, 4) == 'tag_') {
+                $docInfo->tags[substr($name, 4)] = $attrNode->value;
+            }
+        }
+
+        $this->pageInfoByDocRef[$docref] = $docInfo;
+
         return $this->pageInfoByDocRef[$docref] ?? false;
     }
     // }}}
