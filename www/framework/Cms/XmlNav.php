@@ -170,17 +170,47 @@ class XmlNav {
             } else if ($a->released && !$b->released) {
                 return 1;
             }
-            $aTi = $a->lastchange->getTimestamp();
-            $bTi = $b->lastchange->getTimestamp();
-            if ($aTi == $bTi) {
-                return 0;
-            }
-            return ($aTi > $bTi) ? -1 : 1;
+
+            return $b->lastchange->getTimestamp() <=> $a->lastchange->getTimestamp();
         });
 
         if ($max > 0) {
             $pages = array_splice($pages, 0, $max);
         }
+
+        return $pages;
+    }
+    // }}}
+    // {{{ getPublicPages()
+    /**
+     * @brief getPublicPages
+     *
+     * @param max
+     * @return array
+     **/
+    public function getPublicPages($lastpublishDate = false)
+    {
+        $pages = $this->getPages();
+
+        $pages = array_filter($pages, function($page) {
+            return $page->released || $page->published;
+        });
+
+        usort($pages, function($a, $b) use ($lastpublishDate) {
+            if (!$a->released && $b->released) {
+                return -1;
+            } else if ($a->released && !$b->released) {
+                return 1;
+            } else if (
+                $lastpublishDate &&
+                $a->lastrelease->getTimestamp() <= $lastpublishDate->getTimestamp() &&
+                $b->lastrelease->getTimestamp() <= $lastpublishDate->getTimestamp()
+            ) {
+                return $a->pageOrder <=> $b->pageOrder;
+            }
+
+            return $b->lastchange->getTimestamp() <=> $a->lastchange->getTimestamp();
+        });
 
         return $pages;
     }

@@ -1202,14 +1202,7 @@ class Project extends \Depage\Entity\Entity
         $languages = $this->getLanguages();
 
         // get pages/urls to publish
-        $urls = [];
-        $pageOrder = [];
-        foreach ($this->getXmlNav()->getRecentlyChangedPages() as $p) {
-            if ($p->released || $p->published) {
-                $urls[$p->pageId] = $p->url;
-                $pageOrder[$p->pageId] = $p->pageOrder;
-            }
-        }
+        $pages = $this->getXmlNav()->getPublicPages($this->getLastPublishDate());
 
         // prepare project published notification
         $newlyPublishedPages = [];
@@ -1223,6 +1216,15 @@ class Project extends \Depage\Entity\Entity
                 $newlyPublishedPages[] = $baseUrl . $lang . $p->url;
             }
         }
+
+        $graphicsOptions = [
+            'extension' => $this->graphicsOptions->extension,
+            'executable' => $this->graphicsOptions->executable,
+            'optimize' => $this->graphicsOptions->optimize,
+            'baseUrl' => $baseUrl,
+            'cachePath' => $projectPath . "lib/cache/graphics/",
+            'relativePath' => $projectPath,
+        ];
 
         // added init task
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->name);
@@ -1240,6 +1242,7 @@ class Project extends \Depage\Entity\Entity
             \$transformer = %s;
             \$transformCache = %s;
             \$indexer = new \\Depage\\Search\\Indexer();
+            \$imgUrl = new \\Depage\\Graphics\\Imgurl(%s);
             \$newlyPublishedPages = %s;
 
         ", [
@@ -1251,6 +1254,7 @@ class Project extends \Depage\Entity\Entity
             $publishId,
             $transformer,
             $transformCache,
+            $graphicsOptions,
             $newlyPublishedPages,
         ]);
 
@@ -1284,25 +1288,16 @@ class Project extends \Depage\Entity\Entity
             ], $initId);
         }
 
-        $graphicsOptions = [
-            'extension' => $this->graphicsOptions->extension,
-            'executable' => $this->graphicsOptions->executable,
-            'optimize' => $this->graphicsOptions->optimize,
-            'baseUrl' => $baseUrl,
-            'cachePath' => $projectPath . "lib/cache/graphics/",
-            'relativePath' => $projectPath,
-        ];
-
         $i = 0;
-        foreach ($urls as $pageId => $url) {
+        foreach ($pages as $page) {
             foreach ($languages as $lang => $name) {
-                $target = $lang . $url;
+                $target = $lang . $page->url;
 
                 // transform page
                 $pubId = $task->addSubtask(
                     "transforming $target",
                     "\$html = \$transformer->transformUrl(%s, %s);",
-                    [$url, $lang],
+                    [$page->url, $lang],
                     $initId
                 );
 
@@ -1310,7 +1305,6 @@ class Project extends \Depage\Entity\Entity
                 $task->addSubtask(
                     "generating images for $target",
                     "\$images = \$indexer->loadXml(\$html, %s)->getImages();
-                    \$imgUrl = new \\Depage\\Graphics\\Imgurl(%s);
                     foreach (\$images as \$i) {
                         \$imgUrl->render(\$i);
                         if (\$imgUrl->rendered) {
@@ -1318,7 +1312,7 @@ class Project extends \Depage\Entity\Entity
                         }
                     }
                     ",
-                    [$baseUrl . $target, $graphicsOptions, $projectPath],
+                    [$baseUrl . $target, $projectPath],
                     $pubId
                 );
 
@@ -1349,7 +1343,7 @@ class Project extends \Depage\Entity\Entity
             $task->addSubtask(
                 "adding canonical url for $target",
                 "\$urls->addUrl(%s, %s, %s);",
-                [$pageId, $url, $pageOrder[$pageId]],
+                [$page->pageId, $page->url, $page->pageOrder],
                 $pubId
             );
             $i++;
