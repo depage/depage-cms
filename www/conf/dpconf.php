@@ -90,7 +90,7 @@ $conf = array(
     // }}}
 
     // {{{ edit.depage.net
-    'edit.depage.net/' => array(
+    '*edit.depage.net/' => array(
         'handler' => 'depage\Cms\Ui\Main',
         'phpcli' => "/usr/bin/php",
         'db' => array(
@@ -114,77 +114,7 @@ $conf = array(
     ),
     // }}}
 // {{{ edit.depage.net graphics
-    'edit.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
-        'handler' => 'Depage\Graphics\Ui\Graphics',
-        'env' => 'production',
-        'extension' => "gm",
-        'executable' => "/usr/bin/gm",
-        'optimize' => true,
-        'base' => 'inherit',
-        'env' => 'production',
-    ),
-    // }}}
-    // {{{ preview.edit.depage.net
-    'preview.edit.depage.net/' => array(
-        'handler' => 'depage\Cms\Ui\Main',
-        'phpcli' => "/usr/bin/php",
-        'db' => array(
-            'dsn' => 'mysql:dbname=depage-edit;host=mariadb',
-            'user' => 'root',
-            'password' => 'killroy',
-            'prefix' => 'dp',
-        ),
-        'cache' => array(
-            'xmldb' => array(
-                'disposition' => "redis",
-                'host' => "redis:6379",
-            ),
-        ),
-        'graphics' => [
-            'extension' => "gm",
-            'executable' => "/usr/bin/gm",
-            'optimize' => true,
-        ],
-        'env' => 'production',
-    ),
-    // }}}
-    // {{{ preview.edit.depage.net graphics
-    'preview.edit.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
-        'handler' => 'Depage\Graphics\Ui\Graphics',
-        'env' => 'production',
-        'extension' => "gm",
-        'executable' => "/usr/bin/gm",
-        'optimize' => true,
-        'base' => 'inherit',
-        'env' => 'production',
-    ),
-    // }}}
-    // {{{ lib.edit.depage.net
-    'lib.edit.depage.net/' => array(
-        'handler' => 'depage\Cms\Ui\Main',
-        'phpcli' => "/usr/bin/php",
-        'db' => array(
-            'dsn' => 'mysql:dbname=depage-edit;host=mariadb',
-            'user' => 'root',
-            'password' => 'killroy',
-            'prefix' => 'dp',
-        ),
-        'cache' => array(
-            'xmldb' => array(
-                'disposition' => "redis",
-                'host' => "redis:6379",
-            ),
-        ),
-        'graphics' => [
-            'extension' => "gm",
-            'executable' => "/usr/bin/gm",
-            'optimize' => true,
-        ],
-        'env' => 'production',
-    ),
-    // }}}
-    // {{{ lib.edit.depage.net graphics
-    'lib.edit.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
+    '*edit.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
         'handler' => 'Depage\Graphics\Ui\Graphics',
         'env' => 'production',
         'extension' => "gm",
