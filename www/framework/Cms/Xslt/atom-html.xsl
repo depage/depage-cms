@@ -10,7 +10,7 @@
     xmlns:pg="http://cms.depagecms.net/ns/page"
     xmlns:sec="http://cms.depagecms.net/ns/section"
     xmlns:edit="http://cms.depagecms.net/ns/edit"
-    extension-element-prefixes="xsl db proj pg sec edit ">
+    extension-element-prefixes="xsl db dp proj pg sec edit php ">
 
     <!-- {{{ edit:text_formatted -->
     <xsl:template match="edit:text_formatted">
@@ -149,28 +149,34 @@
         </xsl:choose>
     </xsl:template>
     <!-- }}} -->
-    <!-- {{{ b -->
-    <xsl:template match="b">
-        <b>
+    <!-- {{{ b i strong em small ul ol li -->
+    <xsl:template match="b | i | strong | em | small | ul | ol | li">
+        <xsl:variable name="tagName" select="name()" />
+        <xsl:element name="{$tagName}">
             <xsl:apply-templates />
-            <xsl:text> </xsl:text>
-        </b>
+        </xsl:element>
+    </xsl:template>
+    <xsl:template match="li/p">
+        <xsl:apply-templates />
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ br -->
+    <xsl:template match="br"><br /></xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:date -->
+    <xsl:template match="edit:date">
+        <time><xsl:attribute name="datetime"><xsl:value-of select="translate(@value,'/','-')"/></xsl:attribute>
+            <xsl:call-template name="formatdateshort">
+                <xsl:with-param name="date"><xsl:value-of select="@value"/></xsl:with-param>
+            </xsl:call-template>
+        </time>
     </xsl:template>
     <!-- }}} -->
-    <!-- {{{ i -->
-    <xsl:template match="i">
-        <i>
-            <xsl:apply-templates />
-            <xsl:text> </xsl:text>
-        </i>
-    </xsl:template>
-    <!-- }}} -->
-    <!-- {{{ small -->
-    <xsl:template match="small">
-        <small>
-            <xsl:apply-templates />
-            <xsl:text> </xsl:text>
-        </small>
+    <!-- {{{ edit:plain_source -->
+    <xsl:template match="edit:plain_source">
+        <pre><code>
+        <xsl:value-of select="dp:changesrc(string(.))" disable-output-escaping="no"/>
+        </code></pre>
     </xsl:template>
     <!-- }}} -->
 
