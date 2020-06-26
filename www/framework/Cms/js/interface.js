@@ -2117,7 +2117,7 @@ var depageCMS = (function() {
             lastLoadTime = Date.now() - previewStarted;
             previewLoadTime = lastLoadTime - 1000;
             previewLoadTime = Math.min(4000, Math.max(200, previewLoadTime));
-            console.log("load times: " + lastLoadTime + "/" + previewLoadTime);
+            //console.log("load times: " + lastLoadTime + "/" + previewLoadTime);
 
             previewUpdateTimer = setInterval(function () {
                 try {
