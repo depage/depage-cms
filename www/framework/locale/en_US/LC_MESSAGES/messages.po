@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-19 16:33+0200\n"
+"POT-Creation-Date: 2020-06-26 21:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -140,9 +140,9 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:644
-#: Cms/Ui/DocProperties.php:688 Cms/Ui/DocProperties.php:726
-#: Cms/Ui/DocProperties.php:766
+#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:647
+#: Cms/Ui/DocProperties.php:691 Cms/Ui/DocProperties.php:729
+#: Cms/Ui/DocProperties.php:769
 msgid "Text"
 msgstr ""
 
@@ -184,8 +184,8 @@ msgstr ""
 msgid "(public)"
 msgstr ""
 
-#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:938
-#: Cms/Ui/DocProperties.php:1036
+#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:941
+#: Cms/Ui/DocProperties.php:1039
 msgid "http://domain.com"
 msgstr ""
 
@@ -2040,7 +2040,7 @@ msgstr ""
 msgid "Project Settings"
 msgstr ""
 
-#: Cms/Ui/Project.php:72 Cms/Ui/Project.php:94 Cms/Ui/DocProperties.php:510
+#: Cms/Ui/Project.php:72 Cms/Ui/Project.php:94 Cms/Ui/DocProperties.php:513
 msgid "Tags"
 msgstr ""
 
@@ -2159,240 +2159,240 @@ msgid ""
 "or to a comma separated list of custom emails for testing."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:253
+#: Cms/Ui/DocProperties.php:256
 msgid "prop_name_edit_img_caption"
 msgstr "Caption"
 
-#: Cms/Ui/DocProperties.php:254
+#: Cms/Ui/DocProperties.php:257
 msgid "prop_name_edit_img_copyright"
 msgstr "Copyright"
 
-#: Cms/Ui/DocProperties.php:255
+#: Cms/Ui/DocProperties.php:258
 msgid "prop_name_edit_img_thumb"
 msgstr "Thumbnail"
 
-#: Cms/Ui/DocProperties.php:347
+#: Cms/Ui/DocProperties.php:350
 msgid "Page Status"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:364
+#: Cms/Ui/DocProperties.php:367
 msgid "Page is published"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:367
+#: Cms/Ui/DocProperties.php:370
 msgid "Page is waiting to be published"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:370
+#: Cms/Ui/DocProperties.php:373
 msgid "Page has unreleased changes"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:373
+#: Cms/Ui/DocProperties.php:376
 msgid "Page is published but has unreleased changes."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:375
+#: Cms/Ui/DocProperties.php:378
 msgid "Page is waiting to be published."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:377
+#: Cms/Ui/DocProperties.php:380
 msgid "Page is published."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:379
+#: Cms/Ui/DocProperties.php:382
 msgid "Page has not been published yet."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:384
+#: Cms/Ui/DocProperties.php:387
 #, php-format
 msgid ""
 "<p class=\"status\">%s<span><a href=\"%s\" target=\"_blank\">%s</a></span></"
 "p>"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:391
+#: Cms/Ui/DocProperties.php:394
 #, php-format
 msgid "<p class=\"status\">%s<span>%s</span></p>"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:401
+#: Cms/Ui/DocProperties.php:404
 #, php-format
 msgid "<p class=\"date\">%s %s by %s</p>"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:402
+#: Cms/Ui/DocProperties.php:405
 msgid "Changed"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:404 Cms/Forms/ReleasePages.php:63
+#: Cms/Ui/DocProperties.php:407 Cms/Forms/ReleasePages.php:63
 msgid "unknown user"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:409
+#: Cms/Ui/DocProperties.php:412
 msgid "url"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:418 Cms/Ui/DocProperties.php:428
+#: Cms/Ui/DocProperties.php:421 Cms/Ui/DocProperties.php:431
 msgid "Earlier page versions"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:419
+#: Cms/Ui/DocProperties.php:422
 msgid "Current Version"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:441
+#: Cms/Ui/DocProperties.php:444
 msgid "Release Page"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:442
+#: Cms/Ui/DocProperties.php:445
 msgid "Mark this page to be published, when project gets published next time"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:444
+#: Cms/Ui/DocProperties.php:447
 msgid "Request Release"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:445
+#: Cms/Ui/DocProperties.php:448
 msgid "Ask for this page the be released"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:467 Cms/Ui/DocProperties.php:893
-#: Cms/Ui/DocProperties.php:927
+#: Cms/Ui/DocProperties.php:470 Cms/Ui/DocProperties.php:896
+#: Cms/Ui/DocProperties.php:930
 msgid "Default"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:469 Cms/Ui/DocProperties.php:894
+#: Cms/Ui/DocProperties.php:472 Cms/Ui/DocProperties.php:897
 #: Cms/XmlDocTypes/Colors.php:15
 msgid "Colorscheme"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:488
+#: Cms/Ui/DocProperties.php:491
 msgid "Navigation"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:526 Cms/Ui/DocProperties.php:543
+#: Cms/Ui/DocProperties.php:529 Cms/Ui/DocProperties.php:546
 msgid "Protection"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:535
+#: Cms/Ui/DocProperties.php:538
 msgid "Page protected"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:546
+#: Cms/Ui/DocProperties.php:549
 msgid "Page is protected and cannot be changed."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:550
+#: Cms/Ui/DocProperties.php:553
 msgid "Pagetype"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:558
+#: Cms/Ui/DocProperties.php:561
 msgid "html"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:559
+#: Cms/Ui/DocProperties.php:562
 msgid "text"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:560
+#: Cms/Ui/DocProperties.php:563
 msgid "php"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:581 Cms/Ui/DocProperties.php:918
+#: Cms/Ui/DocProperties.php:584 Cms/Ui/DocProperties.php:921
 #: Cms/Forms/Newsletter.php:54 Cms/Forms/Project/Language.php:68
 msgid "Title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:600
+#: Cms/Ui/DocProperties.php:603
 msgid "Linkinfo"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:619 Cms/Forms/Newsletter.php:80
+#: Cms/Ui/DocProperties.php:622 Cms/Forms/Newsletter.php:80
 msgid "Description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:663
+#: Cms/Ui/DocProperties.php:666
 msgid "Headline"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:806
+#: Cms/Ui/DocProperties.php:809
 msgid "Type"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:827
+#: Cms/Ui/DocProperties.php:830
 msgid "Date"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:849
+#: Cms/Ui/DocProperties.php:852
 msgid "Time"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:871
+#: Cms/Ui/DocProperties.php:874
 msgid "Color"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:915
+#: Cms/Ui/DocProperties.php:918
 msgid "Link"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:919
+#: Cms/Ui/DocProperties.php:922
 msgid "Link title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:925
+#: Cms/Ui/DocProperties.php:928
 msgid "Target"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:928
+#: Cms/Ui/DocProperties.php:931
 msgid "New Window"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:936 Cms/Ui/DocProperties.php:1034
+#: Cms/Ui/DocProperties.php:939 Cms/Ui/DocProperties.php:1037
 msgid "href"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:956
+#: Cms/Ui/DocProperties.php:959
 msgid "Audio"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:960 Cms/Ui/DocProperties.php:985
-#: Cms/Ui/DocProperties.php:1012
+#: Cms/Ui/DocProperties.php:963 Cms/Ui/DocProperties.php:988
+#: Cms/Ui/DocProperties.php:1015
 msgid "src"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:981
+#: Cms/Ui/DocProperties.php:984
 msgid "Video"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1005
+#: Cms/Ui/DocProperties.php:1008
 msgid "Image"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1022
+#: Cms/Ui/DocProperties.php:1025
 msgid "title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1023
+#: Cms/Ui/DocProperties.php:1026
 msgid "Image title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1028
+#: Cms/Ui/DocProperties.php:1031
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1029
+#: Cms/Ui/DocProperties.php:1032
 msgid "Image description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1053
+#: Cms/Ui/DocProperties.php:1056
 msgid "Table"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1092
+#: Cms/Ui/DocProperties.php:1095
 msgid "Source"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1111
+#: Cms/Ui/DocProperties.php:1114
 msgid "Not allowed to edit this element."
 msgstr ""
 
@@ -2558,12 +2558,12 @@ msgstr ""
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr ""
 
-#: Cms/Project.php:1473
+#: Cms/Project.php:1467
 #, php-format
 msgid "%s published"
 msgstr ""
 
-#: Cms/Project.php:1475
+#: Cms/Project.php:1469
 msgid ""
 "The following pages got published:\n"
 "\n"
