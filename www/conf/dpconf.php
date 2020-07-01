@@ -90,7 +90,7 @@ $conf = array(
     // }}}
 
     // {{{ edit.depage.net
-    'edit.depage.net/' => array(
+    '*edit.depage.net/' => array(
         'handler' => 'depage\Cms\Ui\Main',
         'phpcli' => "/usr/bin/php",
         'db' => array(
@@ -114,7 +114,7 @@ $conf = array(
     ),
     // }}}
 // {{{ edit.depage.net graphics
-    'edit.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
+    '*edit.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
         'handler' => 'Depage\Graphics\Ui\Graphics',
         'env' => 'production',
         'extension' => "gm",
@@ -124,6 +124,7 @@ $conf = array(
         'env' => 'production',
     ),
     // }}}
+
     // {{{ editbeta.depage.net
     'editbeta.depage.net/' => array(
         'handler' => 'depage\Cms\Ui\Main',

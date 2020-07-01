@@ -130,8 +130,8 @@ class DocProperties extends Base
             //$this->form->addHtml("<p>Icon: " . $node->getAttribute("icon") . "</p>");
         }
 
-        if (in_array($node->prefix, ['pg', 'sec', 'edit'])) {
-            // only for page data content
+        if ($_SERVER['REQUEST_METHOD'] === 'GET' && in_array($node->prefix, ['pg', 'sec', 'edit'])) {
+            // only for page data content and only for get request
             $this->addPgRelease($node);
         }
 
@@ -152,8 +152,9 @@ class DocProperties extends Base
             $released = $doc->isReleased();
             $node = $this->form->getValuesXml();
             $hashNew = $doc->hashDomNode($node);
+            $changed = $hashOld !== $hashNew;
 
-            if ($hashOld !== $hashNew) {
+            if ($changed) {
                 $doc->saveNode($node);
 
                 $prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
@@ -173,6 +174,8 @@ class DocProperties extends Base
 
             $this->form->clearSession(false);
             $this->clearOldFormData();
+
+            return new \Depage\Json\Json(["success" => true, "changed" => $changed]);
         }
 
         // @todo clean unsed session?

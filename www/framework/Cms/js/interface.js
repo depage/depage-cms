@@ -61,8 +61,10 @@ var depageCMS = (function() {
         $pagedataTreeContainer,
         $docPropertiesContainer;
 
-    var jstreePages;
-    var jstreePagedata;
+    var jstreePages,
+        jstreePagedata,
+        jstreeLibrary,
+        jstreeColors;
 
     var currentLayout;
 
@@ -817,7 +819,7 @@ var depageCMS = (function() {
             var $deleteButton = localJS.addToolbarButton($toolbar, locale.delete, "icon-delete", localJS.deleteSelectedFiles);
             var last = false;
 
-            $libraryTreeContainer
+            jstreeLibrary = $libraryTreeContainer.depageTree()
                 .on("activate_node.jstree", function(e, data) {
                     var path = data.node.a_attr.href.replace(/libref:\/\//, "");
 
@@ -827,8 +829,8 @@ var depageCMS = (function() {
                         localJS.loadLibraryFiles(path);
                     }
                 })
-                .on("refresh.jstree", function(e, data) {
-                    var selected = data.instance.get_selected(true);
+                .on("refresh.jstree", function() {
+                    var selected = jstreeLibrary.get_selected(true);
 
                     if (typeof selected[0] == 'undefined') return;
                     var path = selected[0].a_attr.href.replace(/libref:\/\//, "");
@@ -839,14 +841,14 @@ var depageCMS = (function() {
                         localJS.loadLibraryFiles(path);
                     }
                 })
-                .on("ready.jstree", function(e, data) {
+                .on("ready.jstree", function() {
                     $fileContainer.click();
                 })
-                .on("focus.jstree", function(e, data) {
+                .on("focus.jstree", function() {
                     $fileContainer.removeClass("focus");
                     $toolbar.removeClass("visible");
                 })
-                .depageTree();
+                .jstree(true);
 
             $fileContainer
                 .on("selectionChange.depage", function() {
@@ -957,15 +959,12 @@ var depageCMS = (function() {
             var $colorTreeContainer = $(".tree.colors .jstree-container");
             var $colorContainer = $(".colorscheme .color-list");
             var $colorProps = $(".color-property");
-            var docref = $colorTreeContainer.attr("data-doc-id");
 
             var $toolbar = $("<span class=\"toolbar-colors\"></span>").appendTo("#toolbarmain .tree-actions");
-            var $addButton = localJS.addToolbarButton($toolbar, locale.create, "icon-create", localJS.addColor);
+            localJS.addToolbarButton($toolbar, locale.create, "icon-create", localJS.addColor);
             var $deleteButton = localJS.addToolbarButton($toolbar, locale.delete, "icon-delete", localJS.deleteSelectedColor);
 
-            var xmldb = new DepageXmldb(baseUrl, projectName, "colors");
-
-            $colorTreeContainer
+            jstreeColors = $colorTreeContainer.depageTree()
                 .on("activate_node.jstree", function(e, data) {
                     var nodeId = null;
                     if (typeof data.node.data !== 'undefined') {
@@ -984,15 +983,15 @@ var depageCMS = (function() {
                         $colorContainer.trigger("selectionChange.depage");
                     });
                 })
-                .on("ready.jstree", function(e, data) {
-                    $colorTreeContainer.jstree(true).activate_node($colorTreeContainer.find("ul:first li:first")[0]);
+                .on("ready.jstree", function() {
+                    jstreeColors.activate_node($colorTreeContainer.find("ul:first li:first")[0]);
                     $colorContainer.click();
                 })
-                .on("focus.jstree", function(e, data) {
+                .on("focus.jstree", function() {
                     $colorContainer.removeClass("focus");
                     $toolbar.removeClass("visible");
                 })
-                .depageTree();
+                .jstree(true);
 
             $colorContainer
                 .on("selectionChange.depage", function() {
@@ -1004,15 +1003,14 @@ var depageCMS = (function() {
                     }
                     localJS.setupColorProperties($color);
                 })
-                .on("click", function(e) {
+                .on("click", function() {
                     $colorContainer.addClass("focus");
                     $toolbar.addClass("visible");
 
                     $colorTreeContainer.jstree(true).looseFocus();
                 })
-                .on("click", "figure", function(e) {
+                .on("click", "figure", function() {
                     var $thumbs = $colorContainer.find("figure");
-                    var current = $thumbs.index(this);
 
                     $colorContainer.find(".selected").removeClass("selected");
 
@@ -1022,7 +1020,7 @@ var depageCMS = (function() {
 
                     $colorContainer.trigger("selectionChange.depage");
                 })
-                .on("changeColorValue.spectrum", "figure", function(e) {
+                .on("changeColorValue.spectrum", "figure", function() {
                     var $color = $(this);
                     var nodeId = $color.attr("data-nodeid");
                     var value = $color.attr("data-value");
@@ -1032,7 +1030,7 @@ var depageCMS = (function() {
 
                     localJS.saveColor(nodeId, value);
                 })
-                .on("changeColorName.spectrum", "figure", function(e) {
+                .on("changeColorName.spectrum", "figure", function() {
                     var $color = $(this);
                     var nodeId = $color.attr("data-nodeid");
                     var value = $color.attr("data-name");
@@ -1222,7 +1220,7 @@ var depageCMS = (function() {
                 jstreePages = $tree.depageTree()
                     .on("activate_node.jstree", function(e, data) {
                         if (typeof window.history != 'undefined') {
-                            window.history.pushState(null, null, baseUrl + "project/" + projectName + "/edit/" + data.node.id + "/");
+                            window.history.replaceState(null, null, baseUrl + "project/" + projectName + "/edit/" + data.node.id + "/");
                         }
                         localJS.loadPagedataTree(data.node.data.docRef);
 
@@ -2119,7 +2117,7 @@ var depageCMS = (function() {
             lastLoadTime = Date.now() - previewStarted;
             previewLoadTime = lastLoadTime - 1000;
             previewLoadTime = Math.min(4000, Math.max(200, previewLoadTime));
-            console.log("load times: " + lastLoadTime + "/" + previewLoadTime);
+            //console.log("load times: " + lastLoadTime + "/" + previewLoadTime);
 
             previewUpdateTimer = setInterval(function () {
                 try {

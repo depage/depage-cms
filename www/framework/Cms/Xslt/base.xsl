@@ -12,6 +12,7 @@
     xmlns:exslt="http://exslt.org/common"
     extension-element-prefixes="xsl exslt db proj pg sec edit ">
 
+    <xsl:import href="xslt://functions.xsl" />
     <xsl:key name="page-by-id" match="pg:*" use="@db:id"/>
 
     <!-- {{{ edit:a -->

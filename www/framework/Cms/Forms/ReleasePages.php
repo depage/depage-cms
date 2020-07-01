@@ -17,6 +17,8 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
      **/
     public function __construct($name, $params = [])
     {
+        $this->canPublish = $params['canPublish'];
+
         $params['cancelUrl'] = DEPAGE_BASE;
         $params['cancelLabel'] = _("Cancel");
         $params['class'] = "lastchanged_pages";
@@ -27,7 +29,7 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
 
         parent::__construct($name, $params);
 
-        $this->label = _("Release Pages Now");
+        $this->label = $this->canPublish ? _("Release Pages Now") : "";
     }
     // }}}
     // {{{ addChildElements()
@@ -42,19 +44,27 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
 
         $pages = $this->project->getXmlNav()->getUnreleasedPages();
         $previewPath = $this->project->getPreviewPath();
+        $editPath = "project/{$this->project->name}/edit/";
 
-        $fs = $this->addFieldset("recentChanges", [
-            'label' => _("Unreleased Pages"),
-            'class' => "select-all",
-        ]);
-        $fs->addHtml("<p>" . _("Please select the pages you want to release:") . "</p>");
+        if ($this->canPublish) {
+            $fs = $this->addFieldset("recentChanges", [
+                'label' => _("Unreleased Pages"),
+                'class' => "select-all",
+            ]);
+            $fs->addHtml("<p>" . _("Please select the pages you want to release:") . "</p>");
+        } else {
+            $fs = $this->addFieldset("recentChanges", [
+                'label' => _("Unreleased Pages"),
+            ]);
+        }
 
         foreach($pages as $page) {
             if (!$page->released) {
                 $username = isset($this->users[$page->lastchangeUid]) ? $this->users[$page->lastchangeUid]->fullname : _("unknown user");
                 $selected = $page->name == $this->selectedDocId;
 
-                $fs->addHtml("<a href=\"" . $previewPath . $page->url . "\" class=\"button preview\" target=\"previewFrame\">" . _("Preview") . "</a>");
+                $fs->addHtml("<a href=\"{$previewPath}{$page->url}\" class=\"button preview\" target=\"previewFrame\">" . _("Preview") . "</a>");
+                $fs->addHtml("<a href=\"{$editPath}{$page->pageId}/\" class=\"button edit\">" . _("Edit") . "</a>");
                 $fs->addBoolean("page-" . $page->id, array(
                     'label' => $page->url,
                     'defaultValue' => $selected,

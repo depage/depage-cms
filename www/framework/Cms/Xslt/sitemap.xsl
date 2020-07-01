@@ -12,6 +12,8 @@
     xmlns:edit="http://cms.depagecms.net/ns/edit"
     extension-element-prefixes="xsl db proj pg sec edit ">
 
+    <xsl:import href="xslt://base.xsl" />
+
     <xsl:template match="proj:pages_struct">
         <urlset>
             <xsl:apply-templates select="pg:*[dp:pageVisible(.)]" />

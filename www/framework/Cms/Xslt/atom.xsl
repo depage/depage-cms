@@ -10,9 +10,10 @@
     xmlns:pg="http://cms.depagecms.net/ns/page"
     xmlns:sec="http://cms.depagecms.net/ns/section"
     xmlns:edit="http://cms.depagecms.net/ns/edit"
-    extension-element-prefixes="xsl db proj pg sec edit ">
+    extension-element-prefixes="xsl db dp proj pg sec edit php ">
 
-    <xsl:include href="xslt://atom-html.xsl" />
+    <xsl:import href="xslt://base.xsl" />
+    <xsl:import href="xslt://atom-html.xsl" />
 
     <xsl:variable name="campaign" select="concat('?utm_campaign=', 'atom-feed')" />
 

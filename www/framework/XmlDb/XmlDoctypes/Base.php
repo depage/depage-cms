@@ -72,9 +72,9 @@ class Base implements DoctypeInterface
                 $xml .= '/>';
             }
             $doc = new \DOMDocument;
-            $doc->loadXML($xml);
+            $doc->loadXML("<root>$xml</root>");
 
-            $result = $doc->documentElement;
+            $result = $doc->documentElement->childNodes;
         }
 
         return $result;
