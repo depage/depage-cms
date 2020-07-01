@@ -19,6 +19,16 @@ Version 2.1   {#v2-1}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.8 / 26.06.2020      {#v2-1-8}
+-------------------
+
+**Backend**
+- added performance optimizations to XmlNav
+- added performance optimizations when autosaving DocProperties
+- refactored publishing tasks
+- enhanced xsl templates for atom feeds
+
+
 v2.1.7 / 19.06.2020      {#v2-1-7}
 -------------------
 
