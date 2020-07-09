@@ -547,9 +547,7 @@
         <xsl:processing-instruction name="php">
             @header("Location: <xsl:value-of select="$url" />");
         ?</xsl:processing-instruction>
-        Redirecting to <xsl:apply-templates select="edit:a[@lang = $currentLang]">
-            <xsl:with-param name="content" select="$url" />
-        </xsl:apply-templates>
+        die();
     </xsl:template>
     <!-- }}} -->
 
@@ -559,13 +557,14 @@
             @header("Location: <xsl:for-each select="//sec:redirect/edit:a[@lang = $currentLang]">
                 <xsl:choose>
                     <xsl:when test="@href_id != ''">
-                        <xsl:value-of select="dp:getPageRef(@href_id)" />
+                        <xsl:value-of select="dp:getPageRef(@href_id, $currentLang, true())" />
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:value-of select="dp:getRef(@href)" />
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:for-each>");
+            die();
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
