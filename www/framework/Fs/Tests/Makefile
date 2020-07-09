@@ -6,7 +6,7 @@ test: server
 	../vendor/bin/phpunit --configuration PHPUnit.xml .
 
 server:
-	$(MAKE) -C docker
+	#$(MAKE) -C docker
 	$(MAKE) run -C docker
 
 clean:

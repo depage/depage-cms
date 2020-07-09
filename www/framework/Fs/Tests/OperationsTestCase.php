@@ -2,11 +2,15 @@
 
 namespace Depage\Fs\Tests;
 
-abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+use Depage\Fs\Exceptions\FsException;
+
+abstract class OperationsTestCase extends TestCase
 {
     // {{{ constructor
-    public function __construct()
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
+        parent::__construct($name, $data, $dataName);
         $this->root = __DIR__;
         $this->src = $this->createSrc();
         $this->dst = $this->createDst();
@@ -14,7 +18,7 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
     // }}}
 
     // {{{ setUp
-    public function setUp()
+    public function setUp():void
     {
         $this->assertTrue($this->src->setUp());
         $this->assertTrue($this->dst->setUp());
@@ -24,7 +28,7 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ tearDown
-    public function tearDown()
+    public function tearDown():void
     {
         $this->assertTrue($this->src->tearDown());
         $this->assertTrue($this->dst->tearDown());
@@ -223,12 +227,11 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ testCdOutOfBaseDir
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Cannot leave base directory
-     */
     public function testCdOutOfBaseDir()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Cannot leave base directory");
+
         $basePwd = $this->fs->pwd();
         $pwd = preg_replace(';Temp/$;', '', $basePwd);
         $this->assertEquals($pwd . 'Temp/', $basePwd);
@@ -237,22 +240,20 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ testCdOutOfBaseDirRelative
-    /**
-     * @expectedException           Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage    Cannot leave base directory
-     */
     public function testCdOutOfBaseDirRelative()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Cannot leave base directory");
+
         $this->fs->cd('..');
     }
     // }}}
     // {{{ testCdFail
-    /**
-     * @expectedException           Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage    Directory not accessible
-     */
     public function testCdFail()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Directory not accessible");
+
         $this->fs->cd('dirDoesntExist');
     }
     // }}}
@@ -295,12 +296,10 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ testMkdirFail
-    /**
-     * @expectedException           Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage    Error while creating directory "testDir/testSubDir".
-     */
     public function testMkdirFail()
     {
+        $this->expectException(FsException::class);
+
         $this->assertFalse($this->dst->is_dir('testDir'));
         $this->assertFalse($this->dst->is_dir('testDir/testSubDir'));
 
@@ -341,22 +340,20 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ testRmDoesntExist
-    /**
-     * @expectedException           Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage    doesn't exist.
-     */
     public function testRmDoesntExist()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("doesn't exist.");
+
         $this->fs->rm('filedoesntexist');
     }
     // }}}
     // {{{ testRmCurrent
-    /**
-     * @expectedException           Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage    Cannot delete current or parent directory
-     */
     public function testRmCurrent()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Cannot delete current or parent directory");
+
         $this->mkdirDst('testDir');
 
         $this->fs->cd('testDir');
@@ -364,12 +361,11 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ testRmParentDirOfCurrent
-    /**
-     * @expectedException           Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage    Cannot delete current or parent directory
-     */
     public function testRmParentDirOfCurrent()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Cannot delete current or parent directory");
+
         $this->mkdirDst('testDir/testSubDir');
 
         $pwd = $this->fs->pwd();
@@ -378,14 +374,59 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
     }
     // }}}
 
+    // {{{ testCopy
+    public function testCopy()
+    {
+        $this->createFileDst('testFile');
+        $this->assertFalse($this->dst->is_file('testFile2'));
+
+        $this->fs->copy('testFile', 'testFile2');
+        $this->assertTrue($this->dst->is_file('testFile'));
+        $this->assertTrue($this->dst->checkFile('testFile2'));
+    }
+    // }}}
+    // {{{ testCopyOverwrite
+    public function testCopyOverwrite()
+    {
+        $this->createFileDst('testFile', 'before');
+        $this->createFileDst('testFile2', 'after');
+
+        $this->fs->copy('testFile2', 'testFile');
+        $this->assertTrue($this->dst->checkFile('testFile', 'after'));
+    }
+    // }}}
+    // {{{ testCopyIntoDirectory
+    public function testCopyIntoDirectory()
+    {
+        $this->createFileDst('testFile');
+        $this->mkdirDst('testDir');
+
+        $this->fs->copy('testFile', 'testDir');
+        $this->assertTrue($this->dst->is_file('testFile'));
+        $this->assertTrue($this->dst->checkFile('testDir/testFile'));
+    }
+    // }}}
+    // {{{ testCopySourceDoesntExist
+    public function testCopySourceDoesntExist()
+    {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("source doesn't exist");
+
+        $this->mkdirDst('testDir');
+        $this->assertFalse($this->dst->is_file('/testFile'));
+
+        $this->fs->copy('testFile', 'testDir/testFile');
+    }
+    // }}}
+
     // {{{ testMv
     public function testMv()
     {
         $this->createFileDst('testFile');
-        $this->assertFalse($this->dst->is_file('/testFile2'));
+        $this->assertFalse($this->dst->is_file('testFile2'));
 
         $this->fs->mv('testFile', 'testFile2');
-        $this->assertFalse($this->dst->is_file('/testFile'));
+        $this->assertFalse($this->dst->is_file('testFile'));
         $this->assertTrue($this->dst->checkFile('testFile2'));
     }
     // }}}
@@ -410,12 +451,11 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ testMvSourceDoesntExist
-    /**
-     * @expectedException           Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage    source doesn't exist
-     */
     public function testMvSourceDoesntExist()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("source doesn't exist");
+
         $this->mkdirDst('testDir');
         $this->assertFalse($this->dst->is_file('/testFile'));
 
@@ -544,7 +584,7 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->fs->test());
         $this->assertTrue($this->dst->tearDown());
         $this->assertFalse($this->fs->test($error));
-        $this->assertContains('file_put_contents', $error);
+        $this->assertStringContainsString('file_put_contents', $error);
     }
     // }}}
 
@@ -556,12 +596,10 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ testLateConnectInvalidDirectoryFail
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage directorydoesnotexist
-     */
     public function testLateConnectInvalidDirectoryFail()
     {
+        $this->expectException(FsException::class);
+
         $params = array('path' => 'directorydoesnotexist');
         $fs = $this->createTestObject($params);
         $fs->ls('*');
@@ -589,3 +627,5 @@ abstract class OperationsTestCase extends \PHPUnit_Framework_TestCase
     }
     // }}}
 }
+
+// vim:set ft=php sw=4 sts=4 fdm=marker et :

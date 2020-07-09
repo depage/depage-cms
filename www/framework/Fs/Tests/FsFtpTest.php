@@ -17,7 +17,7 @@ class FsFtpTest extends OperationsTestCase
     // }}}
 
     // {{{ setUp
-    public function setUp()
+    public function setUp():void
     {
         FtpCurl::disconnect();
         parent::setUp();
@@ -65,23 +65,6 @@ class FsFtpTest extends OperationsTestCase
         $this->assertTrue($fs->test());
     }
     // }}}
-    // {{{ testSslFail
-    public function testSslFail()
-    {
-        $params = array(
-            'path' => '/Temp',
-            'scheme' => 'ftp',
-            'host' => $GLOBALS['REMOTE_HOST'],
-            'user' => $GLOBALS['REMOTE_USER'],
-            'pass' => $GLOBALS['REMOTE_PASS'],
-        );
-
-        $fs = new FsFtp($params);
-
-        $this->assertFalse($fs->test($error));
-        $this->assertSame('SSL certificate problem: unable to get local issuer certificate', $error);
-    }
-    // }}}
     // {{{ testTest
     /**
      * override, sending data to server actually happens at stream_flush
@@ -92,6 +75,15 @@ class FsFtpTest extends OperationsTestCase
         $this->assertTrue($this->fs->test());
         $this->assertTrue($this->dst->tearDown());
         $this->assertFalse($this->fs->test($error));
+    }
+    // }}}
+
+    // {{{ testMkdirFail
+    public function testMkdirFail()
+    {
+        $this->expectExceptionMessage("Error while creating directory \"testDir/testSubDir\".");
+
+        return parent::testMkdirFail();
     }
     // }}}
 }

@@ -3,13 +3,14 @@
 namespace Depage\Fs\Tests;
 
 use Depage\Fs\Tests\TestClasses\FsSshTestClass;
+use Depage\Fs\Exceptions\FsException;
 
 class FsSshKeyTest extends FsSshTest
 {
     // {{{ createTestObject
     public function createTestObject($override = array())
     {
-        $params = array(
+        $params = [
             'path' => '/home/testuser/Temp',
             'scheme' => 'ssh2.sftp',
             'host' => $GLOBALS['REMOTE_HOST'],
@@ -19,7 +20,7 @@ class FsSshKeyTest extends FsSshTest
             'privateKeyFile' => __DIR__ . '/' . $GLOBALS['PRIVATE_RSA_KEY'],
             'publicKeyFile' => __DIR__ . '/' . $GLOBALS['PUBLIC_RSA_KEY'],
             'fingerprint' => $GLOBALS['SSH_FINGERPRINT'],
-        );
+        ];
 
         $newParams = array_merge($params, $override);
 
@@ -46,12 +47,11 @@ class FsSshKeyTest extends FsSshTest
     // }}}
 
     // {{{ testInaccessiblePrivateKeyFile
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage SSH key file not accessible: "filedoesntexist".
-     */
     public function testInaccessiblePrivateKeyFile()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("SSH key file not accessible: \"filedoesntexist\".");
+
         $params = array(
             'privateKeyFile' => 'filedoesntexist',
         );
@@ -89,12 +89,11 @@ class FsSshKeyTest extends FsSshTest
     // }}}
 
     // {{{ testConnectInvalidPrivateKeyString
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Invalid SSH private key format (PEM format required).
-     */
     public function testConnectInvalidPrivateKeyString()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Invalid SSH private key format (PEM format required).");
+
         $params = array(
             'tmp' => '/tmp',
             'privateKey' => 'iamnotaprivatesshkey' ,
@@ -106,12 +105,11 @@ class FsSshKeyTest extends FsSshTest
     }
     // }}}
     // {{{ testConnectInvalidPublicKeyString
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage ssh2_auth_pubkey_file(): Authentication failed for testuser using public key: Invalid public key data
-     */
     public function testConnectInvalidPublicKeyString()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("ssh2_auth_pubkey_file(): Authentication failed for testuser using public key: Invalid public key data");
+
         $params = array(
             'tmp' => '/tmp',
             'privateKeyFile' => __DIR__ . '/' . $GLOBALS['PRIVATE_RSA_KEY'],
@@ -214,12 +212,11 @@ class FsSshKeyTest extends FsSshTest
     }
     // }}}
     // {{{ testInvalidKeyCombination
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Invalid SSH key combination.
-     */
     public function testInvalidKeyCombination()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Invalid SSH key combination.");
+
         $params = array(
             'publicKey' => $GLOBALS['PUBLIC_RSA_KEY'],
         );

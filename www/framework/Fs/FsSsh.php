@@ -61,7 +61,10 @@ class FsSsh extends Fs
         if (!$this->session) {
             $connection = $this->getConnection($fingerprint);
 
-            if (strcasecmp($this->fingerprint, $fingerprint) !== 0) {
+            if (
+                !is_null($this->fingerprint) &&
+                strcasecmp($this->fingerprint, $fingerprint) !== 0
+            ) {
                 throw new Exceptions\FsException('SSH RSA Fingerprints don\'t match.');
             }
 
@@ -172,12 +175,21 @@ class FsSsh extends Fs
     // {{{ rename
     protected function rename($source, $target)
     {
+        $result = true;
+
         // workaround, rename doesn't overwrite files via ssh
-        if (file_exists($target) && is_file($target)) {
+        if (is_file($target) && is_file($source)) {
             $this->rm($target);
+            $result = !is_file($target);
         }
 
-        return parent::rename($source, $target);
+        if ($result) {
+            //parent::rename($source, $target);
+            \ssh2_sftp_rename($this->session, $source, $target);
+            $result = is_file($target);
+        }
+
+        return $result;
     }
     // }}}
 }

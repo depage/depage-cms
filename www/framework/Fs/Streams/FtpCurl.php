@@ -43,7 +43,7 @@ class FtpCurl
     {
         $parsed = Fs::parseUrl($url);
         $host = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $url);
-        $path = $parsed['path'];
+        $path = (isset($parsed['path'])) ? $parsed['path'] : '/';
 
         if (static::$handle) {
             curl_reset(static::$handle);
@@ -57,7 +57,7 @@ class FtpCurl
         }
 
         $username = $parsed['user'];
-        $password = $parsed['pass'];
+        $password = (isset($parsed['pass'])) ? $parsed['pass'] : '';
 
         $options = [
             CURLOPT_USERPWD        => $username . ':' . $password,
@@ -69,8 +69,6 @@ class FtpCurl
 
         if ($parsed['scheme'] == "ftps") {
             $options += [
-                CURLOPT_SSL_VERIFYPEER => true,
-                CURLOPT_SSL_VERIFYHOST => 2,
                 CURLOPT_FTP_SSL        => CURLFTPSSL_TRY, // require SSL For both control and data connections
                 CURLOPT_FTPSSLAUTH     => CURLFTPAUTH_DEFAULT, // let cURL choose the FTP authentication method (either SSL or TLS)
             ];
@@ -81,7 +79,11 @@ class FtpCurl
         }
 
         if ($this->getParameter('caCert')) {
-            $options[CURLOPT_CAINFO] = $this->getParameter('caCert');
+            $options += [
+                CURLOPT_SSL_VERIFYPEER => true,
+                CURLOPT_SSL_VERIFYHOST => 2,
+                CURLOPT_CAINFO => $this->getParameter('caCert'),
+            ];
         }
 
         // cURL FTP enables passive mode by default, so disable it by enabling the PORT command and allowing cURL to select the IP address for the data connection
@@ -444,3 +446,5 @@ class FtpCurl
     }
     // }}}
 }
+
+// vim:set ft=php sw=4 sts=4 fdm=marker :

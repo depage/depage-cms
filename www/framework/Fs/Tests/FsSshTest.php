@@ -3,6 +3,7 @@
 namespace Depage\Fs\Tests;
 
 use Depage\Fs\FsSsh;
+use Depage\Fs\Exceptions\FsException;
 
 class FsSshTest extends OperationsTestCase
 {
@@ -39,12 +40,11 @@ class FsSshTest extends OperationsTestCase
     }
     // }}}
     // {{{ testWrongFingerprint
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage SSH RSA Fingerprints don't match.
-     */
     public function testWrongFingerprint()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("SSH RSA Fingerprints don't match.");
+
         $fs = $this->createTestObject(array('fingerprint' => 'wrongfingerprint'));
         $fs->ls('*');
     }
@@ -67,12 +67,13 @@ class FsSshTest extends OperationsTestCase
     // }}}
     // {{{ testLateConnectInvalidDirectoryFail
     /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Unable to open ssh2.sftp://
      * @todo ambiguous error message
      */
     public function testLateConnectInvalidDirectoryFail()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Unable to open ssh2.sftp://");
+
         return parent::testLateConnectInvalidDirectoryFail();
     }
     // }}}

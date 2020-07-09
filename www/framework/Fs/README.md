@@ -1,4 +1,5 @@
-#depage-fs
+depage-fs
+=========
 
 Transparent, protocol independent, local and remote file system operations.
 
@@ -14,18 +15,25 @@ a remote system.
 depage-fs virtually tracks the remote working directory (cd, pwd). Once the
 remote path is set, it prevents any operations in parent directories.
 
-##Features
-####List of operations
+Features
+========
+
+List of operations
+------------------
 
 pwd, ls, lsDir, lsFiles, exists, fileInfo, cd, mkdir, rm, mv, get, put,
 getString, putString
 
-####Protocols
+Protocols
+---------
 
 local, ftp(s), ssh (authentication by password or key)
 
-##Example
-######File transfer, local to remote
+Example
+-------
+
+File transfer, local to remote
+
 ```php
 $fs = Fs::factory('ftp://user:pass@host/');
 
@@ -34,13 +42,15 @@ $fs->cd('new/path');
 $fs->put('file.zip');
 ```
 
-######First, get the SSH fingerprint...
+First, get the SSH fingerprint...
+
 ```php
 $fs = Fs::factory('ssh://host');
 $print = $fs->getFingerprint();
 ```
 
-######...then connect with SSH key
+then connect with SSH key
+
 ```php
 $params = array(
     'user'              => 'user',
@@ -54,7 +64,8 @@ $fs = Fs::factory('ssh://host', $params);
 $fs->get('/home/user/file.zip');
 ```
 
-##Notes on usage
+Notes on usage
+--------------
 
 - depage-fs error handler converts any file system operation errors/warnings to
 exceptions. The problem causing them may be in a location different to the one
@@ -68,7 +79,8 @@ make sure the connection is encrypted. Susceptible to MITM attacks!
 generated (and subsequently deleted) in a temporary directory specified by the
 'tmp'-parameter.
 
-##License (dual)
+License (dual)
+--------------
 
 - GPL2: <http://www.gnu.org/licenses/gpl-2.0.html>
 - MIT: <http://www.opensource.org/licenses/mit-license.php>
