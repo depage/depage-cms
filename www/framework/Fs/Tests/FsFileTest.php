@@ -3,11 +3,12 @@
 namespace Depage\Fs\Tests;
 
 use Depage\Fs\Tests\TestClasses\FsFileTestClass;
+use Depage\Fs\Exceptions\FsException;
 
 class FsFileTest extends OperationsTestCase
 {
     // {{{ setUp
-    public function setUp()
+    public function setUp():void
     {
         $this->assertTrue($this->src->setUp());
         $this->assertTrue(chdir($this->src->getRoot()));
@@ -16,7 +17,7 @@ class FsFileTest extends OperationsTestCase
     }
     // }}}
     // {{{ tearDown
-    public function tearDown()
+    public function tearDown():void
     {
         $this->assertTrue($this->src->tearDown());
 
@@ -68,12 +69,10 @@ class FsFileTest extends OperationsTestCase
     }
     // }}}
     // {{{ testMkdirFail
-    /**
-     * @expectedException           Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage    mkdir(): No such file or directory
-     */
     public function testMkdirFail()
     {
+        $this->expectExceptionMessage("mkdir(): No such file or directory");
+
         return parent::testMkdirFail();
     }
     // }}}
@@ -89,6 +88,15 @@ class FsFileTest extends OperationsTestCase
         $this->assertEquals('file://' . $cwd . '/path/to/file', $fs->cleanUrl($cwd . '/path/to/file'));
     }
     // }}}
+
+    // {{{ testLateConnectInvalidDirectoryFail
+    public function testLateConnectInvalidDirectoryFail()
+    {
+        $this->expectExceptionMessage("directorydoesnotexist");
+
+        parent::testLateConnectInvalidDirectoryFail();
+    }
+    // }}}
 }
 
-/* vim:set ft=php sw=4 sts=4 fdm=marker et : */
+// vim:set ft=php sw=4 sts=4 fdm=marker et :

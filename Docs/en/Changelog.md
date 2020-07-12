@@ -19,6 +19,14 @@ Version 2.1   {#v2-1}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.9 / 11.07.2020      {#v2-1-9}
+-------------------
+
+**Backend**
+- updated depage-fs to the latest version
+- updated redirect template not to output additional content
+
+
 v2.1.8 / 26.06.2020      {#v2-1-8}
 -------------------
 

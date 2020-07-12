@@ -3,11 +3,12 @@
 namespace Depage\Fs\Tests;
 
 use Depage\Fs\Tests\TestClasses\PrivateSshKeyTestClass;
+use Depage\Fs\Exceptions\FsException;
 
 class PrivateSshKeyTest extends PublicSshKeyTest
 {
     // {{{ setUp
-    public function setUp()
+    public function setUp():void
     {
         $this->keyPath = __DIR__ . '/' . $GLOBALS['PRIVATE_RSA_KEY'];
         $this->publicKeyPath = __DIR__ . '/' . $GLOBALS['PUBLIC_RSA_KEY'];
@@ -41,24 +42,22 @@ class PrivateSshKeyTest extends PublicSshKeyTest
     }
     // }}}
     // {{{ testExtractPublicKeyDsa
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Currently public key generation is only supported for RSA keys.
-     */
     public function testExtractPublicKeyDsa()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Currently public key generation is only supported for RSA keys.");
+
         $key = $this->generateTestObject(__DIR__ . '/' . $GLOBALS['PRIVATE_DSA_KEY']);
 
         $public = $key->extractPublicKey('/tmp');
     }
     // }}}
     // {{{ testInvalidKey
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Invalid SSH private key format (PEM format required).
-     */
     public function testInvalidKey()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Invalid SSH private key format (PEM format required).");
+
         $this->generateTestObject($this->publicKeyPath);
     }
     // }}}

@@ -188,6 +188,26 @@ class Fs
         $this->postCommandHook();
     }
     // }}}
+    // {{{ copy
+    public function copy($sourcePath, $targetPath)
+    {
+        $this->preCommandHook();
+
+        $source = $this->cleanUrl($sourcePath);
+        $target = $this->cleanUrl($targetPath);
+
+        if (file_exists($source)) {
+            if(file_exists($target) && is_dir($target)) {
+                $target .= '/' . $this->extractFileName($source);
+            }
+            \copy($source, $target, $this->streamContext);
+        } else {
+            throw new Exceptions\FsException('Cannot copy "' . $this->cleanUrl($sourcePath, false) . '" to "' . $this->cleanUrl($targetPath, false) . '" - source doesn\'t exist.');
+        }
+
+        $this->postCommandHook();
+    }
+    // }}}
     // {{{ mv
     public function mv($sourcePath, $targetPath)
     {
@@ -334,17 +354,24 @@ class Fs
     {
         $parsed = parse_url($url);
 
+        // hack, parse_url (PHP 5.6.29) won't handle resource name strings
+        if (isset($parsed['fragment'])) {
+            $urlParts = explode('/', $url);
+
+            if (isset($urlParts[2]) && preg_match('/^Resource id \#([0-9]+)$/', $urlParts[2], $matches)) {
+                $urlParts[2] = $matches[1];
+                $parsed = parse_url(implode('/', $urlParts));
+                $parsed['host'] = 'Resource id #' . $parsed['host'];
+            }
+        }
+
         // hack, parse_url matches anything after the first question mark as "query"
-        $path = (isset($parsed['path'])) ? $parsed['path'] : null;
-        $query = (isset($parsed['query'])) ? $parsed['query'] : null;
-        if ($query !== null || preg_match('/\?$/', $url)) {
+        $path = (isset($parsed['path'])) ? $parsed['path'] : '';
+        $query = (isset($parsed['query'])) ? $parsed['query'] : '';
+        if (!empty($query) || preg_match('/\?$/', $url)) {
             $parsed['path'] = $path . '?' . $query;
             unset($parsed['query']);
         }
-
-        if (!isset($parsed['path'])) $parsed['path'] = "/";
-        if (!isset($parsed['user'])) $parsed['user'] = "";
-        if (!isset($parsed['pass'])) $parsed['pass'] = "";
 
         return $parsed;
     }

@@ -5,8 +5,9 @@ namespace Depage\Fs\Tests;
 use Depage\Fs\Fs;
 use Depage\Fs\Exceptions\FsException;
 use Depage\Fs\Tests\TestClasses\FsTestClass;
+use PHPUnit\Framework\TestCase;
 
-class FsTest extends \PHPUnit_Framework_TestCase
+class FsTest extends TestCase
 {
     // {{{ createTestObject
     public function createTestObject($override = array())
@@ -21,7 +22,7 @@ class FsTest extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ setUp
-    public function setUp()
+    public function setUp():void
     {
         $this->fs = $this->createTestObject();
     }
@@ -212,7 +213,7 @@ class FsTest extends \PHPUnit_Framework_TestCase
         );
 
         $fs = $this->createTestObject($params);
-        $this->assertEquals('testScheme://testUser:@testHost/', $fs->pwd());
+        $this->assertEquals('testScheme://testUser@testHost/', $fs->pwd());
     }
     // }}}
 

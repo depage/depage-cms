@@ -3,11 +3,13 @@
 namespace Depage\Fs\Tests;
 
 use Depage\Fs\Tests\TestClasses\PublicSshKeyTestClass;
+use PHPUnit\Framework\TestCase;
+use Depage\Fs\Exceptions\FsException;
 
-class PublicSshKeyTest extends \PHPUnit_Framework_TestCase
+class PublicSshKeyTest extends TestCase
 {
     // {{{ setUp
-    public function setUp()
+    public function setUp():void
     {
         $this->keyPath = __DIR__ . '/' . $GLOBALS['PUBLIC_RSA_KEY'];
         $this->testKey = file_get_contents($this->keyPath);
@@ -31,12 +33,11 @@ class PublicSshKeyTest extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ testKeyFileExistsFail
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage SSH key file not accessible: "filedoesntexist".
-     */
     public function testKeyFileExistsFail()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("SSH key file not accessible: \"filedoesntexist\".");
+
         $key = $this->generateTestObject('filedoesntexist');
     }
     // }}}
@@ -61,12 +62,11 @@ class PublicSshKeyTest extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ testCreateKeyFileAndCleanFail
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Cannot delete temporary key file
-     */
     public function testCreateKeyFileAndCleanFail()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Cannot delete temporary key file");
+
         $key = $this->generateTestObject($this->testKey, '/tmp');
         $this->assertTrue(is_file($key->__toString()));
 
@@ -76,22 +76,20 @@ class PublicSshKeyTest extends \PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ testCreateKeyFileTmpDirNotWritable
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Cannot write to temporary key file directory "tmpdirdoesntexist".
-     */
     public function testCreateKeyFileTmpDirNotWritable()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Cannot write to temporary key file directory \"tmpdirdoesntexist\".");
+
         $key = $this->generateTestObject($this->testKey, 'tmpdirdoesntexist');
     }
     // }}}
     // {{{ testCreateKeyFileWriteError
-    /**
-     * @expectedException Depage\Fs\Exceptions\FsException
-     * @expectedExceptionMessage Cannot create temporary key file
-     */
     public function testCreateKeyFileWriteError()
     {
+        $this->expectException(FsException::class);
+        $this->expectExceptionMessage("Cannot create temporary key file");
+
         $key = $this->generateTestObject('writeFail!', '/tmp');
     }
     // }}}
