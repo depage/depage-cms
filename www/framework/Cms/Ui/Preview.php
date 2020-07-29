@@ -114,7 +114,11 @@ class Preview extends \Depage\Depage\Ui\Base
         $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
         $project->setPreviewType($this->previewType);
 
-        if ($lang == "sitemap.xml") {
+        if ($lang == "api" && $project->isApiAvailable()) {
+            $redirector = new \Depage\Redirector\Redirector($project->getBaseUrl() . '/');
+            require($project->getProjectPath() . 'lib/global/api.php');
+            die();
+        } else if ($lang == "sitemap.xml") {
             $sitemap = new \Depage\Http\Response();
             $sitemap
                 ->setBody($project->generateSitemap())

@@ -791,6 +791,18 @@ class Project extends \Depage\Entity\Entity
         return $lang;
     }
     // }}}
+    // {{{ isApiAvailable()
+    /**
+     * @brief isApiAvailable
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function isApiAvailable()
+    {
+        return file_exists($this->getProjectPath() . 'lib/global/api.php');
+    }
+    // }}}
 
     // {{{ getHomeUrl()
     /**
@@ -1270,7 +1282,7 @@ class Project extends \Depage\Entity\Entity
         }
 
         // transform pages
-        $apiAvailable = file_exists($projectPath . 'lib/global/api.php');
+        $apiAvailable = $this->isApiAvailable();
 
         if ($apiAvailable) {
             // call updateSchema API
