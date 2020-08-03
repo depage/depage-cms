@@ -19,6 +19,14 @@ Version 2.1   {#v2-1}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.10 / 03.08.2020      {#v2-1-10}
+-------------------
+
+**Backend**
+- made it possible to allow project specific api calls in preview
+- updated task runner to automatically retry failed subtasks
+
+
 v2.1.9 / 11.07.2020      {#v2-1-9}
 -------------------
 

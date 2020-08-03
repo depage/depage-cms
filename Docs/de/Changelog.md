@@ -19,6 +19,14 @@ Version 2.1   {#v2-1}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.10 / 03.08.2020      {#v2-1-10}
+-------------------
+
+**Backend**
+- Vorschau aktualisiert, um projekt-spezifische API calls in der Vorschau zuzulassen
+- Task-Runner aktualisiert, um fehlgeschlagene Subtasks automatisch zu wiederholen
+
+
 v2.1.9 / 11.07.2020      {#v2-1-9}
 -------------------
 
