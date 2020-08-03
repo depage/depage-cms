@@ -129,11 +129,16 @@ class TaskRunner extends \Depage\Depage\Ui\Base
 
                 $this->sendNotification("Task finished", "'{$this->task->taskName}' has finished successfully");
             } catch (\Exception $e) {
-                $this->task->setSubtaskStatus($subtask, $e->getMessage());
-                $this->task->setTaskStatus("failed");
-                $this->log("ERROR: " . $e->getMessage());
+                // retry first
+                if ($this->task->retrySubtask($subtask)) {
+                    $this->log("RETRYING AFTER ERROR: " . $e->getMessage());
+                } else {
+                    $this->task->setSubtaskStatus($subtask, $e->getMessage());
+                    $this->task->setTaskStatus("failed");
+                    $this->log("ERROR: " . $e->getMessage());
 
-                $this->sendNotification("Task failed", "'{$this->task->taskName}' failed with " . $e->getMessage());
+                    $this->sendNotification("Task failed", "'{$this->task->taskName}' failed with " . $e->getMessage());
+                }
             }
 
             $this->task->unlock();
