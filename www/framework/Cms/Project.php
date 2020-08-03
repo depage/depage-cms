@@ -1141,14 +1141,32 @@ class Project extends \Depage\Entity\Entity
      **/
     public function addPublishTask($taskName, $publishId, $userId)
     {
+        $targets = $this->getPublishingTargets();
+        $conf = $targets[$publishId];
+
+        $publishPdo = clone $this->pdo;
+        $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->name;
+
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $taskName, $this->name);
-        $task->addSubtask("init publishing subtasks", "
+        $task->addSubtask("initializing publishing task", "
+            \$fs = \\Depage\\Fs\\Fs::factory(%s, array(
+                'user' => %s,
+                'pass' => %s,
+            ));
+            \$pdo = %s;
+            \$publishId = %s;
             \$project = %s;
-            \$project->initPublishTask(%s, %s, %s);
+            \$publisher = new \\Depage\\Publisher\\Publisher(\$pdo, \$fs, \$publishId);
+            \$publisher->testConnection();
+            \$project->initPublishTask(%s, \$publishId, %s);
         ", [
+            $conf->output_folder,
+            $conf->output_user,
+            $conf->output_pass,
+            $publishPdo,
+            $publishId,
             $this,
             $taskName,
-            $publishId,
             $userId,
         ]);
 
@@ -1270,7 +1288,6 @@ class Project extends \Depage\Entity\Entity
             $newlyPublishedPages,
         ]);
 
-        $task->addSubtask("testing publish target", "\$publisher->testConnection();", [], $initId);
         $task->addSubtask("resetting publishing state", "\$publisher->resetPublishedState();", [], $initId);
 
         // publish file library
