@@ -17,7 +17,7 @@
 namespace Depage\Tasks;
 
 class Task {
-    private $tmpvars = array();
+    private $tmpvars = [];
 
     /**
      * @brief fp file pointer to file lock
@@ -334,6 +334,7 @@ class Task {
         unset($subtask, $_tmpindex, $_tmpvar);
 
         $_tmpnames = array_keys(get_defined_vars());
+        $this->tmpvars = [];
         foreach ($_tmpnames as $_tmpname)
         {
             // @todo only save in tempvars if task has subtask?
