@@ -201,6 +201,7 @@ abstract class Transformer
                 'baseUrl' => null,
                 'baseUrlStatic' => null,
                 'projectName' => null,
+                'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
             );
             $variables = array(
                 'navigation' => "document('xmldb://pages')",
@@ -208,7 +209,6 @@ abstract class Transformer
                 'colors' => "document('xmldb://colors')",
                 'languages' => "\$settings/proj:settings/proj:languages",
                 'currentPage' => "\$navigation//pg:page[@status = 'active']",
-                'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
                 'libPath' => "'" . htmlspecialchars('file://' . str_replace(" ", "%20", realpath($this->libPath))) . "'",
                 'var-ga-Account' => "''",
                 'var-ga-Domain' => "''",
