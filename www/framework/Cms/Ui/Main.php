@@ -35,6 +35,7 @@ class Main extends Base {
             'api/*/cache' => '\Depage\Cms\Api\Cache',
             'api/*/css' => '\Depage\Cms\Api\Css',
             'api/*/project' => '\Depage\Cms\Api\Project',
+            'api/*/task' => '\Depage\Cms\Api\Task',
         ];
     }
     // }}}
@@ -365,41 +366,6 @@ class Main extends Base {
 
         imagepng($im);
         imagedestroy($im);
-    }
-    // }}}
-    // {{{ api()
-    /**
-     * @brief api
-     *
-     * @todo move this in own class or classes
-     *
-     * @param mixed $
-     * @return void
-     **/
-    public function api($projectName, $type, $action)
-    {
-        $retVal = [
-            'success' => false,
-        ];
-        try {
-            if ($projectName != "-") {
-                $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
-            }
-        } catch (\Exception $e) {
-            $retVal['error'] = $e->getMessage();
-            return new \Depage\Json\Json($retVal);
-        }
-
-        if ($type == "task") {
-            $taskToDelete = filter_input(INPUT_POST, 'taskId', FILTER_SANITIZE_NUMBER_INT);
-            if ($action == "delete") {
-                if ($task = \Depage\Tasks\Task::load($this->pdo, $taskToDelete)) {
-                    $retVal['success'] = $task->remove();
-                }
-            }
-        }
-
-        return new \Depage\Json\Json($retVal);
     }
     // }}}
 
