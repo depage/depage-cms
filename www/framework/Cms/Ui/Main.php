@@ -34,7 +34,7 @@ class Main extends Base {
             'api/*/user' => '\Depage\Cms\Api\User',
             'api/*/cache' => '\Depage\Cms\Api\Cache',
             'api/*/css' => '\Depage\Cms\Api\Css',
-            //'api/*/project' => '\Depage\Cms\Api\Project',
+            'api/*/project' => '\Depage\Cms\Api\Project',
         ];
     }
     // }}}
@@ -390,19 +390,6 @@ class Main extends Base {
             return new \Depage\Json\Json($retVal);
         }
 
-        if ($type == "project") {
-            $url = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_STRING);
-
-            if ($action == "pageId" && !empty($url)) {
-                $xmlGetter = $project->getXmlGetter();
-
-                $transformer = \Depage\Transformer\Transformer::factory("dev", $xmlGetter, $projectName, "html");
-                $transformer->routeHtmlThroughPhp = true;
-                list($retVal['pageId'],, $retVal['urlPath']) = $transformer->getPageIdFor($url);
-
-                $retVal['success'] = true;
-            }
-        }
         if ($type == "task") {
             $taskToDelete = filter_input(INPUT_POST, 'taskId', FILTER_SANITIZE_NUMBER_INT);
             if ($action == "delete") {

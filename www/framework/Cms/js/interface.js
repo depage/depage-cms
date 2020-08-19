@@ -1245,7 +1245,7 @@ var depageCMS = (function() {
                                 type: 'POST',
                                 url: baseUrl + "api/" + projectName + "/project/pageId/",
                                 data: { url: currentPreviewUrl },
-                                success: function(data, status) {
+                                success: function(data) {
                                     var node = jstreePages.get_node(data.pageId);
                                     if (node) {
                                         jstreePages.activate_node(node);
