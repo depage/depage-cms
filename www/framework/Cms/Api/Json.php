@@ -25,6 +25,10 @@ abstract class Json extends \Depage\Cms\Ui\Base
 
         $this->projectName = $this->urlSubArgs[0];
 
+        if ($this->projectName == "-") {
+            return;
+        }
+
         if (empty($this->projectName)) {
             throw new \Depage\Cms\Exceptions\Project("no project given");
         } else {

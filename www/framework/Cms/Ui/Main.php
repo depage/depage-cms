@@ -31,6 +31,7 @@ class Main extends Base {
             'project/*/library' => '\Depage\Cms\Ui\FileLibrary',
             'project/*/colors' => '\Depage\Cms\Ui\ColorSchemes',
             'api/*/newsletter' => '\Depage\Cms\Api\Newsletter',
+            'api/*/user' => '\Depage\Cms\Api\User',
             //'api/*/cache' => '\Depage\Cms\Api\Cache',
             //'api/*/project' => '\Depage\Cms\Api\Project',
         ];
@@ -388,18 +389,6 @@ class Main extends Base {
             return new \Depage\Json\Json($retVal);
         }
 
-        if ($type == "user") {
-            if ($action == "status") {
-                $retVal['loggedin'] = false;
-                $retVal['success'] = true;
-
-                $user = $this->auth->enforceLazy();
-                if ($user) {
-                    $retVal['loggedin'] = true;
-                    $retVal['user'] = $user->name;
-                }
-            }
-        }
         if ($type == "cache") {
             if ($action == "clear") {
                 $retVal['success'] = $project->clearTransformCache();
