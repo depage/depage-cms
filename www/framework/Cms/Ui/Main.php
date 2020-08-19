@@ -33,6 +33,7 @@ class Main extends Base {
             'api/*/newsletter' => '\Depage\Cms\Api\Newsletter',
             'api/*/user' => '\Depage\Cms\Api\User',
             'api/*/cache' => '\Depage\Cms\Api\Cache',
+            'api/*/css' => '\Depage\Cms\Api\Css',
             //'api/*/project' => '\Depage\Cms\Api\Project',
         ];
     }
@@ -389,11 +390,6 @@ class Main extends Base {
             return new \Depage\Json\Json($retVal);
         }
 
-        if ($type == "css") {
-            if ($action == "generate") {
-                $retVal['success'] = $project->generateCss();
-            }
-        }
         if ($type == "project") {
             $url = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_STRING);
 
