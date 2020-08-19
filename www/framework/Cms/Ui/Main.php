@@ -30,9 +30,9 @@ class Main extends Base {
             'project/*/doc-properties/*/*' => '\Depage\Cms\Ui\DocProperties',
             'project/*/library' => '\Depage\Cms\Ui\FileLibrary',
             'project/*/colors' => '\Depage\Cms\Ui\ColorSchemes',
-            //'api/*/newsletter/' => '\Depage\Cms\Api\Newsletter',
-            //'api/*/cache/' => '\Depage\Cms\Api\Cache',
-            //'api/*/project/' => '\Depage\Cms\Api\Project',
+            'api/*/newsletter' => '\Depage\Cms\Api\Newsletter',
+            //'api/*/cache' => '\Depage\Cms\Api\Cache',
+            //'api/*/project' => '\Depage\Cms\Api\Project',
         ];
     }
     // }}}
@@ -388,23 +388,6 @@ class Main extends Base {
             return new \Depage\Json\Json($retVal);
         }
 
-        if ($type == "newsletter") {
-            $newsletter = new \Depage\Cms\Newsletter($this->pdo, $project, "");
-
-            $values = json_decode(file_get_contents("php://input"));
-
-            if ($values && $action == "subscribe") {
-                $retVal['validation'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
-                $retVal['success'] = true;
-            } else if ($values && $action == "is-subscriber") {
-                $retVal['success'] = $newsletter->isSubscriber($values->email, $values->lang, $values->category);
-            } else if ($values && $action == "confirm") {
-                $retVal['subscriber'] = $newsletter->confirm($values->validation);
-                $retVal['success'] = true;
-            } else if ($values && $action == "unsubscribe") {
-                $retVal['success'] = $newsletter->unsubscribe($values->email, $values->lang, $values->category);
-            }
-        }
         if ($type == "user") {
             if ($action == "status") {
                 $retVal['loggedin'] = false;
