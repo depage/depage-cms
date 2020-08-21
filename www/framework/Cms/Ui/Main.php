@@ -21,8 +21,9 @@ class Main extends Base {
     // {{{ _getSubHandler
     static function _getSubHandler() {
         return [
-            'project/*' => '\Depage\Cms\Ui\Project',
             'user/*' => '\Depage\Cms\Ui\User',
+
+            'project/*' => '\Depage\Cms\Ui\Project',
             'project/*/preview' => '\Depage\Cms\Ui\Preview',
             'project/*/newsletter/*' => '\Depage\Cms\Ui\Newsletter',
             'project/*/tree/*' => '\Depage\Cms\Ui\Tree',
@@ -30,12 +31,15 @@ class Main extends Base {
             'project/*/doc-properties/*/*' => '\Depage\Cms\Ui\DocProperties',
             'project/*/library' => '\Depage\Cms\Ui\FileLibrary',
             'project/*/colors' => '\Depage\Cms\Ui\ColorSchemes',
+            'project/*/addon/*' => '\Depage\Cms\Ui\Addon',
+
             'api/*/newsletter' => '\Depage\Cms\Api\Newsletter',
             'api/*/user' => '\Depage\Cms\Api\User',
             'api/*/cache' => '\Depage\Cms\Api\Cache',
             'api/*/css' => '\Depage\Cms\Api\Css',
             'api/*/project' => '\Depage\Cms\Api\Project',
             'api/*/task' => '\Depage\Cms\Api\Task',
+            'api/*/addon/*' => '\Depage\Cms\Api\Addon',
         ];
     }
     // }}}

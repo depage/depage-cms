@@ -21,11 +21,15 @@ abstract class Json extends \Depage\Cms\Ui\Base
 
     // {{{ _init
     public function _init(array $importVariables = []) {
-        parent::_init($importVariables);
-
         $this->projectName = $this->urlSubArgs[0];
 
+        parent::_init($importVariables);
+
         if ($this->projectName == "-") {
+            return;
+        }
+
+        if (isset($this->project)) {
             return;
         }
 
