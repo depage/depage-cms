@@ -1,0 +1,39 @@
+// {{{ .datatable
+div.datatable {
+    margin-top: $toolbarHeight + $infoHeight;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+
+    table {
+        border: none;
+        border-collapse: collapse;
+        border-bottom: 1px solid $borderColor;
+
+        th,
+        td {
+            white-space: nowrap;
+            padding: 5px;
+            border: none;
+            vertical-align: top;
+            text-align: left;
+        }
+        th {
+            font-weight: bold;
+            background: #ffffff;
+            border-bottom: 1px solid $borderColor;
+        }
+        td.changed {
+            color: $selectionBackgroundColor;
+            font-weight: bold;
+        }
+        tr:nth-child(even)  {
+        }
+        tr:nth-child(odd) {
+            background: $backgroundBrightColor;
+        }
+    }
+}
+// }}}
+
+// vim:set ft=scss sw=4 sts=4 fdm=marker :
