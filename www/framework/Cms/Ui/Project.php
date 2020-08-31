@@ -460,65 +460,6 @@ class Project extends Base
         return $h;
     }
     // }}}
-    // {{{ upload()
-    /**
-     * @brief upload
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function upload()
-    {
-        $libPath = "/" . implode("/", func_get_args());
-        $targetPath = $this->project->getProjectPath() . "lib" . $libPath;
-
-        $form = new \Depage\Cms\Forms\Project\FlashUpload("upload-to-lib", [
-            'project' => $this->project,
-            'targetPath' => $libPath,
-        ]);
-        $form->process();
-        if ($form->validate()) {
-            $values = $form->getValues();
-
-            if (is_dir($targetPath)) {
-                foreach ($values['file'] as $file) {
-                    $filename = \Depage\Html\Html::getEscapedUrl($file['name']);
-                    rename($file['tmp_name'], $targetPath . "/" . $filename);
-
-                    $cachePath = $this->project->getProjectPath() . "lib/cache/";
-                    if (is_dir($cachePath)) {
-                        // remove thumbnails from cache inside of project if available
-                        $cache = \Depage\Cache\Cache::factory("graphics", [
-                            'cachepath' => $cachePath,
-                        ]);
-                        $cache->delete("lib" . $libPath . "/" . $filename . ".*");
-                    }
-
-                    // remove thumbnails from global graphics cache
-                    $cache = \Depage\Cache\Cache::factory("graphics");
-                    $cache->delete("projects/" . $this->project->name . "/lib" . $libPath . "/" . $filename . ".*");
-                }
-            }
-
-            $activeUsers = \Depage\Auth\User::loadActive($this->pdo);
-            $callback = new \Depage\Cms\Rpc\Func("get_update_prop_files", ['path' => $libPath . '/']);
-            foreach ($activeUsers as $user) {
-                $newN = new Notification($this->pdo);
-                $newN->setData([
-                    'sid' => $user->sid,
-                    'tag' => "flashRpcUpdate." . $this->projectName,
-                    'title' => $this->projectName,
-                    'message' => $callback,
-                ])
-                ->save();
-            }
-
-            $form->clearValueOf("file");
-        }
-
-        return $form;
-    }
-    // }}}
 
     // {{{ edit()
     function edit($pageId = null) {
