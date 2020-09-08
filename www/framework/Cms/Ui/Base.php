@@ -99,7 +99,7 @@ class Base extends \Depage\Depage\Ui\Base
      *
      * @return  null
      */
-    public function _package($output) {
+    protected function _package($output) {
         $output = parent::_package($output);
 
         // pack into base-html if output is html-object
@@ -128,7 +128,6 @@ class Base extends \Depage\Depage\Ui\Base
      **/
     protected function getProject($projectName)
     {
-        // @todo check if current user is allowed to load project
         if ($projectName != "+") {
             return \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->authUser, $projectName)[0];
         } else {

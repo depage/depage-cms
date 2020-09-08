@@ -44,6 +44,13 @@ class Request {
         return $this;
     }
     // }}}
+    // {{{ setJson()
+    public function setJson($postData) {
+        $this->setPostData(json_encode($postData));
+
+        return $this;
+    }
+    // }}}
     // {{{ setCookie()
     public function setCookie($cookie) {
         if (is_array($cookie)) {
@@ -125,7 +132,7 @@ class Request {
 
         curl_close($ch);
 
-        return new Response($header, $body, $info);
+        return new Response($body, $header, $info);
     }
     // }}}
 

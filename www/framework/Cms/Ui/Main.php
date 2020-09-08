@@ -21,8 +21,9 @@ class Main extends Base {
     // {{{ _getSubHandler
     static function _getSubHandler() {
         return [
-            'project/*' => '\Depage\Cms\Ui\Project',
             'user/*' => '\Depage\Cms\Ui\User',
+
+            'project/*' => '\Depage\Cms\Ui\Project',
             'project/*/preview' => '\Depage\Cms\Ui\Preview',
             'project/*/newsletter/*' => '\Depage\Cms\Ui\Newsletter',
             'project/*/tree/*' => '\Depage\Cms\Ui\Tree',
@@ -30,9 +31,15 @@ class Main extends Base {
             'project/*/doc-properties/*/*' => '\Depage\Cms\Ui\DocProperties',
             'project/*/library' => '\Depage\Cms\Ui\FileLibrary',
             'project/*/colors' => '\Depage\Cms\Ui\ColorSchemes',
-            //'api/*/newsletter/' => '\Depage\Cms\Api\Newsletter',
-            //'api/*/cache/' => '\Depage\Cms\Api\Cache',
-            //'api/*/project/' => '\Depage\Cms\Api\Project',
+            'project/*/addon/*' => '\Depage\Cms\Ui\Addon',
+
+            'api/*/newsletter' => '\Depage\Cms\Api\Newsletter',
+            'api/*/user' => '\Depage\Cms\Api\User',
+            'api/*/cache' => '\Depage\Cms\Api\Cache',
+            'api/*/css' => '\Depage\Cms\Api\Css',
+            'api/*/project' => '\Depage\Cms\Api\Project',
+            'api/*/task' => '\Depage\Cms\Api\Task',
+            'api/*/addon/*' => '\Depage\Cms\Api\Addon',
         ];
     }
     // }}}
@@ -363,93 +370,6 @@ class Main extends Base {
 
         imagepng($im);
         imagedestroy($im);
-    }
-    // }}}
-    // {{{ api()
-    /**
-     * @brief api
-     *
-     * @todo move this in own class or classes
-     *
-     * @param mixed $
-     * @return void
-     **/
-    public function api($projectName, $type, $action)
-    {
-        $retVal = [
-            'success' => false,
-        ];
-        try {
-            if ($projectName != "-") {
-                $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $projectName);
-            }
-        } catch (\Exception $e) {
-            $retVal['error'] = $e->getMessage();
-            return new \Depage\Json\Json($retVal);
-        }
-
-        if ($type == "newsletter") {
-            $newsletter = new \Depage\Cms\Newsletter($this->pdo, $project, "");
-
-            $values = json_decode(file_get_contents("php://input"));
-
-            if ($values && $action == "subscribe") {
-                $retVal['validation'] = $newsletter->subscribe($values->email, $values->firstname, $values->lastname, $values->description, $values->lang, $values->category);
-                $retVal['success'] = true;
-            } else if ($values && $action == "is-subscriber") {
-                $retVal['success'] = $newsletter->isSubscriber($values->email, $values->lang, $values->category);
-            } else if ($values && $action == "confirm") {
-                $retVal['subscriber'] = $newsletter->confirm($values->validation);
-                $retVal['success'] = true;
-            } else if ($values && $action == "unsubscribe") {
-                $retVal['success'] = $newsletter->unsubscribe($values->email, $values->lang, $values->category);
-            }
-        }
-        if ($type == "user") {
-            if ($action == "status") {
-                $retVal['loggedin'] = false;
-                $retVal['success'] = true;
-
-                $user = $this->auth->enforceLazy();
-                if ($user) {
-                    $retVal['loggedin'] = true;
-                    $retVal['user'] = $user->name;
-                }
-            }
-        }
-        if ($type == "cache") {
-            if ($action == "clear") {
-                $retVal['success'] = $project->clearTransformCache();
-            }
-        }
-        if ($type == "css") {
-            if ($action == "generate") {
-                $retVal['success'] = $project->generateCss();
-            }
-        }
-        if ($type == "project") {
-            $url = filter_input(INPUT_POST, 'url', FILTER_SANITIZE_STRING);
-
-            if ($action == "pageId" && !empty($url)) {
-                $xmlGetter = $project->getXmlGetter();
-
-                $transformer = \Depage\Transformer\Transformer::factory("dev", $xmlGetter, $projectName, "html");
-                $transformer->routeHtmlThroughPhp = true;
-                list($retVal['pageId'],, $retVal['urlPath']) = $transformer->getPageIdFor($url);
-
-                $retVal['success'] = true;
-            }
-        }
-        if ($type == "task") {
-            $taskToDelete = filter_input(INPUT_POST, 'taskId', FILTER_SANITIZE_NUMBER_INT);
-            if ($action == "delete") {
-                if ($task = \Depage\Tasks\Task::load($this->pdo, $taskToDelete)) {
-                    $retVal['success'] = $task->remove();
-                }
-            }
-        }
-
-        return new \Depage\Json\Json($retVal);
     }
     // }}}
 
