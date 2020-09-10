@@ -1153,10 +1153,6 @@ class Project extends \Depage\Entity\Entity
      **/
     public function addPublishTask($taskName, $publishId, $userId)
     {
-        $generator = new Tasks\PublishGenerator($this->pdo);
-        $task = $generator->create($taskName, $publishId, $userId, $this);
-
-        $task->begin();
 
         return $task;
     }

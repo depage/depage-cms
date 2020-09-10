@@ -314,20 +314,24 @@ class Project extends Base
             $values = $form->getValues();
             $publishId = $values['publishId'];
 
-            if ($values['clearTransformCache']) {
-                $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->project->name, "html-live-" . $publishId);
-                $transformCache->clearAll();
-            }
-
-            // release pages
+            $releasePages = [];
             foreach ($values as $key => $value) {
                 if ($value == true && preg_match('/page-(.*)/', $key, $matches)) {
-                    $this->project->releaseDocument($matches[1], $this->authUser->id);
+                    $releasePages[] = $matches[1];
                 }
             }
-            $this->project->releaseDocument("pages", $this->authUser->id);
 
-            $this->project->addPublishTask("Publish Project '{$this->project->name}/{$publishId}'", $publishId, $this->authUser->id);
+            $generator = new \Depage\Cms\Tasks\PublishGenerator($this->pdo);
+            $task = $generator->create(
+                "Publish Project '{$this->project->name}/{$publishId}'",
+                $publishId,
+                $this->authUser->id,
+                $this->project,
+                $releasePages,
+                $values['clearTransformCache'],
+            );
+
+            $task->begin();
 
             $form->clearSession();
 

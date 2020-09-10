@@ -77,7 +77,7 @@ class PublishGenerator
      *
      * @return void
      **/
-    public function create($taskName, $publishId, $userId, $project)
+    public function create($taskName, $publishId, $userId, $project, $releasePages = [], $clearTransformCache = false)
     {
         $this->taskName = $taskName;
         $this->publishId = $publishId;
@@ -89,9 +89,11 @@ class PublishGenerator
         $this->task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->taskName, $this->project->name);
         $this->task->addSubtask("initializing publishing task", "
             \$generator = %s;
-            \$generator->queueSubtasks();
+            \$generator->queueSubtasks(%s, %s);
         ", [
             $this,
+            $releasePages,
+            $clearTransformCache,
         ]);
 
         return $this->task;
@@ -147,6 +149,24 @@ class PublishGenerator
         return new \Depage\Publisher\Urls($publishPdo, $this->publishId);
     }
     // }}}
+    // {{{ getTransformCache()
+    /**
+     * @brief getTransformCache
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getTransformCache()
+    {
+        $conf = $this->project->getPublishingTargets()[$this->publishId];
+
+        return new \Depage\Transformer\TransformCache(
+            $this->pdo,
+            $this->project->name,
+            $conf->template_set . "-live-" . $this->publishId
+        );
+    }
+    // }}}
     // {{{ getTransformer()
     /**
      * @brief getTransformer
@@ -160,11 +180,7 @@ class PublishGenerator
 
         $xmlgetter = $this->project->getXmlGetter();
 
-        $transformCache = new \Depage\Transformer\TransformCache(
-            $this->pdo,
-            $this->project->name,
-            $conf->template_set . "-live-" . $this->publishId
-        );
+        $transformCache = $this->getTransformCache();
         //$transformCache = null;
 
         $transformer = \Depage\Transformer\Transformer::factory(
@@ -181,7 +197,7 @@ class PublishGenerator
         $transformer->setBaseUrlStatic(
             $this->project->getBaseUrlStatic($this->publishId)
         );
-        $transformer->routeHtmlThroughPhp = $conf->mod_rewrite == "true";
+        $transformer->routeHtmlThroughPhp = $this->project->getProjectConfig->routeHtmlThroughPhp;
 
         return $transformer;
     }
@@ -228,7 +244,7 @@ class PublishGenerator
      * @param mixed
      * @return void
      **/
-    public function queueSubtasks()
+    public function queueSubtasks($releasePages = [], $clearTransformCache = false)
     {
         $publisher = $this->getPublisher();
         $publisher->testConnection();
@@ -240,7 +256,11 @@ class PublishGenerator
 
         $apiAvailable = $this->project->isApiAvailable();
 
-        $this->releaseDocuments();
+        $this->releaseDocuments($releasePages);
+
+        if ($clearTransformCache) {
+            $this->getTransformCache()->clearAll();
+        }
 
         $this->queueInit();
         $this->queuePublishFiles();
@@ -592,10 +612,15 @@ class PublishGenerator
      * @param mixed
      * @return void
      **/
-    protected function releaseDocuments()
+    protected function releaseDocuments($releasePages = [])
     {
         $xmldb = $this->project->getXmlDb($this->userId);
         $docs = $xmldb->getDocuments();
+
+        // save pages in history
+        foreach ($releasePages as $page) {
+            $this->project->releaseDocument($page, $this->userId);
+        }
 
         // save folders in history
         foreach ($docs as $doc) {
