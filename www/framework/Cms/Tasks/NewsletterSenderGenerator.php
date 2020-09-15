@@ -63,9 +63,13 @@ class NewsletterSenderGenerator extends PublishGenerator
                 ->setHtmlText($newsletter->transform("live", $lang));
             // @todo add header List-Unsubscribe:
 
-            $initId = $this->task->addSubtask("initializing mail", "\$mail = %s; \$newsletter = %s;", [
+            $initId = $this->task->addSubtask(
+                "initializing mail",
+                "\$mail = %s;
+                \$newsletter = \$generator->getNewsletter(%s);
+                ", [
                 $mail,
-                $newsletter,
+                $newsletter->name,
             ]);
 
             foreach ($emails as $to) {

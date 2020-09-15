@@ -197,7 +197,7 @@ class PublishGenerator
         $transformer->setBaseUrlStatic(
             $this->project->getBaseUrlStatic($this->publishId)
         );
-        $transformer->routeHtmlThroughPhp = $this->project->getProjectConfig->routeHtmlThroughPhp;
+        $transformer->routeHtmlThroughPhp = $this->project->getProjectConfig()->routeHtmlThroughPhp;
 
         return $transformer;
     }
@@ -234,6 +234,18 @@ class PublishGenerator
             'cachePath' => $projectPath . "lib/cache/graphics/",
             'relativePath' => $projectPath,
         ]);
+    }
+    // }}}
+    // {{{ getNewsletter()
+    /**
+     * @brief getNewsletter
+     *
+     * @param mixed $name
+     * @return void
+     **/
+    public function getNewsletter($name)
+    {
+        return \Depage\Cms\Newsletter::loadByName($this->pdo, $this->project, $name);
     }
     // }}}
 
@@ -447,10 +459,9 @@ class PublishGenerator
             \$project = \$generator->getProject();
             \$publisher->publishString(
                 \$project->generateSitemap(%s),
-                %s
+                'sitemap.xml'
             );", [
                 $this->publishId,
-                "sitemap.xml",
         ], $this->initId);
 
     }
@@ -564,7 +575,7 @@ class PublishGenerator
             // @todo check if newsletter has been published
             foreach ($languages as $lang => $name) {
                 $this->task->addSubtask("publishing newsletter {$newsletter->name}", "
-                    \$newsletter = \Depage\Cms\Newsletter::loadByName(\$pdo, \$project, %s);
+                    \$newsletter = \$generator->getNewsletter(%s);
                     \$publisher->publishString(
                         \$newsletter->transform(\"live\", \"$lang\"),
                         %s
