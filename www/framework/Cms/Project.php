@@ -1144,19 +1144,6 @@ class Project extends \Depage\Entity\Entity
         return $doc->getDocInfo()->rootid;
     }
     // }}}
-    // {{{ addPublishTask()
-    /**
-     * @brief addPublishTask
-     *
-     * @param mixed $param
-     * @return void
-     **/
-    public function addPublishTask($taskName, $publishId, $userId)
-    {
-
-        return $task;
-    }
-    // }}}
 
     // {{{ getXsltProcessor()
     /**
@@ -1264,7 +1251,7 @@ class Project extends \Depage\Entity\Entity
             'routeHtmlThroughPhp' => false,
             'publishNotifications' => [],
             'releaseRequestNotifications' => [],
-            'version' => 1,
+            'version' => 2,
         ]);
 
         if (file_exists("$projectPath/lib/global/config.php")) {

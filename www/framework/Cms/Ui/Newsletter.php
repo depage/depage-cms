@@ -141,9 +141,15 @@ class Newsletter extends Base
                 $this->newsletter->sendTo($values['emails'], "en");
             } else {
                 $publishId = array_keys($this->project->getPublishingTargets())[0];
-                $this->project->addPublishTask($this->newsletter->name, $publishId, $this->authUser->id);
 
-                $this->newsletter->sendToSubscribers($values['to']);
+                $generator = new \Depage\Cms\Tasks\NewsletterSenderGenerator($this->pdo, $this->project, $this->authUser->id);
+                $task = $generator->createNewsletterSender(
+                    $publishId,
+                    $this->newsletter,
+                    $this->conf->from,
+                    $values['to']
+                );
+                $task->begin();
             }
             $form->clearSession();
 

@@ -321,12 +321,9 @@ class Project extends Base
                 }
             }
 
-            $generator = new \Depage\Cms\Tasks\PublishGenerator($this->pdo);
-            $task = $generator->create(
-                "Publish Project '{$this->project->name}/{$publishId}'",
+            $generator = new \Depage\Cms\Tasks\PublishGenerator($this->pdo, $this->project, $this->authUser->id);
+            $task = $generator->createPublisher(
                 $publishId,
-                $this->authUser->id,
-                $this->project,
                 $releasePages,
                 $values['clearTransformCache'],
             );

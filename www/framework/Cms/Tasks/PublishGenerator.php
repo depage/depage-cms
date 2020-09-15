@@ -54,9 +54,11 @@ class PublishGenerator
      * @param mixed $taskName, $publishId, $userId, $project
      * @return void
      **/
-    public function __construct($pdo)
+    public function __construct($pdo, $project, $userId)
     {
         $this->pdo = $pdo;
+        $this->userId = $userId;
+        $this->project = $project;
     }
     // }}}
 
@@ -77,12 +79,10 @@ class PublishGenerator
      *
      * @return void
      **/
-    public function create($taskName, $publishId, $userId, $project, $releasePages = [], $clearTransformCache = false)
+    public function createPublisher($publishId, $releasePages = [], $clearTransformCache = false)
     {
-        $this->taskName = $taskName;
         $this->publishId = $publishId;
-        $this->userId = $userId;
-        $this->project = $project;
+        $this->taskName = "Publishing '{$this->project->name}/{$this->publishId}'";
 
         $conf = $this->project->getPublishingTargets()[$this->publishId];
 
