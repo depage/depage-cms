@@ -660,7 +660,7 @@ abstract class Transformer
             $path = $url->getRelativePathTo($path);
         }
         if ($this->routeHtmlThroughPhp) {
-            $path = preg_replace("/\.php$/", ".html", $path);
+            //$path = preg_replace("/\.php$/", ".html", $path);
         }
 
         return $path;
