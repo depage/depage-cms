@@ -19,6 +19,18 @@ Version 2.1   {#v2-1}
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.11 / 16.09.2020      {#v2-2-0}
+-------------------
+
+**Frontend**
+- Neue Front-End Addons für Projekte hinzugefügt
+
+**Backend**
+- Refactoring der API Klassen
+- Tasks zum Veröffentlichen und Versenden von Newsletters optimiert
+- Eingebettete HTTP Klassen auf die letzte Version aktualisiert
+
+
 v2.1.10 / 03.08.2020      {#v2-1-10}
 -------------------
 
@@ -41,7 +53,7 @@ v2.1.8 / 26.06.2020      {#v2-1-8}
 **Backend**
 - Performance Optimierungen zu XmlNav hinzugefügt
 - Performance Optimierungen beim Auto-Speichern von Doc-Properties hinzugefügt
-- Refactoring des Vreöffentlichungs-Tasks
+- Refactoring des Veröffentlichungs-Tasks
 - XSL Vorlagen für Atom-Feeds verbessert
 
 

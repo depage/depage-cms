@@ -19,6 +19,18 @@ Version 2.1   {#v2-1}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.11 / 16.09.2020      {#v2-2-0}
+-------------------
+
+**Frontend**
+- added Custom UI addons for projects
+
+**Backend**
+- refactored api routing
+- optimized publishing and newsletter sending tasks
+- updated included http classes to latest version
+
+
 v2.1.10 / 03.08.2020      {#v2-1-10}
 -------------------
 
