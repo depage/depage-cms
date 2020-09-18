@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-18 13:29+0200\n"
+"POT-Creation-Date: 2020-09-18 13:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2151,7 +2151,7 @@ msgstr "%d Seiten gelöscht."
 
 #: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:36 Cms/tpl/projectlist.tpl:22
 #: Cms/tpl/newsletterList.tpl:47 Cms/tpl/toolbar_main.tpl:42
-#: Cms/Forms/ReleasePages.php:75
+#: Cms/Forms/ReleasePages.php:77
 msgid "Edit"
 msgstr "Editieren"
 
@@ -2247,7 +2247,7 @@ msgstr "<p class=\"date\">%s %s von %s</p>"
 msgid "Changed"
 msgstr "Geändert"
 
-#: Cms/Ui/DocProperties.php:407 Cms/Forms/ReleasePages.php:71
+#: Cms/Ui/DocProperties.php:407 Cms/Forms/ReleasePages.php:73
 msgid "unknown user"
 msgstr "unbekannter Benutzer"
 
@@ -2620,7 +2620,7 @@ msgstr "Vorschau des Projektes"
 
 #: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:18
 #: Cms/tpl/projectmain.tpl:42 Cms/tpl/publish.tpl:18
-#: Cms/Forms/ReleasePages.php:54 Cms/Forms/ReleasePages.php:74
+#: Cms/Forms/ReleasePages.php:54 Cms/Forms/ReleasePages.php:76
 #: Cms/Forms/NewsletterPublish.php:63
 msgid "Preview"
 msgstr "Vorschau"
@@ -2975,10 +2975,14 @@ msgstr "Vorschau der Änderungen"
 msgid "Please select the pages you want to release:"
 msgstr "Bitte markieren Sie die Seiten, die Sie freigeben möchten:"
 
-#: Cms/Forms/ReleasePages.php:80
+#: Cms/Forms/ReleasePages.php:82
 #, php-format
 msgid "Changed by %s, %s"
 msgstr "Geändert von %s, %s"
+
+#: Cms/Forms/ReleasePages.php:88
+msgid "All pages are already released."
+msgstr "Alle Seiten sind bereits freigegeben."
 
 #: Cms/Forms/NewsletterPublish.php:29
 msgid "Send Now"
@@ -3247,6 +3251,9 @@ msgstr "(Unbenanntes Farbschema)"
 #: Cms/XmlDocTypes/Library.php:23
 msgid "Untitled"
 msgstr "Unbenannt"
+
+#~ msgid "There are no unreleased pages."
+#~ msgstr "Es gibt keine nicht freigegebenen Seiten"
 
 #~ msgid "Upload files to:"
 #~ msgstr "Daten hochladen nach:"

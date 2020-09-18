@@ -66,6 +66,8 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
             ]);
         }
 
+        $numUnreleased = 0;
+
         foreach($pages as $page) {
             if (!$page->released) {
                 $username = isset($this->users[$page->lastchangeUid]) ? $this->users[$page->lastchangeUid]->fullname : _("unknown user");
@@ -78,7 +80,12 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
                     'defaultValue' => $selected,
                 ));
                 $fs->addHtml("<p class=\"small\">" . sprintf(_("Changed by %s, %s"), $username, $formatter->format($page->lastchange, true)) . "</p>");
+                $numUnreleased++;
             }
+        }
+
+        if ($numUnreleased == 0) {
+            $fs->addHtml("<p>" . _("All pages are already released.") . "</p>");
         }
     }
     // }}}
