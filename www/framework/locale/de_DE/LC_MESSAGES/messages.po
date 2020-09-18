@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-06-26 21:45+0200\n"
+"POT-Creation-Date: 2020-09-18 13:29+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1998,44 +1998,44 @@ msgstr "Benutzer '%s' bearbeiten"
 msgid "Add new User"
 msgstr "Neuen Benutzer hinzufügen"
 
-#: Cms/Ui/Main.php:103
+#: Cms/Ui/Main.php:110
 msgid "Your current session expired. Please login again."
 msgstr ""
 "Ihre aktuelle Sitzung ist abgelaufen. Bitte loggen Sie sich erneut ein."
 
-#: Cms/Ui/Main.php:113 Cms/Forms/Login.php:22 Cms/Forms/Login.php:37
+#: Cms/Ui/Main.php:120 Cms/Forms/Login.php:22 Cms/Forms/Login.php:37
 msgid "Login"
 msgstr ""
 
-#: Cms/Ui/Main.php:165 Cms/tpl/toolbar_main.tpl:28
+#: Cms/Ui/Main.php:172 Cms/tpl/toolbar_main.tpl:28
 msgid "Projects"
 msgstr "Projekte"
 
-#: Cms/Ui/Main.php:166
+#: Cms/Ui/Main.php:173
 msgid "Edit, preview or changed settings for your projects"
 msgstr "Bearbeitung, Vorschau oder Änderung der Einstellungen ihrer Projekte"
 
-#: Cms/Ui/Main.php:235
+#: Cms/Ui/Main.php:242
 msgid "Tasks"
 msgstr ""
 
-#: Cms/Ui/Main.php:237
+#: Cms/Ui/Main.php:244
 msgid "Shows the currently running background tasks"
 msgstr "Zeigt die aktuell laufenden Hintergrundtasks an"
 
-#: Cms/Ui/Main.php:299
+#: Cms/Ui/Main.php:306
 msgid "Users"
 msgstr "Benutzer"
 
-#: Cms/Ui/Main.php:301
+#: Cms/Ui/Main.php:308
 msgid "Shows the users that are currently logged in"
 msgstr "Zeigt alle aktuell angemeldeten Benutzer"
 
-#: Cms/Ui/Main.php:329
+#: Cms/Ui/Main.php:336
 msgid "News"
 msgstr ""
 
-#: Cms/Ui/Main.php:330
+#: Cms/Ui/Main.php:337
 msgid "Shows news and version info"
 msgstr "News und Versionsinfo anzeigen"
 
@@ -2129,29 +2129,29 @@ msgstr "Neues Projekt hinzufügen"
 msgid "You are not allowed to publish this project."
 msgstr "Sie haben keine Authentifizierung, diese Projekt zu veröffentlichen."
 
-#: Cms/Ui/Project.php:337
+#: Cms/Ui/Project.php:338
 #, php-format
 msgid "Publish Project '%s'"
 msgstr "Publizieren von Projekt '%s'"
 
-#: Cms/Ui/Project.php:392
+#: Cms/Ui/Project.php:393
 #, php-format
 msgid "Release Pages for Project '%s'"
 msgstr "Seiten freigeben für Projekt '%s'"
 
-#: Cms/Ui/Project.php:439
+#: Cms/Ui/Project.php:440
 #, php-format
 msgid "Unreleased Pages for Project '%s'"
 msgstr "Nicht freigegebene Seiten für Projekt '%s'"
 
-#: Cms/Ui/Project.php:672
+#: Cms/Ui/Project.php:614
 #, php-format
 msgid "Deleted %d pages."
 msgstr "%d Seiten gelöscht."
 
 #: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:36 Cms/tpl/projectlist.tpl:22
 #: Cms/tpl/newsletterList.tpl:47 Cms/tpl/toolbar_main.tpl:42
-#: Cms/Forms/ReleasePages.php:67
+#: Cms/Forms/ReleasePages.php:75
 msgid "Edit"
 msgstr "Editieren"
 
@@ -2169,11 +2169,11 @@ msgstr ""
 msgid "User is not allowed to send newsletters"
 msgstr "Dieser Benutzer darf keine Newsletter versenden"
 
-#: Cms/Ui/Newsletter.php:166
+#: Cms/Ui/Newsletter.php:172
 msgid "Publish Newsletter"
 msgstr "Newsletter veröffentlichen"
 
-#: Cms/Ui/Newsletter.php:167
+#: Cms/Ui/Newsletter.php:173
 msgid ""
 "You can send the newsletter to a group of your subscribers (e.g. 'Default') "
 "or to a comma separated list of custom emails for testing."
@@ -2247,7 +2247,7 @@ msgstr "<p class=\"date\">%s %s von %s</p>"
 msgid "Changed"
 msgstr "Geändert"
 
-#: Cms/Ui/DocProperties.php:407 Cms/Forms/ReleasePages.php:63
+#: Cms/Ui/DocProperties.php:407 Cms/Forms/ReleasePages.php:71
 msgid "unknown user"
 msgstr "unbekannter Benutzer"
 
@@ -2421,7 +2421,7 @@ msgstr "Quelltext"
 msgid "Not allowed to edit this element."
 msgstr "Sie haben keine Authentifizierung, dieses Element zu bearbeiten."
 
-#: Cms/Ui/Base.php:193
+#: Cms/Ui/Base.php:192
 msgid "You are not allowed here."
 msgstr "Sie haben hier keine Authentifizierung."
 
@@ -2437,6 +2437,19 @@ msgstr "Sie haben eine neue Benachrichtigung von %s erhalten:"
 #: Cms/BackgroundTasks.php:82
 msgid "Your faithful servant on"
 msgstr "Ihr treuer Helfer auf"
+
+#: Cms/Tasks/PublishGenerator.php:664
+#, php-format
+msgid "%s published"
+msgstr "%s veröffentlicht"
+
+#: Cms/Tasks/PublishGenerator.php:666
+msgid ""
+"The following pages got published:\n"
+"\n"
+msgstr ""
+"Die folgenden Seiten wurden veröffentlicht:\n"
+"\n"
 
 #: Cms/js/locale.php:21 Cms/Forms/User.php:26 Cms/Forms/ReleasePages.php:23
 msgid "Cancel"
@@ -2575,27 +2588,14 @@ msgstr "Zum geteilten Layout wechseln"
 msgid "Switch to preview-only layout"
 msgstr "Zum Nur-Vorschau Layout wechseln"
 
-#: Cms/Project.php:1073
+#: Cms/Project.php:1097
 msgid "Document Release Request"
 msgstr "Anfrage zur Seitenfreigabe: "
 
-#: Cms/Project.php:1074
+#: Cms/Project.php:1098
 #, php-format
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr "%s bittet um eine Seitenfreigabe von '%s' für Projekt '%s'."
-
-#: Cms/Project.php:1467
-#, php-format
-msgid "%s published"
-msgstr "%s veröffentlicht"
-
-#: Cms/Project.php:1469
-msgid ""
-"The following pages got published:\n"
-"\n"
-msgstr ""
-"Die folgenden Seiten wurden veröffentlicht:\n"
-"\n"
 
 #: Cms/tpl/settings.tpl:5 Cms/tpl/projectlist.tpl:44
 #: Cms/tpl/toolbar_main.tpl:55 Cms/tpl/toolbar_main.tpl:68
@@ -2620,7 +2620,8 @@ msgstr "Vorschau des Projektes"
 
 #: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:18
 #: Cms/tpl/projectmain.tpl:42 Cms/tpl/publish.tpl:18
-#: Cms/Forms/ReleasePages.php:66 Cms/Forms/NewsletterPublish.php:63
+#: Cms/Forms/ReleasePages.php:54 Cms/Forms/ReleasePages.php:74
+#: Cms/Forms/NewsletterPublish.php:63
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -2803,8 +2804,8 @@ msgstr "Freigegebene Newsletter"
 msgid "Inline help"
 msgstr "Inline Hilfe"
 
-#: Cms/tpl/changelist.tpl:13 Cms/Forms/ReleasePages.php:51
-#: Cms/Forms/ReleasePages.php:57
+#: Cms/tpl/changelist.tpl:13 Cms/Forms/ReleasePages.php:59
+#: Cms/Forms/ReleasePages.php:65
 msgid "Unreleased Pages"
 msgstr "Nicht freigegebene Seiten"
 
@@ -2966,11 +2967,15 @@ msgstr "Publikations-Cache vor der Veröffentlichung leeren."
 msgid "Release Pages Now"
 msgstr "Seiten jetzt freigeben"
 
-#: Cms/Forms/ReleasePages.php:54
+#: Cms/Forms/ReleasePages.php:50
+msgid "Preview of Changes"
+msgstr "Vorschau der Änderungen"
+
+#: Cms/Forms/ReleasePages.php:62
 msgid "Please select the pages you want to release:"
 msgstr "Bitte markieren Sie die Seiten, die Sie freigeben möchten:"
 
-#: Cms/Forms/ReleasePages.php:72
+#: Cms/Forms/ReleasePages.php:80
 #, php-format
 msgid "Changed by %s, %s"
 msgstr "Geändert von %s, %s"
@@ -3029,14 +3034,6 @@ msgstr "ID"
 #: Cms/Forms/Project/Basic.php:72
 msgid "Project Group"
 msgstr "Projektgruppe"
-
-#: Cms/Forms/Project/FlashUpload.php:35
-msgid "Upload files to:"
-msgstr "Daten hochladen nach:"
-
-#: Cms/Forms/Project/FlashUpload.php:39
-msgid "Choose File"
-msgstr "Datei auswählen"
 
 #: Cms/Forms/Project/Publish.php:20
 msgid "Save Publish Settings"
@@ -3250,6 +3247,12 @@ msgstr "(Unbenanntes Farbschema)"
 #: Cms/XmlDocTypes/Library.php:23
 msgid "Untitled"
 msgstr "Unbenannt"
+
+#~ msgid "Upload files to:"
+#~ msgstr "Daten hochladen nach:"
+
+#~ msgid "Choose File"
+#~ msgstr "Datei auswählen"
 
 #~ msgid "You are not allowed to release pages on this project."
 #~ msgstr ""

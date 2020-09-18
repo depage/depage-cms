@@ -335,7 +335,7 @@ class Project extends Base
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
-        $title = sprintf(_("Publish Project '%s'"), $this->project->name);
+        $title = sprintf(_("Publish Project '%s'"), $this->project->fullname);
 
         $h = new Html("publish.tpl", [
             'content' => new Html("box.tpl", [
@@ -390,7 +390,7 @@ class Project extends Base
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
-        $title = sprintf(_("Release Pages for Project '%s'"), $this->project->name);
+        $title = sprintf(_("Release Pages for Project '%s'"), $this->project->fullname);
         $previewUrl = "";
 
         if ($pageInfo = $this->project->getXmlNav()->getPageInfo($docId)) {
@@ -437,7 +437,7 @@ class Project extends Base
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
-        $title = sprintf(_("Unreleased Pages for Project '%s'"), $this->project->name);
+        $title = sprintf(_("Unreleased Pages for Project '%s'"), $this->project->fullname);
         $previewUrl = "";
 
         if ($pageInfo = $this->project->getXmlNav()->getPageInfo($docId)) {

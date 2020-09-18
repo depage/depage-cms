@@ -46,6 +46,14 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
         $previewPath = $this->project->getPreviewPath();
         $editPath = "project/{$this->project->name}/edit/";
 
+        $fs = $this->addFieldset("preview", [
+            'label' => _("Preview of Changes"),
+        ]);
+        $fs->addHtml("<p>");
+            $fs->addHtml("<a href=\"{$previewPath}\" class=\"preview\" target=\"previewFrame\">" . $this->project->fullname . "</a>");
+            $fs->addHtml("<a href=\"{$previewPath}\" class=\"button preview\" target=\"previewFrame\">" . _("Preview") . "</a>");
+        $fs->addHtml("</p>");
+
         if ($this->canPublish) {
             $fs = $this->addFieldset("recentChanges", [
                 'label' => _("Unreleased Pages"),
