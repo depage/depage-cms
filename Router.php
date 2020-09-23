@@ -106,6 +106,7 @@ class Router
         $action = $url->getPart($options->urlSubArgs);
         $args = $url->getParts($options->urlSubArgs + 1);
 
+        $action = str_replace("-", "_", $action);
         $action = preg_replace("/\.(html|php)$/", "", $action);
 
         if (empty($action)) {
@@ -113,6 +114,9 @@ class Router
         }
         $handler->action = $action;
 
+        if (is_callable([$handler, '_init'])) {
+            $handler->_init();
+        }
         if (is_callable([$handler, $action])) {
             $response = call_user_func_array([$handler, $action], $args);
         } else {
