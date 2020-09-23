@@ -103,7 +103,12 @@ class Handler
      **/
     protected function redirect($url)
     {
-        \Depage\Router\Router::redirect("{$this->baseUrl}{$this->lang}{$url}");
+        if (preg_match("/^\/[^\/].*/", $url)) {
+            // interal link
+            $url = "{$this->baseUrl}{$this->lang}{$url}";
+        }
+
+        \Depage\Router\Router::redirect($url);
     }
     // }}}
 }
