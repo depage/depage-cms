@@ -143,7 +143,7 @@ class Url
      * @param mixed
      * @return void
      **/
-    public function getParts($offset, $length = null)
+    public function getParts($offset = 0, $length = null)
     {
         if (!is_null($length) && $length <= 0) {
             return [];
@@ -169,6 +169,21 @@ class Url
     public function getPart($offset)
     {
         return $this->parts[$offset] ?? null;
+    }
+    // }}}
+    // {{{ setPart()
+    /**
+     * @brief setPart
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function setPart($offset, $val)
+    {
+        $this->parts[$offset] = $val;
+        $this->path = "/" . implode("/", $this->parts) . "/";
+
+        return $this;
     }
     // }}}
 
