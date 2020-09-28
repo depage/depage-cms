@@ -300,7 +300,7 @@
         <xsl:param name="id" />
         <xsl:param name="linebreaks" />
 
-        <xsl:if test="($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true'">
+        <xsl:if test="dp:hasLangContent()">
             <xsl:apply-templates>
                 <xsl:with-param name="class" select="$class"/>
                 <xsl:with-param name="id" select="$id"/>
@@ -311,63 +311,63 @@
     <!-- }}} -->
     <!-- {{{ edit:text_formatted mode autolist-->
     <xsl:template match="edit:text_formatted" mode="autolist">
-        <xsl:if test="($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true'">
+        <xsl:if test="dp:hasLangContent()">
             <xsl:apply-templates mode="autolist" />
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:text_headline -->
     <xsl:template match="edit:text_headline">
-        <xsl:if test="($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true'">
+        <xsl:if test="dp:hasLangContent()">
             <xsl:apply-templates mode="linebreaks" />
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:text_headline h1 -->
     <xsl:template match="edit:text_headline" mode="h1">
-        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+        <xsl:if test="dp:hasLangContent()">
             <h1><xsl:apply-templates mode="linebreaks" /></h1>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:text_headline h2 -->
     <xsl:template match="edit:text_headline" mode="h2">
-        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+        <xsl:if test="dp:hasLangContent()">
             <h2><xsl:apply-templates mode="linebreaks" /></h2>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:text_headline h3 -->
     <xsl:template match="edit:text_headline" mode="h3">
-        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+        <xsl:if test="dp:hasLangContent()">
             <h3><xsl:apply-templates mode="linebreaks" /></h3>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:text_headline h4 -->
     <xsl:template match="edit:text_headline" mode="h4">
-        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+        <xsl:if test="dp:hasLangContent()">
             <h4><xsl:apply-templates mode="linebreaks" /></h4>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:text_headline h5 -->
     <xsl:template match="edit:text_headline" mode="h5">
-        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+        <xsl:if test="dp:hasLangContent()">
             <h5><xsl:apply-templates mode="linebreaks" /></h5>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:text_headline h6 -->
     <xsl:template match="edit:text_headline" mode="h6">
-        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+        <xsl:if test="dp:hasLangContent()">
             <h6><xsl:apply-templates mode="linebreaks" /></h6>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:text_headline p -->
     <xsl:template match="edit:text_headline" mode="p">
-        <xsl:if test="(($currentPage/@multilang = 'true' and @lang = $currentLang) or $currentPage/@multilang != 'true') and normalize-space(string(.)) != ''">
+        <xsl:if test="dp:hasLangContent(">
             <p><xsl:apply-templates mode="linebreaks" /></p>
         </xsl:if>
     </xsl:template>

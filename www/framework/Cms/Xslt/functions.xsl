@@ -65,6 +65,25 @@
         </xsl:choose>
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:hasLangContent() -->
+    <!--
+        dp:hasLangContent($node, $lang)
+
+    -->
+    <func:function name="dp:hasLangContent">
+        <xsl:param name="node" select="." />
+        <xsl:param name="lang" select="$currentLang" />
+
+        <xsl:choose>
+            <xsl:when test="normalize-space(string($node)) != '' and (($currentPage/@multilang = 'true' or not($currentPage)) and ./@lang = $lang) or $currentPage/@multilang != 'true'">
+                <func:result select="true()" />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="false()" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </func:function>
+    <!-- }}} -->
 
     <!-- {{{ dp:getDocument() -->
     <!--
