@@ -366,6 +366,17 @@
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::fileinfo', string($path), string($extended))" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:includeUnparsed() -->
+    <!--
+        dp:includeUnparsed(libref)
+
+    -->
+    <func:function name="dp:includeUnparsed">
+        <xsl:param name="path" />
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::includeUnparsed', string($path))" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:glob() -->
     <!--
         dp:glob(libref)

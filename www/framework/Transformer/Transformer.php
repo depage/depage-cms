@@ -546,6 +546,7 @@ abstract class Transformer
             "autokeywords" => [$this, "xsltAutokeywords"],
             "changesrc" => [$this, "xsltChangeSrc"],
             "fileinfo" => [$this, "xsltFileinfo"],
+            "includeUnparsed" => [$this, "xsltIncludeUnparsed"],
             "formatDate" => [$this, "xsltFormatDate"],
             "getLibRef" => [$this, "xsltGetLibRef"],
             "getPageRef" => [$this, "xsltGetPageRef"],
@@ -696,6 +697,33 @@ abstract class Transformer
             $xml .= " $key=\"" . htmlspecialchars($value, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
         }
         $xml .= " />";
+
+        $doc = new \DOMDocument();
+        $doc->loadXML($xml);
+
+        return $doc;
+    }
+    // }}}
+    // {{{ xsltIncludeUnparsed
+    /**
+     * gets fileinfo for libref path
+     *
+     * @public
+     *
+     * @param    $path (string) libref path to target file
+     *
+     * @return    $xml (xml) file info as xml string
+     */
+    public function xsltIncludeUnparsed($path) {
+        $xml = "";
+        $path = "projects/" . $this->projectName . "/lib" . substr($path, 8);
+
+        $xml = "<text>";
+        if (file_exists($path)) {
+            $xml .= htmlspecialchars(file_get_contents($path),
+                \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8");
+        }
+        $xml .= "</text>";
 
         $doc = new \DOMDocument();
         $doc->loadXML($xml);
