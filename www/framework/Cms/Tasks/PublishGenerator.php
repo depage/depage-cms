@@ -73,9 +73,9 @@ class PublishGenerator
 
     }
     // }}}
-    // {{{ create()
+    // {{{ createPublisher()
     /**
-     * @brief create
+     * @brief createPublisher
      *
      * @return void
      **/

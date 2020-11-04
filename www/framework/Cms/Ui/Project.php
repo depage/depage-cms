@@ -697,10 +697,11 @@ class Project extends Base
      **/
     public function update()
     {
-        $updateSrc = $this->project->getProjectPath() . "xslt/update.php";
+        $generator = new \Depage\Cms\Tasks\UpdateProjectGenerator($this->pdo, $this->project, $this->authUser->id);
+        $task = $generator->createUpdater();
 
-        if (file_exists($updateSrc)) {
-            $this->project->addProjectUpdateTask();
+        if ($task) {
+            $task->begin();
 
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         } else {
