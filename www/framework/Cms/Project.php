@@ -1181,6 +1181,7 @@ class Project extends \Depage\Entity\Entity
         if (!$doc) {
             return;
         }
+        $released = $doc->isReleased();
         $node = $doc->getSubdocByNodeId($id);
 
         if (!$newNode = $xsltProc->transformToDoc($node)) {
@@ -1199,6 +1200,10 @@ class Project extends \Depage\Entity\Entity
             $doc->deleteNode($id);
         } else if ($node->saveXml() != $newNode->saveXml()) {
             $doc->replaceNode($newNode, $id);
+        }
+        if ($released) {
+            $doc->getHistory()->save(1, true);
+            $doc->clearCache();
         }
     }
     // }}}

@@ -113,6 +113,10 @@ class Page extends Base
         $doc->clearCache();
 
         $pageInfo = $this->project->getXmlNav()->getPageInfo($this->document->getDocInfo()->name);
+        if (!isset($pageInfo->pageId)) {
+            return;
+        }
+
         $parentPageId = $doc->getParentIdById($pageInfo->pageId);
 
         $prefix = $this->xmlDb->pdo->prefix . "_proj_" . $this->project->name;
