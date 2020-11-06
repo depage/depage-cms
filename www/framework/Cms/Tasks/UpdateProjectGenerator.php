@@ -109,7 +109,7 @@ class UpdateProjectGenerator
         if (!$newNode->hasChildNodes()) {
             $doc->deleteNode($id);
         } else if ($node->saveXml() != $newNode->saveXml()) {
-            $doc->replaceNode($newNode, $id);
+            $doc->saveNode($newNode);
         }
     }
     // }}}
