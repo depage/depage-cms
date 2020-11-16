@@ -215,6 +215,7 @@ abstract class Transformer
                 'var-pa-siteId' => "''",
                 'var-pa-Domain' => "''",
                 'var-fb-Account' => "''",
+                'var-pinterest-tagId' => "''",
             );
 
             // add variables from settings
