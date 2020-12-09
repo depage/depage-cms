@@ -101,7 +101,7 @@ abstract class PdoEntity extends Entity
      * @param mixed $timestamp = null
      * @return void
      **/
-    protected function dateTimestamp($timestamp = null)
+    public static function dateTimestamp($timestamp = null)
     {
         if ($timestamp === null) {
             $timestamp = time();

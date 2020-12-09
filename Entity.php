@@ -142,7 +142,7 @@ abstract class Entity implements \JsonSerializable
                 $this->data[$key] = $val;
             }
 
-            return true;
+            return $this;
         }
 
         $trace = debug_backtrace();
@@ -152,7 +152,7 @@ abstract class Entity implements \JsonSerializable
             ' on line ' . $trace[0]['line'],
             E_USER_NOTICE);
 
-        return false;
+        return $this;
     }
     // }}}
 
@@ -207,6 +207,10 @@ abstract class Entity implements \JsonSerializable
      */
     public function __isset($key)
     {
+        $getter = "get" . ucfirst($key);
+        if (method_exists($this, $getter)) {
+            return true;
+        }
         return (isset($this->data[$key]));
     }
     // }}}
