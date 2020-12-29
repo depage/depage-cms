@@ -163,7 +163,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
             } else {
                 $this->unlock();
 
-                throw new Exceptions\Exception(implode("\n", $commandOutput));
+                throw new \Depage\Graphics\Exceptions\Exception(implode("\n", $commandOutput));
             }
         }
 
