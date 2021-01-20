@@ -234,25 +234,25 @@ class Imgurl
     // {{{ addCrop()
     public function addCrop($width, $height, $x = 0, $y = 0)
     {
-        $this->actions[] = "crop{$width}x{$height}-{$x}x{$y}";
+        $this->actions[] = "crop-{$width}x{$height}-{$x}x{$y}";
     }
     // }}}
     // {{{ addResize()
     public function addResize($width, $height)
     {
-        $this->actions[] = "resize{$width}x{$height}";
+        $this->actions[] = "resize-{$width}x{$height}";
     }
     // }}}
     // {{{ addThumb()
     public function addThumb($width, $height)
     {
-        $this->actions[] = "thumb{$width}x{$height}";
+        $this->actions[] = "thumb-{$width}x{$height}";
     }
     // }}}
     // {{{ addThumbfill()
     public function addThumbfill($width, $height)
     {
-        $this->actions[] = "thumbfill{$width}x{$height}";
+        $this->actions[] = "thumbfill-{$width}x{$height}";
     }
     // }}}
     // {{{ setQuality()
