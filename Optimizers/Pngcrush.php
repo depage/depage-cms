@@ -35,7 +35,7 @@ class Pngcrush extends Optimizer
         $this->command .= "-rem cHRM ";
         $this->command .= "-rem iCCP ";
         $this->command .= "-rem sRGB ";
-        
+
         // blacken transparent areas
         $this->command .= "-blacken ";
 
@@ -45,7 +45,7 @@ class Pngcrush extends Optimizer
 
         $success = $this->execCommand();
 
-        if ($success) {
+        if ($success && filesize($filename) > filesize($tmpfile)) {
             unlink($filename);
             rename($tmpfile, $filename);
         } else {
