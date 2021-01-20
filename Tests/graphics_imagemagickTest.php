@@ -13,7 +13,9 @@ class graphics_imagemagickTest extends TestCase
      **/
     public function setUp():void
     {
-        $this->graphics = new graphics_imagemagickTestClass(array('executable' => 'bin'));
+        $this->graphics = new graphics_imagemagickTestClass([
+            'executable' => 'bin',
+        ]);
     }
     // }}}
 
@@ -137,7 +139,7 @@ class graphics_imagemagickTest extends TestCase
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test2.png');
 
-        $this->assertSame("bin -size 100x100 -background none ( '" . __DIR__ . "/images/test.jpg' ) -flatten -quality 95 png:'" . __DIR__ . "/output/test2.png'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin -size 100x100 -background none ( '" . __DIR__ . "/images/test.jpg' ) -flatten -quality 95 -strip -define png:format=png00 png:'" . __DIR__ . "/output/test2.png'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
@@ -151,7 +153,7 @@ class graphics_imagemagickTest extends TestCase
         $this->graphics->addResize(200, 200);
         $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test.jpg');
 
-        $this->assertSame("bin -size 200x200 -background #FFF ( '" . __DIR__ . "/images/test.jpg' -resize 200x200! ) -flatten -quality 85 jpg:'" . __DIR__ . "/output/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin -size 200x200 -background #FFF ( '" . __DIR__ . "/images/test.jpg' -resize 200x200! ) -flatten -quality 85 -strip -interlace Plane jpg:'" . __DIR__ . "/output/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
@@ -227,6 +229,47 @@ class graphics_imagemagickTest extends TestCase
     {
         $this->graphics->render(__DIR__ . '/images/test.gif', __DIR__ . '/output/test.gif');
         $this->assertSame('', $this->graphics->getQuality(), 'GIF quality string error.');
+    }
+    // }}}
+
+    // {{{ testGetOptimizeJpg()
+    /**
+     * Tests getQuality method for GIF
+     **/
+    public function testGetOptimizeJpg()
+    {
+        $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test.jpg');
+        $this->assertSame(' -strip -interlace Plane', $this->graphics->getOptimize(), 'GIF quality string error.');
+    }
+    // }}}
+    // {{{ testGetOptimizePng()
+    /**
+     * Tests getQuality method for GIF
+     **/
+    public function testGetOptimizePng()
+    {
+        $this->graphics->render(__DIR__ . '/images/test.png', __DIR__ . '/output/test.png');
+        $this->assertSame(' -strip -define png:format=png00', $this->graphics->getOptimize(), 'GIF quality string error.');
+    }
+    // }}}
+    // {{{ testGetOptimizeWebp()
+    /**
+     * Tests getQuality method for GIF
+     **/
+    public function testGetOptimizeWebp()
+    {
+        $this->graphics->render(__DIR__ . '/images/test.webp', __DIR__ . '/output/test.webp');
+        $this->assertSame(' -strip', $this->graphics->getOptimize(), 'GIF quality string error.');
+    }
+    // }}}
+    // {{{ testGetOptimizeWebpLossless()
+    /**
+     * Tests getQuality method for GIF
+     **/
+    public function testGetOptimizeWebpLossless()
+    {
+        $this->graphics->render(__DIR__ . '/images/test.png', __DIR__ . '/output/test.webp');
+        $this->assertSame(' -strip -define webp:lossless=true', $this->graphics->getOptimize(), 'GIF quality string error.');
     }
     // }}}
 

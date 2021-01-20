@@ -329,15 +329,14 @@ class Imagemagick extends \Depage\Graphics\Graphics
      **/
     protected function getOptimize()
     {
-        $param = "";
-        if ($this->optimize) {
-            $param .= " -strip";
+        $param = " -strip";
 
-            if ($this->outputFormat == 'jpg') {
-                $param .= " -interlace Plane";
-            } else if ($this->outputFormat == 'png') {
-                $param .= " -define png:format=png00";
-            }
+        if ($this->outputFormat == 'jpg') {
+            $param .= " -interlace Plane";
+        } else if ($this->outputFormat == 'png') {
+            $param .= " -define png:format=png00";
+        } else if ($this->outputFormat == "webp" && $this->inputFormat == "png") {
+            $param .= " -define webp:lossless=true";
         }
 
         return $param;
