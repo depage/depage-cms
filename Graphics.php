@@ -477,7 +477,7 @@ class Graphics
      **/
     protected function getQuality()
     {
-        if ($this->outputFormat == 'jpg') {
+        if ($this->outputFormat == 'jpg' || $this->outputFormat == "webp") {
             if (
                 is_numeric($this->quality)
                 && $this->quality >= 0

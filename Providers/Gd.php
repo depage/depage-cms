@@ -85,8 +85,6 @@ class Gd extends \Depage\Graphics\Graphics
      **/
     protected function thumb($width, $height)
     {
-        list($width, $height) = $this->dimensions($width, $height);
-
         if (!$this->bypassTest($width, $height)) {
             $newSize = $this->dimensions($width, null);
 
@@ -120,8 +118,6 @@ class Gd extends \Depage\Graphics\Graphics
      **/
     protected function thumbfill($width, $height)
     {
-        list($width, $height) = $this->dimensions($width, $height);
-
         if (!$this->bypassTest($width, $height)) {
             $newSize = $this->dimensions($width, null);
 

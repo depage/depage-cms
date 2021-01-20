@@ -52,24 +52,21 @@ add a white background for transparent pixels.
 
 Basic usage as image service with the gd library and no image optimization:
 
-    <?php
-    /*
-     * @file getimage.php
-     */
+```php
+<?php
     require_once(__DIR__ . "/php/Graphics/Graphics.php");
 
     $imgurl = new Depage\Graphics\Imgurl();
     $imgurl->render()->display();
+```
 
 ### Extended Usage with Options ###
 
 Extended usage as image service with the imagemagick as conversion utility
 and jpegtran and optipng as optimization tools:
 
-    <?php
-    /*
-     * @file getimage.php
-     */
+```php
+<?php
     require_once(__DIR__ . "/php/Graphics/Graphics.php");
 
     $imgurl = new Depage\Graphics\Imgurl(array(
@@ -82,12 +79,14 @@ and jpegtran and optipng as optimization tools:
         ),
     ));
     $imgurl->render()->display();
+```
 
 
 Usage as Image-Editing/Conversion Tool
 --------------------------------------
 
-    <?php
+```php
+<?php
     require_once(__DIR__ . "/php/Graphics/Graphics.php");
 
     $graphics = new Depage\Graphics\Graphics(array(
@@ -103,6 +102,7 @@ Usage as Image-Editing/Conversion Tool
     $graphics->addBackground("#ffffff");
 
     $graphics->render("sourceImage.png", "targetImage.jpg");
+```
 
 
 Webserver Configuration
@@ -110,15 +110,17 @@ Webserver Configuration
 
 ### nginx ###
 
-    location /basedirectory {
-        location ~ (?i)/basedirectory/(.*)\.(jpg|jpeg|gif|png)\.([^/]*)\.(jpg|jpeg|gif|png)$ {
-            rewrite (?i)^(/basedirectory)/(?!lib/cache/graphics)(.*)$ $1/lib/cache/graphics/$2 last;
+```
+location /basedirectory {
+    location ~ (?i)/basedirectory/(.*)\.(jpg|jpeg|gif|png)\.([^/]*)\.(jpg|jpeg|gif|png)$ {
+        rewrite (?i)^(/basedirectory)/(?!lib/cache/graphics)(.*)$ $1/lib/cache/graphics/$2 last;
 
-            try_files $uri /basedirectory/lib/global/getimage.php;
-        }
-
-        try_files $uri $uri/;
+        try_files $uri /basedirectory/lib/global/getimage.php;
     }
+
+    try_files $uri $uri/;
+}
+```
 
 
 ### Apache ###
@@ -127,6 +129,7 @@ Webserver Configuration
 
 ### .htacess ###
 
+```
 RewriteEngine       on
 RewriteBase         /
 
@@ -141,6 +144,7 @@ RewriteRule         ^lib/cache/graphics/(.*)\.(jpg|jpeg|png|gif)\.([^/]*)\.(png)
 
 RewriteCond         %{REQUEST_FILENAME}   !-s
 RewriteRule         ^lib/cache/graphics/(.*)\.(jpg|jpeg|png|gif)\.([^/]*)\.(gif)$ /lib/global/getimage.php [T=image/gif]
+```
 
 
 Install Using Composer
