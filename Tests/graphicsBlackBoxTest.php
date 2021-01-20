@@ -21,37 +21,6 @@ class graphicsBlackBoxTest extends TestCase
     ];
     protected $maxDifference = 0.5;
 
-    // {{{ constructor()
-    /**
-     * Constructor function
-     **/
-    public function __construct()
-    {
-        parent::__construct();
-
-        $i = 1;
-        $types = imagetypes();
-        $aSupportedTypes = array();
-
-        $aPossibleImageTypeBits = array(
-            \IMG_GIF => 'gif',
-            \IMG_JPG => 'jpg',
-            \IMG_PNG => 'png',
-        );
-        if (defined('IMG_WEBP')) {
-            $aPossibleImageTypeBits[\IMG_WEBP] = "webp";
-        }
-
-        foreach ($aPossibleImageTypeBits as $iImageTypeBits => $sImageTypeString) {
-            if (imagetypes() & $iImageTypeBits) {
-                $aSupportedTypes[] = array($iImageTypeBits, $sImageTypeString);
-            }
-        }
-
-        //$this->formats = $aSupportedTypes;
-    }
-    // }}}
-
     // {{{ clean()
     /**
      * Cleanup method, deletes output test images

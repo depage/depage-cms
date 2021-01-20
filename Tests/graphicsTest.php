@@ -346,12 +346,9 @@ class graphicsTest extends TestCase
      **/
     public function testBypassTestException0X()
     {
-        try {
-            $this->graphics->bypassTest(0, 100);
-        } catch (Depage\Graphics\Exceptions\Exception $expected) {
-            return;
-        }
-        $this->fail('Expected graphics_exception');
+        $this->expectException(\Depage\Graphics\Exceptions\Exception::class);
+
+        $this->graphics->bypassTest(0, 100);
     }
     // }}}
     // {{{ testBypassTestException0Y()
@@ -360,12 +357,9 @@ class graphicsTest extends TestCase
      **/
     public function testBypassTestException0Y()
     {
-        try {
-            $this->graphics->bypassTest(100, 0);
-        } catch (Depage\Graphics\Exceptions\Exception $expected) {
-            return;
-        }
-        $this->fail('Expected graphics_exception');
+        $this->expectException(\Depage\Graphics\Exceptions\Exception::class);
+
+        $this->graphics->bypassTest(100, 0);
     }
     // }}}
     // {{{ testBypassTestExceptionNegativeX()
@@ -374,12 +368,9 @@ class graphicsTest extends TestCase
      **/
     public function testBypassTestExceptionNegativeX()
     {
-        try {
-            $this->graphics->bypassTest(-1, 100);
-        } catch (Depage\Graphics\Exceptions\Exception $expected) {
-            return;
-        }
-        $this->fail('Expected graphics_exception');
+        $this->expectException(\Depage\Graphics\Exceptions\Exception::class);
+
+        $this->graphics->bypassTest(-1, 100);
     }
     // }}}
     // {{{ testBypassTestExceptionNegativeY()
@@ -388,12 +379,9 @@ class graphicsTest extends TestCase
      **/
     public function testBypassTestExceptionNegativeY()
     {
-        try {
-            $this->graphics->bypassTest(100, -1);
-        } catch (Depage\Graphics\Exceptions\Exception $expected) {
-            return;
-        }
-        $this->fail('Expected graphics_exception');
+        $this->expectException(\Depage\Graphics\Exceptions\Exception::class);
+
+        $this->graphics->bypassTest(100, -1);
     }
     // }}}
     // {{{ testBypassTestExceptionInvalidXY()
@@ -402,12 +390,9 @@ class graphicsTest extends TestCase
      **/
     public function testBypassTestExceptionInvalidXY()
     {
-        try {
-            $this->graphics->bypassTest(null, null);
-        } catch (Depage\Graphics\Exceptions\Exception $expected) {
-            return;
-        }
-        $this->fail('Expected graphics_exception');
+        $this->expectException(\Depage\Graphics\Exceptions\Exception::class);
+
+        $this->graphics->bypassTest(null, null);
     }
     // }}}
 }
