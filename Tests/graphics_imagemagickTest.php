@@ -1,15 +1,17 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Tests for imagesmagick class
  **/
-class graphics_imagemagickTest extends PHPUnit_Framework_TestCase
+class graphics_imagemagickTest extends TestCase
 {
     // {{{ setUp()
     /**
      * Prepares fresh test objects
      **/
-    public function setUp()
+    public function setUp():void
     {
         $this->graphics = new graphics_imagemagickTestClass(array('executable' => 'bin'));
     }

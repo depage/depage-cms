@@ -1,17 +1,18 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use Depage\Graphics\Graphics;
 
 /**
  * Tests for graphics class
  **/
-class graphicsTest extends PHPUnit_Framework_TestCase
+class graphicsTest extends TestCase
 {
     // {{{ setUp()
     /**
      * Creates fresh graphics objects for tests
      **/
-    public function setUp()
+    public function setUp():void
     {
         $this->graphics = new graphicsTestClass();
     }

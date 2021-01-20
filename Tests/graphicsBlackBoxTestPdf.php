@@ -1,11 +1,12 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use Depage\Graphics\Graphics;
 
 /**
  * Blackbox tests for all extensions, compares imagesizes/filesizes
  **/
-class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
+class graphicsBlackBoxTest extends TestCase
 {
     protected $extensions   = array(
         'im',
@@ -24,6 +25,8 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
      **/
     public function __construct()
     {
+        parent::__construct();
+
         $i = 1;
         $types = imagetypes();
         $aSupportedTypes = array();
@@ -128,7 +131,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
     /**
      * Prepares fresh test objects
      **/
-    public function setUp()
+    public function setUp():voide
     {
         $this->clean();
 
@@ -138,7 +141,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
     }
     // }}}
     // {{{ tearDown()
-    public function tearDown()
+    public function tearDown():void
     {
         $this->clean();
     }
