@@ -1,18 +1,16 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Tests for graphics class
  **/
-class optimizerTest extends PHPUnit_Framework_TestCase
+class optimizerTest extends TestCase
 {
     protected $testJpeg;
     protected $testPng;
 
-    function __construct()
-    {
-    }
-
-    function setUp()
+    function setUp():void
     {
         $this->testJpeg = __DIR__ . "/output/optim.jpg";
         $this->testPng = __DIR__ . "/output/optim.png";
@@ -21,7 +19,7 @@ class optimizerTest extends PHPUnit_Framework_TestCase
         copy(__DIR__ . "/images/test.png", $this->testPng);
     }
 
-    function tearDown()
+    function tearDown():void
     {
         unlink($this->testJpeg);
         unlink($this->testPng);
