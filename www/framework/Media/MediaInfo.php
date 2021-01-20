@@ -366,7 +366,7 @@ class MediaInfo
      * @return bool
      */
     protected function hasImageExtension() {
-        $extensions = array("png", "jpg", "jpeg", "gif");
+        $extensions = array("png", "jpg", "jpeg", "gif", "webp");
 
         return in_array(strtolower($this->info['extension']), $extensions);
 
