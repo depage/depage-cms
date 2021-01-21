@@ -29,7 +29,7 @@ class graphicsBlackBoxTest extends TestCase
     {
         foreach ($this->extensions as $extension) {
             foreach ($this->formats as $format) {
-                $file = "output/test-{$extension}.{$format[1]}";
+                $file = __DIR__ . "/output/test-{$extension}.{$format[1]}";
                 if (file_exists($file)) {
                     unlink($file);
                 }
