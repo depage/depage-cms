@@ -127,6 +127,9 @@ class graphicsBlackBoxTest extends TestCase
         foreach ($this->extensions as $extension) {
             $this->graphics[$extension] = Graphics::factory(array('extension' => $extension));
         }
+        if (!function_exists('imagewebp') && isset($this->formats[3])) {
+            unset($this->formats[3]);
+        }
     }
     // }}}
     // {{{ tearDown()
