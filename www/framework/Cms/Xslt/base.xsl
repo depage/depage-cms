@@ -113,7 +113,7 @@
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:a href -->
-    <xsl:template match="edit:a" mode="href">
+    <xsl:template match="edit:a | edit:img" mode="href">
         <xsl:param name="absolute" select="false()" />
         <xsl:param name="lang" select="$currentLang" />
 
