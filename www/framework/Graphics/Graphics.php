@@ -394,6 +394,8 @@ class Graphics
         if (isset($this->outputLockFp)) {
             flock($this->outputLockFp, LOCK_UN);
             unlink($this->output . ".lock");
+
+            $this->outputLockFp = null;
         }
     }
     // }}}
