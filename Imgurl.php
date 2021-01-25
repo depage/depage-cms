@@ -63,7 +63,7 @@ class Imgurl
         if (isset($this->options['baseUrl']) && isset($this->options['cachePath'])) {
             $baseUrl = rtrim($this->options['baseUrl'], '/');
             $this->cachePath = $this->options['cachePath'];
-            $relativePath = $this->options['relativePath'];
+            $relativePath = $this->options['relPath'];
         } else if (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
             // we are using depage-framework so use constants for paths
             $info = parse_url(DEPAGE_BASE);
@@ -259,36 +259,48 @@ class Imgurl
     public function addBackground($background)
     {
         $this->actions[] = "bg{$background}";
+
+        return $this;
     }
     // }}}
     // {{{ addCrop()
     public function addCrop($width, $height, $x = 0, $y = 0)
     {
         $this->actions[] = "crop{$width}x{$height}-{$x}x{$y}";
+
+        return $this;
     }
     // }}}
     // {{{ addResize()
     public function addResize($width, $height)
     {
         $this->actions[] = "r{$width}x{$height}";
+
+        return $this;
     }
     // }}}
     // {{{ addThumb()
     public function addThumb($width, $height)
     {
         $this->actions[] = "t{$width}x{$height}";
+
+        return $this;
     }
     // }}}
     // {{{ addThumbfill()
     public function addThumbfill($width, $height)
     {
         $this->actions[] = "tf{$width}x{$height}";
+
+        return $this;
     }
     // }}}
     // {{{ setQuality()
     public function setQuality($quality)
     {
         $this->actions[] = "q{$quality}";
+
+        return $this;
     }
     // }}}
 }
