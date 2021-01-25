@@ -12,6 +12,9 @@ class Imgurl
 {
     protected $options = array();
     protected $actions = array();
+    protected $notFound = false;
+    public $id = "";
+    public $rendered = false;
     protected $invalidAction = false;
     protected $cachePath = '';
     /*
@@ -49,11 +52,22 @@ class Imgurl
     /*
      * Analyzes the image url and set the path for srcImg and outImg
      */
-    protected function analyze()
+    protected function analyze($url)
     {
-        if (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
+        $this->invalidAction = false;
+        $this->notFound = false;
+        $this->rendered = false;
+        $this->id = "";
+        $this->actions = [];
+
+        if (isset($this->options['baseUrl']) && isset($this->options['cachePath'])) {
+            $baseUrl = rtrim($this->options['baseUrl'], '/');
+            $this->cachePath = $this->options['cachePath'];
+            $relativePath = $this->options['relativePath'];
+        } else if (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
             // we are using depage-framework so use constants for paths
-            $baseUrl = DEPAGE_PATH;
+            $info = parse_url(DEPAGE_BASE);
+            $baseUrl = rtrim($info['path'], '/');
             $relativePath = "";
             $this->cachePath = DEPAGE_CACHE_PATH . "graphics/";
         } else {
@@ -86,11 +100,18 @@ class Imgurl
         }
 
         // get image name
-        $imgUrl = substr($_SERVER["REQUEST_URI"], strlen($baseUrl) + 1);
+        $imgUrl = substr($url, strlen($baseUrl) + 1);
 
         // get action parameters
-        preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);
+        $success = preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);
 
+        if (!$success) {
+            $this->invalidAction = true;
+
+            return;
+        }
+
+        $this->id = rawurldecode($matches[0]);
         $this->srcImg = $relativePath . rawurldecode($matches[1]);
         $this->outImg = $this->cachePath . rawurldecode($matches[0]);
         $this->actions = $this->analyzeActions($matches[3]);
@@ -102,8 +123,6 @@ class Imgurl
      */
     protected function analyzeActions($actionString)
     {
-        $this->invalidAction = false;
-        $this->actions = array();
         $actions = explode(".", $actionString);
 
         foreach ($actions as &$action) {
@@ -144,14 +163,15 @@ class Imgurl
     }
     // }}}
     // {{{ render
-    public function render()
+    public function render($url = null)
     {
-        $this->analyze();
+        if (is_null($url)) {
+            $url = $_SERVER["REQUEST_URI"];
+        }
+        $this->analyze($url);
 
         if ($this->invalidAction) {
-            header("HTTP/1.1 500 Internal Server Error");
-            echo("invalid image action");
-            die();
+            return $this;
         }
         // make cache diretories
         $outDir = dirname($this->outImg);
@@ -176,14 +196,13 @@ class Imgurl
 
             // render image out
             $graphics->render($this->srcImg, $this->outImg);
+
+            $this->rendered = true;
         } catch (Exceptions\FileNotFound $e) {
-            header("HTTP/1.1 404 Not Found");
-            echo("file not found");
-            die();
+            $this->notFound = true;
+            return $this;
         } catch (Exceptions\Exception $e) {
-            header("HTTP/1.1 500 Internal Server Error");
-            echo("invalid image action");
-            die();
+            $this->invalidAction = true;
         }
 
         return $this;
@@ -195,6 +214,17 @@ class Imgurl
     {
         $info = pathinfo($this->outImg);
         $ext = strtolower($info['extension']);
+
+        if ($this->invalidAction) {
+            header("HTTP/1.1 500 Internal Server Error");
+            echo("invalid image action");
+            die();
+        }
+        if ($this->notFound) {
+            header("HTTP/1.1 404 Not Found");
+            echo("file not found");
+            die();
+        }
 
         if ($ext == "jpg" || $ext ==  "jpeg") {
             header("Content-type: image/jpeg");
@@ -228,31 +258,31 @@ class Imgurl
     // {{{ addBackground()
     public function addBackground($background)
     {
-        $this->actions[] = "bg-{$background}";
+        $this->actions[] = "bg{$background}";
     }
     // }}}
     // {{{ addCrop()
     public function addCrop($width, $height, $x = 0, $y = 0)
     {
-        $this->actions[] = "crop-{$width}x{$height}-{$x}x{$y}";
+        $this->actions[] = "crop{$width}x{$height}-{$x}x{$y}";
     }
     // }}}
     // {{{ addResize()
     public function addResize($width, $height)
     {
-        $this->actions[] = "resize-{$width}x{$height}";
+        $this->actions[] = "r{$width}x{$height}";
     }
     // }}}
     // {{{ addThumb()
     public function addThumb($width, $height)
     {
-        $this->actions[] = "thumb-{$width}x{$height}";
+        $this->actions[] = "t{$width}x{$height}";
     }
     // }}}
     // {{{ addThumbfill()
     public function addThumbfill($width, $height)
     {
-        $this->actions[] = "thumbfill-{$width}x{$height}";
+        $this->actions[] = "tf{$width}x{$height}";
     }
     // }}}
     // {{{ setQuality()
