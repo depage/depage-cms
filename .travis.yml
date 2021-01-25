@@ -8,4 +8,4 @@ install:
     - sudo apt-get install -qq imagemagick graphicsmagick optipng pngcrush jpegoptim libjpeg-progs
 
 script:
-    phpunit --bootstrap Tests/bootstrap.php Tests
+    phpunit --bootstrap Tests/bootstrap.php --debug -v --no-coverage --process-isolation Tests

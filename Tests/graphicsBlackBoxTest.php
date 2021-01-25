@@ -29,7 +29,7 @@ class graphicsBlackBoxTest extends TestCase
     {
         foreach ($this->extensions as $extension) {
             foreach ($this->formats as $format) {
-                $file = "output/test-{$extension}.{$format[1]}";
+                $file = __DIR__ . "/output/test-{$extension}.{$format[1]}";
                 if (file_exists($file)) {
                     unlink($file);
                 }
@@ -126,6 +126,9 @@ class graphicsBlackBoxTest extends TestCase
 
         foreach ($this->extensions as $extension) {
             $this->graphics[$extension] = Graphics::factory(array('extension' => $extension));
+        }
+        if (!function_exists('imagewebp') && isset($this->formats[3])) {
+            unset($this->formats[3]);
         }
     }
     // }}}
