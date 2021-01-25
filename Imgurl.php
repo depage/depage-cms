@@ -63,7 +63,7 @@ class Imgurl
         if (isset($this->options['baseUrl']) && isset($this->options['cachePath'])) {
             $baseUrl = rtrim($this->options['baseUrl'], '/');
             $this->cachePath = $this->options['cachePath'];
-            $relativePath = $this->options['relPath'];
+            $relativePath = $this->options['relPath'] ?? '';
         } else if (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
             // we are using depage-framework so use constants for paths
             $info = parse_url(DEPAGE_BASE);
