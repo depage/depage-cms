@@ -100,6 +100,7 @@ class Graphicsmagick extends Imagemagick
             $this->bypass();
         } else {
             $quality = $this->getQuality();
+            $optimize   = $this->getOptimize();
 
             if ($this->background === 'checkerboard') {
                 $tempFile = tempnam(sys_get_temp_dir(), 'depage-graphics-');
@@ -111,13 +112,13 @@ class Graphicsmagick extends Imagemagick
 
                 $this->command = $this->executable . " convert";
                 $this->command .= " -page {$canvasSize} -size {$canvasSize} pattern:checkerboard";
-                $this->command .= " -page {$canvasSize} miff:{$tempFile} -flatten {$quality} +page {$this->outputFormat}:" . escapeshellarg($this->output);
+                $this->command .= " -page {$canvasSize} miff:{$tempFile} -colorspace rgb -flatten {$quality}{$optimize} +page {$this->outputFormat}:" . escapeshellarg($this->output);
 
                 $this->execCommand();
                 unlink($tempFile);
             } else {
                 $background = $this->getBackground();
-                $this->command .= "{$background} {$quality} +page {$this->outputFormat}:" . escapeshellarg($this->output);
+                $this->command .= "{$background} -colorspace rgb {$quality}{$optimize} +page {$this->outputFormat}:" . escapeshellarg($this->output);
 
                 $this->execCommand();
 

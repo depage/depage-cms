@@ -90,9 +90,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
         if (!$this->bypassTest($newSize[0], $newSize[1])) {
             $resizeAction = $this->getResizeAction($newSize[0], $newSize[1]);
 
-            //$this->command .= " -colorspace Lab";
             $this->command .= " $resizeAction {$newSize[0]}x{$newSize[1]}!";
-            //$this->command .= " -colorspace sRGB";
 
             $this->size = $newSize;
         }
@@ -202,7 +200,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
             $pageNumber = $this->getPageNumber();
 
             $this->command = "{$this->executable} {$background} ( " . escapeshellarg($this->input) . "{$pageNumber}{$this->command}";
-            $this->command .= " ) -flatten {$quality}{$optimize}";
+            $this->command .= " ) -colorspace sRGB -flatten {$quality}{$optimize}";
 
             $this->command .= " {$this->outputFormat}:" . escapeshellarg($this->output);
 
@@ -314,6 +312,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
         if (
             $this->outputFormat == 'jpg'
             || $this->outputFormat == 'png'
+            || $this->outputFormat == 'webp'
         ) {
             return '-quality ' . parent::getQuality();
         } else {
@@ -336,7 +335,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
         } else if ($this->outputFormat == 'png') {
             $param .= " -define png:format=png00";
         } else if ($this->outputFormat == "webp" && $this->inputFormat == "png") {
-            $param .= " -define webp:lossless=true";
+            $param .= " -define webp:lossless=true -define webp:image-hint=graph";
         }
 
         return $param;

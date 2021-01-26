@@ -80,7 +80,7 @@ class graphics_graphicsmagickTest extends TestCase
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test2.png');
 
-        $this->assertSame("bin convert '" . __DIR__ . "/images/test.jpg' -background none -quality 95 +page png:'" . __DIR__ . "/output/test2.png'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin convert '" . __DIR__ . "/images/test.jpg' -background none -colorspace rgb -quality 95 -strip -define png:format=png00 +page png:'" . __DIR__ . "/output/test2.png'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
@@ -94,7 +94,7 @@ class graphics_graphicsmagickTest extends TestCase
         $this->graphics->addResize(200, 200);
         $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test.jpg');
 
-        $this->assertSame("bin convert '" . __DIR__ . "/images/test.jpg' -background none -resize 200x200! -flatten -background #FFF -quality 85 +page jpg:'" . __DIR__ . "/output/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin convert '" . __DIR__ . "/images/test.jpg' -background none -resize 200x200! -flatten -background #FFF -colorspace rgb -quality 85 -strip -interlace Plane +page jpg:'" . __DIR__ . "/output/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
