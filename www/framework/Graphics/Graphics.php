@@ -479,7 +479,7 @@ class Graphics
      **/
     protected function getQuality()
     {
-        if ($this->outputFormat == 'jpg' || $this->outputFormat == "webp") {
+        if ($this->outputFormat == 'jpg') {
             if (
                 is_numeric($this->quality)
                 && $this->quality >= 0
@@ -488,6 +488,16 @@ class Graphics
                 $quality = $this->quality;
             } else {
                 $quality = 85;
+            }
+        } elseif ($this->outputFormat == "webp") {
+            if (
+                is_numeric($this->quality)
+                && $this->quality >= 0
+                && $this->quality <= 100
+            ) {
+                $quality = $this->quality;
+            } else {
+                $quality = 75;
             }
         } elseif ($this->outputFormat == 'png') {
             if (

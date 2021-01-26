@@ -139,7 +139,7 @@ class graphics_imagemagickTest extends TestCase
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test2.png');
 
-        $this->assertSame("bin -size 100x100 -background none ( '" . __DIR__ . "/images/test.jpg' ) -flatten -quality 95 -strip -define png:format=png00 png:'" . __DIR__ . "/output/test2.png'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin -size 100x100 -background none ( '" . __DIR__ . "/images/test.jpg' ) -colorspace sRGB -flatten -quality 95 -strip -define png:format=png00 png:'" . __DIR__ . "/output/test2.png'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
@@ -153,7 +153,7 @@ class graphics_imagemagickTest extends TestCase
         $this->graphics->addResize(200, 200);
         $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test.jpg');
 
-        $this->assertSame("bin -size 200x200 -background #FFF ( '" . __DIR__ . "/images/test.jpg' -resize 200x200! ) -flatten -quality 85 -strip -interlace Plane jpg:'" . __DIR__ . "/output/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin -size 200x200 -background #FFF ( '" . __DIR__ . "/images/test.jpg' -resize 200x200! ) -colorspace sRGB -flatten -quality 85 -strip -interlace Plane jpg:'" . __DIR__ . "/output/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
@@ -269,7 +269,7 @@ class graphics_imagemagickTest extends TestCase
     public function testGetOptimizeWebpLossless()
     {
         $this->graphics->render(__DIR__ . '/images/test.png', __DIR__ . '/output/test.webp');
-        $this->assertSame(' -strip -define webp:lossless=true', $this->graphics->getOptimize(), 'GIF quality string error.');
+        $this->assertSame(' -strip -define webp:lossless=true -define webp:image-hint=graph', $this->graphics->getOptimize(), 'webp lossless string error.');
     }
     // }}}
 
