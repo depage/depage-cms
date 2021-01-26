@@ -615,8 +615,10 @@ abstract class Transformer
 
         if (!empty($url['path'])) {
             $path = "lib/" . $url['host'] . $url['path'];
-        } else {
+        } else if (!empty($url['host'])) {
             $path = "lib/" . $url['host'];
+        } else {
+            return "";
         }
 
         if ($absolute != "relative" && !empty($this->baseUrlStatic) && $this->baseUrl != $this->baseUrlStatic) {
