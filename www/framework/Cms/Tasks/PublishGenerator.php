@@ -232,7 +232,7 @@ class PublishGenerator
             'optimize' => $options->optimize,
             'baseUrl' => $this->project->getBaseUrl($this->publishId),
             'cachePath' => $projectPath . "lib/cache/graphics/",
-            'relativePath' => $projectPath,
+            'relPath' => $projectPath,
         ]);
     }
     // }}}
