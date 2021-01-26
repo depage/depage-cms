@@ -19,6 +19,16 @@ Version 2.1   {#v2-1}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.13 / 26.01.2021      {#v2-1-13}
+-------------------
+
+**Backend**
+- updated and enhanced graphics classes
+- enhanced support for webp files
+- enhanced base xsl templates
+- enhanced support for picture elements
+
+
 v2.1.12 / 03.11.2020      {#v2-1-12}
 -------------------
 
