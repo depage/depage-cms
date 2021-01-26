@@ -112,7 +112,7 @@
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
-    <!-- {{{ edit:a href -->
+    <!-- {{{ edit:a | edit:img href -->
     <xsl:template match="edit:a | edit:img" mode="href">
         <xsl:param name="absolute" select="false()" />
         <xsl:param name="lang" select="$currentLang" />
@@ -395,7 +395,7 @@
         <xsl:apply-templates mode="linebreaks"/><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
     </xsl:template>
     <!-- }}} -->
-    <!-- {{{ p mode autolist -->
+    <!-- {{{ p autolist -->
     <xsl:template match="p" mode="autolist">
         <xsl:variable name="nbsp"><xsl:if test="count(br[position() = last()]) = 0">&#160;</xsl:if></xsl:variable>
         <xsl:choose>
@@ -440,7 +440,7 @@
     <!-- {{{ br -->
     <xsl:template match="br"><br /></xsl:template>
     <!-- }}} -->
-    <!-- {{{ br mode linebreaks-->
+    <!-- {{{ br linebreaks-->
     <xsl:template match="br" mode="linebreaks"></xsl:template>
     <!-- }}} -->
     <!-- {{{ a -->

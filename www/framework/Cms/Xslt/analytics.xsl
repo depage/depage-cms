@@ -30,9 +30,11 @@
             <xsl:if test="$var-ga-Account != ''">
                 c.ga = { account: <xsl:value-of select="dp:jsEscape($var-ga-Account)" />, domain: <xsl:value-of select="dp:jsEscape($var-ga-Domain)" /> };
             </xsl:if>
+            <!--
             <xsl:if test="$var-pinterest-tagId != ''">
                 c.pinterest = { tagId: <xsl:value-of select="dp:jsEscape($var-pinterest-tagId)" /> };
             </xsl:if>
+            -->
             w.depageAnalyticsConfig = c; })(window);
         </script>
     </xsl:template>
