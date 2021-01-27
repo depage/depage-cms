@@ -69,6 +69,9 @@
                     </xsl:when>
                     <xsl:when test="@href and (substring($href, 1, 7) = 'http://' or substring($href, 1, 8) = 'https://')">
                         <xsl:attribute name="target">_blank</xsl:attribute>
+                        <xsl:if test="$rel = ''">
+                            <xsl:attribute name="rel">noopener</xsl:attribute>
+                        </xsl:if>
                     </xsl:when>
                 </xsl:choose>
                 <xsl:if test="$class != '' or $redirect != ''">
@@ -175,6 +178,9 @@
                         </xsl:when>
                         <xsl:when test="@href and (substring($href, 1, 5) = 'http:' or substring($href, 1, 6) = 'https:')">
                             <xsl:attribute name="target">_blank</xsl:attribute>
+                            <xsl:if test="$rel = ''">
+                                <xsl:attribute name="rel">noopener</xsl:attribute>
+                            </xsl:if>
                         </xsl:when>
                     </xsl:choose>
                     <xsl:if test="$lang"><xsl:attribute name="hreflang"><xsl:value-of select="$lang"/></xsl:attribute></xsl:if>
