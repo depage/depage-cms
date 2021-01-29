@@ -613,13 +613,7 @@ abstract class Transformer
     {
         $url = parse_url($path);
 
-        if (!empty($url['path'])) {
-            $path = "lib/" . $url['host'] . $url['path'];
-        } else if (!empty($url['host'])) {
-            $path = "lib/" . $url['host'];
-        } else {
-            return "";
-        }
+        $path = "lib/" . ($url['host'] ?? '') . ($url['path'] ?? '');
 
         if ($absolute != "relative" && !empty($this->baseUrlStatic) && $this->baseUrl != $this->baseUrlStatic) {
             $path = $this->baseUrlStatic . $path;
