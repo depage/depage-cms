@@ -73,7 +73,7 @@ class Response {
     public function setBody($body = "")
     {
         if (is_array($body)) {
-            $this->body = implode($body, "");
+            $this->body = implode($body);
         } else {
             $this->body = (string) $body;
         }
