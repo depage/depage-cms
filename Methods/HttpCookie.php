@@ -148,6 +148,11 @@ class HttpCookie extends Auth
                 // username login
                 $user = User::loadByUsername($this->pdo, $username);
             }
+
+            if ($user->isDisabled()) {
+                return false;
+            }
+
             $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
 
             if ($pass->verify($user->name, $password, $user->passwordhash)) {
@@ -157,7 +162,6 @@ class HttpCookie extends Auth
                     $user->lang = DEPAGE_LANG;
                     $user->save();
                 }
-
 
                 return $user;
             } else {
@@ -176,7 +180,9 @@ class HttpCookie extends Auth
         if ($user) {
             $this->destroySession();
             $this->registerSession($user->id);
-            $this->startSession();
+            $sid = $this->startSession();
+
+            $user->onLogin($sid);
 
             return true;
         }
@@ -193,6 +199,10 @@ class HttpCookie extends Auth
                 $this->startSession();
 
                 $user = User::loadBySid($this->pdo, $this->getSid());
+
+                if ($user->isDisabled()) {
+                    return false;
+                }
 
                 return $user;
             } else {
@@ -234,6 +244,8 @@ class HttpCookie extends Auth
                 $params['httponly']
             );
         }
+
+        return $sid;
     }
     // }}}
     // {{{ hasSession()

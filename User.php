@@ -383,7 +383,7 @@ class User extends \Depage\Entity\PdoEntity
         // }}}
 
         if (!empty($where)) {
-            $where = "WHERE " . implode($where, " AND ");
+            $where = "WHERE " . implode(" AND ", $where);
         } else {
             $where = "";
         };
@@ -438,15 +438,11 @@ class User extends \Depage\Entity\PdoEntity
      **/
     public function jsonSerialize()
     {
-        $data = [
+        return [
             'name' => $this->data['name'],
             'fullname' => $this->data['fullname'],
             'sortname' => $this->data['sortname'],
-            'profileImg' => $this->getProfileImage(),
-            'logline' => $this->data['logline'],
         ];
-
-        return $data;
     }
     // }}}
 
@@ -527,6 +523,39 @@ class User extends \Depage\Entity\PdoEntity
             $settings = unserialize($this->data['settings']);
         }
         return $settings;
+    }
+    // }}}
+
+    // {{{ isDisabled()
+    /**
+     * @brief isDisabled
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function isDisabled()
+    {
+        return false;
+    }
+    // }}}
+
+    // {{{ hasRecentlyRegistered()
+    /**
+     * @brief hasRecentlyRegistered
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function hasRecentlyRegistered()
+    {
+        if (empty($this->profileImg)) {
+            return true;
+        }
+
+        $date = new \DateTime($this->dateRegistered);
+        $new = new \DateTime("-1 month");
+
+        return $date > $new;
     }
     // }}}
 
@@ -617,6 +646,21 @@ class User extends \Depage\Entity\PdoEntity
     public function onLogout($sid) {
     }
     // }}}
+    // {{{ onLogin
+    /**
+     * Login
+     *
+     * Called when the user logs in.
+     *
+     * Override in inheriting classes to provide session end functionality.
+     *
+     * @param $session_id
+     *
+     * @return void
+     */
+    public function onLogin($sid) {
+    }
+    // }}}
     // {{{ onLoad()
     /**
      * @brief onLoad
@@ -629,7 +673,6 @@ class User extends \Depage\Entity\PdoEntity
         // can be overridden by child class
     }
     // }}}
-
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
