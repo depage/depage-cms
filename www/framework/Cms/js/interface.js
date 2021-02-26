@@ -1,6 +1,5 @@
 /*
  * @require framework/shared/jquery-1.12.3.min.js
- * @require framework/shared/jquery.cookie.js
  * @require framework/shared/jquery-sortable.js
  *
  * @require framework/shared/depage-jquery-plugins/depage-details.js
@@ -933,9 +932,14 @@ var depageCMS = (function() {
         // {{{ setupFileList
         setupFileList: function() {
             var $form = $(".upload-to-lib");
-            var $dropArea = $form.parents('.files');
+            var $dropArea = $form.parents('.file-list');
             var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($form);
             var $fileContainer = $(".files .file-list");
+
+            $(document)
+                .off('dragover')
+                .off('dragend')
+                .off('drop');
 
             $form.find('input[type="submit"]').remove();
             $form.find('input[type="file"]').depageUploader({

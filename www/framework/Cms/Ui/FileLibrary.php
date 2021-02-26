@@ -153,7 +153,7 @@ class FileLibrary extends Base
         $pathHash = sha1($targetPath);
 
         $form = new \Depage\Cms\Forms\Project\Upload("upload-to-lib-$pathHash", [
-            'submitUrl' => DEPAGE_BASE . "project/{$this->project->name}/library/manager/" . rawurlencode($path) . "/",
+            'submitUrl' => DEPAGE_BASE . "project/{$this->project->name}/library/files/" . rawurlencode($path) . "/",
             'project' => $this->project,
             'targetPath' => $path,
             'class' => 'upload-to-lib',
