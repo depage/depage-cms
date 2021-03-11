@@ -71,7 +71,13 @@ class Config implements \Iterator, \ArrayAccess
         // sort that shorter urls with same beginning are tested first for a match
         // @todo change sort order to have the inherited always at the end
         usort($urls, function($a, $b) {
-            return strlen($a) > strlen($b);
+            $la = strlen($a);
+            $lb = strlen($b);
+
+            if ($la == $lb) {
+                return 0;
+            }
+            return $la > $lb ? 1 : -1;
         });
 
         // remove url-parameters before matching
