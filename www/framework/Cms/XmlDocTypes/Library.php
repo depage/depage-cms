@@ -51,7 +51,7 @@ class Library extends Base {
      * @return null
      */
     public function onAddNode(\DomNode $node, $targetId, $targetPos, $extras) {
-        if (isset($extras)) {
+        if (is_string($extras)) {
             $node->setAttribute("name", $extras);
         }
         $path = $this->getPathById($targetId, $node->getAttribute("name"));

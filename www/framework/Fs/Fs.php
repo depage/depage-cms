@@ -459,7 +459,7 @@ class Fs
     // }}}
 
     // {{{ lsFilter
-    protected function lsFilter($path = '', $function)
+    protected function lsFilter($path, $function)
     {
         $ls = $this->ls($path);
         $pwd = $this->pwd();

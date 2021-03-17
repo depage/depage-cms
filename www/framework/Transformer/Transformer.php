@@ -104,7 +104,7 @@ abstract class Transformer
     // {{{ initXsltProc()
     public function initXsltProc()
     {
-        libxml_disable_entity_loader(false);
+        //libxml_disable_entity_loader(false);
         libxml_use_internal_errors(true);
 
         // @todo use own dtd loaded with caching instead of having own htmlentities file
