@@ -581,7 +581,8 @@ class Project extends \Depage\Entity\Entity
     private function updateXmlTemplate($template)
     {
         $file = $this->getProjectPath() . "xml/$template";
-        $xml = \Depage\Xml\Document::load($file);
+        $xml = new \Depage\Xml\Document();
+        $xml->load($file);
         $this->xmldb = $this->getXmlDb();
 
         if (!$xml) {
