@@ -955,11 +955,11 @@ class DocProperties extends Base
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $f = $this->form->addFieldset("xmledit-$nodeId", [
+        $fs = $this->form->addFieldset("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Audio")),
-            'class' => "edit-audio",
+            'class' => "doc-property-fieldset edit-audio",
         ]);
-        $f->addText("xmledit-$nodeId-src", [
+        $fs->addText("xmledit-$nodeId-src", [
             'label' => $this->getLabelForNode($node, _("src")),
             'class' => "edit-src",
             'dataAttr' => [
