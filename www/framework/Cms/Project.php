@@ -340,7 +340,8 @@ class Project extends \Depage\Entity\Entity
             glob(__DIR__ . "/../Comments/Sql/*.sql"),
             glob(__DIR__ . "/../Publisher/Sql/*.sql"),
             glob(__DIR__ . "/../Transformer/Sql/*.sql"),
-            glob(__DIR__ . "/Sql/Newsletter/*.sql")
+            glob(__DIR__ . "/Sql/Newsletter/*.sql"),
+            glob(__DIR__ . "/Sql/FileLibrary/*.sql")
         );
         sort($files);
         foreach ($files as $file) {
