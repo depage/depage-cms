@@ -24,6 +24,8 @@
             "close" => _("Close"),
             "copy" => _("Copy"),
             "copyUrl" => _("Copy URL to Clipboard"),
+            "shareUrl" => _("Mail Link to file"),
+            "shareUrlSubject" => _("Link to file"),
             "create" => _("New"),
             "createNew" => _("Create new:"),
             "createNewAtEnd" => _("Create new element at the end"),

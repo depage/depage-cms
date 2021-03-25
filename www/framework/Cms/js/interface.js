@@ -914,6 +914,13 @@ var depageCMS = (function() {
                             action: function() {
                                 copyToClipboard($thumb.attr("data-url"));
                             }
+                        },
+                        _shareFile: {
+                            label: locale.shareUrl,
+                            _disabled: $thumb.hasClass("not-published"),
+                            action: function() {
+                                $('<iframe src="mailto:?subject=' + locale.shareUrlSubject + '&body=' + $thumb.attr("data-url") + '">').appendTo('body').css("display", "none");
+                            }
                         }
                     });
 
