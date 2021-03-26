@@ -220,6 +220,9 @@ var depageCMS = (function() {
             $(".teaser").click( function() {
                 document.location = $("a", this)[0].href;
             });
+            $("fieldset.detail").depageDetails({
+                head: "legend"
+            });
         },
         // }}}
         // {{{ setupLoginCheck
