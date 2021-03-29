@@ -7,7 +7,7 @@
 */
 CREATE TABLE _proj_PROJECTNAME_filelibrary_files (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `path` text NOT NULL DEFAULT '',
+  `folder` int(10) unsigned NOT NULL,
   `filename` text NOT NULL DEFAULT '',
   `mime` varchar(255) NOT NULL DEFAULT '',
   `hash` varchar(64) NOT NULL DEFAULT '',
@@ -21,5 +21,5 @@ CREATE TABLE _proj_PROJECTNAME_filelibrary_files (
   `description` text DEFAULT '',
   `keywords` text DEFAULT '',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `filename`(`path`,`filename`)
+  UNIQUE KEY `filename`(`folder`,`filename`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;

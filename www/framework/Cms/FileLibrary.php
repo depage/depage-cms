@@ -27,9 +27,19 @@ class FileLibrary
      **/
     protected $project = null;
 
+    /**
+     * @brieftableFiles
+     **/
+    protected $tableFiles = "";
+
+    /**
+     * @brief rootPath
+     **/
+    protected $rootPath = "";
+
     // {{{ __construct()
     /**
-     * @brief __construct
+     * @brief__construct
      *
      * @param mixed
      * @return void
@@ -38,8 +48,11 @@ class FileLibrary
     {
         $this->pdo = $pdo;
         $this->project = $project;
+        $this->tableFiles = "{$pdo->prefix}_proj_{$project->name}_filelibrary_files";
 
-        $this->fs = \Depage\Fs\Fs::factory($this->project->getProjectPath() . "lib/");
+        $this->rootPath = $this->project->getProjectPath() . "lib/";
+        $this->fs = \Depage\Fs\Fs::factory($this->rootPath);
+        $this->mediainfo = new \Depage\Media\MediaInfo();
     }
     // }}}
 
@@ -50,41 +63,18 @@ class FileLibrary
      * @param mixed
      * @return void
      **/
-    public function syncLibraryTree($selectedPath)
+    public function syncLibraryTree($path)
     {
-        $xmldb = $this->project->getXmlDb();
-        $doc = $xmldb->getDoc("files");
-        if (!$doc) {
-            $doc = $xmldb->createDoc('Depage\Cms\XmlDocTypes\Library', "files");
-
-            $xml = new \Depage\Xml\Document();
-            $xml->load(__DIR__ . "/../XmlDocTypes/LibraryXml/library.xml");
-
-            $nodeId = $doc->save($xml);
-        }
+        $doc = $this->getFilesDoc();
         $xml = $doc->getXml();
 
-        $this->syncFolder($doc, $xml->documentElement, "");
+        $this->syncFolder($doc, $xml->documentElement, "/");
 
-        if (!empty($selectedPath)) {
-            $selectedPath = trim($selectedPath, '/');
-            $dirs = explode('/', $selectedPath);
-            $xpath = new \DOMXPath($xml);
-            $xpath->registerNamespace("proj", "http://cms.depagecms.net/ns/project");
-
-            $query = "/proj:library";
-            foreach ($dirs as $dir) {
-                $query .= "/proj:folder[@name = '" . htmlentities($dir) . "']";
-            }
-            $query .= "/@db:id";
-
-            $result = $xpath->evaluate($query);
-            if ($result->length == 1) {
-                return $result->item(0)->nodeValue;
-            } else {
-                return false;
-            }
+        if (!empty($path)) {
+            return $this->getFolderIdByPath($path);
         }
+
+        return false;
     }
     // }}}
     // {{{ syncFolder()
@@ -140,6 +130,225 @@ class FileLibrary
         foreach($dirsById as $id => $dir) {
             $this->syncFolder($doc, $nodesById[$id], $path . '/' . $dir);
         }
+    }
+    // }}}
+    // {{{ syncFiles()
+    /**
+     * @brief syncFiles
+     *
+     * @param mixed $path
+     * @return void
+     **/
+    public function syncFiles($path):void
+    {
+        $folderId = $this->getFolderIdByPath($path);
+        $oldFiles = $this->getFilesInFolder($folderId);
+
+        $files = $this->fs->lsFiles(trim($path . "/*", '/'));
+
+        foreach ($files as $file) {
+            $fpath = $this->rootPath . $file;
+            $fname = basename($file);
+            $fsize = filesize($fpath);
+            $fdate = filemtime($fpath);
+            if (!isset($oldFiles[$fname])) {
+                $this->updateFileInfo(null, $folderId, $fname, $fpath);
+            } else if ($oldFiles[$fname]->filesize != $fsize || $oldFiles[$fname]->lastmod->getTimestamp() != $fdate) {
+                $this->updateFileInfo($oldFiles[$fname]->id, $folderId, $fname, $fpath);
+            }
+            if (isset($oldFiles[$fname])) {
+                unset($oldFiles[$fname]);
+            }
+        }
+        $query = $this->pdo->prepare(
+            "DELETE FROM {$this->tableFiles}
+            WHERE id=:id"
+        );
+        foreach ($oldFiles as $file => $info) {
+            $query->execute([
+                'id' => $info->id,
+            ]);
+        }
+    }
+    // }}}
+    // {{{ updateFileInfo()
+    /**
+     * @brief updateFileInfo
+     *
+     * @param mixed $id, $file
+     * @return void
+     **/
+    protected function updateFileInfo($id, $folderId, $file, $fullpath)
+    {
+        $info = $this->mediainfo->getInfo($fullpath);
+        $query = $this->pdo->prepare(
+            "INSERT INTO {$this->tableFiles}
+            SET
+                id=:id,
+                folder=:folderId,
+                filename=:file,
+                mime=:mime,
+                hash=:hash,
+                filesize=:fsize,
+                lastmod=:fdate,
+                width=:width,
+                height=:height,
+                displayAspectRatio=:dar,
+                duration=:duration,
+                copyright=:copyright,
+                description=:description,
+                keywords=:keywords
+            ON DUPLICATE KEY UPDATE
+                folder=VALUES(folder),
+                filename=VALUES(filename),
+                mime=VALUES(mime),
+                hash=VALUES(hash),
+                filesize=VALUES(filesize),
+                lastmod=VALUES(lastmod),
+                width=VALUES(width),
+                height=VALUES(height),
+                displayAspectRatio=VALUES(displayAspectRatio),
+                duration=VALUES(duration),
+                copyright=VALUES(copyright),
+                description=VALUES(description),
+                keywords=VALUES(keywords)
+            "
+        );
+        $query->execute([
+            'id' => $id,
+            'folderId' => $folderId,
+            'file' => $file,
+            'mime' => $info['mime'],
+            'hash' => hash_file("sha256", $fullpath),
+            'fsize' => $info['filesize'],
+            'fdate' => $info['date']->format('Y-m-d H:i:s'),
+            'width' => $info['width'] ?? null,
+            'height' => $info['height'] ?? null,
+            'dar' => $info['displayAspectRatio'] ?? null,
+            'duration' => $info['duration'] ?? null,
+            'copyright' => $info['copyright'] ?? "",
+            'description' => $info['description'] ?? "",
+            'keywords' => $info['keywords'] ?? "",
+        ]);
+    }
+    // }}}
+
+    // {{{ getFolderIdByPath()
+    /**
+     * @brief getFolderIdByPath
+     *
+     * @param mixed $path
+     * @return void
+     **/
+    public function getFolderIdByPath(string $path):int
+    {
+        // @todo cache results
+        $doc = $this->getFilesDoc();
+        $xml = $doc->getXml();
+
+        if (!empty($path)) {
+            $path = trim($path, '/');
+            $dirs = explode('/', $path);
+            $xpath = new \DOMXPath($xml);
+            $xpath->registerNamespace("proj", "http://cms.depagecms.net/ns/project");
+
+            $query = "/proj:library";
+            foreach ($dirs as $dir) {
+                $query .= "/proj:folder[@name = '" . htmlentities($dir) . "']";
+            }
+            $query .= "/@db:id";
+
+            $result = $xpath->evaluate($query);
+
+            if ($result->length == 1) {
+                return $result->item(0)->nodeValue;
+            }
+        }
+
+        return false;
+    }
+    // }}}
+    // {{{ getPathByFolderId()
+    /**
+     * @brief getPathByFolderId
+     *
+     * @param mixed thByFo
+     * @return void
+     **/
+    public function getPathByFolderId(int $id):string
+    {
+        // @todo cache results
+        $doc = $this->getFilesDoc();
+        $xml = $doc->getXml();
+
+        $xpath = new \DOMXPath($xml);
+        $xpath->registerNamespace("proj", "http://cms.depagecms.net/ns/project");
+        $xpath->registerNamespace("db", "http://cms.depagecms.net/ns/database");
+
+        $query = "//proj:folder[@db:id = '$id']/@url";
+
+        $result = $xpath->evaluate($query);
+
+        if ($result->length == 1) {
+            return $result->item(0)->nodeValue;
+        }
+
+        return false;
+    }
+    // }}}
+    // {{{ getFilesInFolder()
+    /**
+     * @brief getFilesInFolder
+     *
+     * @param mixed int $id
+     * @return void
+     **/
+    public function getFilesInFolder(int $folderId):array
+    {
+        $files = [];
+
+        $query = $this->pdo->prepare(
+            "SELECT f.* FROM {$this->tableFiles} AS f
+            WHERE folder=:folderId
+            ORDER BY filename ASC",
+        [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
+
+        $query->execute([
+            'folderId' => $folderId,
+        ]);
+
+        while ($file = $query->fetchObject()) {
+            $date = new \DateTime($file->lastmod);
+            $file->lastmod = $date;
+
+            $files[$file->filename] = $file;
+        }
+
+        return $files;
+    }
+    // }}}
+
+    // {{{ getFilesDoc()
+    /**
+     * @brief getDoc
+     *
+     * @param mixed
+     * @return void
+     **/
+    protected function getFilesDoc()
+    {
+        $xmldb = $this->project->getXmlDb();
+        $doc = $xmldb->getDoc("files");
+        if (!$doc) {
+            $doc = $xmldb->createDoc('Depage\Cms\XmlDocTypes\Library', "files");
+
+            $xml = new \Depage\Xml\Document();
+            $xml->load(__DIR__ . "/../XmlDocTypes/LibraryXml/library.xml");
+
+            $nodeId = $doc->save($xml);
+        }
+
+        return $doc;
     }
     // }}}
 }

@@ -108,6 +108,9 @@ class FileLibrary extends Base
         $_SESSION['dpLibraryUploadedFiles'] = [];
         $files = $this->fs->lsFiles(trim($path . "/*", '/'));
 
+        $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
+        $fl->syncFiles($path);
+
         return new Html("fileListing.tpl", [
             'form' => $form,
             'uploadedFiles' => $uploadedFiles,
