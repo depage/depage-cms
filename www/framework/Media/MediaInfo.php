@@ -302,7 +302,7 @@ class MediaInfo
 
         if ($info['streams']['video'][0]['display_aspect_ratio'] == "0:1") {
             $info['displayAspectRatio'] = $info['width'] / $info['height'];
-        } else {
+        } else if (count($info['streams']['video']) > 0 && $info['duration'] > 1) {
             list($aspectW, $aspectH) = explode(":", $info['streams']['video'][0]['display_aspect_ratio']);
             $info['displayAspectRatio'] = $aspectW / $aspectH;
         }

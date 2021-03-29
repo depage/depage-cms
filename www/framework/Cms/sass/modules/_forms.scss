@@ -215,6 +215,20 @@
             border-bottom: 1px solid $selectionBackgroundColor;
             z-index: 20;
         }
+        &.detail {
+            legend:before {
+                content: " ";
+                width: 24px;
+                height: 24px;
+                margin-top: -4px;
+                display: block;
+                float: left;
+                @include icon-base("closed", 24px);
+            }
+            legend.active:before {
+                @include icon("open", 24px);
+            }
+        }
 
         legend {
             font-weight: bold;
@@ -235,7 +249,7 @@
             bottom: auto;
             left: auto;
             right: auto;
-            max-height: 25vh;
+            max-height: 35vh;
         }
     }
 }
@@ -403,7 +417,7 @@
     }
 }
 // }}}
-// {{{ .edit-href .edit-src
+// {{{ .edit-href / .edit-src
 .edit-href,
 .edit-src {
     position: relative;

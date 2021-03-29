@@ -19,6 +19,18 @@ Version 2.1   {#v2-1}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.1.14 / 29.04.2021      {#v2-1-14}
+-------------------
+
+**Backend**
+- added various small bug fixes
+- added enhancements for php 8
+
+**Frontend**
+- enhanced newsletter form
+- added download sharing to file library
+
+
 v2.1.13 / 26.01.2021      {#v2-1-13}
 -------------------
 

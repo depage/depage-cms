@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-18 13:38+0200\n"
+"POT-Creation-Date: 2021-03-25 11:10+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2131,7 +2131,7 @@ msgstr ""
 msgid "Deleted %d pages."
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:36 Cms/tpl/projectlist.tpl:22
+#: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:38 Cms/tpl/projectlist.tpl:22
 #: Cms/tpl/newsletterList.tpl:47 Cms/tpl/toolbar_main.tpl:42
 #: Cms/Forms/ReleasePages.php:77
 msgid "Edit"
@@ -2449,122 +2449,130 @@ msgid "Copy URL to Clipboard"
 msgstr ""
 
 #: Cms/js/locale.php:27
-msgid "New"
+msgid "Mail Link to file"
 msgstr ""
 
 #: Cms/js/locale.php:28
-msgid "Create new:"
+msgid "Link to file"
 msgstr ""
 
 #: Cms/js/locale.php:29
-msgid "Create new element at the end"
+msgid "New"
 msgstr ""
 
 #: Cms/js/locale.php:30
-msgid "There are no elements that can be created in this element"
+msgid "Create new:"
 msgstr ""
 
 #: Cms/js/locale.php:31
-msgid "Cut"
+msgid "Create new element at the end"
 msgstr ""
 
 #: Cms/js/locale.php:32
-msgid "Delete"
+msgid "There are no elements that can be created in this element"
 msgstr ""
 
 #: Cms/js/locale.php:33
-msgid "Delete this element now?"
+msgid "Cut"
 msgstr ""
 
 #: Cms/js/locale.php:34
-msgid "Deselect all"
+msgid "Delete"
 msgstr ""
 
 #: Cms/js/locale.php:35
-msgid "Duplicate"
+msgid "Delete this element now?"
+msgstr ""
+
+#: Cms/js/locale.php:36
+msgid "Deselect all"
 msgstr ""
 
 #: Cms/js/locale.php:37
-msgid "Edit the current page in edit interface on the left ←."
-msgstr ""
-
-#: Cms/js/locale.php:38
-msgid "Edit the current page"
+msgid "Duplicate"
 msgstr ""
 
 #: Cms/js/locale.php:39
-msgid "Height: "
+msgid "Edit the current page in edit interface on the left ←."
 msgstr ""
 
 #: Cms/js/locale.php:40
-msgid "Width: "
+msgid "Edit the current page"
 msgstr ""
 
 #: Cms/js/locale.php:41
-msgid "Switch layout to: Edit-only, Split-view and Preview-only"
+msgid "Height: "
 msgstr ""
 
 #: Cms/js/locale.php:42
-msgid "News- or blog-post"
+msgid "Width: "
 msgstr ""
 
-#: Cms/js/locale.php:43 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:95
-msgid "No current tasks."
+#: Cms/js/locale.php:43
+msgid "Switch layout to: Edit-only, Split-view and Preview-only"
 msgstr ""
 
 #: Cms/js/locale.php:44
-msgid "Ok"
+msgid "News- or blog-post"
 msgstr ""
 
-#: Cms/js/locale.php:45
-msgid "Paste"
+#: Cms/js/locale.php:45 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:95
+msgid "No current tasks."
 msgstr ""
 
 #: Cms/js/locale.php:46
-msgid "Filter Projects"
+msgid "Ok"
 msgstr ""
 
 #: Cms/js/locale.php:47
+msgid "Paste"
+msgstr ""
+
+#: Cms/js/locale.php:48
+msgid "Filter Projects"
+msgstr ""
+
+#: Cms/js/locale.php:49
 msgid "Reload"
 msgstr ""
 
-#: Cms/js/locale.php:48 Cms/js/locale.php:49
+#: Cms/js/locale.php:50 Cms/js/locale.php:51
 msgid "Reload page preview"
 msgstr ""
 
-#: Cms/js/locale.php:50
+#: Cms/js/locale.php:52
 msgid "Rename"
 msgstr ""
 
-#: Cms/js/locale.php:51
+#: Cms/js/locale.php:53
 msgid "Select all"
 msgstr ""
 
-#: Cms/js/locale.php:52
+#: Cms/js/locale.php:54
 msgid "Finished uploading/Cancel"
 msgstr ""
 
-#: Cms/js/locale.php:53
+#: Cms/js/locale.php:55
 msgid "Change zoom level of preview."
 msgstr ""
 
-#: Cms/js/locale.php:54
+#: Cms/js/locale.php:56
 msgid "Switch to edit-only layout"
 msgstr ""
 
-#: Cms/js/locale.php:55
+#: Cms/js/locale.php:57
 msgid "Switch to split layout"
 msgstr ""
 
-#: Cms/js/locale.php:56
+#: Cms/js/locale.php:58
 msgid "Switch to preview-only layout"
 msgstr ""
 
-#: Cms/Project.php:1097
+#: Cms/Project.php:1098
 msgid "Document Release Request"
 msgstr ""
 
-#: Cms/Project.php:1098
+#: Cms/Project.php:1099
 #, php-format
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr ""

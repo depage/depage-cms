@@ -220,6 +220,9 @@ var depageCMS = (function() {
             $(".teaser").click( function() {
                 document.location = $("a", this)[0].href;
             });
+            $("fieldset.detail").depageDetails({
+                head: "legend"
+            });
         },
         // }}}
         // {{{ setupLoginCheck
@@ -913,6 +916,13 @@ var depageCMS = (function() {
                             label: locale.copyUrl,
                             action: function() {
                                 copyToClipboard($thumb.attr("data-url"));
+                            }
+                        },
+                        _shareFile: {
+                            label: locale.shareUrl,
+                            _disabled: $thumb.hasClass("not-published"),
+                            action: function() {
+                                $('<iframe src="mailto:?subject=' + locale.shareUrlSubject + '&body=' + $thumb.attr("data-url") + '">').appendTo('body').css("display", "none");
                             }
                         }
                     });

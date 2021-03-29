@@ -691,7 +691,9 @@ abstract class Transformer
 
         $xml = "<file";
         foreach ($info as $key => $value) {
-            $xml .= " $key=\"" . htmlspecialchars($value, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
+            if (!is_array($value)) {
+                $xml .= " $key=\"" . htmlspecialchars($value, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
+            }
         }
         $xml .= " />";
 
