@@ -149,7 +149,7 @@ class FileLibrary
      * @param mixed $path
      * @return void
      **/
-    public function syncFiles($path):void
+    public function syncFiles($path):int
     {
         $folderId = $this->getFolderIdByPath($path);
         $oldFiles = $this->getFilesInFolder($folderId);
@@ -179,6 +179,8 @@ class FileLibrary
                 'id' => $info->id,
             ]);
         }
+
+        return $folderId;
     }
     // }}}
     // {{{ updateFileInfo()
@@ -351,7 +353,8 @@ class FileLibrary
         while ($file = $query->fetchObject()) {
             $date = new \DateTime($file->lastmod);
             $file->lastmod = $date;
-            $file->fullname = $path . $file->filename;
+            $file->ext = pathinfo($file->filename, \PATHINFO_EXTENSION);
+            $file->fullname = trim($path . $file->filename, '/');
 
             $files[$file->filename] = $file;
         }

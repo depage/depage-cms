@@ -5,7 +5,7 @@
         <li>
             <?php
                 $thumb = new \Depage\Html\Html("thumbnail.tpl", [
-                    'file' => "libref://{$file}",
+                    'file' => $file,
                     'project' => $this->project,
                     'class' => in_array($file, $this->uploadedFiles) ? "selected" : "",
                 ], $this->param);

@@ -109,7 +109,9 @@ class FileLibrary extends Base
         $files = $this->fs->lsFiles(trim($path . "/*", '/'));
 
         $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
-        $fl->syncFiles($path);
+        $folderId = $fl->syncFiles($path);
+
+        $files = $fl->getFilesInFolder($folderId);
 
         return new Html("fileListing.tpl", [
             'form' => $form,
