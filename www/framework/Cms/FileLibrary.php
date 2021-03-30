@@ -37,6 +37,16 @@ class FileLibrary
      **/
     protected $rootPath = "";
 
+    /**
+     * @brief idByPath
+     **/
+    protected $idByPath = [];
+
+    /**
+     * @brief path
+     **/
+    protected $pathById = [];
+
     // {{{ __construct()
     /**
      * @brief__construct
@@ -251,7 +261,11 @@ class FileLibrary
      **/
     public function getFolderIdByPath(string $path):int
     {
-        // @todo cache results
+        // cache results in instance
+        if (isset($this->idByPath[$path])) {
+            return $this->idByPath[$path];
+        }
+
         $doc = $this->getFilesDoc();
         $xml = $doc->getXml();
 
@@ -270,7 +284,8 @@ class FileLibrary
             $result = $xpath->evaluate($query);
 
             if ($result->length == 1) {
-                return $result->item(0)->nodeValue;
+                $this->idByPath[$path] = $result->item(0)->nodeValue;
+                return $this->idByPath[$path];
             }
         }
 
@@ -286,7 +301,11 @@ class FileLibrary
      **/
     public function getPathByFolderId(int $id):string
     {
-        // @todo cache results
+        // cache results in instance
+        if (isset($this->pathById[$path])) {
+            return $this->pathById[$path];
+        }
+
         $doc = $this->getFilesDoc();
         $xml = $doc->getXml();
 
@@ -299,7 +318,9 @@ class FileLibrary
         $result = $xpath->evaluate($query);
 
         if ($result->length == 1) {
-            return $result->item(0)->nodeValue;
+            $this->pathById[$path] = $result->item(0)->nodeValue;
+
+            return $this->pathById[$path];
         }
 
         return false;
@@ -315,6 +336,7 @@ class FileLibrary
     public function getFilesInFolder(int $folderId):array
     {
         $files = [];
+        $path = $this->getPathByFolderId($folderId);
 
         $query = $this->pdo->prepare(
             "SELECT f.* FROM {$this->tableFiles} AS f
@@ -329,6 +351,7 @@ class FileLibrary
         while ($file = $query->fetchObject()) {
             $date = new \DateTime($file->lastmod);
             $file->lastmod = $date;
+            $file->fullname = $path . $file->filename;
 
             $files[$file->filename] = $file;
         }
