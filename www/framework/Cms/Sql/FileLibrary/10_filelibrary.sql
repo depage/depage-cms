@@ -2,10 +2,10 @@
     FileLibray Files Table
     -----------------------------------
 
-    @tablename _proj_PROJECTNAME_filelibrary_files
+    @tablename _proj_PROJECTNAME_library_files
     @version 2.2.0
 */
-CREATE TABLE _proj_PROJECTNAME_filelibrary_files (
+CREATE TABLE _proj_PROJECTNAME_library_files (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `folder` int(10) unsigned NOT NULL,
   `filename` text NOT NULL DEFAULT '',
@@ -17,6 +17,9 @@ CREATE TABLE _proj_PROJECTNAME_filelibrary_files (
   `height` int(10) unsigned DEFAULT NULL,
   `displayAspectRatio` float unsigned DEFAULT NULL,
   `duration` int(10) unsigned DEFAULT NULL,
+  `artist` text DEFAULT '',
+  `album` text DEFAULT '',
+  `title` text DEFAULT '',
   `copyright` text DEFAULT '',
   `description` text DEFAULT '',
   `keywords` text DEFAULT '',

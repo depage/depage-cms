@@ -48,7 +48,7 @@ class FileLibrary
     {
         $this->pdo = $pdo;
         $this->project = $project;
-        $this->tableFiles = "{$pdo->prefix}_proj_{$project->name}_filelibrary_files";
+        $this->tableFiles = "{$pdo->prefix}_proj_{$project->name}_library_files";
 
         $this->rootPath = $this->project->getProjectPath() . "lib/";
         $this->fs = \Depage\Fs\Fs::factory($this->rootPath);
@@ -195,6 +195,9 @@ class FileLibrary
                 height=:height,
                 displayAspectRatio=:dar,
                 duration=:duration,
+                artist=:artist,
+                title=:title,
+                album=:album,
                 copyright=:copyright,
                 description=:description,
                 keywords=:keywords
@@ -209,6 +212,9 @@ class FileLibrary
                 height=VALUES(height),
                 displayAspectRatio=VALUES(displayAspectRatio),
                 duration=VALUES(duration),
+                artist=VALUES(artist),
+                title=VALUES(title),
+                album=VALUES(album),
                 copyright=VALUES(copyright),
                 description=VALUES(description),
                 keywords=VALUES(keywords)
@@ -226,6 +232,9 @@ class FileLibrary
             'height' => $info['height'] ?? null,
             'dar' => $info['displayAspectRatio'] ?? null,
             'duration' => $info['duration'] ?? null,
+            'artist' => $info['tag_artist'] ?? "",
+            'album' => $info['tag_album'] ?? "",
+            'title' => $info['tag_title'] ?? "",
             'copyright' => $info['copyright'] ?? "",
             'description' => $info['description'] ?? "",
             'keywords' => $info['keywords'] ?? "",
