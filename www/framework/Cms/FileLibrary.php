@@ -245,7 +245,7 @@ class FileLibrary
         $f->lastmod = $info['date'];
         $f->width = $info['width'] ?? null;
         $f->height = $info['height'] ?? null;
-        $f->displayAspectRatio = $info['displayAspectRatio'] ?? null;
+        $f->displayAspectRatio = is_nan($info['displayAspectRatio']) ? null : $info['displayAspectRatio'];
         $f->duration = $info['duration'] ?? null;
         $f->artist = $info['tag_artist'] ?? "";
         $f->album = $info['tag_album'] ?? "";
