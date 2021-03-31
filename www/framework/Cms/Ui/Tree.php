@@ -494,10 +494,9 @@ class Tree extends Base {
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
         // @todo move node to trash for "pages" document?
-        $parent_id = $this->doc->getParentIdById($id);
-        $ids = $this->doc->deleteNode($id);
-        $status = count($ids) > 0;
-        if ($status) {
+        $parent_id = $this->doc->deleteNode($id);
+        if ($parent_id) {
+            $status = true;
             $this->recordChange($this->docId, [$parent_id]);
         }
 

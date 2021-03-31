@@ -38,8 +38,10 @@ class DeltaUpdates {
         $min_id_query->execute(array($this->doc_id));
         $row = $min_id_query->fetch();
 
-        $delete_query = $this->pdo->prepare("DELETE FROM " . $this->table_name . " WHERE id < ? AND doc_id = ?");
-        $delete_query->execute(array((int)$row["id"], $this->doc_id));
+        if ($row) {
+            $delete_query = $this->pdo->prepare("DELETE FROM " . $this->table_name . " WHERE id < ? AND doc_id = ?");
+            $delete_query->execute(array((int)$row["id"], $this->doc_id));
+        }
     }
 
     private function changedParentIds() {
