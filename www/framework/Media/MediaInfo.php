@@ -190,7 +190,7 @@ class MediaInfo
             if (is_array($iptc)) {
                 foreach ($iptc as $key => $value) {
                     if (isset($this->iptcHeaders[$key])) {
-                        $info['iptc' . $this->iptcHeaders[$key]] = implode(", ", str_replace("\\n", " ", $value));
+                        $info['iptc' . $this->iptcHeaders[$key]] = $this->forceUTF8String($value);
                     }
                 }
             }
@@ -203,11 +203,11 @@ class MediaInfo
                 $info = array();
                 foreach ($exif as $key => $value) {
                     if (is_string($value)) {
-                        $info['exif' . $key] = $value;
+                        $info['exif' . $key] = $this->forceUTF8String($value);
                     }
                     if ($key == "COMPUTED") {
                         foreach ($value as $keySub => $valueSub) {
-                            $info['exifComputed' . $keySub] = $valueSub;
+                            $info['exifComputed' . $keySub] = $this->forceUTF8String($value);
                         }
                     }
                 }
@@ -399,6 +399,27 @@ class MediaInfo
     }
     // }}}
 
+    // {{{ forceUTF8String()
+    /**
+     * @brief forceUTF8String
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function forceUTF8String($value)
+    {
+        if (is_array($value)) {
+            $str = [];
+            foreach ($value as $v) {
+                $str[] = str_replace("\\n", " ", $this->forceUTF8String($v));
+            }
+
+            return implode(", ", $str);
+        }
+
+        return mb_convert_encoding($value, "UTF-8", "UTF-8");
+    }
+    // }}}
     // {{{ call()
     /**
      * Call
