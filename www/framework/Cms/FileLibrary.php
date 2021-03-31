@@ -193,6 +193,9 @@ class FileLibrary
     protected function updateFileInfo($id, $folderId, $file, $fullpath)
     {
         $info = $this->mediainfo->getInfo($fullpath);
+        if (!$info->exists) {
+            //return false;
+        }
         $query = $this->pdo->prepare(
             "INSERT INTO {$this->tableFiles}
             SET
@@ -232,25 +235,46 @@ class FileLibrary
                 keywords=VALUES(keywords)
             "
         );
+        $f = new FileInfo();
+        $f->id = $id;
+        $f->folder = $folderId;
+        $f->filename = $file;
+        $f->mime = $info['mime'];
+        $f->hash = hash_file("sha256", $fullpath);
+        $f->filesize = $info['filesize'];
+        $f->lastmod = $info['date'];
+        $f->width = $info['width'] ?? null;
+        $f->height = $info['height'] ?? null;
+        $f->displayApsectRatio = $info['displayAspectRatio'] ?? null;
+        $f->duration = $info['duration'] ?? null;
+        $f->artist = $info['tag_artist'] ?? "";
+        $f->album = $info['tag_album'] ?? "";
+        $f->title = $info['tag_title'] ?? "";
+        $f->copyright = $info['copyright'] ?? "";
+        $f->description = $info['description'] ?? "";
+        $f->keywords = $info['keywords'] ?? "";
+
         $query->execute([
-            'id' => $id,
-            'folderId' => $folderId,
-            'file' => $file,
-            'mime' => $info['mime'],
-            'hash' => hash_file("sha256", $fullpath),
-            'fsize' => $info['filesize'],
-            'fdate' => $info['date']->format('Y-m-d H:i:s'),
-            'width' => $info['width'] ?? null,
-            'height' => $info['height'] ?? null,
-            'dar' => $info['displayAspectRatio'] ?? null,
-            'duration' => $info['duration'] ?? null,
-            'artist' => $info['tag_artist'] ?? "",
-            'album' => $info['tag_album'] ?? "",
-            'title' => $info['tag_title'] ?? "",
-            'copyright' => $info['copyright'] ?? "",
-            'description' => $info['description'] ?? "",
-            'keywords' => $info['keywords'] ?? "",
+            'id' => $f->id,
+            'folderId' => $f->folder,
+            'file' => $f->filename,
+            'mime' => $f->mime,
+            'hash' => $f->hash,
+            'fsize' => $f->filesize,
+            'fdate' => $f->lastmod->format('Y-m-d H:i:s'),
+            'width' => $f->width,
+            'height' => $f->height,
+            'dar' => $f->displayAspectRatio,
+            'duration' => $f->duration,
+            'artist' => $f->artist,
+            'album' => $f->album,
+            'title' => $f->title,
+            'copyright' => $f->copyright,
+            'description' => $f->description,
+            'keywords' => $f->keywords,
         ]);
+
+        return $f;
     }
     // }}}
 
@@ -328,6 +352,74 @@ class FileLibrary
         return false;
     }
     // }}}
+    // {{{ getFileInfoByLibref()
+    /**
+     * @brief getFileInfoByLibref
+     *
+     * @param mixed $libref
+     * @return void
+     **/
+    public function getFileInfoByLibref($libref)
+    {
+        $fullpath = str_replace("libref://", "", $libref);
+
+        return $this->getFileInfoByPath($fullpath);
+    }
+    // }}}
+    // {{{ getFileInfoByPath()
+    /**
+     * @brief getFileInfoByPath
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getFileInfoByPath($fullpath)
+    {
+        $filename = basename($fullpath);
+        $path = dirname($fullpath) . "/";
+        $folderId = $this->getFolderIdByPath($path);
+
+        $query = $this->pdo->prepare(
+            "SELECT f.* FROM {$this->tableFiles} AS f
+            WHERE
+                folder=:folderId AND
+                filename=:filename
+            ORDER BY filename ASC"
+        );
+
+        $query->execute([
+            'folderId' => $folderId,
+            'filename' => $filename,
+        ]);
+
+        $info = $query->fetchObject("Depage\\Cms\\FileInfo");
+
+        if (!$info) {
+            $info = $this->updateFileInfo(null, $folderId, $filename, $this->rootPath . $fullpath);
+        } else {
+            $date = new \DateTime($info->lastmod);
+            $info->lastmod = $date;
+        }
+        if ($info) {
+            $info->ext = pathinfo($info->filename, \PATHINFO_EXTENSION);
+            $info->fullname = trim($path . $info->filename, '/');
+        }
+
+        return $info;
+    }
+    // }}}
+    // {{{ getFileInfoById()
+    /**
+     * @brief getFileInfoById
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function getFileInfoById($id)
+    {
+
+    }
+    // }}}
     // {{{ getFilesInFolder()
     /**
      * @brief getFilesInFolder
@@ -350,7 +442,7 @@ class FileLibrary
             'folderId' => $folderId,
         ]);
 
-        while ($file = $query->fetchObject()) {
+        while ($file = $query->fetchObject("Depage\\Cms\\FileInfo")) {
             $date = new \DateTime($file->lastmod);
             $file->lastmod = $date;
             $file->ext = pathinfo($file->filename, \PATHINFO_EXTENSION);

@@ -204,6 +204,9 @@ class DocProperties extends Base
         if ($_GET['ajax'] == "true") {
             $file = rawurldecode($file);
         }
+        $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
+        $file = $fl->getFileInfoByLibref($file);
+
         return new Html("thumbnail.tpl", [
             'file' => $file,
             'project' => $this->project,
