@@ -111,6 +111,14 @@ class Library extends Base {
         if (empty($path)) {
             return true;
         }
+
+        $fl = new \Depage\Cms\FileLibrary($this->project->getPdo(), $this->project);
+        $xpath = new \DomXpath($this->document->getSubdocByNodeId($nodeId));
+        $list = $xpath->query("//proj:folder");
+        foreach ($list as $item) {
+            $fl->deleteDataForFolder((int) $item->attributes->getNamedItem('id')->nodeValue);
+        }
+
         try {
             $this->moveToTrash($path);
         } catch (\Exception $e) {
@@ -190,19 +198,19 @@ class Library extends Base {
         $trashPath = $this->project->getProjectPath() . "trash/";
         $srcPath = $this->project->getProjectPath() . "lib/" . $path;
         $targetPath = $trashPath . $path;
+        $parentPath = dirname($targetPath);
 
+        if (!file_exists($srcPath)) {
+            return;
+        }
         if (!is_dir($trashPath)) {
             mkdir($trashPath, 0777, true);
         }
-
-        if (!is_dir($srcPath)) {
-            $pathinfo = pathinfo($targetPath);
-            if (!is_dir($pathinfo['dirname'])) {
-                mkdir($pathinfo['dirname'], 0777, true);
-            }
-        }
         if (file_exists($targetPath) || is_dir($targetPath)) {
             $targetPath = $this->renameExistingTrashTarget($targetPath);
+        }
+        if (!is_dir($targetPath)) {
+            mkdir($targetPath, 0777, true);
         }
         rename($srcPath, $targetPath);
 

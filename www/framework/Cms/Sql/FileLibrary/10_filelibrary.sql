@@ -16,7 +16,7 @@ CREATE TABLE _proj_PROJECTNAME_library_files (
   `width` int(10) unsigned DEFAULT NULL,
   `height` int(10) unsigned DEFAULT NULL,
   `displayAspectRatio` float unsigned DEFAULT NULL,
-  `duration` int(10) unsigned DEFAULT NULL,
+  `duration` float unsigned DEFAULT NULL,
   `artist` text DEFAULT '',
   `album` text DEFAULT '',
   `title` text DEFAULT '',

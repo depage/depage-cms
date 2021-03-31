@@ -193,8 +193,8 @@ class FileLibrary
     protected function updateFileInfo($id, $folderId, $file, $fullpath)
     {
         $info = $this->mediainfo->getInfo($fullpath);
-        if (!$info->exists) {
-            //return false;
+        if (!$info['exists']) {
+            return false;
         }
         $query = $this->pdo->prepare(
             "INSERT INTO {$this->tableFiles}
@@ -245,7 +245,7 @@ class FileLibrary
         $f->lastmod = $info['date'];
         $f->width = $info['width'] ?? null;
         $f->height = $info['height'] ?? null;
-        $f->displayApsectRatio = $info['displayAspectRatio'] ?? null;
+        $f->displayAspectRatio = $info['displayAspectRatio'] ?? null;
         $f->duration = $info['duration'] ?? null;
         $f->artist = $info['tag_artist'] ?? "";
         $f->album = $info['tag_album'] ?? "";
@@ -275,6 +275,26 @@ class FileLibrary
         ]);
 
         return $f;
+    }
+    // }}}
+    // {{{ deleteDataForFolder()
+    /**
+     * @brief deleteDataForFolder
+     *
+     * @param mixed $folderId
+     * @return void
+     **/
+    public function deleteDataForFolder(int $folderId)
+    {
+        var_dump($folderId);
+        $query = $this->pdo->prepare(
+            "DELETE FROM {$this->tableFiles}
+            WHERE folder=:folderId"
+        );
+
+        $query->execute([
+            'folderId' => $folderId,
+        ]);
     }
     // }}}
 
@@ -328,25 +348,25 @@ class FileLibrary
     public function getPathByFolderId(int $id):string
     {
         // cache results in instance
-        if (isset($this->pathById[$path])) {
-            return $this->pathById[$path];
+        if (isset($this->pathById[$id])) {
+            return $this->pathById[$id];
         }
 
         $doc = $this->getFilesDoc();
         $xml = $doc->getXml();
 
         $xpath = new \DOMXPath($xml);
-        $xpath->registerNamespace("proj", "http://cms.depagecms.net/ns/project");
-        $xpath->registerNamespace("db", "http://cms.depagecms.net/ns/database");
+        //$xpath->registerNamespace("proj", "http://cms.depagecms.net/ns/project");
+        //$xpath->registerNamespace("db", "http://cms.depagecms.net/ns/database");
 
         $query = "//proj:folder[@db:id = '$id']/@url";
 
         $result = $xpath->evaluate($query);
 
         if ($result->length == 1) {
-            $this->pathById[$path] = $result->item(0)->nodeValue;
+            $this->pathById[$id] = $result->item(0)->nodeValue;
 
-            return $this->pathById[$path];
+            return $this->pathById[$id];
         }
 
         return false;

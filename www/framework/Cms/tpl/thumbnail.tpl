@@ -12,7 +12,7 @@
     }
     $sizeFormatter = new \Depage\Formatters\FileSize();
     $timeFormatter = new \Depage\Formatters\TimeAbsolute();
-    $lastPublishDate = $this->project->getLastPublishDateOf("lib/" . $file);
+    $lastPublishDate = $this->project->getLastPublishDateOf("lib/" . $this->file->fullname);
 
     $target = $this->project->getDefaultTargetUrl() . "/lib/";
 
@@ -53,13 +53,13 @@
                 <p><?php self::t($this->file->description); ?></p>
             <?php } ?>
             <?php if (isset($this->file->duration)) { ?>
-                <p><?php self::t($timeFormatter->format($wthis->file->duration)); ?></p>
+                <p><?php self::t($timeFormatter->format($this->file->duration)); ?></p>
             <?php } ?>
             <?php if (isset($this->file->artist)) { ?>
                 <p><?php self::t($this->file->artist); ?></p>
             <?php } ?>
             <?php if (isset($this->file->album)) { ?>
-                <p><?php self::t($wthis->file->album); ?></p>
+                <p><?php self::t($this->file->album); ?></p>
             <?php } ?>
             <?php if (isset($this->file->title)) { ?>
                 <p><?php self::t($this->file->title); ?></p>
