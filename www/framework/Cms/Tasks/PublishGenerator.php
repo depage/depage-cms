@@ -324,28 +324,31 @@ class PublishGenerator
      **/
     protected function queuePublishFiles()
     {
-        $projectPath = $this->project->getProjectPath();
+        $libPath = $this->project->getProjectPath() . "lib/";
         $conf = $this->project->getPublishingTargets()[$this->publishId];
 
-        $fsLocal = \Depage\Fs\Fs::factory($projectPath);
+        $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
+        $fsLocal = \Depage\Fs\Fs::factory($libPath);
 
-        // getting als files in library
-        $files = $fsLocal->lsFiles("lib/*");
-        $dirs = $fsLocal->lsDir("lib/*");
+        // getting all directories in library
+        $dirs = $fsLocal->lsDir("*");
+
         while (count($dirs) > 0) {
             $dir = array_pop($dirs);
-            $files = array_merge($files, $fsLocal->lsFiles($dir . "/*"));
+            $folderId = $fl->syncFiles($dir);
+
+            // adding tasks for all files
+            $files = $fl->getFilesInFolder($folderId);
+            foreach ($files as $file) {
+                $this->task->addSubtask("publishing $file->fullname", "\$publisher->publishFileWithHash(%s, %s, %s);", [
+                    $libPath . $file->fullname,
+                    "lib/" . $file->fullname,
+                    $file->hash,
+                ], $this->initId);
+            }
+
             $dirs = array_merge($dirs, $fsLocal->lsDir($dir . "/*"));
         }
-
-        // publish file library
-        foreach ($files as $file) {
-            $this->task->addSubtask("publishing $file", "\$publisher->publishFile(%s, %s);", [
-                $projectPath . $file,
-                $file,
-            ], $this->initId);
-        }
-
     }
     // }}}
     // {{{ queueUpdateSchema()

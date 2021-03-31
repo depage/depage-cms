@@ -286,7 +286,6 @@ class FileLibrary
      **/
     public function deleteDataForFolder(int $folderId)
     {
-        var_dump($folderId);
         $query = $this->pdo->prepare(
             "DELETE FROM {$this->tableFiles}
             WHERE folder=:folderId"
@@ -372,6 +371,7 @@ class FileLibrary
         return false;
     }
     // }}}
+
     // {{{ getFileInfoByLibref()
     /**
      * @brief getFileInfoByLibref

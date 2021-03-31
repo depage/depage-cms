@@ -8,7 +8,7 @@
 CREATE TABLE _proj_PROJECTNAME_library_files (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `folder` int(10) unsigned NOT NULL,
-  `filename` text NOT NULL DEFAULT '',
+  `filename` blob NOT NULL DEFAULT '',
   `mime` varchar(255) NOT NULL DEFAULT '',
   `hash` varchar(64) NOT NULL DEFAULT '',
   `filesize` int(10) unsigned NOT NULL DEFAULT 0,

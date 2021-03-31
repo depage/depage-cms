@@ -209,8 +209,8 @@ class Library extends Base {
         if (file_exists($targetPath) || is_dir($targetPath)) {
             $targetPath = $this->renameExistingTrashTarget($targetPath);
         }
-        if (!is_dir($targetPath)) {
-            mkdir($targetPath, 0777, true);
+        if (!is_dir($parentPath)) {
+            mkdir($parentPath, 0777, true);
         }
         rename($srcPath, $targetPath);
 
