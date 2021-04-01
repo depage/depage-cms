@@ -20,6 +20,9 @@
             <?php self::e($thumb); ?>
         </li>
     <?php } ?>
+    <?php if (!empty($this->query['query']) && count($this->files) == 0) { ?>
+        <li><?php self::t(_("No files found")); ?></li>
+    <?php } ?>
 </ul>
 
 <?php // vim:set ft=php sw=4 sts=4 fdm=marker et :

@@ -32,7 +32,7 @@ class FileSearch extends \Depage\HtmlForm\HtmlForm
      **/
     public function addChildElements()
     {
-        $this->addText("query", [
+        $this->addSearch("query", [
             'label' => _("Search"),
         ]);
         $this->addSingle("mime", [

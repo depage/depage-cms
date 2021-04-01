@@ -144,7 +144,7 @@ class FileLibrary extends Base
         ]);
 
         $form->process();
-        if ($_POST['formAutosave'] == true) {
+        if (($_POST['formAutosave'] ?? false) == true) {
             die();
         }
         if ($form->validateAutosave()) {
