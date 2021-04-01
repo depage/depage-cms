@@ -3,7 +3,7 @@ Changelog     {#changelog}
 
 [TOC]
 
-Version 2.1   {#v2-1}
+Version 2.2   {#v2-2}
 ===========
 
 **User Interface Highlights**
@@ -17,6 +17,19 @@ Version 2.1   {#v2-1}
 - Enhanced [preview](@ref page-preview) to automatically show currently edited language
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.2.0 / 29.04.2021      {#v2-2-0}
+-------------------
+
+**Backend**
+- added new file library
+- enhanced performance when publishing file library
+- added ability to name and move folder in library while keeping file references
+
+**Frontend**
+- enhanced file library
+- added search interface for file library
 
 
 v2.1.14 / 29.04.2021      {#v2-1-14}

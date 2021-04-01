@@ -3,7 +3,7 @@ Versionshistorie     {#changelog}
 
 [TOC]
 
-Version 2.1   {#v2-1}
+Version 2.2   {#v2-2}
 ===========
 
 **User Interface Highlights**
@@ -17,6 +17,19 @@ Version 2.1   {#v2-1}
 - Verbesserung der [Vorschau](@ref page-preview), so dass diese automatisch in der gerade bearbeiteten Sprache angezeigt wird
 - Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.2.0 / 29.04.2021      {#v2-2-0}
+-------------------
+
+**Backend**
+- Neue Dateibibliothek hinzugefügt
+- Performance beim Veröffentlichen der Dateibibliothek verbessert
+- Verschieben und Umbenennen von Ordnern in der Dateibibliothek hält Dateiverknüpfungen bei
+
+**Frontend**
+- Dateibibliothek verbessert
+- Neue Suchfunktion zur Dateibibliothek hinzugefügt
 
 
 v2.1.14 / 29.04.2021      {#v2-1-14}
