@@ -102,6 +102,9 @@ class FileLibrary extends Base
         if (!is_dir($targetPath)) {
             return "";
         }
+        if (empty($path)) {
+            return $this->search();
+        }
 
         $form = $this->upload($path);
         $uploadedFiles = $_SESSION['dpLibraryUploadedFiles'] ?? [];
@@ -119,6 +122,45 @@ class FileLibrary extends Base
             'path' => $path,
             'files' => $files,
             'project' => $this->project,
+        ], $this->htmlOptions);
+    }
+    // }}}
+    // {{{ search()
+    /**
+     * @brief search
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function search()
+    {
+        $files = [];
+        $query = [];
+
+        $form = new \Depage\Cms\Forms\Project\FileSearch("file-search", [
+            'submitUrl' => DEPAGE_BASE . "project/{$this->project->name}/library/search/",
+            'project' => $this->project,
+            'class' => 'search-lib',
+        ]);
+
+        $form->process();
+        if ($_POST['formAutosave'] == true) {
+            die();
+        }
+        if ($form->validateAutosave()) {
+            $query = $form->getValues();
+
+            $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
+            if (strlen(trim($query['query'])) >= 2) {
+                $files = $fl->searchFiles($query['query'], $query['mime']);
+            }
+        }
+
+        return new Html("fileSearch.tpl", [
+            'project' => $this->project,
+            'form' => $form,
+            'query' => $query,
+            'files' => $files,
         ], $this->htmlOptions);
     }
     // }}}

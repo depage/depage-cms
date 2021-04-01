@@ -474,6 +474,56 @@ class FileLibrary
         return $files;
     }
     // }}}
+    // {{{ searchFiles()
+    /**
+     * @brief getFilesInFolder
+     *
+     * @param mixed int $id
+     * @return void
+     **/
+    public function searchFiles(string $search, string $mime = "*", int $limit = 1000):array
+    {
+        $files = [];
+
+        $search = "%{$search}%";
+        $params = [
+            'search' => $search,
+            'limit' => $limit,
+        ];
+
+        $mimeQuery = "";
+        if ($mime != "*") {
+            $mimeQuery = " AND mime LIKE :mime";
+            $params['mime'] = str_replace("*", "%", $mime);
+        }
+
+        $query = $this->pdo->prepare(
+            "SELECT f.* FROM {$this->tableFiles} AS f
+            WHERE
+                filename LIKE :search
+                {$mimeQuery}
+            ORDER BY filename ASC
+            LIMIT :limit",
+        [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
+
+        $query->execute($params);
+
+        while ($file = $query->fetchObject("Depage\\Cms\\FileInfo")) {
+            $path = $this->getPathByFolderId($file->folder);
+
+            if (strpos($path, "/cache/") === 0) continue;;
+
+            $date = new \DateTime($file->lastmod);
+            $file->lastmod = $date;
+            $file->ext = pathinfo($file->filename, \PATHINFO_EXTENSION);
+            $file->fullname = trim($path . $file->filename, '/');
+
+            $files[$file->filename] = $file;
+        }
+
+        return $files;
+    }
+    // }}}
 
     // {{{ getFilesDoc()
     /**

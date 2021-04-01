@@ -941,23 +941,38 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupFileList
         setupFileList: function() {
-            var $form = $(".upload-to-lib");
-            var $dropArea = $form.parents('.file-list');
-            var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($form);
+            var $uploadForm = $(".upload-to-lib");
+            var $searchForm = $(".search-lib");
+            var $dropArea = $uploadForm.parents('.file-list');
+            var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($uploadForm);
             var $fileContainer = $(".files .file-list");
 
-            $(document)
-                .off('dragover')
-                .off('dragend')
-                .off('drop');
+            if ($uploadForm.length > 0) {
+                $(document)
+                    .off('dragover')
+                    .off('dragend')
+                    .off('drop');
 
-            $form.find('input[type="submit"]').remove();
-            $form.find('input[type="file"]').depageUploader({
-                $drop_area: $dropArea,
-                $progress_container: $progressArea
-            }).on('complete', function(e, html) {
-                localJS.loadLibraryFiles($form.find("p.input-file").attr("data-path"));
-            });
+                $uploadForm.find('input[type="submit"]').remove();
+                $uploadForm.find('input[type="file"]').depageUploader({
+                    $drop_area: $dropArea,
+                    $progress_container: $progressArea
+                }).on('complete', function(e, html) {
+                    localJS.loadLibraryFiles($uploadForm.find("p.input-file").attr("data-path"));
+                });
+            }
+
+            if ($searchForm.length > 0) {
+                $searchForm.on("depageForm.autosaved", function() {
+                    var url = baseUrl + "project/" + projectName + "/library/search/";
+                    var $fileContainer = $(".files .file-list ul.results");
+
+                    // @todo limit loading until last results where loaded before
+                    $fileContainer.empty().load(url + "?ajax=true ul.results > *", function() {
+                        //localJS.setupFileList();
+                    });
+                });
+            }
 
             $(".file-list ul").depageLiveFilter("li", "figcaption");
             $(".file-list li").on("depage.filter-hidden", function() {
