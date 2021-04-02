@@ -489,7 +489,9 @@ class FileLibrary
     {
         $files = [];
 
-        $textQuery = "%{$search}%";
+        $textQuery = str_replace(["%", "_", " "], ["\\%", "\\_", "%"], trim($search));
+        $textQuery = "%{$textQuery}%";
+
         $filename = $textQuery;
         $params = [
             'filename' => $filename,

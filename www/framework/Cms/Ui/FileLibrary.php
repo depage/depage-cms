@@ -137,7 +137,7 @@ class FileLibrary extends Base
         $files = [];
         $query = [];
 
-        $form = new \Depage\Cms\Forms\Project\FileSearch("file-search", [
+        $form = new \Depage\Cms\Forms\Project\FileSearch("file-search-{$this->project->name}", [
             'submitUrl' => DEPAGE_BASE . "project/{$this->project->name}/library/search/",
             'project' => $this->project,
             'class' => 'search-lib',
