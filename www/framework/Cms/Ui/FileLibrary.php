@@ -152,7 +152,7 @@ class FileLibrary extends Base
 
             $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
             if (strlen(trim($query['query'])) >= 2) {
-                $files = $fl->searchFiles($query['query'], $query['mime']);
+                $files = $fl->searchFiles($query['query'], $query['type'], $query['mime']);
             }
         }
 

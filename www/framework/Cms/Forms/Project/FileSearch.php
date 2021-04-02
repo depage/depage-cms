@@ -36,7 +36,7 @@ class FileSearch extends \Depage\HtmlForm\HtmlForm
             'label' => _("Search"),
         ]);
         $this->addSingle("mime", [
-            'label' => _("Type"),
+            'label' => _("File Type"),
             'defaultValue' => "*",
             'list' => [
                 '*' => _("All"),
@@ -44,6 +44,14 @@ class FileSearch extends \Depage\HtmlForm\HtmlForm
                 'video/*' => _("Video"),
                 'audio/*' => _("Audio"),
                 'application/pdf' => _("PDF"),
+            ],
+        ]);
+        $this->addSingle("type", [
+            'label' => _("Search Type"),
+            'defaultValue' => 'filename',
+            'list' => [
+                'filename' => _("Filename only"),
+                'all' => _("All Metadata"),
             ],
         ]);
     }

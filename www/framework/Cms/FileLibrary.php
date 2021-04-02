@@ -485,13 +485,14 @@ class FileLibrary
      * @param mixed int $id
      * @return void
      **/
-    public function searchFiles(string $search, string $mime = "*", int $limit = 1000):array
+    public function searchFiles(string $search, string $searchType = "filename", string $mime = "*", int $limit = 1000):array
     {
         $files = [];
 
-        $search = "%{$search}%";
+        $textQuery = "%{$search}%";
+        $filename = $textQuery;
         $params = [
-            'search' => $search,
+            'filename' => $filename,
             'limit' => $limit,
         ];
 
@@ -501,10 +502,30 @@ class FileLibrary
             $params['mime'] = str_replace("*", "%", $mime);
         }
 
+        $metadataQuery = "";
+        if ($searchType == "all") {
+            $metadataQuery .= " OR artist LIKE :artist";
+            $metadataQuery .= " OR album LIKE :album";
+            $metadataQuery .= " OR title LIKE :title";
+            $metadataQuery .= " OR copyright LIKE :copyright";
+            $metadataQuery .= " OR description LIKE :description";
+            $metadataQuery .= " OR keywords LIKE :keywords";
+
+            $params['artist'] = $textQuery;
+            $params['album'] = $textQuery;
+            $params['title'] = $textQuery;
+            $params['copyright'] = $textQuery;
+            $params['description'] = $textQuery;
+            $params['keywords'] = $textQuery;
+        }
+
         $query = $this->pdo->prepare(
             "SELECT f.* FROM {$this->tableFiles} AS f
             WHERE
-                filename LIKE :search
+                (
+                    filename LIKE :filename
+                    {$metadataQuery}
+                )
                 {$mimeQuery}
             ORDER BY filename ASC
             LIMIT :limit",
