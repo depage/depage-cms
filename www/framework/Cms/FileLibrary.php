@@ -517,7 +517,12 @@ class FileLibrary
             $params['copyright'] = $textQuery;
             $params['description'] = $textQuery;
             $params['keywords'] = $textQuery;
+        } else if ($searchType == "fulltext") {
+            $metadataQuery = " OR MATCH(artist, album, title, copyright, description, keywords) AGAINST (:metadata IN NATURAL LANGUAGE MODE)";
+
+            $params['metadata'] = $search;
         }
+
 
         $query = $this->pdo->prepare(
             "SELECT f.* FROM {$this->tableFiles} AS f

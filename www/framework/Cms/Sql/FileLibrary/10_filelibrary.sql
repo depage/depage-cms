@@ -27,5 +27,6 @@ CREATE TABLE _proj_PROJECTNAME_library_files (
   PRIMARY KEY (`id`),
   UNIQUE KEY `folderFilename`(`folder`,`filenamehash`),
   KEY `filename`(`filename`),
-  KEY `info`(`hash`,`mime`,`filesize`,`lastmod`)
+  KEY `info`(`hash`,`mime`,`filesize`,`lastmod`),
+  FULLTEXT KEY `metadata` (`artist`,`album`,`title`,`copyright`,`description`,`keywords`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
