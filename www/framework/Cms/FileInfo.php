@@ -20,6 +20,7 @@ class FileInfo
     public $id = null;
     public $folder = null;
     public $filename = null;
+    public $filenamehash = null;
     public $mime = null;
     public $hash = null;
     public $filesize = null;

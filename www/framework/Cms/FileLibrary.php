@@ -202,6 +202,7 @@ class FileLibrary
                 id=:id,
                 folder=:folderId,
                 filename=:file,
+                filenamehash=:filenamehash,
                 mime=:mime,
                 hash=:hash,
                 filesize=:fsize,
@@ -219,6 +220,7 @@ class FileLibrary
             ON DUPLICATE KEY UPDATE
                 folder=VALUES(folder),
                 filename=VALUES(filename),
+                filenamehash=VALUES(filenamehash),
                 mime=VALUES(mime),
                 hash=VALUES(hash),
                 filesize=VALUES(filesize),
@@ -239,6 +241,7 @@ class FileLibrary
         $f->id = $id;
         $f->folder = $folderId;
         $f->filename = $file;
+        $f->filenamehash = hash("sha1", $file);
         $f->mime = $info['mime'];
         $f->hash = hash_file("sha256", $fullpath);
         $f->filesize = $info['filesize'];
@@ -258,6 +261,7 @@ class FileLibrary
             'id' => $f->id,
             'folderId' => $f->folder,
             'file' => $f->filename,
+            'filenamehash' => $f->filenamehash,
             'mime' => $f->mime,
             'hash' => $f->hash,
             'fsize' => $f->filesize,
@@ -396,6 +400,7 @@ class FileLibrary
     public function getFileInfoByPath($fullpath)
     {
         $filename = basename($fullpath);
+        $filenamehash = hash("sha256", $filename);
         $path = dirname($fullpath) . "/";
         $folderId = $this->getFolderIdByPath($path);
 
@@ -403,13 +408,12 @@ class FileLibrary
             "SELECT f.* FROM {$this->tableFiles} AS f
             WHERE
                 folder=:folderId AND
-                filename=:filename
-            ORDER BY filename ASC"
+                filenamehash=:filenamehash"
         );
 
         $query->execute([
             'folderId' => $folderId,
-            'filename' => $filename,
+            'filenamehash' => $filenamehash,
         ]);
 
         $info = $query->fetchObject("Depage\\Cms\\FileInfo");

@@ -8,9 +8,10 @@
 CREATE TABLE _proj_PROJECTNAME_library_files (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `folder` int(10) unsigned NOT NULL,
-  `filename` blob NOT NULL DEFAULT '',
-  `mime` varchar(255) NOT NULL DEFAULT '',
+  `filename` text NOT NULL DEFAULT '',
+  `filenamehash` varchar(40) NOT NULL DEFAULT '',
   `hash` varchar(64) NOT NULL DEFAULT '',
+  `mime` varchar(255) NOT NULL DEFAULT '',
   `filesize` int(10) unsigned NOT NULL DEFAULT 0,
   `lastmod` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   `width` int(10) unsigned DEFAULT NULL,
@@ -24,5 +25,7 @@ CREATE TABLE _proj_PROJECTNAME_library_files (
   `description` text DEFAULT '',
   `keywords` text DEFAULT '',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `filename`(`folder`,`filename`)
+  UNIQUE KEY `folderFilename`(`folder`,`filenamehash`),
+  KEY `filename`(`filename`),
+  KEY `info`(`hash`,`mime`,`filesize`,`lastmod`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
