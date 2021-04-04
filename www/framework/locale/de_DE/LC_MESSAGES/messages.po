@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-04 20:55+0200\n"
+"POT-Creation-Date: 2021-04-04 23:00+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2800,11 +2800,15 @@ msgstr ""
 msgid "Changed: "
 msgstr "Geändert: "
 
-#: Cms/tpl/thumbnail.tpl:45
+#: Cms/tpl/thumbnail.tpl:44
+msgid "Folder: "
+msgstr "Ordner: "
+
+#: Cms/tpl/thumbnail.tpl:46
 msgid "Published: "
 msgstr "Publiziert: "
 
-#: Cms/tpl/thumbnail.tpl:47
+#: Cms/tpl/thumbnail.tpl:48
 msgid ""
 "File has not been published yet.\n"
 "Publish your project to make the file available online."
