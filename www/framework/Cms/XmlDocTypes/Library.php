@@ -199,6 +199,7 @@ class Library extends Base {
         $srcPath = $this->project->getProjectPath() . "lib/" . $path;
         $targetPath = $trashPath . $path;
         $parentPath = dirname($targetPath);
+        $wasFile = is_file($srcPath);
 
         if (!file_exists($srcPath)) {
             return;
@@ -215,6 +216,12 @@ class Library extends Base {
         rename($srcPath, $targetPath);
 
         $this->clearGraphicsCache($path);
+
+        if ($wasFile) {
+            $fl = new \Depage\Cms\FileLibrary($this->project->getPdo(), $this->project);
+
+            $fl->syncFiles(dirname($path) . "/");
+        }
     }
     // }}}
     // {{{ renameExistingTrashTarget()
