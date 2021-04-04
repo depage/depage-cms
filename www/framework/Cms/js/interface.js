@@ -958,23 +958,29 @@ var depageCMS = (function() {
                     .off('dragend')
                     .off('drop');
 
-                $uploadForm.find('input[type="submit"]').remove();
+                $uploadForm.find('p.submit').remove();
                 $uploadForm.find('input[type="file"]').depageUploader({
                     $drop_area: $dropArea,
                     $progress_container: $progressArea
                 }).on('complete', function() {
                     localJS.loadLibraryFiles($uploadForm.find("p.input-file").attr("data-path"));
                 });
+                $uploadForm.on("submit", function() {
+                    return false;
+                });
             }
 
             if ($searchForm.length > 0) {
-                $searchForm.find("p.submit").remove();
+                $searchForm.find('p.submit').remove();
                 $searchForm.on("depageForm.autosaved", function() {
                     var url = baseUrl + "project/" + projectName + "/library/search/";
                     var $fileContainer = $(".files .file-list ul.results");
 
                     // @todo limit loading until last results where loaded before
                     $fileContainer.empty().load(url + "?ajax=true ul.results > *");
+                });
+                $searchForm.on("submit", function() {
+                    return false;
                 });
             }
             $(".search").toggleClass("active", $searchForm.length > 0);
