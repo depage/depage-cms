@@ -1,5 +1,5 @@
 <h1><?php self::t(_("File Library")); ?></h1>
-<p><?php self::t(_("Please search for a file or choose a folder on the left.")); ?></p>
+<p><?php self::t(_("Please search for a file or choose a folder.")); ?></p>
 <p><?php self::t(_("To upload a new file, please choose a folder to upload to first.")); ?></p>
 
 <?php self::e($this->form); ?>
@@ -21,7 +21,7 @@
         </li>
     <?php } ?>
     <?php if (!empty($this->query['query']) && count($this->files) == 0) { ?>
-        <li><?php self::t(_("No files found")); ?></li>
+        <li><em><?php self::t(_("No matching files found.")); ?></em></li>
     <?php } ?>
 </ul>
 

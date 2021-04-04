@@ -34,10 +34,12 @@ class FileSearch extends \Depage\HtmlForm\HtmlForm
     {
         $this->addSearch("query", [
             'label' => _("Search"),
+            'autofocus' => true,
         ]);
         $this->addSingle("mime", [
             'label' => _("File Type"),
             'defaultValue' => "*",
+            'class' => 'edit-type',
             'list' => [
                 '*' => _("All"),
                 'image/*' => _("Image"),
@@ -49,6 +51,7 @@ class FileSearch extends \Depage\HtmlForm\HtmlForm
         $this->addSingle("type", [
             'label' => _("Search Type"),
             'defaultValue' => 'filename',
+            'class' => 'edit-type',
             'list' => [
                 'filename' => _("Filename only"),
                 'all' => _("All Metadata"),

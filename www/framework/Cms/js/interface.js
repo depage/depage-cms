@@ -935,6 +935,11 @@ var depageCMS = (function() {
                         $ok.click();
                     }
                 });
+            $(".open-search").on("click", function() {
+                localJS.loadLibraryFiles("");
+                currentLibPath = "";
+                jstreeLibrary.deselect_all();
+            });
 
             localJS.setupFileList();
         },
@@ -978,6 +983,7 @@ var depageCMS = (function() {
                     $fileContainer.trigger("selectionChange.depage");
                 });
             }
+            $(".search").toggleClass("active", $searchForm.length > 0);
 
             $fileContainer.trigger("selectionChange.depage");
         },

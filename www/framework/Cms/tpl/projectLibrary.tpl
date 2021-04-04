@@ -5,6 +5,7 @@
         <header class="info info-tree-library">
             <h1><?php self::e(_("Library")); ?></h1>
         </header>
+        <div class="search active"><a class="open-search"><?php self::t(_("File Search")); ?></a></div>
         <div <?php self::attr([
             'class' => "tree library",
             'data-url' => "project/{$this->projectName}/tree/lib/",
