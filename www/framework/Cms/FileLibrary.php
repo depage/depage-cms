@@ -196,6 +196,8 @@ class FileLibrary
         if (!$info['exists']) {
             return false;
         }
+        $pathKeywords = trim(str_replace(["/", " ", "-", "_"], ",", $this->getPathByFolderId($folderId)), ",");
+
         $query = $this->pdo->prepare(
             "INSERT INTO {$this->tableFiles}
             SET
@@ -216,7 +218,8 @@ class FileLibrary
                 album=:album,
                 copyright=:copyright,
                 description=:description,
-                keywords=:keywords
+                keywords=:keywords,
+                customKeywords=:customKeywords
             ON DUPLICATE KEY UPDATE
                 folder=VALUES(folder),
                 filename=VALUES(filename),
@@ -234,7 +237,8 @@ class FileLibrary
                 album=VALUES(album),
                 copyright=VALUES(copyright),
                 description=VALUES(description),
-                keywords=VALUES(keywords)
+                keywords=VALUES(keywords),
+                customKeywords=VALUES(customKeywords)
             "
         );
         $f = new FileInfo();
@@ -256,6 +260,7 @@ class FileLibrary
         $f->copyright = $info['copyright'] ?? "";
         $f->description = $info['description'] ?? "";
         $f->keywords = $info['keywords'] ?? "";
+        $f->customKeywords = $pathKeywords;
 
         $query->execute([
             'id' => $f->id,
@@ -276,6 +281,7 @@ class FileLibrary
             'copyright' => $f->copyright,
             'description' => $f->description,
             'keywords' => $f->keywords,
+            'customKeywords' => $f->customKeywords,
         ]);
 
         return $f;
@@ -334,6 +340,8 @@ class FileLibrary
 
             if ($result->length == 1) {
                 $this->idByPath[$path] = $result->item(0)->nodeValue;
+                $this->pathById[$result->item(0)->nodeValue] = $path . "/";
+
                 return $this->idByPath[$path];
             }
         }
@@ -368,6 +376,7 @@ class FileLibrary
 
         if ($result->length == 1) {
             $this->pathById[$id] = $result->item(0)->nodeValue;
+            $this->idByPath[$result->item(0)->nodeValue] = $id;
 
             return $this->pathById[$id];
         }
@@ -512,6 +521,7 @@ class FileLibrary
             $metadataQuery .= " OR copyright LIKE :copyright";
             $metadataQuery .= " OR description LIKE :description";
             $metadataQuery .= " OR keywords LIKE :keywords";
+            $metadataQuery .= " OR customKeywords LIKE :customKeywords";
 
             $params['artist'] = $textQuery;
             $params['album'] = $textQuery;
@@ -519,8 +529,9 @@ class FileLibrary
             $params['copyright'] = $textQuery;
             $params['description'] = $textQuery;
             $params['keywords'] = $textQuery;
+            $params['customKeywords'] = $textQuery;
         } else if ($searchType == "fulltext") {
-            $metadataQuery = " OR MATCH(artist, album, title, copyright, description, keywords) AGAINST (:metadata IN NATURAL LANGUAGE MODE)";
+            $metadataQuery = " OR MATCH(artist, album, title, copyright, description, keywords, customKeywords) AGAINST (:metadata IN NATURAL LANGUAGE MODE)";
 
             $params['metadata'] = $search;
         }

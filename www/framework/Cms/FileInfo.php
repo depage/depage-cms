@@ -35,6 +35,7 @@ class FileInfo
     public $copyright = "";
     public $description = "";
     public $keywords = "";
+    public $customKeywords = "";
     public $ext = "";
     public $fullname = "";
 }
