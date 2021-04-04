@@ -976,12 +976,6 @@ var depageCMS = (function() {
                     // @todo limit loading until last results where loaded before
                     $fileContainer.empty().load(url + "?ajax=true ul.results > *");
                 });
-            } else {
-                $(".file-list ul").depageLiveFilter("li", "figcaption");
-                $(".file-list li").on("depage.filter-hidden", function() {
-                    $("figure", this).removeClass("selected");
-                    $fileContainer.trigger("selectionChange.depage");
-                });
             }
             $(".search").toggleClass("active", $searchForm.length > 0);
 
