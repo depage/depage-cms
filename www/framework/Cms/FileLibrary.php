@@ -561,7 +561,7 @@ class FileLibrary
             $file->ext = pathinfo($file->filename, \PATHINFO_EXTENSION);
             $file->fullname = trim($path . $file->filename, '/');
 
-            $files[$file->filename] = $file;
+            $files[] = $file;
         }
 
         return $files;
