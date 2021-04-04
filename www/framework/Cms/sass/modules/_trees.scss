@@ -669,7 +669,7 @@
             position: relative;
             color: $textBaseColor;
             line-height: $searchHeight;
-            padding-left: $searchHeight;
+            padding-left: $searchHeight - 2px;
             cursor: pointer;
 
             &::before {
