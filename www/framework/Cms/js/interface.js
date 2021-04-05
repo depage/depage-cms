@@ -980,15 +980,56 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupFileSearch
         setupFileSearch: function($form) {
+            var query,
+                lastQuery,
+                loading = false;
+
+            var getQuery = function() {
+                var q = "";
+                $("input, select, textarea", $form).each(function() {
+                    var type = $(this).attr("type");
+                    if ((type == "search")) {
+                        q += this.value;
+                    } else if ((type == "radio")) {
+                        if (this.checked) {
+                            q += this.value;
+                        }
+                    }
+                });
+
+                return q;
+            };
+            var testForLoading = function() {
+                query = getQuery();
+
+                if (loading) {
+                    setTimeout(testForLoading, 100);
+                    return;
+                }
+                if (query == lastQuery) {
+                    return;
+                }
+
+                loadResults();
+            };
+            var loadResults = function() {
+                var url = baseUrl + "project/" + projectName + "/library/search/";
+                var $fileContainer = $(".files .file-list ul.results");
+
+                loading = true;
+                $fileContainer.empty().load(url + "?ajax=true ul.results > *", function() {
+                    lastQuery = query;
+                    loading = false;
+                });
+            };
+
+            query = lastQuery = getQuery();
+
             $form.find('p.submit').remove();
             $form.find('.input-search input').select();
 
             $form.on("depageForm.autosaved", function() {
-                var url = baseUrl + "project/" + projectName + "/library/search/";
-                var $fileContainer = $(".files .file-list ul.results");
-
-                // @todo limit loading until last results where loaded before
-                $fileContainer.empty().load(url + "?ajax=true ul.results > *");
+                testForLoading();
             });
             $form.on("submit", function() {
                 return false;
