@@ -971,21 +971,28 @@ var depageCMS = (function() {
             }
 
             if ($searchForm.length > 0) {
-                $searchForm.find('p.submit').remove();
-                $searchForm.on("depageForm.autosaved", function() {
-                    var url = baseUrl + "project/" + projectName + "/library/search/";
-                    var $fileContainer = $(".files .file-list ul.results");
-
-                    // @todo limit loading until last results where loaded before
-                    $fileContainer.empty().load(url + "?ajax=true ul.results > *");
-                });
-                $searchForm.on("submit", function() {
-                    return false;
-                });
+                localJS.setupFileSearch($searchForm);
             }
             $(".search").toggleClass("active", $searchForm.length > 0);
 
             $fileContainer.trigger("selectionChange.depage");
+        },
+        // }}}
+        // {{{ setupFileSearch
+        setupFileSearch: function($form) {
+            $form.find('p.submit').remove();
+            $form.find('.input-search input').select();
+
+            $form.on("depageForm.autosaved", function() {
+                var url = baseUrl + "project/" + projectName + "/library/search/";
+                var $fileContainer = $(".files .file-list ul.results");
+
+                // @todo limit loading until last results where loaded before
+                $fileContainer.empty().load(url + "?ajax=true ul.results > *");
+            });
+            $form.on("submit", function() {
+                return false;
+            });
         },
         // }}}
         // {{{ setupColorSchemes
