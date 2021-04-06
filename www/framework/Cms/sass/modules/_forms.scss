@@ -685,7 +685,7 @@
     }
 }
 // }}}
-// {{{ .search-lib {
+// {{{ .search-lib
 .search-lib {
     display: block;
     margin: $treeLineHeight auto;
@@ -702,6 +702,17 @@
     }
     .depage-label {
         display: none;
+    }
+    .clear {
+        $size: $treeLineHeight;
+        position: absolute;
+        top: 4px;
+        right: 6px;
+        z-index: 1000;
+        width: $size;
+        height: $size;
+        cursor: pointer;
+        @include icon-base("clear", $size);
     }
 }
 // }}}

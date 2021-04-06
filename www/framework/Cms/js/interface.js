@@ -982,7 +982,8 @@ var depageCMS = (function() {
         setupFileSearch: function($form) {
             var query,
                 lastQuery,
-                loading = false;
+                loading = false,
+                $queryInput = $form.find('.input-search input');
 
             var getQuery = function() {
                 var q = "";
@@ -1022,11 +1023,25 @@ var depageCMS = (function() {
                     loading = false;
                 });
             };
+            var clearQuery = function() {
+                $queryInput[0].value = '';
+                $queryInput.change();
+            }
 
             query = lastQuery = getQuery();
 
-            $form.find('p.submit').remove();
-            $form.find('.input-search input').select();
+            $form.find('p.submit')
+                .remove();
+            $queryInput
+                .select()
+                .on("keydown", function(e) {
+                    if (e.keyCode == 27) {
+                        clearQuery();
+                    }
+                });
+            $("<a class=\"clear\"></a>")
+                .insertAfter($queryInput)
+                .on('click', clearQuery);
 
             $form.on("depageForm.autosaved", function() {
                 testForLoading();
