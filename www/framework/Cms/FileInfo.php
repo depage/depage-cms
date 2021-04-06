@@ -38,6 +38,30 @@ class FileInfo
     public $customKeywords = "";
     public $ext = "";
     public $fullname = "";
+    public $libref = "";
+    public $libid = "";
+
+    // {{{ init()
+    /**
+     * @brief init
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function init($path)
+    {
+        if (is_string($this->lastmod)) {
+            $date = new \DateTime($this->lastmod);
+            $this->lastmod = $date;
+        }
+        if (!is_null($this->filename)) {
+            $this->ext = pathinfo($this->filename, \PATHINFO_EXTENSION);
+            $this->fullname = trim($path . $this->filename, '/');
+        }
+        $this->libid = "libid://{$this->id}/{$this->hash}";
+        $this->libref = "libref://{$this->fullname}";
+    }
+    // }}}
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :

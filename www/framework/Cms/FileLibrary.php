@@ -196,14 +196,15 @@ class FileLibrary
         if (!$info['exists']) {
             return false;
         }
-        $pathKeywords = trim(str_replace(["/", " ", "-", "_"], ",", $this->getPathByFolderId($folderId)), ",");
+        $path = $this->getPathByFolderId($folderId);
+        $pathKeywords = trim(str_replace(["/", " ", "-", "_"], ",", $path), ",");
 
         $query = $this->pdo->prepare(
             "INSERT INTO {$this->tableFiles}
             SET
                 id=:id,
                 folder=:folderId,
-                filename=:file,
+                filename=:filename,
                 filenamehash=:filenamehash,
                 mime=:mime,
                 hash=:hash,
@@ -265,7 +266,7 @@ class FileLibrary
         $query->execute([
             'id' => $f->id,
             'folderId' => $f->folder,
-            'file' => $f->filename,
+            'filename' => $f->filename,
             'filenamehash' => $f->filenamehash,
             'mime' => $f->mime,
             'hash' => $f->hash,
@@ -283,6 +284,11 @@ class FileLibrary
             'keywords' => $f->keywords,
             'customKeywords' => $f->customKeywords,
         ]);
+        if (is_null($id)) {
+            $f->id = $this->pdo->lastInsertId();
+        }
+
+        $f->init($path);
 
         return $f;
     }
@@ -385,6 +391,49 @@ class FileLibrary
     }
     // }}}
 
+    // {{{ librefToLibid()
+    /**
+     * @brief librefToLibid
+     *
+     * @param mixed $libref
+     * @return void
+     **/
+    public function librefToLibid($libref)
+    {
+        $info = $this->getFileInfoByLibref($libref);
+
+        if (!$info) return false;
+
+        return $info->libid;
+    }
+    // }}}
+    // {{{ libidToLibref()
+    /**
+     * @brief libidToLibref
+     *
+     * @param mixed $libid
+     * @return void
+     **/
+    public function libidToLibref($libid)
+    {
+        $u = (object) parse_url($libid);
+
+        if (!preg_match("|libid://(\d+)/([^/]*)|", $libid, $m)) {
+            return false;
+        }
+
+        $id = (int) $m[1];
+        $hash = $m[2];
+
+
+        $info = $this->getFileInfoById($id);
+
+        if (!$info) return false;
+
+        return $info->libref;
+    }
+    // }}}
+
     // {{{ getFileInfoByLibref()
     /**
      * @brief getFileInfoByLibref
@@ -409,7 +458,6 @@ class FileLibrary
     public function getFileInfoByPath($fullpath)
     {
         $filename = basename($fullpath);
-        $filenamehash = hash("sha256", $filename);
         $path = dirname($fullpath) . "/";
         $folderId = $this->getFolderIdByPath($path);
 
@@ -417,25 +465,20 @@ class FileLibrary
             "SELECT f.* FROM {$this->tableFiles} AS f
             WHERE
                 folder=:folderId AND
-                filenamehash=:filenamehash"
+                filenamehash=SHA1(:filename)"
         );
 
         $query->execute([
             'folderId' => $folderId,
-            'filenamehash' => $filenamehash,
+            'filename' => $filename,
         ]);
 
         $info = $query->fetchObject("Depage\\Cms\\FileInfo");
 
-        if (!$info) {
-            $info = $this->updateFileInfo(null, $folderId, $filename, $this->rootPath . $fullpath);
-        } else {
-            $date = new \DateTime($info->lastmod);
-            $info->lastmod = $date;
-        }
         if ($info) {
-            $info->ext = pathinfo($info->filename, \PATHINFO_EXTENSION);
-            $info->fullname = trim($path . $info->filename, '/');
+            $info->init($path);
+        } else {
+            $info = $this->updateFileInfo(null, $folderId, $filename, $this->rootPath . $fullpath);
         }
 
         return $info;
@@ -450,7 +493,26 @@ class FileLibrary
      **/
     public function getFileInfoById($id)
     {
+        $query = $this->pdo->prepare(
+            "SELECT f.* FROM {$this->tableFiles} AS f
+            WHERE
+                id=:id"
+        );
 
+        $query->execute([
+            'id' => $id,
+        ]);
+
+        $info = $query->fetchObject("Depage\\Cms\\FileInfo");
+
+        if (!$info) {
+            return false;
+        }
+
+        $path = $this->getPathByFolderId($info->folder);
+        $info->init($path);
+
+        return $info;
     }
     // }}}
     // {{{ getFilesInFolder()
@@ -476,10 +538,7 @@ class FileLibrary
         ]);
 
         while ($file = $query->fetchObject("Depage\\Cms\\FileInfo")) {
-            $date = new \DateTime($file->lastmod);
-            $file->lastmod = $date;
-            $file->ext = pathinfo($file->filename, \PATHINFO_EXTENSION);
-            $file->fullname = trim($path . $file->filename, '/');
+            $file->init($path);
 
             $files[$file->filename] = $file;
         }
@@ -554,12 +613,9 @@ class FileLibrary
         while ($file = $query->fetchObject("Depage\\Cms\\FileInfo")) {
             $path = $this->getPathByFolderId($file->folder);
 
-            if (strpos($path, "/cache/") === 0) continue;;
+            if (strpos($path, "/cache/") === 0) continue;
 
-            $date = new \DateTime($file->lastmod);
-            $file->lastmod = $date;
-            $file->ext = pathinfo($file->filename, \PATHINFO_EXTENSION);
-            $file->fullname = trim($path . $file->filename, '/');
+            $file->init($path);
 
             $files[] = $file;
         }
