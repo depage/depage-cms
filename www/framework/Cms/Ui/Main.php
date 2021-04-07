@@ -36,6 +36,7 @@ class Main extends Base {
             'api/*/newsletter' => '\Depage\Cms\Api\Newsletter',
             'api/*/user' => '\Depage\Cms\Api\User',
             'api/*/cache' => '\Depage\Cms\Api\Cache',
+            'api/*/library' => '\Depage\Cms\Api\Library',
             'api/*/css' => '\Depage\Cms\Api\Css',
             'api/*/project' => '\Depage\Cms\Api\Project',
             'api/*/task' => '\Depage\Cms\Api\Task',

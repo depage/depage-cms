@@ -66,6 +66,28 @@ class FileLibrary
     }
     // }}}
 
+    // {{{ syncLibrary()
+    /**
+     * @brief syncLibrary
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function syncLibrary()
+    {
+        $this->syncLibraryTree();
+        $dirs = $this->fs->lsDir("*");
+
+        while (count($dirs) > 0) {
+            $dir = array_pop($dirs);
+            $folderId = $this->syncFiles($dir);
+
+            $dirs = array_merge($dirs, $this->fs->lsDir($dir . "/*"));
+        }
+
+        return true;
+    }
+    // }}}
     // {{{ syncLibraryTree()
     /**
      * @brief syncLibraryTree
@@ -73,7 +95,7 @@ class FileLibrary
      * @param mixed
      * @return void
      **/
-    public function syncLibraryTree($path)
+    public function syncLibraryTree($path = "")
     {
         $doc = $this->getFilesDoc();
         $xml = $doc->getXml();
@@ -253,7 +275,7 @@ class FileLibrary
         $f->lastmod = $info['date'];
         $f->width = $info['width'] ?? null;
         $f->height = $info['height'] ?? null;
-        $f->displayAspectRatio = is_nan($info['displayAspectRatio']) ? null : $info['displayAspectRatio'];
+        $f->displayAspectRatio = $info['displayAspectRatio'] ?? null;
         $f->duration = $info['duration'] ?? null;
         $f->artist = $info['tag_artist'] ?? "";
         $f->album = $info['tag_album'] ?? "";
@@ -330,26 +352,26 @@ class FileLibrary
         $doc = $this->getFilesDoc();
         $xml = $doc->getXml();
 
-        if (!empty($path)) {
-            $path = trim($path, '/');
-            $dirs = explode('/', $path);
-            $xpath = new \DOMXPath($xml);
-            $xpath->registerNamespace("proj", "http://cms.depagecms.net/ns/project");
+        if (empty($path)) {
+            return false;
+        }
 
-            $query = "/proj:library";
-            foreach ($dirs as $dir) {
-                $query .= "/proj:folder[@name = '" . htmlentities($dir) . "']";
-            }
-            $query .= "/@db:id";
+        $path = trim($path, '/');
+        $dirs = explode('/', $path);
+        $xpath = new \DOMXPath($xml);
 
-            $result = $xpath->evaluate($query);
+        $query = "/proj:library";
+        foreach ($dirs as $dir) {
+            $query .= "/proj:folder[@name = '" . htmlentities($dir) . "']";
+        }
+        $query .= "/@db:id";
 
-            if ($result->length == 1) {
-                $this->idByPath[$path] = $result->item(0)->nodeValue;
-                $this->pathById[$result->item(0)->nodeValue] = $path . "/";
+        $result = $xpath->evaluate($query);
 
-                return $this->idByPath[$path];
-            }
+        if ($result->length == 1) {
+            $this->idByPath[$path] = $result->item(0)->nodeValue;
+
+            return $this->idByPath[$path];
         }
 
         return false;
@@ -373,8 +395,6 @@ class FileLibrary
         $xml = $doc->getXml();
 
         $xpath = new \DOMXPath($xml);
-        //$xpath->registerNamespace("proj", "http://cms.depagecms.net/ns/project");
-        //$xpath->registerNamespace("db", "http://cms.depagecms.net/ns/database");
 
         $query = "//proj:folder[@db:id = '$id']/@url";
 
@@ -382,7 +402,6 @@ class FileLibrary
 
         if ($result->length == 1) {
             $this->pathById[$id] = $result->item(0)->nodeValue;
-            $this->idByPath[$result->item(0)->nodeValue] = $id;
 
             return $this->pathById[$id];
         }
@@ -460,6 +479,10 @@ class FileLibrary
         $filename = basename($fullpath);
         $path = dirname($fullpath) . "/";
         $folderId = $this->getFolderIdByPath($path);
+
+        if (!$folderId) {
+            return false;
+        }
 
         $query = $this->pdo->prepare(
             "SELECT f.* FROM {$this->tableFiles} AS f
