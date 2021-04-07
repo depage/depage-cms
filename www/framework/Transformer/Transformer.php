@@ -680,32 +680,17 @@ abstract class Transformer
      * @return    $xml (xml) file info as xml string
      */
     public function xsltFileinfo($path, $extended = "true") {
-        $xml = "";
-        $path = "projects/" . $this->projectName . "/lib" . substr($path, 8);
+        $info = $this->fl->getFileInfoByRef($path);
 
-        $fileinfo = new \Depage\Media\MediaInfo();
+        if (!$info) {
+            $xml = "<file exists=\"false\" />";
+            $doc = new \DOMDocument();
+            $doc->loadXML($xml);
 
-        if ($extended === "false") {
-            $info = $fileinfo->getBasicInfo($path);
-        } else {
-            $info = $fileinfo->getInfo($path);
-        }
-        if (isset($info['date'])) {
-            $info['date'] = $info['date']->format("Y-m-d H:i:s");
+            return $doc;
         }
 
-        $xml = "<file";
-        foreach ($info as $key => $value) {
-            if (!is_array($value)) {
-                $xml .= " $key=\"" . htmlspecialchars($value, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
-            }
-        }
-        $xml .= " />";
-
-        $doc = new \DOMDocument();
-        $doc->loadXML($xml);
-
-        return $doc;
+        return $info->toXml();
     }
     // }}}
     // {{{ xsltIncludeUnparsed
