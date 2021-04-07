@@ -332,7 +332,7 @@ class Fs
     // }}}
 
     // {{{ depageFsErrorHandler
-    public function depageFsErrorHandler($errno, $errstr, $errfile, $errline, array $errcontext)
+    public function depageFsErrorHandler($errno, $errstr, $errfile, $errline)
     {
         restore_error_handler();
         throw new Exceptions\FsException($errstr);
