@@ -16,6 +16,24 @@ class JsTreeXmlToHtml
         $xslt->importStylesheet($xsl);
         $xslt->setParameter("", "projectName", $project->name);
 
+        $fl = new \Depage\Cms\FileLibrary($project->getPdo(), $project);
+
+        \Depage\Cms\Xslt\FuncDelegate::registerFunctions($xslt, [
+            "thumbnailSrc" => function($ref) use ($fl, $project) {
+                $info = $fl->getFileInfoByRef($ref);
+
+                if (!$info) return "";
+
+                $path = "projects/{$project->name}/lib/{$info->fullname}";
+
+                if ($info->ext == "svg") {
+                    return $path;
+                }
+
+                return $path . ".tf-48x48.png";
+            },
+        ]);
+
         $html = [];
         foreach ($nodes as $id => &$subdoc) {
             $html[$id] = $xslt->transformToXML($subdoc);

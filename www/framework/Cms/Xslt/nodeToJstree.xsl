@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:rpc="http://cms.depagecms.net/ns/rpc" xmlns:db="http://cms.depagecms.net/ns/database" xmlns:proj="http://cms.depagecms.net/ns/project" xmlns:pg="http://cms.depagecms.net/ns/page" xmlns:sec="http://cms.depagecms.net/ns/section" xmlns:edit="http://cms.depagecms.net/ns/edit" xmlns:backup="http://cms.depagecms.net/ns/backup" version="1.0" xmlns:dpg="http://www.depagecms.net/ns/depage" extension-element-prefixes="xsl rpc db proj pg sec edit backup dpg">
+<xsl:stylesheet
+    version="1.0"
+    xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+    xmlns:php="http://php.net/xsl"
+    xmlns:rpc="http://cms.depagecms.net/ns/rpc"
+    xmlns:db="http://cms.depagecms.net/ns/database"
+    xmlns:proj="http://cms.depagecms.net/ns/project"
+    xmlns:pg="http://cms.depagecms.net/ns/page"
+    xmlns:sec="http://cms.depagecms.net/ns/section"
+    xmlns:edit="http://cms.depagecms.net/ns/edit"
+    xmlns:backup="http://cms.depagecms.net/ns/backup"
+    xmlns:dpg="http://www.depagecms.net/ns/depage"
+    extension-element-prefixes="xsl rpc db proj pg sec edit backup dpg php">
 
     <xsl:output method="html" indent="no" omit-xml-declaration="yes" />
     <xsl:strip-space elements="*" />
@@ -97,14 +109,9 @@
     </xsl:template>
 
     <xsl:template match="edit:img" mode="hint">
-        <xsl:if test="substring(@src, 1, 9) = 'libref://'">
-            <!--
-            <xsl:call-template name="filename">
-                <xsl:with-param name="filename" select="@src" />
-            </xsl:call-template>
-            -->
+        <xsl:if test="substring(@src, 1, 9) = 'libref://' or substring(@src, 1, 8) = 'libid://'">
             <span class="mini-thumb">
-                <xsl:attribute name="style">background-image: url('projects/<xsl:value-of select="$projectName" />/lib/<xsl:value-of select="substring(@src, 10)" /><xsl:if test="not(substring(@src, string-length(@src) - 3) = '.svg')">.thumbfill-48x48.png</xsl:if>');</xsl:attribute>
+                <xsl:attribute name="style">background-image: url('<xsl:value-of select="php:function('Depage\Cms\Xslt\FuncDelegate::thumbnailSrc', string(@src))" />');</xsl:attribute>
             </span>
         </xsl:if>
     </xsl:template>
