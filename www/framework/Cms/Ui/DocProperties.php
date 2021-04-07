@@ -74,6 +74,7 @@ class DocProperties extends Base
 
         $this->project = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->authUser, $this->projectName)[0];
         $this->xmldb = $this->project->getXmlDb($this->authUser->id);
+        $this->fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
 
         $this->languages = array_keys($this->project->getLanguages());
     }
@@ -124,6 +125,7 @@ class DocProperties extends Base
             'dataNode' => $node,
             'class' => "labels-on-top",
             'ttl' => $this->auth->sessionLifetime,
+            'fl' => $this->fl,
         ]);
 
         if ($node->getAttribute("icon")) {
@@ -204,8 +206,7 @@ class DocProperties extends Base
         if ($_GET['ajax'] == "true") {
             $file = rawurldecode($file);
         }
-        $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
-        $file = $fl->getFileInfoByLibref($file);
+        $file = $this->fl->getFileInfoByRef($file);
 
         return new Html("thumbnail.tpl", [
             'file' => $file,

@@ -410,15 +410,21 @@ class FileLibrary
     }
     // }}}
 
-    // {{{ librefToLibid()
+    // {{{ toLibid()
     /**
-     * @brief librefToLibid
+     * @brieftoLibid
      *
      * @param mixed $libref
      * @return void
      **/
-    public function librefToLibid($libref)
+    public function toLibid($libref)
     {
+        if (preg_match("|libid://(\d+)/([^/]*)|", $libref, $m)) {
+            return $libref;
+        }
+        if (!preg_match("|libref://([^/]*)|", $libref, $m)) {
+            return false;
+        }
         $info = $this->getFileInfoByLibref($libref);
 
         if (!$info) return false;
@@ -426,17 +432,18 @@ class FileLibrary
         return $info->libid;
     }
     // }}}
-    // {{{ libidToLibref()
+    // {{{ toLibref()
     /**
-     * @brief libidToLibref
+     * @brieftoLibref
      *
      * @param mixed $libid
      * @return void
      **/
-    public function libidToLibref($libid)
+    public function toLibref($libid)
     {
-        $u = (object) parse_url($libid);
-
+        if (preg_match("|libref://([^/]*)|", $libid)) {
+            return $libid;
+        }
         if (!preg_match("|libid://(\d+)/([^/]*)|", $libid, $m)) {
             return false;
         }
@@ -453,6 +460,27 @@ class FileLibrary
     }
     // }}}
 
+    // {{{ getFileInfoByRef()
+    /**
+     * @brief getFileInfoByLibref
+     *
+     * @param mixed $libref
+     * @return void
+     **/
+    public function getFileInfoByRef($ref)
+    {
+        $ref = $this->toLibid($ref);
+
+        if (!preg_match("|libid://(\d+)/([^/]*)|", $ref, $m)) {
+            return false;
+        }
+
+        $id = (int) $m[1];
+
+
+        return $this->getFileInfoById($id);
+    }
+    // }}}
     // {{{ getFileInfoByLibref()
     /**
      * @brief getFileInfoByLibref
