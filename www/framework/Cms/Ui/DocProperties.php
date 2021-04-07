@@ -160,7 +160,7 @@ class DocProperties extends Base
                 $doc->saveNode($node);
 
                 $prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-                $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->projectName, 0);
+                $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->project, 0);
                 $parentId = $doc->getParentIdById($this->nodeId);
                 $deltaUpdates->recordChange($this->nodeId);
 
@@ -168,7 +168,7 @@ class DocProperties extends Base
                     // get pageId correctly
                     $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docRef);
                     $pageDoc = $this->xmldb->getDoc("pages");
-                    $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $pageDoc->getDocId(), $this->projectName, 0);
+                    $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $pageDoc->getDocId(), $this->project, 0);
                     $parentId = $pageDoc->getParentIdById($pageInfo->pageId);
                     $deltaUpdates->recordChange($parentId);
                 }

@@ -51,7 +51,7 @@ class Tree extends Base {
         if (!$this->project) {
             throw new \Depage\Cms\Exceptions\Project("not allowed");
         }
-        $this->deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, $this->projectName, 0);
+        $this->deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, $this->project, 0);
     }
     // }}}
 
@@ -746,7 +746,7 @@ class Tree extends Base {
         } else {
             $doc = $this->doc->getSubdocByNodeId($nodeId);
         }
-        $html = \Depage\Cms\JsTreeXmlToHtml::toHTML(array($doc), $this->projectName);
+        $html = \Depage\Cms\JsTreeXmlToHtml::toHTML(array($doc), $this->project);
 
         return current($html);
     }

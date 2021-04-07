@@ -120,7 +120,7 @@ class Page extends Base
         $parentPageId = $doc->getParentIdById($pageInfo->pageId);
 
         $prefix = $this->xmlDb->pdo->prefix . "_proj_" . $this->project->name;
-        $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->xmlDb->pdo, $this->xmlDb, $doc->getDocId(), $this->project->name);
+        $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->xmlDb->pdo, $this->xmlDb, $doc->getDocId(), $this->project);
 
         $deltaUpdates->recordChange($parentPageId);
     }

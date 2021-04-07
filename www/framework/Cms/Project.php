@@ -987,7 +987,7 @@ class Project extends \Depage\Entity\Entity
         $docId = $pages->getDocId();
         $prefix = $this->pdo->prefix . "_proj_" . $this->name;
 
-        $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $docId, $this->name, 0);
+        $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $docId, $this, 0);
         $nodeIdNews = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']"));
         $nodeIdYear = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']/pg:folder[@name = '$year']"));
         $nodeIdMonth = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']/pg:folder[@name = '$year']/pg:folder[@name = '$month']"));
