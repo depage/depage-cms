@@ -162,6 +162,9 @@
         <xsl:param name="lang" select="$currentLang" />
 
         <xsl:choose>
+            <xsl:when test="substring($url, 1, 8) = 'libid://'">
+                <func:result select="dp:getLibRef($url)"/>
+            </xsl:when>
             <xsl:when test="substring($url, 1, 9) = 'libref://'">
                 <func:result select="dp:getLibRef($url)"/>
             </xsl:when>

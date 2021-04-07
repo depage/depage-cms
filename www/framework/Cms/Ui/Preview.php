@@ -180,7 +180,7 @@ class Preview extends \Depage\Depage\Ui\Base
         $xmlGetter = $this->project->getXmlGetter();
         $xmlGetter->timestamp = $this->timestamp;
 
-        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlGetter, $this->projectName, $this->template, $transformCache);
+        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlGetter, $this->project, $this->template, $transformCache);
         $transformer->routeHtmlThroughPhp = true;
 
         $projectConfig = $this->project->getProjectConfig();

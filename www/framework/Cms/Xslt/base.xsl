@@ -215,7 +215,7 @@
             <xsl:when test="($src and $src != '') or ($srcset and $srcset != '') or ($alt and $alt != '')">
                 <img>
                     <xsl:choose>
-                        <xsl:when test="$src != '' and substring($src, 1, 8) = 'libref:/'">
+                        <xsl:when test="$src != '' and substring($src, 1, 9) = 'libref://'">
                             <xsl:attribute name="src">
                                 <xsl:value-of select="dp:getLibRef($src)"/>
                             </xsl:attribute>
