@@ -714,6 +714,9 @@
         cursor: pointer;
         @include icon-base("clear", $size);
     }
+    input:placeholder-shown + .clear {
+        display: none;
+    }
 }
 // }}}
 

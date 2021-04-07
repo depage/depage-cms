@@ -24,7 +24,8 @@
 ?>
 <figure <?php self::attr([
     'class' => "thumb " . $class,
-    'data-libref' => 'libref://' . $this->file->fullname,
+    'data-libref' => $this->file->libref,
+    'data-libid' => $this->file->libid,
     'data-url' => $target . $this->file->fullname,
     'data-width' => $this->file->width ?? -1,
     'data-height' => $this->file->height ?? -1,

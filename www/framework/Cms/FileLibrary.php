@@ -546,6 +546,7 @@ class FileLibrary
         return $files;
     }
     // }}}
+
     // {{{ searchFiles()
     /**
      * @brief getFilesInFolder
@@ -556,54 +557,60 @@ class FileLibrary
     public function searchFiles(string $search, string $searchType = "filename", string $mime = "*", int $limit = 1000):array
     {
         $files = [];
-
-        $textQuery = str_replace(["%", "_", " "], ["\\%", "\\_", "%"], trim($search));
-        $textQuery = "%{$textQuery}%";
-
-        $filename = $textQuery;
+        $where = [];
         $params = [
-            'filename' => $filename,
             'limit' => $limit,
         ];
+        $searchFields = ['filename'];
+        if ($searchType == "all") {
+            $searchFields += [
+                'artist',
+                'album',
+                'title',
+                'copyright',
+                'description',
+                'keywords',
+                'customKeywords',
+            ];
+        }
+
+        $queries = explode(" ", trim($search));
+
+        foreach ($queries as $i => $q) {
+            $q = \Depage\Entity\PdoEntity::escapeLike($q, '|');
+            $w = [];
+
+            foreach ($searchFields as $j => $f) {
+                $w[] = "{$f} LIKE :{$f}{$i} ESCAPE '|'";
+                $params["{$f}{$i}"] = "%$q%";
+            }
+
+            $where[] = "(" . implode(" OR ", $w) . ")";
+        }
 
         $mimeQuery = "";
         if ($mime != "*") {
-            $mimeQuery = " AND mime LIKE :mime";
+            $where[] = "mime LIKE :mime";
             $params['mime'] = str_replace("*", "%", $mime);
         }
 
         $metadataQuery = "";
-        if ($searchType == "all") {
-            $metadataQuery .= " OR artist LIKE :artist";
-            $metadataQuery .= " OR album LIKE :album";
-            $metadataQuery .= " OR title LIKE :title";
-            $metadataQuery .= " OR copyright LIKE :copyright";
-            $metadataQuery .= " OR description LIKE :description";
-            $metadataQuery .= " OR keywords LIKE :keywords";
-            $metadataQuery .= " OR customKeywords LIKE :customKeywords";
-
-            $params['artist'] = $textQuery;
-            $params['album'] = $textQuery;
-            $params['title'] = $textQuery;
-            $params['copyright'] = $textQuery;
-            $params['description'] = $textQuery;
-            $params['keywords'] = $textQuery;
-            $params['customKeywords'] = $textQuery;
-        } else if ($searchType == "fulltext") {
-            $metadataQuery = " OR MATCH(artist, album, title, copyright, description, keywords, customKeywords) AGAINST (:metadata IN NATURAL LANGUAGE MODE)";
+        if ($searchType == "fulltext") {
+            $where[] = "MATCH(artist, album, title, copyright, description, keywords, customKeywords) AGAINST (:metadata IN NATURAL LANGUAGE MODE)";
 
             $params['metadata'] = $search;
         }
 
+        if (!empty($where)) {
+            $where = implode(" AND ", $where);
+        } else {
+            $where = "";
+        };
+
 
         $query = $this->pdo->prepare(
             "SELECT f.* FROM {$this->tableFiles} AS f
-            WHERE
-                (
-                    filename LIKE :filename
-                    {$metadataQuery}
-                )
-                {$mimeQuery}
+            WHERE {$where}
             ORDER BY filename ASC
             LIMIT :limit",
         [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);

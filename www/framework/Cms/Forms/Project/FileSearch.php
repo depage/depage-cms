@@ -34,6 +34,7 @@ class FileSearch extends \Depage\HtmlForm\HtmlForm
     {
         $this->addSearch("query", [
             'label' => _("Search"),
+            'placeholder' => _("Search for files"),
             'autofocus' => true,
         ]);
         $this->addSingle("mime", [
