@@ -186,7 +186,7 @@ class PublishGenerator
         $transformer = \Depage\Transformer\Transformer::factory(
             "live",
             $this->project->getXmlGetter(),
-            $this->project->name,
+            $this->project,
             $conf->template_set,
             $transformCache
         );

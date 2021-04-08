@@ -1294,7 +1294,7 @@ class Project extends \Depage\Entity\Entity
         $xmlgetter = $this->getXmlGetter();
         $baseUrl = $this->getBaseUrl($publishId);
 
-        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlgetter, $this->name, "sitemap");
+        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlgetter, $this, "sitemap");
         $transformer->setBaseUrl($baseUrl);
         $xml = $xmlgetter->getDocXml("pages");
 
@@ -1322,7 +1322,7 @@ class Project extends \Depage\Entity\Entity
     {
         $xmlgetter = $this->getXmlGetter();
 
-        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlgetter, $this->name, "atom");
+        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlgetter, $this, "atom");
         $xml = $xmlgetter->getDocXml("pages");
 
         $parameters = [
@@ -1430,7 +1430,7 @@ class Project extends \Depage\Entity\Entity
         $conf = $targets[$publishId];
         $baseurl = $this->getBaseUrl($publishId);
 
-        $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this->name, $conf->template_set);
+        $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this, $conf->template_set);
 
         $urls = new \Depage\Publisher\Urls($publishPdo, $publishId);
 
@@ -1488,7 +1488,7 @@ class Project extends \Depage\Entity\Entity
 
         $xmlgetter = $this->getXmlGetter();
 
-        $transformer = \Depage\Transformer\Transformer::factory("pre", $xmlgetter, $this->name, "css");
+        $transformer = \Depage\Transformer\Transformer::factory("pre", $xmlgetter, $this, "css");
         $xml = $xmlgetter->getDocXml("colors");
         $xpath = new \DOMXPath($xml);
         $nodes = $xpath->query("//proj:colorscheme[@name != 'tree_name_color_global']/@name");
