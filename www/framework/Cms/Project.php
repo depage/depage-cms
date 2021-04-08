@@ -801,7 +801,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getDefaultLanguage()
     {
-        $lang = reset(array_keys($this->getLanguages()));
+        $lang = array_keys($this->getLanguages())[0];
 
         return $lang;
     }

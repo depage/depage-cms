@@ -60,9 +60,11 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
             if (empty($element->dataPath)) {
                 continue;
             }
+
             $value = "";
-            preg_match("/(.*?)(\/@([-_a-z0-9]+))?$/i", $element->dataPath, $matches);
-            list($xpath, $nodeXpath, $attrXpath, $attrName) = $matches;
+            preg_match("/(.*?)(\/@([-_a-z0-9]+))?$/i", $element->dataPath, $m);
+
+            list($xpath, $nodeXpath, $attrXpath, $attrName) = array_pad($m, 4, '');
 
             $nodes = $this->dataNodeXpath->query($xpath);
 

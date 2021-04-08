@@ -403,21 +403,21 @@ class DocProperties extends Base
             // }}}
 
             $fs->addHtml("<div class=\"details\">");
-                // {{{ add changed date
-                $fs->addHtml(sprintf(
-                    _("<p class=\"date\">%s %s by %s</p>"),
-                    _("Changed"),
-                    $dateFormatter->format($pageInfo->lastchange, true),
-                    htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
-                ));
-                // }}}
-                // {{{ add url input
-                $fs->addUrl("url-$nodeId", [
-                    'label' => _("url"),
-                    'readonly' => true,
-                    'defaultValue' => $url,
-                ]);
-                // }}}
+            // {{{ add changed date
+            $fs->addHtml(sprintf(
+                _("<p class=\"date\">%s %s by %s</p>"),
+                _("Changed"),
+                $dateFormatter->format($pageInfo->lastchange, true),
+                htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
+            ));
+            // }}}
+            // {{{ add url input
+            $fs->addUrl("url-{$this->docRef}", [
+                'label' => _("url"),
+                'readonly' => true,
+                'defaultValue' => $url,
+            ]);
+            // }}}
             // {{{ add restore from history interface
             if ($this->authUser->canEditTemplates()) {
                 $history = $this->doc->getHistory();
@@ -487,7 +487,7 @@ class DocProperties extends Base
         $navs = $this->project->getNavigations();
         $defaults = [];
         foreach ($navs as $key => $val) {
-            if ($pageInfo->nav[$key] == 'true') {
+            if (($pageInfo->nav[$key] ?? false) == 'true') {
                 $defaults[] = $key;
             }
         }
@@ -508,7 +508,7 @@ class DocProperties extends Base
         $tags = $this->project->getTags();
         $defaults = [];
         foreach ($tags as $key => $val) {
-            if ($pageInfo->tags[$key] == 'true') {
+            if (($pageInfo->tags[$key] ?? false) == 'true') {
                 $defaults[] = $key;
             }
         }
