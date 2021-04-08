@@ -162,7 +162,7 @@ class DocProperties extends Base
                 $prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
                 $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->project, 0);
                 $parentId = $doc->getParentIdById($this->nodeId);
-                $deltaUpdates->recordChange($this->nodeId);
+                $deltaUpdates->recordChange($parentId);
 
                 if ($released) {
                     // get pageId correctly
