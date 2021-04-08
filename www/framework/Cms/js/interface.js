@@ -301,9 +301,12 @@ var depageCMS = (function() {
             };
             ws.onerror = function(e) {
                 console.log("websocket error");
+                console.log(e);
             };
-            ws.onclose = function(e) {
-                setTimeout(localJS.setupNotifications, 1000);
+            ws.onclose = function() {
+                setTimeout(function() {
+                    localJS.setupNotifications();
+                }, 1000);
             };
         },
         // }}}
