@@ -425,6 +425,7 @@
         display: inline-block;
         background: $backgroundColor;
         margin-top: 10px;
+        cursor: pointer;
     }
     > span > span {
         &:first-child input[type="radio"] + span {
@@ -440,6 +441,7 @@
         position: absolute;
         opacity: 0;
         width: 0;
+        cursor: pointer;
     }
     input[type="radio"] + span {
         display: inline-block;
