@@ -63,7 +63,9 @@
                     that.poll();
                 };
                 this.ws.onclose = function(e) {
-                    setTimeout(that.reconnect, 1000);
+                    setTimeout(function() {
+                        that.reconnect();
+                    }, 1000);
                 };
             },
             // }}}
@@ -265,7 +267,6 @@
                         if (data.nodes[id]) {
                             var parentNode = inst.get_node(id);
                             var html = $(data.nodes[id]);
-
                             updatedIds.push(Number.parseInt(id, 10));
 
                             if (!parentNode && id == $tree.attr("data-node-id")) {

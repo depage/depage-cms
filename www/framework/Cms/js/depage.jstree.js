@@ -218,6 +218,8 @@
         base.onRefresh = $.proxy(function(e, param) {
             if (nodeToActivate) {
                 var node = jstree.get_node(nodeToActivate);
+                if (!node) return;
+
                 var nodeType = node.li_attr.rel;
 
                 jstree.activate_node(node);
