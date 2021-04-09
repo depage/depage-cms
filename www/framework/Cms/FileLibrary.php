@@ -454,6 +454,9 @@ class FileLibrary
 
         $info = $this->getFileInfoById($id);
 
+        if (!$info) {
+            $info = $this->getFileInfoByHash($hash);
+        }
         if (!$info) return false;
 
         return $info->libref;
@@ -476,9 +479,15 @@ class FileLibrary
         }
 
         $id = (int) $m[1];
+        $hash = $m[2];
 
+        $info = $this->getFileInfoById($id);
 
-        return $this->getFileInfoById($id);
+        if (!$info) {
+            $info = $this->getFileInfoByHash($hash);
+        }
+
+        return $info;
     }
     // }}}
     // {{{ getFileInfoByLibref()
@@ -566,6 +575,40 @@ class FileLibrary
         return $info;
     }
     // }}}
+    // {{{ getFileInfoByHash()
+    /**
+     * @brief getFileInfoByHash
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function getFileInfoByHash($hash)
+    {
+        $query = $this->pdo->prepare(
+            "SELECT f.* FROM {$this->tableFiles} AS f
+            WHERE
+                hash=:hash
+            ORDER BY folder DESC
+            LIMIT 1"
+        );
+
+        $query->execute([
+            'hash' => $hash,
+        ]);
+
+        $info = $query->fetchObject("Depage\\Cms\\FileInfo");
+
+        if (!$info) {
+            return false;
+        }
+
+        $path = $this->getPathByFolderId($info->folder);
+        $info->init($path);
+
+        return $info;
+    }
+    // }}}
+
     // {{{ getFilesInFolder()
     /**
      * @brief getFilesInFolder
