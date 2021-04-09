@@ -93,7 +93,7 @@ class Request {
         //set the url, number of POST vars, POST data
         curl_setopt($ch, CURLOPT_URL, $this->url);
 
-        if (!empty($this->headers)) {
+        if (count($this->headers) > 0) {
             curl_setopt($ch, CURLOPT_HTTPHEADER, $this->headers);
         }
         if (!empty($this->cookie)) {
@@ -102,7 +102,7 @@ class Request {
         if (!empty($this->password)) {
             curl_setopt($ch, CURLOPT_USERPWD, $this->password);
         }
-        if (!empty($this->postData)) {
+        if (is_array($this->postData) && count($this->postData) > 0) {
             // array for automatically encoding post data
             $postStr = http_build_query($this->postData, '', '&');
             curl_setopt($ch, CURLOPT_POST, true);
