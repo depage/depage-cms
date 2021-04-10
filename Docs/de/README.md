@@ -18,6 +18,8 @@ Willkommen bei depage-cms.
 >
 > > [Dateibibliothek](@ref file-library)
 > >
+> > [Dateien Suchen](@ref file-search)
+> >
 > > [Farben](@ref colors)
 > >
 > > [Newsletter](@ref newsletter)

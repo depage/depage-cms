@@ -19,6 +19,8 @@ Welcome to depage-cms.
 >
 > > [File Library](@ref file-library)
 > >
+> > [File Search](@ref file-search)
+> >
 > > [Colors](@ref colors)
 > >
 > > [Newsletter](@ref newsletter)

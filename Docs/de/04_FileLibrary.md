@@ -54,6 +54,21 @@ Dateien löschen
 Da beim Veröffentlichen immer die gesamte Dateibibliothek auf dem Server aktualisiert wird empfiehlt es sich von Zeit zu Zeit unbenötigte
 Dateien zu löschen. Dazu markiert man einfach die Dateien in der Dateiübersicht und drückt den Button löschen. Nach einer Sicherheitsabfrage wird die Datei aus der Dateibibliothek entfernt.
 
+Dateien Suchen        {#file-search}
+==============
+
+Um Dateien und Bilder zu finden, die bereits in die Dateibibliothek hochgeladen wurden, kann die *Datei-Suche* benutzt werden.
+
+![Dateien finden](images/file-library-search.png)
+
+Man kann entweder nach dem Dateinamen suchen oder alle Metadaten in die Suche mit einbeziehen. Zu den Metadaten gehören: Dateiname, Ordername, Bild-, Audio- oder Video-Metadaten (wie beispielsweise Beschreibung, Titel oder Copyright).
+
+Es ist auch möglich die Dateisuche nach Dateitypen einzuschränken.
+- Bild
+- Video
+- Audio
+- PDF
+
 
 
 > [Weiter zum Thema: Farben](@ref colors)
