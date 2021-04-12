@@ -27,6 +27,8 @@ class FileInfo
     public $lastmod = null;
     public $width = null;
     public $height = null;
+    public $centerX = null;
+    public $centerY = null;
     public $displayAspectRatio = null;
     public $duration = null;
     public $artist = "";
@@ -78,6 +80,8 @@ class FileInfo
             'filesize',
             'width',
             'height',
+            'centerX',
+            'centerY',
             'displayAspectRatio',
             'duration',
             'artist',

@@ -234,6 +234,8 @@ class FileLibrary
                 lastmod=:fdate,
                 width=:width,
                 height=:height,
+                centerX=:centerX,
+                centerY=:centerY,
                 displayAspectRatio=:dar,
                 duration=:duration,
                 artist=:artist,
@@ -253,6 +255,8 @@ class FileLibrary
                 lastmod=VALUES(lastmod),
                 width=VALUES(width),
                 height=VALUES(height),
+                centerX=VALUES(centerX),
+                centerY=VALUES(centerY),
                 displayAspectRatio=VALUES(displayAspectRatio),
                 duration=VALUES(duration),
                 artist=VALUES(artist),
@@ -275,6 +279,8 @@ class FileLibrary
         $f->lastmod = $info['date'];
         $f->width = $info['width'] ?? null;
         $f->height = $info['height'] ?? null;
+        $f->centerX = !empty($info['width']) ? 50 : null;
+        $f->centerY = !empty($info['height']) ? 50 : null;
         $f->displayAspectRatio = $info['displayAspectRatio'] ?? null;
         $f->duration = $info['duration'] ?? null;
         $f->artist = $info['tag_artist'] ?? "";
@@ -296,6 +302,8 @@ class FileLibrary
             'fdate' => $f->lastmod->format('Y-m-d H:i:s'),
             'width' => $f->width,
             'height' => $f->height,
+            'centerX' => $f->centerX,
+            'centerY' => $f->centerY,
             'dar' => $f->displayAspectRatio,
             'duration' => $f->duration,
             'artist' => $f->artist,

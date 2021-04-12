@@ -31,3 +31,10 @@ CREATE TABLE _proj_PROJECTNAME_library_files (
   KEY `info`(`hash`,`mime`,`filesize`,`lastmod`),
   FULLTEXT KEY `metadata` (`artist`,`album`,`title`,`copyright`,`description`,`keywords`,`customKeywords`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*
+    @version 2.2.0.1
+*/
+ALTER TABLE _proj_PROJECTNAME_library_files ADD COLUMN `centerX` TINYINT DEFAULT NULL AFTER height, ADD COLUMN `centerY` TINYINT DEFAULT NULL AFTER centerX;
+
+UPDATE _proj_PROJECTNAME_library_files SET centerX = 50, centerY = 50 WHERE mime LIKE 'image/%';

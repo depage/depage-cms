@@ -29,6 +29,8 @@
     'data-url' => $target . $this->file->fullname,
     'data-width' => $this->file->width ?? -1,
     'data-height' => $this->file->height ?? -1,
+    'data-centerx' => $this->file->centerx ?? '',
+    'data-centery' => $this->file->centery ?? '',
     'data-ext' => $this->file->ext,
     'data-fallbackthumb' => $fallbackThumb,
 ]); ?>>
