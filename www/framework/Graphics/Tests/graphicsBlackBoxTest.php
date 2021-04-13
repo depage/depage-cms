@@ -311,6 +311,58 @@ class graphicsBlackBoxTest extends TestCase
         $this->runSuite(50, 100, 'thumbfill-simple');
     }
     // }}}
+    // {{{ testThumbfillSimpleLargeWidthTopLeft()
+    /**
+     * Tests thumbfill actionwith gravity towards top left
+     **/
+    public function testThumbfillSimpleLargeWidthTopLeft()
+    {
+        foreach ($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumbfill(100, 50, 0, 0);
+        }
+
+        $this->runSuite(100, 50, 'thumbfill-simple');
+    }
+    // }}}
+    // {{{ testThumbfillSimpleLargeWidthBottomRight()
+    /**
+     * Tests thumbfill actionwith gravity towards bottom right
+     **/
+    public function testThumbfillSimpleLargeWidthBottomRight()
+    {
+        foreach ($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumbfill(100, 50, 100, 100);
+        }
+
+        $this->runSuite(100, 50, 'thumbfill-simple');
+    }
+    // }}}
+    // {{{ testThumbfillSimpleLargeHeightTopLeft()
+    /**
+     * Tests thumbfill actionwith gravity towards top left
+     **/
+    public function testThumbfillSimpleLargeHeightTopLeft()
+    {
+        foreach ($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumbfill(50, 100, 0, 0);
+        }
+
+        $this->runSuite(50, 100, 'thumbfill-simple');
+    }
+    // }}}
+    // {{{ testThumbfillSimpleLargeHeightBottomRight()
+    /**
+     * Tests thumbfill actionwith gravity towards bottom right
+     **/
+    public function testThumbfillSimpleLargeHeightBottomRight()
+    {
+        foreach ($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumbfill(50, 100, 100, 100);
+        }
+
+        $this->runSuite(50, 100, 'thumbfill-simple');
+    }
+    // }}}
 
     // {{{ testActionChain()
     /**
