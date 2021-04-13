@@ -10,11 +10,12 @@ class graphicsBlackBoxTest extends TestCase
 {
     protected $extensions   = [
         'gd',
-        'im',
-        'gm',
+        'imagick',
+        //'im',
+        //'gm',
     ];
     protected $formats      = [
-        [\IMG_GIF, 'gif', 'image/gif'],
+        //[\IMG_GIF, 'gif', 'image/gif'],
         [\IMG_JPG, 'jpg', 'image/jpeg'],
         [\IMG_PNG, 'png', 'image/png'],
         [\IMG_WEBP, 'webp', 'image/webp'],

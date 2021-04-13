@@ -24,11 +24,12 @@ class Imagick extends \Depage\Graphics\Graphics
      * @param mixed $width, $height, $x, $y
      * @return void
      **/
-    protected function crop($width, $height, $x, $y)
+    protected function crop($width, $height, $x = 0, $y = 0)
     {
         if (!$this->bypassTest($width, $height, $x, $y)) {
-            $this->image->setGravity("NorthWest");
+            $this->image->setGravity(\Imagick::GRAVITY_NORTHWEST);
             $this->image->cropImage($width, $height, $x, $y);
+            $this->image->setImagePage($width, $height, 0, 0);
             $this->size = array($width, $height);
         }
     }
@@ -45,7 +46,7 @@ class Imagick extends \Depage\Graphics\Graphics
         $newSize = $this->dimensions($width, $height);
 
         if (!$this->bypassTest($newSize[0], $newSize[1])) {
-            $this->image->resizeImage($newSize[0], $newSize[1]. \Imagick::FILTER_LANCZOS, 1);
+            $this->image->resizeImage($newSize[0], $newSize[1], \Imagick::FILTER_LANCZOS, 1);
             $this->size = $newSize;
         }
     }
@@ -60,8 +61,9 @@ class Imagick extends \Depage\Graphics\Graphics
     protected function thumb($width, $height)
     {
         if (!$this->bypassTest($width, $height)) {
-            $this->image->setGravity("Center");
-            $this->image->resizeImage($width, $height. \Imagick::FILTER_LANCZOS, 1);
+            $this->image->setGravity(\Imagick::GRAVITY_CENTER);
+            $this->image->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, true);
+            $this->image->setGravity(\Imagick::GRAVITY_CENTER);
             $this->image->setImageExtent($width, $height);
             $this->size = array($width, $height);
         }
@@ -77,23 +79,10 @@ class Imagick extends \Depage\Graphics\Graphics
     protected function thumbfill($width, $height)
     {
         if (!$this->bypassTest($width, $height)) {
-            $this->image->setGravity("Center");
-            $this->image->resizeImage($width, $height. \Imagick::FILTER_LANCZOS, 1, true);
-            $this->image->setImageExtent($width, $height);
+            $this->image->setGravity(\Imagick::GRAVITY_CENTER);
+            $this->image->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, true);
             $this->size = array($width, $height);
         }
-    }
-    // }}}
-
-    // {{{ getImageSize()
-    /**
-     * @brief   Determine size of input image
-     *
-     * @return void
-     **/
-    protected function getImageSize()
-    {
-        return getimagesize($this->input);
     }
     // }}}
 
@@ -106,7 +95,8 @@ class Imagick extends \Depage\Graphics\Graphics
      **/
     protected function load()
     {
-        $this->image = new \Imagick($this->input);
+        $this->image = new \Imagick(realpath($this->input));
+        $this->image->transformimagecolorspace(\Imagick::COLORSPACE_SRGB);
     }
     // }}}
     // {{{ save()
@@ -120,15 +110,70 @@ class Imagick extends \Depage\Graphics\Graphics
     {
 
         if ($this->outputFormat == 'jpg') {
-            $this->image->setImageFormat('jpeg');
+            //$this->image->setImageFormat('jpeg');
         } else {
-            $this->image->setImageFormat($this->outputFormat);
+            //$this->image->setImageFormat($this->outputFormat);
         }
         $result = $this->image->writeImage($this->output);
+        //file_put_contents($this->output, $this->image);
 
         if (!$result) {
             throw new \Depage\Graphics\Exceptions\Exception('Could not save output image.');
         }
+    }
+    // }}}
+
+    // {{{ getImageSize()
+    /**
+     * @brief   Determine size of input image
+     *
+     * @return void
+     **/
+    protected function getImageSize()
+    {
+        $this->image = new \Imagick(realpath($this->input));
+
+        $imageSize = [
+            $this->image->getImageWidth(),
+            $this->image->getImageHeight()
+        ];
+
+        return $imageSize;
+    }
+    // }}}
+
+    // {{{ render()
+    /**
+     * @brief   Main method for image handling.
+     *
+     * Starts actions, saves image, calls bypass if necessary.
+     *
+     * @param  string $input  input filename
+     * @param  string $output output filename
+     * @return void
+     **/
+    public function render($input, $output = null)
+    {
+        parent::render($input, $output);
+
+        $this->load();
+        $this->processQueue();
+
+        if ($this->otherRender && file_exists($this->output)) {
+            // do nothing file is already generated
+        } else if ($this->bypass
+            && $this->inputFormat == $this->outputFormat
+        ) {
+            $this->bypass();
+        } else {
+            $this->save();
+
+            if ($this->optimize) {
+                $this->optimizeImage($this->output);
+            }
+        }
+
+        parent::renderFinished();
     }
     // }}}
 }
