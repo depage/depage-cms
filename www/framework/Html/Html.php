@@ -490,7 +490,7 @@ class Html {
                     echo("\"");
                 }
             }
-        } else if (!empty($value)) {
+        } else if (!empty($value) || is_numeric($value)) {
             echo(" $name=\"");
             echo(trim(htmlspecialchars($value)));
             echo("\"");

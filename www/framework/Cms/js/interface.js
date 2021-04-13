@@ -909,13 +909,14 @@ var depageCMS = (function() {
                     }
 
                     $.vakata.context.show($(this), {x: e.pageX, y:e.pageY}, {
-                        _delete: {
-                            label: locale.delete,
+                        _chooseCenter: {
+                            label: locale.chooseCenter,
                             action: function() {
-                                localJS.deleteSelectedFiles();
+                                localJS.chooseImageCenter($thumb);
                             }
                         },
                         _copyUrl: {
+                            separator_before: true,
                             label: locale.copyUrl,
                             action: function() {
                                 copyToClipboard($thumb.attr("data-url"));
@@ -926,6 +927,13 @@ var depageCMS = (function() {
                             _disabled: $thumb.hasClass("not-published"),
                             action: function() {
                                 $('<iframe src="mailto:?subject=' + locale.shareUrlSubject + '&body=' + $thumb.attr("data-url") + '">').appendTo('body').css("display", "none");
+                            }
+                        },
+                        _delete: {
+                            separator_before: true,
+                            label: locale.delete,
+                            action: function() {
+                                localJS.deleteSelectedFiles();
                             }
                         }
                     });
@@ -1579,8 +1587,19 @@ var depageCMS = (function() {
                         localJS.loadFileChooser($input);
                     });
                 });
-                $form.on("depageForm.autosaved", function() {
-                    $form.find(".doc-property-meta p.release a").removeClass("disabled");
+                $form.on("contextmenu", "figure.thumb", function(e) {
+                    var $thumb = $(this);
+
+                    $.vakata.context.show($(this), {x: e.pageX, y:e.pageY}, {
+                        _chooseCenter: {
+                            label: locale.chooseCenter,
+                            action: function() {
+                                localJS.chooseImageCenter($thumb);
+                            }
+                        },
+                    });
+
+                    return false;
                 });
                 $form.find("input[type='color']").spectrum({
                     preferredFormat: "hex",
@@ -1589,6 +1608,9 @@ var depageCMS = (function() {
                     showInput: true,
                     showPalette: false,
                     showSelectionPalette: false
+                });
+                $form.on("depageForm.autosaved", function() {
+                    $form.find(".doc-property-meta p.release a").removeClass("disabled");
                 });
 
                 localJS.setFormState($form, $form.find(".doc-property-meta").data("protected") == 1);
@@ -1692,7 +1714,7 @@ var depageCMS = (function() {
                 $input.trigger("change");
             }
 
-            $(document).off("keypress.depageFileChooser");
+            $(document).off("keyup.depageFileChooser");
             $(".toolbar-filelist").remove();
             if ((jstree = $(".tree.library .jstree-container").jstree(true))) {
                 jstree.destroy();
@@ -1815,6 +1837,105 @@ var depageCMS = (function() {
             });
 
             $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
+        },
+        // }}}
+        // {{{ chooseImageCenter()
+        chooseImageCenter: function($thumb) {
+            var $dialog = $("<div class=\"dialog-full choose-image-center\"><div class=\"content\"><div class=\"dialog-bar\"></div><div class=\"center-selector scrollable-content\"></div></div></div>");
+            var $selector = $dialog.find(".center-selector");
+            var $dialogBar = $dialog.find(".dialog-bar");
+            var $zoomed = $thumb.clone(false);
+            var $ok = $("<a class=\"button default\"></a>");
+            var $cancel = $("<a class=\"button\"></a>");
+            var $cursor = $("<a class=\"cursor\"></a>");
+            var $img = $zoomed.find("img");
+            var centerX = $zoomed.data("center-x");
+            var centerY = $zoomed.data("center-y");
+            var src = $img[0].src;
+            var dragging = false;
+            var moveCursor = function(x, y) {
+                centerX = Math.min(100, Math.max(0, x));
+                centerY = Math.min(100, Math.max(0, y));
+
+                $cursor.css({
+                    left: centerX + "%",
+                    top:  centerY + "%"
+                });
+            };
+
+            $img[0].src = src.replace(/\.t240x240\.png$/, ".t1024xX.jpg");
+
+            $ok
+                .text("Ok")
+                .appendTo($dialogBar)
+                .on("click", function() {
+                    localJS.removeImageCenterChooser();
+                });
+            $cancel
+                .text("Cancel")
+                .appendTo($dialogBar)
+                .on("click", function() {
+                    localJS.removeImageCenterChooser();
+                });
+
+            $zoomed.find("figcaption").remove();
+            $zoomed.appendTo($selector);
+            $dialog.appendTo($body);
+            $cursor
+                .insertBefore($img);
+
+            moveCursor(centerX, centerY);
+
+            $zoomed
+                .on("mousedown", function(e) {
+                    dragging = true;
+                })
+                .on("mouseup", function(e) {
+                    dragging = false;
+
+                    var rect = this.getBoundingClientRect();
+                    var x = e.clientX - rect.left;
+                    var y = e.clientY - rect.top;
+
+                    moveCursor(
+                        Math.round(x / $img.width() * 100),
+                        Math.round(y / $img.height() * 100)
+                    );
+                })
+                .on("mousemove", function(e) {
+                    if (!dragging) {
+                        return;
+                    }
+                    var rect = this.getBoundingClientRect();
+                    var x = e.clientX - rect.left;
+                    var y = e.clientY - rect.top;
+
+                    moveCursor(
+                        Math.round(x / $img.width() * 100),
+                        Math.round(y / $img.height() * 100)
+                    );
+
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    return false;
+                });
+
+            setTimeout(function() {
+                $dialog.addClass("visible");
+                $(".layout").addClass("no-live-help");
+            }, 50);
+        },
+        // }}}
+        // {{{ removeImageCenterChooser()
+        removeImageCenterChooser: function() {
+            var $dialog = $(".choose-image-center");
+
+            $dialog.removeClass("visible");
+            $(".layout").removeClass("no-live-help");
+            setTimeout(function() {
+                $dialog.remove();
+            }, 500);
         },
         // }}}
         // {{{ addColor()

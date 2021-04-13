@@ -240,5 +240,67 @@ html[lang='de'] {
     }
 }
 // }}}
+// {{{ choose-image-center
+.choose-image-center {
+    $width: 512px;
+    figure.thumb {
+        position: relative;
+        width: $width;
+        max-width: 100%;
+        margin: 10px auto;
+        padding: 0;
+        cursor: pointer;
+
+        &::after {
+            display: block;
+            content: " ";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        img {
+            width: $width;
+            max-width: 100%;
+            height: auto;
+            max-height: 100%;
+        }
+    }
+    .cursor {
+        $size: 20px;
+        position: absolute;
+        z-index: 11;
+        will-change: left, top;
+
+        &::before {
+            position: absolute;
+            display: block;
+            content: " ";
+            border-radius: $size * 0.5;
+            width: $size;
+            height: $size;
+            left: -0.5 * $size;
+            top: -0.5 * $size;
+            border-style: solid;
+            border-width: 2px;
+            border-color: $backgroundColor;
+            background-color: $selectionBackgroundColor;
+        }
+    }
+    .center-selector {
+        background: #ffffff;
+    }
+    .dialog-bar + .center-selector {
+        bottom: $toolbarHeight * 1.5;
+
+        @media (pointer:coarse) {
+            bottom: $toolbarHeight * 1.5 * $touchScale;
+        }
+    }
+}
+// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

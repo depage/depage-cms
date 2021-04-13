@@ -20,12 +20,11 @@
         $locales[$lang] = [
             "cancel" => _("Cancel"),
             "choose" => _("Choose"),
+            "chooseCenter" => _("Choose image center"),
             "chooseFileMessage" => _("Please choose a file"),
             "close" => _("Close"),
             "copy" => _("Copy"),
             "copyUrl" => _("Copy URL to Clipboard"),
-            "shareUrl" => _("Mail Link to file"),
-            "shareUrlSubject" => _("Link to file"),
             "create" => _("New"),
             "createNew" => _("Create new:"),
             "createNewAtEnd" => _("Create new element at the end"),
@@ -40,6 +39,9 @@
             "editTooltip" => _("Edit the current page"),
             "forceHeightMessage" => _("Height: "),
             "forceWidthMessage" => _("Width: "),
+            "layout-left-full" => _("Switch to edit-only layout"),
+            "layout-right-full" => _("Switch to preview-only layout"),
+            "layout-split" => _("Switch to split layout"),
             "layoutSwitchHelp" => _("Switch layout to: Edit-only, Split-view and Preview-only"),
             "newPost" => _("News- or blog-post"),
             "noCurrentTasks" => _("No current tasks."),
@@ -51,11 +53,10 @@
             "reloadTooltip" => _("Reload page preview"),
             "rename" => _("Rename"),
             "selectAll" => _("Select all"),
+            "shareUrl" => _("Mail Link to file"),
+            "shareUrlSubject" => _("Link to file"),
             "uploadFinishedCancel" => _("Finished uploading/Cancel"),
             "zoomHelp" => _("Change zoom level of preview."),
-            "layout-left-full" => _("Switch to edit-only layout"),
-            "layout-split" => _("Switch to split layout"),
-            "layout-right-full" => _("Switch to preview-only layout"),
         ];
     }
 

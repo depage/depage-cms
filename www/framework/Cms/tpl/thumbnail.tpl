@@ -3,7 +3,7 @@
     $class = $this->class;
     $imgSrc = "projects/{$this->project->name}/lib/{$this->file->fullname}";
     if (in_array($this->file->ext, ['png', 'jpg', 'jpeg', 'gif', 'pdf'])) {
-        $thumbSrc = $imgSrc . ".thumb-240x240.png";
+        $thumbSrc = $imgSrc . ".t240x240.png";
     } else if (in_array($this->file->ext, ['svg'])) {
         $thumbSrc = $imgSrc;
     } else {
@@ -29,8 +29,8 @@
     'data-url' => $target . $this->file->fullname,
     'data-width' => $this->file->width ?? -1,
     'data-height' => $this->file->height ?? -1,
-    'data-centerx' => $this->file->centerx ?? '',
-    'data-centery' => $this->file->centery ?? '',
+    'data-center-x' => $this->file->centerX,
+    'data-center-y' => $this->file->centerY,
     'data-ext' => $this->file->ext,
     'data-fallbackthumb' => $fallbackThumb,
 ]); ?>>
