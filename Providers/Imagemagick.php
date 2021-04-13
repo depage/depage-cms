@@ -124,14 +124,31 @@ class Imagemagick extends \Depage\Graphics\Graphics
      *
      * @param  int  $width  output width
      * @param  int  $height output height
+     * @param  int  $centerX center of image from left in percent
+     * @param  int  $centerY center of image from top in percent
      * @return void
      **/
-    protected function thumbfill($width, $height)
+    protected function thumbfill($width, $height, $centerX = 50, $centerY = 50)
     {
         if (!$this->bypassTest($width, $height)) {
+            $newSize = $this->dimensions($width, null);
+            $centerX = $centerX / -100 + 0.5;
+            $centerY = $centerY / -100 + 0.5;
+
+            if ($newSize[1] < $height) {
+                $newSize = $this->dimensions(null, $height);
+                $x = round(($width - $newSize[0]) * $centerX);
+                $y = 0;
+            } else {
+                $x = 0;
+                $y = round(($height - $newSize[1]) * $centerY);
+            }
+            $x = ($x < 0) ? $x : '+' . $x;
+            $y = ($y < 0) ? $y : '+' . $y;
+
             $resizeAction = $this->getResizeAction($width, $height);
 
-            $this->command .= " -gravity Center $resizeAction {$width}x{$height}^ -extent {$width}x{$height}";
+            $this->command .= " -gravity Center $resizeAction {$width}x{$height}^ -extent {$width}x{$height}{$x}{$y}";
             $this->size = array($width, $height);
         }
     }

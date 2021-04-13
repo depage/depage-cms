@@ -92,6 +92,52 @@ class imgUrlTest extends TestCase
         }
     }
     // }}}
+    // {{{ testAnalyzeThumbfillTopLeft()
+    public function testAnalyzeThumbfillTopLeft()
+    {
+        $actions = [
+            'tf100x100-0x0',
+            'tf-100x100-0x0',
+            'thumbfill100x100-0x0',
+            'thumbfill-100x100-0x0',
+        ];
+        foreach ($actions as $action) {
+            $this->imgurl->analyze($this->baseUrl . "test.png.$action.png");
+
+            $this->assertSame([
+                [
+                    'addThumbfill',
+                    [100, 100, 0, 0]
+                ],
+            ], $this->imgurl->getActions());
+            $this->assertSame("../test.png", $this->imgurl->getSrcImg());
+            $this->assertSame("cache/test.png.$action.png", $this->imgurl->getOutImg());
+        }
+    }
+    // }}}
+    // {{{ testAnalyzeThumbfillBottomRight()
+    public function testAnalyzeThumbfillBottomRight()
+    {
+        $actions = [
+            'tf100x100-100x100',
+            'tf-100x100-100x100',
+            'thumbfill100x100-100x100',
+            'thumbfill-100x100-100x100',
+        ];
+        foreach ($actions as $action) {
+            $this->imgurl->analyze($this->baseUrl . "test.png.$action.png");
+
+            $this->assertSame([
+                [
+                    'addThumbfill',
+                    [100, 100, 100, 100]
+                ],
+            ], $this->imgurl->getActions());
+            $this->assertSame("../test.png", $this->imgurl->getSrcImg());
+            $this->assertSame("cache/test.png.$action.png", $this->imgurl->getOutImg());
+        }
+    }
+    // }}}
 
     // {{{ testImageExtensions()
     public function testImageExtensions()
@@ -183,6 +229,24 @@ class imgUrlTest extends TestCase
         $url = $this->imgurl->getUrl("test.png");
 
         $this->assertSame('test.png.tf100x100.png', $url);
+    }
+    // }}}
+    // {{{ testGetUrlAddThumbfillTopLeft()
+    public function testGetUrlAddThumbfillTopLeft()
+    {
+        $this->imgurl->addThumbfill(100, 100, 0, 0);
+        $url = $this->imgurl->getUrl("test.png");
+
+        $this->assertSame('test.png.tf100x100-0x0.png', $url);
+    }
+    // }}}
+    // {{{ testGetUrlAddThumbfillBottomRight()
+    public function testGetUrlAddThumbfillBottomRight()
+    {
+        $this->imgurl->addThumbfill(100, 100, 100, 100);
+        $url = $this->imgurl->getUrl("test.png");
+
+        $this->assertSame('test.png.tf100x100-100x100.png', $url);
     }
     // }}}
     // {{{ testGetUrlSetQuality()

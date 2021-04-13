@@ -114,20 +114,24 @@ class Gd extends \Depage\Graphics\Graphics
      *
      * @param  int  $width  output width
      * @param  int  $height output height
+     * @param  int  $centerX center of image from left in percent
+     * @param  int  $centerY center of image from top in percent
      * @return void
      **/
-    protected function thumbfill($width, $height)
+    protected function thumbfill($width, $height, $centerX = 50, $centerY = 50)
     {
-        if (!$this->bypassTest($width, $height)) {
+        if (!$this->bypassTest($width, $height, $centerX - 50, $centerY - 50)) {
             $newSize = $this->dimensions($width, null);
+            $centerX /= 100;
+            $centerY /= 100;
 
             if ($newSize[1] < $height) {
                 $newSize = $this->dimensions(null, $height);
-                $xOffset = round(($width - $newSize[0]) / 2);
+                $xOffset = round(($width - $newSize[0]) * $centerX);
                 $yOffset = 0;
             } else {
                 $xOffset = 0;
-                $yOffset = round(($height - $newSize[1]) / 2);
+                $yOffset = round(($height - $newSize[1]) * $centerY);
             }
 
             $newImage = $this->createCanvas($width, $height);

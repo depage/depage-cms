@@ -145,9 +145,9 @@ class Imgurl
                         $params[0] = "#{$params[0]}";
                     }
                 } else {
-                    foreach ($params as &$p) {
+                    foreach ($params as $i => &$p) {
                         $p = intval($p);
-                        if ($p == 0) {
+                        if ($p == 0 && $i < 2) {
                             $p = null;
                         }
                     }
@@ -288,9 +288,14 @@ class Imgurl
     }
     // }}}
     // {{{ addThumbfill()
-    public function addThumbfill($width, $height)
+    public function addThumbfill($width, $height, $centerX = 50, $centerY = 50)
     {
-        $this->actions[] = "tf{$width}x{$height}";
+        $action = "tf{$width}x{$height}";
+        if ($centerX != 50 || $centerY != 50) {
+            $action .= "-{$centerX}x{$centerY}";
+        }
+
+        $this->actions[] = $action;
 
         return $this;
     }
