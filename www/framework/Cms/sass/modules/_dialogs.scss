@@ -274,6 +274,7 @@ html[lang='de'] {
         position: absolute;
         z-index: 11;
         will-change: left, top;
+        cursor: pointer;
 
         &::before {
             position: absolute;
@@ -282,12 +283,36 @@ html[lang='de'] {
             border-radius: $size * 0.5;
             width: $size;
             height: $size;
-            left: -0.5 * $size;
-            top: -0.5 * $size;
+            left: -0.5 * $size - 2px;
+            top: -0.5 * $size - 2px;
             border-style: solid;
             border-width: 2px;
             border-color: $backgroundColor;
             background-color: $selectionBackgroundColor;
+        }
+    }
+    .examples {
+        $width: 52px;
+        text-align: center;
+        img {
+            display: inline-block;
+            border: 1px solid $backgroundBrightColor;
+            border-right: none;
+            object-fit: cover;
+            width: $width * 2;
+            height: $width * 2;
+        }
+        .example1 {
+            width: $width;
+        }
+        .example2 {
+        }
+        .example3 {
+            width: $width * 3;
+        }
+        .example4 {
+            width: $width * 4;
+            border-right: 1px solid $backgroundBrightColor;
         }
     }
     .center-selector {

@@ -1587,6 +1587,9 @@ var depageCMS = (function() {
                         localJS.loadFileChooser($input);
                     });
                 });
+                $form.on("dblclick", "figure.thumb", function() {
+                    localJS.chooseImageCenter($(this));
+                });
                 $form.on("contextmenu", "figure.thumb", function(e) {
                     var $thumb = $(this);
 
@@ -1841,8 +1844,9 @@ var depageCMS = (function() {
         // }}}
         // {{{ chooseImageCenter()
         chooseImageCenter: function($thumb) {
-            var $dialog = $("<div class=\"dialog-full choose-image-center\"><div class=\"content\"><div class=\"dialog-bar\"></div><div class=\"center-selector scrollable-content\"></div></div></div>");
+            var $dialog = $("<div class=\"dialog-full choose-image-center\"><div class=\"content\"><div class=\"dialog-bar\"></div><div class=\"center-selector scrollable-content\"><div class=\"examples\"></div></div></div></div>");
             var $selector = $dialog.find(".center-selector");
+            var $examples = $dialog.find(".examples");
             var $dialogBar = $dialog.find(".dialog-bar");
             var $zoomed = $thumb.clone(false);
             var $ok = $("<a class=\"button default\"></a>");
@@ -1853,6 +1857,22 @@ var depageCMS = (function() {
             var centerY = $zoomed.data("center-y");
             var src = $img[0].src;
             var dragging = false;
+
+            $zoomed.find("figcaption").remove();
+
+            var createExample = function(className) {
+                var $copy = $img
+                    .clone(false);
+
+                $copy[0].src = src.replace(/\.t240x240\.png$/, ".t240xX.jpg");
+
+                $copy
+                    .addClass(className)
+                    .appendTo($examples);
+
+
+                return $copy;
+            }
             var moveCursor = function(x, y) {
                 centerX = Math.min(100, Math.max(0, x));
                 centerY = Math.min(100, Math.max(0, y));
@@ -1861,7 +1881,15 @@ var depageCMS = (function() {
                     left: centerX + "%",
                     top:  centerY + "%"
                 });
+                $examples.children("img").css({
+                    'object-position': centerX + "% " + centerY + "%"
+                });
             };
+
+            var $example1 = createExample("example1");
+            var $example2 = createExample("example2");
+            var $example2 = createExample("example3");
+            var $example2 = createExample("example4");
 
             $img[0].src = src.replace(/\.t240x240\.png$/, ".t1024xX.jpg");
 
@@ -1878,8 +1906,7 @@ var depageCMS = (function() {
                     localJS.removeImageCenterChooser();
                 });
 
-            $zoomed.find("figcaption").remove();
-            $zoomed.appendTo($selector);
+            $zoomed.prependTo($selector);
             $dialog.appendTo($body);
             $cursor
                 .insertBefore($img);
@@ -1894,12 +1921,10 @@ var depageCMS = (function() {
                     dragging = false;
 
                     var rect = this.getBoundingClientRect();
-                    var x = e.clientX - rect.left;
-                    var y = e.clientY - rect.top;
 
                     moveCursor(
-                        Math.round(x / $img.width() * 100),
-                        Math.round(y / $img.height() * 100)
+                        Math.round((e.clientX - rect.left) / $img.width() * 100),
+                        Math.round((e.clientY - rect.top) / $img.height() * 100)
                     );
                 })
                 .on("mousemove", function(e) {
@@ -1907,12 +1932,10 @@ var depageCMS = (function() {
                         return;
                     }
                     var rect = this.getBoundingClientRect();
-                    var x = e.clientX - rect.left;
-                    var y = e.clientY - rect.top;
 
                     moveCursor(
-                        Math.round(x / $img.width() * 100),
-                        Math.round(y / $img.height() * 100)
+                        Math.round((e.clientX - rect.left) / $img.width() * 100),
+                        Math.round((e.clientY - rect.top) / $img.height() * 100)
                     );
 
                     e.stopPropagation();
