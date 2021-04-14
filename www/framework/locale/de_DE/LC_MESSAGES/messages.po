@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-08 01:49+0200\n"
+"POT-Creation-Date: 2021-04-14 08:30+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2149,7 +2149,7 @@ msgstr "Nicht freigegebene Seiten für Projekt '%s'"
 msgid "Deleted %d pages."
 msgstr "%d Seiten gelöscht."
 
-#: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:38 Cms/tpl/projectlist.tpl:22
+#: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:39 Cms/tpl/projectlist.tpl:22
 #: Cms/tpl/newsletterList.tpl:47 Cms/tpl/toolbar_main.tpl:42
 #: Cms/Forms/ReleasePages.php:77
 msgid "Edit"
@@ -2425,7 +2425,7 @@ msgstr "Sie haben keine Authentifizierung, dieses Element zu bearbeiten."
 msgid "You are not allowed here."
 msgstr "Sie haben hier keine Authentifizierung."
 
-#: Cms/Ui/ColorSchemes.php:136
+#: Cms/Ui/ColorSchemes.php:134
 msgid "unnamed_color"
 msgstr "unbenannte_farbe"
 
@@ -2460,141 +2460,157 @@ msgid "Choose"
 msgstr "Auswählen"
 
 #: Cms/js/locale.php:23
+msgid "Choose image center"
+msgstr "Bildzentrum festlegen"
+
+#: Cms/js/locale.php:24
+msgid "Please click on a point on the image to set it's gravitational center:"
+msgstr "Bitte klicken Sie auf das Bild, um dessen Schwerpunkt festzulegen:"
+
+#: Cms/js/locale.php:25
+msgid "Examples of resulting cropped images:"
+msgstr "Beispiele für daraus resultierende Bildauschnitte:"
+
+#: Cms/js/locale.php:26
 msgid "Please choose a file"
 msgstr "Bitte wählen Sie eine Datei aus"
 
-#: Cms/js/locale.php:24
+#: Cms/js/locale.php:27
 msgid "Close"
 msgstr "Schliessen"
 
-#: Cms/js/locale.php:25
+#: Cms/js/locale.php:28
 msgid "Copy"
 msgstr "Kopieren"
 
-#: Cms/js/locale.php:26
+#: Cms/js/locale.php:29
 msgid "Copy URL to Clipboard"
 msgstr "URL in die Zwischenablage kopieren"
 
-#: Cms/js/locale.php:27
-msgid "Mail Link to file"
-msgstr "Sende Link zur Datei per Email"
-
-#: Cms/js/locale.php:28
-msgid "Link to file"
-msgstr "Link zu Datei"
-
-#: Cms/js/locale.php:29
+#: Cms/js/locale.php:30
 msgid "New"
 msgstr "Neu"
 
-#: Cms/js/locale.php:30
+#: Cms/js/locale.php:31
 msgid "Create new:"
 msgstr "Neu hinzufügen:"
 
-#: Cms/js/locale.php:31
+#: Cms/js/locale.php:32
 msgid "Create new element at the end"
 msgstr "Neues Element am Ende hinzufügen"
 
-#: Cms/js/locale.php:32
+#: Cms/js/locale.php:33
 msgid "There are no elements that can be created in this element"
 msgstr "Es gibt keine Element, die in diesem Element hinzugefügt werden können"
 
-#: Cms/js/locale.php:33
+#: Cms/js/locale.php:34
 msgid "Cut"
 msgstr "Ausschneiden"
 
-#: Cms/js/locale.php:34
+#: Cms/js/locale.php:35
 msgid "Delete"
 msgstr "Löschen"
 
-#: Cms/js/locale.php:35
+#: Cms/js/locale.php:36
 msgid "Delete this element now?"
 msgstr "Dieses Element sofort löschen?"
 
-#: Cms/js/locale.php:36
+#: Cms/js/locale.php:37
 msgid "Deselect all"
 msgstr "Markierung für alle aufheben"
 
-#: Cms/js/locale.php:37
+#: Cms/js/locale.php:38
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: Cms/js/locale.php:39
+#: Cms/js/locale.php:40
 msgid "Edit the current page in edit interface on the left ←."
 msgstr "Bearbeiten Sie die aktuelle Seite im Barbeitungspanel links ←."
 
-#: Cms/js/locale.php:40
+#: Cms/js/locale.php:41
 msgid "Edit the current page"
 msgstr "Aktuelle Seite bearbeiten"
 
-#: Cms/js/locale.php:41
+#: Cms/js/locale.php:42
 msgid "Height: "
 msgstr "Höhe: "
 
-#: Cms/js/locale.php:42
+#: Cms/js/locale.php:43
 msgid "Width: "
 msgstr "Breite: "
 
-#: Cms/js/locale.php:43
+#: Cms/js/locale.php:44
+msgid "Switch to edit-only layout"
+msgstr "Zum Nur-Editier-Layout wechseln"
+
+#: Cms/js/locale.php:45
+msgid "Switch to preview-only layout"
+msgstr "Zum Nur-Vorschau Layout wechseln"
+
+#: Cms/js/locale.php:46
+msgid "Switch to split layout"
+msgstr "Zum geteilten Layout wechseln"
+
+#: Cms/js/locale.php:47
 msgid "Switch layout to: Edit-only, Split-view and Preview-only"
 msgstr ""
 "Zwischen Layouts wechseln: Nur-Editieren, Geteilte Ansicht und Nur-Vorschau"
 
-#: Cms/js/locale.php:44
+#: Cms/js/locale.php:48
 msgid "News- or blog-post"
 msgstr "News- oder Blogeintrag"
 
-#: Cms/js/locale.php:45 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:95
+#: Cms/js/locale.php:49 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:95
 msgid "No current tasks."
 msgstr "Keine aktuellen Tasks."
 
-#: Cms/js/locale.php:46
+#: Cms/js/locale.php:50
 msgid "Ok"
 msgstr ""
 
-#: Cms/js/locale.php:47
+#: Cms/js/locale.php:51
 msgid "Paste"
 msgstr "Einfügen"
 
-#: Cms/js/locale.php:48
+#: Cms/js/locale.php:52
 msgid "Filter Projects"
 msgstr "Projekte filtern"
 
-#: Cms/js/locale.php:49
+#: Cms/js/locale.php:53
 msgid "Reload"
 msgstr "Aktualisieren"
 
-#: Cms/js/locale.php:50 Cms/js/locale.php:51
+#: Cms/js/locale.php:54 Cms/js/locale.php:55
 msgid "Reload page preview"
 msgstr "Seitenvorschau neu laden"
 
-#: Cms/js/locale.php:52
+#: Cms/js/locale.php:56
 msgid "Rename"
 msgstr "Umbenennen"
 
-#: Cms/js/locale.php:53
+#: Cms/js/locale.php:57
+msgid "Reset"
+msgstr "Zurücksetzen"
+
+#: Cms/js/locale.php:58
 msgid "Select all"
 msgstr "Alles markieren"
 
-#: Cms/js/locale.php:54
+#: Cms/js/locale.php:59
+msgid "Mail Link to file"
+msgstr "Sende Link zur Datei per Email"
+
+#: Cms/js/locale.php:60
+msgid "Link to file"
+msgstr "Link zu Datei"
+
+#: Cms/js/locale.php:61
 msgid "Finished uploading/Cancel"
 msgstr "Upload beenden/abbrechen"
 
-#: Cms/js/locale.php:55
+#: Cms/js/locale.php:62
 msgid "Change zoom level of preview."
 msgstr "Ändern Sie die Zoomstufe der Vorschau"
-
-#: Cms/js/locale.php:56
-msgid "Switch to edit-only layout"
-msgstr "Zum Nur-Editier-Layout wechseln"
-
-#: Cms/js/locale.php:57
-msgid "Switch to split layout"
-msgstr "Zum geteilten Layout wechseln"
-
-#: Cms/js/locale.php:58
-msgid "Switch to preview-only layout"
-msgstr "Zum Nur-Vorschau Layout wechseln"
 
 #: Cms/Project.php:1100
 msgid "Document Release Request"
@@ -2796,19 +2812,19 @@ msgid "Files:\\nHere you can manage the files of the current folder."
 msgstr ""
 "Dateien:\\nHier können sie die Dateien, des aktuellen Ordners verwalten."
 
-#: Cms/tpl/thumbnail.tpl:44
+#: Cms/tpl/thumbnail.tpl:46
 msgid "Changed: "
 msgstr "Geändert: "
 
-#: Cms/tpl/thumbnail.tpl:45
+#: Cms/tpl/thumbnail.tpl:47
 msgid "Folder: "
 msgstr "Ordner: "
 
-#: Cms/tpl/thumbnail.tpl:47
+#: Cms/tpl/thumbnail.tpl:49
 msgid "Published: "
 msgstr "Publiziert: "
 
-#: Cms/tpl/thumbnail.tpl:49
+#: Cms/tpl/thumbnail.tpl:51
 msgid ""
 "File has not been published yet.\n"
 "Publish your project to make the file available online."
@@ -3318,9 +3334,6 @@ msgstr "Unbenannt"
 
 #~ msgid "There are no unreleased pages."
 #~ msgstr "Es gibt keine nicht freigegebenen Seiten"
-
-#~ msgid "Choose File"
-#~ msgstr "Datei auswählen"
 
 #~ msgid "You are not allowed to release pages on this project."
 #~ msgstr ""

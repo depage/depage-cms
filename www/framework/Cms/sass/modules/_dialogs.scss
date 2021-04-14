@@ -243,6 +243,16 @@ html[lang='de'] {
 // {{{ choose-image-center
 .choose-image-center {
     $width: 512px;
+
+    > .content {
+        max-width: $width + 4 * 20px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    h1,
+    p {
+        text-align: center;
+    }
     figure.thumb {
         position: relative;
         width: $width;
@@ -292,8 +302,11 @@ html[lang='de'] {
         }
     }
     .examples {
-        $width: 52px;
+        $width: 51px;
         text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
         img {
             display: inline-block;
             border: 1px solid $backgroundBrightColor;
@@ -317,6 +330,7 @@ html[lang='de'] {
     }
     .center-selector {
         background: #ffffff;
+        padding: 10px;
     }
     .dialog-bar + .center-selector {
         bottom: $toolbarHeight * 1.5;

@@ -1850,6 +1850,7 @@ var depageCMS = (function() {
             var $dialogBar = $dialog.find(".dialog-bar");
             var $zoomed = $thumb.clone(false);
             var $ok = $("<a class=\"button default\"></a>");
+            var $reset = $("<a class=\"button\"></a>");
             var $cancel = $("<a class=\"button\"></a>");
             var $cursor = $("<a class=\"cursor\"></a>");
             var $img = $zoomed.find("img");
@@ -1886,27 +1887,35 @@ var depageCMS = (function() {
                 });
             };
 
-            var $example1 = createExample("example1");
-            var $example2 = createExample("example2");
-            var $example2 = createExample("example3");
-            var $example2 = createExample("example4");
+            createExample("example1");
+            createExample("example2");
+            createExample("example3");
+            createExample("example4");
 
             $img[0].src = src.replace(/\.t240x240\.png$/, ".t1024xX.jpg");
 
             $ok
-                .text("Ok")
+                .text(locale.ok)
                 .appendTo($dialogBar)
                 .on("click", function() {
                     localJS.removeImageCenterChooser();
                 });
+            $reset
+                .text(locale.reset)
+                .appendTo($dialogBar)
+                .on("click", function() {
+                    moveCursor(50, 50);
+                });
             $cancel
-                .text("Cancel")
+                .text(locale.cancel)
                 .appendTo($dialogBar)
                 .on("click", function() {
                     localJS.removeImageCenterChooser();
                 });
 
             $zoomed.prependTo($selector);
+            $("<h1>" + locale.chooseCenterHint + "</h1>").insertBefore($zoomed);
+            $("<p>" + locale.chooseCenterExamples + "</p>").insertAfter($zoomed);
             $dialog.appendTo($body);
             $cursor
                 .insertBefore($img);
