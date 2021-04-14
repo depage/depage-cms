@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-14 08:30+0200\n"
+"POT-Creation-Date: 2021-04-14 19:49+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -140,9 +140,9 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:651
-#: Cms/Ui/DocProperties.php:695 Cms/Ui/DocProperties.php:733
-#: Cms/Ui/DocProperties.php:773
+#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:654
+#: Cms/Ui/DocProperties.php:698 Cms/Ui/DocProperties.php:736
+#: Cms/Ui/DocProperties.php:776
 msgid "Text"
 msgstr ""
 
@@ -184,8 +184,8 @@ msgstr ""
 msgid "(public)"
 msgstr ""
 
-#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:945
-#: Cms/Ui/DocProperties.php:1043
+#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:948
+#: Cms/Ui/DocProperties.php:1046
 msgid "http://domain.com"
 msgstr ""
 
@@ -2040,7 +2040,7 @@ msgstr ""
 msgid "Project Settings"
 msgstr ""
 
-#: Cms/Ui/Project.php:72 Cms/Ui/Project.php:94 Cms/Ui/DocProperties.php:517
+#: Cms/Ui/Project.php:72 Cms/Ui/Project.php:94 Cms/Ui/DocProperties.php:520
 msgid "Tags"
 msgstr ""
 
@@ -2171,228 +2171,228 @@ msgstr "Copyright"
 msgid "prop_name_edit_img_thumb"
 msgstr "Thumbnail"
 
-#: Cms/Ui/DocProperties.php:354
+#: Cms/Ui/DocProperties.php:357
 msgid "Page Status"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:371
+#: Cms/Ui/DocProperties.php:374
 msgid "Page is published"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:374
+#: Cms/Ui/DocProperties.php:377
 msgid "Page is waiting to be published"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:377
+#: Cms/Ui/DocProperties.php:380
 msgid "Page has unreleased changes"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:380
+#: Cms/Ui/DocProperties.php:383
 msgid "Page is published but has unreleased changes."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:382
+#: Cms/Ui/DocProperties.php:385
 msgid "Page is waiting to be published."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:384
+#: Cms/Ui/DocProperties.php:387
 msgid "Page is published."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:386
+#: Cms/Ui/DocProperties.php:389
 msgid "Page has not been published yet."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:391
+#: Cms/Ui/DocProperties.php:394
 #, php-format
 msgid ""
 "<p class=\"status\">%s<span><a href=\"%s\" target=\"_blank\">%s</a></span></"
 "p>"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:398
+#: Cms/Ui/DocProperties.php:401
 #, php-format
 msgid "<p class=\"status\">%s<span>%s</span></p>"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:408
+#: Cms/Ui/DocProperties.php:411
 #, php-format
 msgid "<p class=\"date\">%s %s by %s</p>"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:409
+#: Cms/Ui/DocProperties.php:412
 msgid "Changed"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:411 Cms/Forms/ReleasePages.php:73
+#: Cms/Ui/DocProperties.php:414 Cms/Forms/ReleasePages.php:73
 msgid "unknown user"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:416
+#: Cms/Ui/DocProperties.php:419
 msgid "url"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:425 Cms/Ui/DocProperties.php:435
+#: Cms/Ui/DocProperties.php:428 Cms/Ui/DocProperties.php:438
 msgid "Earlier page versions"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:426
+#: Cms/Ui/DocProperties.php:429
 msgid "Current Version"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:448
+#: Cms/Ui/DocProperties.php:451
 msgid "Release Page"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:449
+#: Cms/Ui/DocProperties.php:452
 msgid "Mark this page to be published, when project gets published next time"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:451
+#: Cms/Ui/DocProperties.php:454
 msgid "Request Release"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:452
+#: Cms/Ui/DocProperties.php:455
 msgid "Ask for this page the be released"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:474 Cms/Ui/DocProperties.php:900
-#: Cms/Ui/DocProperties.php:934
+#: Cms/Ui/DocProperties.php:477 Cms/Ui/DocProperties.php:903
+#: Cms/Ui/DocProperties.php:937
 msgid "Default"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:476 Cms/Ui/DocProperties.php:901
+#: Cms/Ui/DocProperties.php:479 Cms/Ui/DocProperties.php:904
 #: Cms/XmlDocTypes/Colors.php:15
 msgid "Colorscheme"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:495
+#: Cms/Ui/DocProperties.php:498
 msgid "Navigation"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:533 Cms/Ui/DocProperties.php:550
+#: Cms/Ui/DocProperties.php:536 Cms/Ui/DocProperties.php:553
 msgid "Protection"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:542
+#: Cms/Ui/DocProperties.php:545
 msgid "Page protected"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:553
+#: Cms/Ui/DocProperties.php:556
 msgid "Page is protected and cannot be changed."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:557
+#: Cms/Ui/DocProperties.php:560
 msgid "Pagetype"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:565
+#: Cms/Ui/DocProperties.php:568
 msgid "html"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:566
+#: Cms/Ui/DocProperties.php:569
 msgid "text"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:567
+#: Cms/Ui/DocProperties.php:570
 msgid "php"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:588 Cms/Ui/DocProperties.php:925
+#: Cms/Ui/DocProperties.php:591 Cms/Ui/DocProperties.php:928
 #: Cms/Forms/Newsletter.php:54 Cms/Forms/Project/Language.php:68
 msgid "Title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:607
+#: Cms/Ui/DocProperties.php:610
 msgid "Linkinfo"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:626 Cms/Forms/Newsletter.php:80
+#: Cms/Ui/DocProperties.php:629 Cms/Forms/Newsletter.php:80
 msgid "Description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:670
+#: Cms/Ui/DocProperties.php:673
 msgid "Headline"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:813
+#: Cms/Ui/DocProperties.php:816
 msgid "Type"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:834
+#: Cms/Ui/DocProperties.php:837
 msgid "Date"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:856
+#: Cms/Ui/DocProperties.php:859
 msgid "Time"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:878
+#: Cms/Ui/DocProperties.php:881
 msgid "Color"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:922
+#: Cms/Ui/DocProperties.php:925
 msgid "Link"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:926
+#: Cms/Ui/DocProperties.php:929
 msgid "Link title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:932
+#: Cms/Ui/DocProperties.php:935
 msgid "Target"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:935
+#: Cms/Ui/DocProperties.php:938
 msgid "New Window"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:943 Cms/Ui/DocProperties.php:1041
+#: Cms/Ui/DocProperties.php:946 Cms/Ui/DocProperties.php:1044
 msgid "href"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:963 Cms/Forms/Project/FileSearch.php:48
+#: Cms/Ui/DocProperties.php:966 Cms/Forms/Project/FileSearch.php:48
 msgid "Audio"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:967 Cms/Ui/DocProperties.php:992
-#: Cms/Ui/DocProperties.php:1019
+#: Cms/Ui/DocProperties.php:970 Cms/Ui/DocProperties.php:995
+#: Cms/Ui/DocProperties.php:1022
 msgid "src"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:988 Cms/Forms/Project/FileSearch.php:47
+#: Cms/Ui/DocProperties.php:991 Cms/Forms/Project/FileSearch.php:47
 msgid "Video"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1012 Cms/Forms/Project/FileSearch.php:46
+#: Cms/Ui/DocProperties.php:1015 Cms/Forms/Project/FileSearch.php:46
 msgid "Image"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1029
+#: Cms/Ui/DocProperties.php:1032
 msgid "title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1030
+#: Cms/Ui/DocProperties.php:1033
 msgid "Image title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1035
+#: Cms/Ui/DocProperties.php:1038
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1036
+#: Cms/Ui/DocProperties.php:1039
 msgid "Image description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1060
+#: Cms/Ui/DocProperties.php:1063
 msgid "Table"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1099
+#: Cms/Ui/DocProperties.php:1102
 msgid "Source"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1118
+#: Cms/Ui/DocProperties.php:1121
 msgid "Not allowed to edit this element."
 msgstr ""
 
@@ -2432,7 +2432,7 @@ msgstr ""
 msgid "Choose"
 msgstr ""
 
-#: Cms/js/locale.php:23
+#: Cms/js/locale.php:23 Cms/tpl/thumbnail.tpl:75
 msgid "Choose image center"
 msgstr ""
 

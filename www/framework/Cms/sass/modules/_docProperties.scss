@@ -333,8 +333,37 @@
 // }}}
 // {{{ doc-properties edit-img
 .doc-properties .edit-img {
+    figure.thumb {
+        margin-bottom: 20px;
+    }
     figure.thumb + p {
         margin-top: 20px;
+    }
+    figure.thumb .choose-image-center-button {
+        $size: 20px;
+        display: block;
+        position: absolute;
+        width: $size * 1.75;
+        height: $size;
+        left: 0;
+        bottom: -$size - 4px;
+        border-radius: $cornerRadius;
+        background-color: $baseColor;
+        cursor: pointer;
+
+        &::after {
+            display: block;
+            content: " ";
+            position: absolute;
+            left: $size * 0.75 / 2;
+            width: $size;
+            height: $size;
+            @include icon-base("choose-image-center", $size);
+        }
+
+        &:hover {
+            background-color: $backgroundColor;
+        }
     }
     p {
         clear: none;

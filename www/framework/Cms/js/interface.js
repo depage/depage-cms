@@ -1611,6 +1611,12 @@ var depageCMS = (function() {
 
                     return false;
                 });
+                $form.on("click", "figure.thumb .choose-image-center-button", function() {
+                    var $thumb = $(this).parent();
+                    var $input = $thumb.next("p").find("input");
+
+                    localJS.chooseImageCenter($thumb, $input);
+                });
                 $form.find("input[type='color']").spectrum({
                     preferredFormat: "hex",
                     showButtons: false,

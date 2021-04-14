@@ -70,6 +70,12 @@
             <?php } ?>
         </div>
     </figcaption>
+    <?php if ($this->file->libid) { ?>
+        <a <?php self::attr([
+            'class' => "choose-image-center-button",
+            'title' => _("Choose image center"),
+        ]); ?>></a>
+    <?php } ?>
 </figure>
 
 <?php // vim:set ft=php sw=4 sts=4 fdm=marker et :

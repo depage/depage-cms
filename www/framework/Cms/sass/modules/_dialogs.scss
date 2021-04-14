@@ -287,7 +287,7 @@ body > .choose-image-center {
         }
     }
     .cursor {
-        $size: 20px;
+        $size: 40px;
         position: absolute;
         z-index: 11;
         will-change: left, top;
@@ -297,14 +297,14 @@ body > .choose-image-center {
             position: absolute;
             display: block;
             content: " ";
-            border-radius: $size * 0.5;
             width: $size;
             height: $size;
-            left: -0.5 * $size - 2px;
-            top: -0.5 * $size - 2px;
+            left: -0.5 * $size;
+            top: -0.5 * $size;
             border-style: solid;
             border-width: 2px;
-            border-color: $backgroundColor;
+            border-color: $textBrightColor;
+            border-radius: 50%;
             background-color: $selectionBackgroundColor;
         }
     }
