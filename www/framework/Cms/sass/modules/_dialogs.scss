@@ -241,13 +241,20 @@ html[lang='de'] {
 }
 // }}}
 // {{{ choose-image-center
-.choose-image-center {
+body > .choose-image-center {
     $width: 512px;
 
     > .content {
         max-width: $width + 4 * 20px;
         margin-left: auto;
         margin-right: auto;
+        bottom: 2 * $toolbarHeight;
+
+        @media (pointer:coarse) {
+            > .content {
+                bottom: 2 * $toolbarHeight * $touchScale;
+            }
+        }
     }
     h1,
     p {

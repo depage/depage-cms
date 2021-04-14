@@ -1563,6 +1563,9 @@ var depageCMS = (function() {
                     var $button = $("<a class=\"button choose-file\">…</a>").insertAfter($input.parent());
 
                     $input.on("change", function() {
+                        if ($input[0].value == "") {
+                            return;
+                        }
                         // image changed -> update thumbnail
                         var thumbUrl = url + "thumbnail/" + encodeURIComponent($input[0].value) + "/?ajax=true";
 
@@ -1588,16 +1591,20 @@ var depageCMS = (function() {
                     });
                 });
                 $form.on("dblclick", "figure.thumb", function() {
-                    localJS.chooseImageCenter($(this));
+                    var $thumb = $(this);
+                    var $input = $thumb.next("p").find("input");
+
+                    localJS.chooseImageCenter($thumb, $input);
                 });
                 $form.on("contextmenu", "figure.thumb", function(e) {
                     var $thumb = $(this);
+                    var $input = $thumb.next("p").find("input");
 
                     $.vakata.context.show($(this), {x: e.pageX, y:e.pageY}, {
                         _chooseCenter: {
                             label: locale.chooseCenter,
                             action: function() {
-                                localJS.chooseImageCenter($thumb);
+                                localJS.chooseImageCenter($thumb, $input);
                             }
                         },
                     });
@@ -1843,7 +1850,12 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ chooseImageCenter()
-        chooseImageCenter: function($thumb) {
+        chooseImageCenter: function($thumb, $input) {
+            var libid = $thumb.data("libid") || false
+            if (!libid) {
+                return;
+            }
+            var fileId = libid.match(/libid:\/\/(\d+)\/(.*)/)[1];
             var $dialog = $("<div class=\"dialog-full choose-image-center\"><div class=\"content\"><div class=\"dialog-bar\"></div><div class=\"center-selector scrollable-content\"><div class=\"examples\"></div></div></div></div>");
             var $selector = $dialog.find(".center-selector");
             var $examples = $dialog.find(".examples");
@@ -1886,6 +1898,18 @@ var depageCMS = (function() {
                     'object-position': centerX + "% " + centerY + "%"
                 });
             };
+            var save = function() {
+                $.ajax({
+                    async: true,
+                    type: 'POST',
+                    url: baseUrl + "api/" + projectName + "/library/set-image-center/",
+                    data: {
+                        fileId: fileId,
+                        centerX: centerX,
+                        centerY: centerY
+                    },
+                });
+            };
 
             createExample("example1");
             createExample("example2");
@@ -1898,7 +1922,9 @@ var depageCMS = (function() {
                 .text(locale.ok)
                 .appendTo($dialogBar)
                 .on("click", function() {
-                    localJS.removeImageCenterChooser();
+                    save();
+
+                    localJS.removeImageCenterChooser($input);
                 });
             $reset
                 .text(locale.reset)
@@ -1960,8 +1986,17 @@ var depageCMS = (function() {
         },
         // }}}
         // {{{ removeImageCenterChooser()
-        removeImageCenterChooser: function() {
+        removeImageCenterChooser: function($input) {
             var $dialog = $(".choose-image-center");
+
+            if (typeof $input !== 'undefined') {
+                var old = $input[0].value;
+                $input[0].value = "";
+                $input.trigger("change");
+
+                $input[0].value = old;
+                $input.trigger("change");
+            }
 
             $dialog.removeClass("visible");
             $(".layout").removeClass("no-live-help");

@@ -617,6 +617,32 @@ class FileLibrary
     }
     // }}}
 
+    // {{{ setImageCenter()
+    /**
+     * @brief setImageCenter
+     *
+     * @param mixed $fileId, $centerX, $centerY
+     * @return void
+     **/
+    public function setImageCenter(int $fileId, int $centerX, int $centerY)
+    {
+        $centerX = min(100, max(0, $centerX));
+        $centerY = min(100, max(0, $centerY));
+
+        $query = $this->pdo->prepare(
+            "UPDATE {$this->tableFiles}
+            SET centerX=:centerX, centerY=:centerY
+            WHERE id=:fileId"
+        );
+
+        return $query->execute([
+            'fileId' => $fileId,
+            'centerX' => $centerX,
+            'centerY' => $centerY,
+        ]);
+    }
+    // }}}
+
     // {{{ getFilesInFolder()
     /**
      * @brief getFilesInFolder

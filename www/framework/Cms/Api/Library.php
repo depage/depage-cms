@@ -18,6 +18,22 @@ namespace Depage\Cms\Api;
 class Library extends Json
 {
     protected $autoEnforceAuth = false;
+    protected $fl = null;
+
+    // {{{ _init()
+    /**
+     * @brief _init
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function _init(array $importVariables = [])
+    {
+        parent::_init($importVariables);
+
+        $this->fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
+    }
+    // }}}
 
     // {{{ status()
     /**
@@ -29,13 +45,34 @@ class Library extends Json
     {
         $values = $this->parseJsonParams();
 
-        $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
-
         $retVal = [
-            'success' => $fl->syncLibrary(),
+            'success' => $this->fl->syncLibrary(),
         ];
 
         return $retVal;
+    }
+    // }}}
+    // {{{ setImageCenter()
+    /**
+     * @brief setImageCenter
+     *
+     * @return boolean
+     **/
+    public function set_image_center()
+    {
+        $success = false;
+
+        if ($this->auth->enforceLazy()) {
+            $fileId = filter_input(INPUT_POST, 'fileId', FILTER_VALIDATE_INT);
+            $centerX = filter_input(INPUT_POST, 'centerX', FILTER_VALIDATE_INT);
+            $centerY = filter_input(INPUT_POST, 'centerY', FILTER_VALIDATE_INT);
+
+            $success = $this->fl->setImageCenter($fileId, $centerX, $centerY);
+        }
+
+        return [
+            'success' => $success,
+        ];
     }
     // }}}
 }
