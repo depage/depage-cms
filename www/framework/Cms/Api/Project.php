@@ -17,7 +17,7 @@ namespace Depage\Cms\Api;
  */
 class Project extends Json
 {
-    protected $autoEnforceAuth = false;
+    protected $autoEnforceAuth = true;
 
     // {{{ pageId()
     /**

@@ -334,6 +334,9 @@ class DocProperties extends Base
     protected function addPgRelease($currentNode)
     {
         $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docRef);
+        if (!$pageInfo) {
+            return;
+        }
         $lastchangeUser = \Depage\Auth\User::loadById($this->pdo, $pageInfo->lastchangeUid);
         $dateFormatter = new \Depage\Formatters\DateNatural();
 
