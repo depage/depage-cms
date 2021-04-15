@@ -1692,6 +1692,10 @@ var depageCMS = (function() {
                 });
 
                 $(document).on("keyup.depageFileChooser", function(e) {
+                    if ($(".dialog-full.choose-image-center").length > 0) {
+                        return;
+                    }
+
                     var key = e.which;
                     if (key === 27) { // ESC
                         localJS.removeFileChooser();
@@ -1985,6 +1989,15 @@ var depageCMS = (function() {
                     return false;
                 });
 
+            $(document).on("keyup.depageChooseImageCenter", function(e) {
+                var key = e.which;
+                if (key === 27) { // ESC
+                    localJS.removeImageCenterChooser();
+                } else if (key === 13) { // Enter
+                    $ok.click();
+                }
+            });
+
             setTimeout(function() {
                 $dialog.addClass("visible");
                 $(".layout").addClass("no-live-help");
@@ -1993,7 +2006,7 @@ var depageCMS = (function() {
         // }}}
         // {{{ removeImageCenterChooser()
         removeImageCenterChooser: function($input) {
-            var $dialog = $(".choose-image-center");
+            var $dialog = $(".dialog-full.choose-image-center");
 
             if (typeof $input !== 'undefined') {
                 var old = $input[0].value;
@@ -2006,6 +2019,9 @@ var depageCMS = (function() {
 
             $dialog.removeClass("visible");
             $(".layout").removeClass("no-live-help");
+
+            $(document).off("keyup.depageChooseImageCenter");
+
             setTimeout(function() {
                 $dialog.remove();
             }, 500);
