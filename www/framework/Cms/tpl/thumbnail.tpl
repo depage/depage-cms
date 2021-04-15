@@ -4,6 +4,7 @@
     $imgSrc = "projects/{$this->project->name}/lib/{$this->file->fullname}";
     if (in_array($this->file->ext, ['png', 'jpg', 'jpeg', 'gif', 'pdf'])) {
         $thumbSrc = $imgSrc . ".t240x240.png";
+        $thumbSrc2 = $imgSrc . ".t240x240.webp";
     } else if (in_array($this->file->ext, ['svg'])) {
         $thumbSrc = $imgSrc;
     } else {
@@ -34,7 +35,13 @@
     'data-ext' => $this->file->ext,
     'data-fallbackthumb' => $fallbackThumb,
 ]); ?>>
-    <img src="<?php self::t($thumbSrc); ?>">
+    <picture>
+        <?php if ($thumbSrc2) { ?>
+            <source srcset="<?php self::t($thumbSrc2); ?>" type="image/webp" />
+        <?php } ?>
+
+        <img src="<?php self::t($thumbSrc); ?>" loading="lazy">
+    </picture>
     <figcaption>
         <?php self::t($this->file->filename); ?>
         <div class="fileinfo">
