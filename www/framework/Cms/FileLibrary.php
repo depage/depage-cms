@@ -268,6 +268,10 @@ class FileLibrary
                 customKeywords=VALUES(customKeywords)
             "
         );
+        $dar = $info['displayAspectRatio'] ?? null;
+        if (is_nan($dar)) {
+            $dar = null;
+        }
         $f = new FileInfo();
         $f->id = $id;
         $f->folder = $folderId;
@@ -281,7 +285,7 @@ class FileLibrary
         $f->height = $info['height'] ?? null;
         $f->centerX = !empty($info['width']) ? 50 : null;
         $f->centerY = !empty($info['height']) ? 50 : null;
-        $f->displayAspectRatio = $info['displayAspectRatio'] ?? null;
+        $f->displayAspectRatio = $dar;
         $f->duration = $info['duration'] ?? null;
         $f->artist = $info['tag_artist'] ?? "";
         $f->album = $info['tag_album'] ?? "";

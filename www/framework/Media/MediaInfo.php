@@ -180,6 +180,9 @@ class MediaInfo
             $info['height'] = $imageinfo[1];
             $info['mime'] = $imageinfo['mime'];
             $info['displayAspectRatio'] = $info['width'] / $info['height'];
+            if (is_nan($info['displayAspectRatio'])) {
+                $info['displayAspectRatio'] = null;
+            }
 
             $this->info = array_merge($this->info, $info);
         }
