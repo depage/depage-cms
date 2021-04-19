@@ -1866,22 +1866,20 @@ var depageCMS = (function() {
                 return;
             }
             var fileId = libid.match(/libid:\/\/(\d+)\/(.*)/)[1];
-            var $dialog = $("<div class=\"dialog-full choose-image-center\"><div class=\"content\"><div class=\"dialog-bar\"></div><div class=\"center-selector scrollable-content\"><div class=\"examples\"></div></div></div></div>");
+            var $dialog = $("<div class=\"dialog-full choose-image-center\"><div class=\"content\"><div class=\"dialog-bar\"></div><div class=\"center-selector scrollable-content\"><figure class=\"thumb\"></figure><div class=\"examples\"></div></div></div></div>");
             var $selector = $dialog.find(".center-selector");
             var $examples = $dialog.find(".examples");
             var $dialogBar = $dialog.find(".dialog-bar");
-            var $zoomed = $thumb.clone(false);
+            var $zoomed = $dialog.find("figure.thumb");
+            var $img = $thumb.find("img").clone(false);
             var $ok = $("<a class=\"button default\"></a>");
             var $reset = $("<a class=\"button\"></a>");
             var $cancel = $("<a class=\"button\"></a>");
             var $cursor = $("<a class=\"cursor\"></a>");
-            var $img = $zoomed.find("img");
-            var centerX = $zoomed.data("center-x");
-            var centerY = $zoomed.data("center-y");
+            var centerX = $thumb.data("center-x");
+            var centerY = $thumb.data("center-y");
             var src = $img[0].src;
             var dragging = false;
-
-            $zoomed.find("figcaption").remove();
 
             var createExample = function(className) {
                 var $copy = $img
@@ -1952,7 +1950,7 @@ var depageCMS = (function() {
                     localJS.removeImageCenterChooser();
                 });
 
-            $zoomed.prependTo($selector);
+            $img.prependTo($zoomed);
             $("<h1>" + locale.chooseCenterHint + "</h1>").insertBefore($zoomed);
             $("<p>" + locale.chooseCenterExamples + "</p>").insertAfter($zoomed);
             $dialog.appendTo($body);
@@ -1962,7 +1960,7 @@ var depageCMS = (function() {
             moveCursor(centerX, centerY);
 
             $zoomed
-                .on("mousedown", function(e) {
+                .on("mousedown", function() {
                     dragging = true;
                 })
                 .on("mouseup", function(e) {
