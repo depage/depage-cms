@@ -1909,6 +1909,9 @@ var depageCMS = (function() {
                 });
             };
             var save = function() {
+                $thumb.attr("data-center-x", centerX);
+                $thumb.attr("data-center-y", centerY);
+
                 $.ajax({
                     async: true,
                     type: 'POST',
