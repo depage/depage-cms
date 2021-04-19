@@ -20,6 +20,8 @@ Willkommen bei depage-cms.
 > >
 > > [Dateien Suchen](@ref file-search)
 > >
+> > [Bildschwerpunkt](@ref image-gravitational-center)
+> >
 > > [Farben](@ref colors)
 > >
 > > [Newsletter](@ref newsletter)

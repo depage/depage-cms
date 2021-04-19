@@ -30,6 +30,7 @@ v2.2.0 / 29.04.2021      {#v2-2-0}
 **Frontend**
 - enhanced file library
 - added search interface for file library
+- added ability to choose gravitational center of images
 
 
 v2.1.14 / 29.04.2021      {#v2-1-14}

@@ -71,4 +71,6 @@ Es ist auch möglich die Dateisuche nach Dateitypen einzuschränken.
 
 
 
-> [Weiter zum Thema: Farben](@ref colors)
+
+
+> [Weiter zum Thema: Bildschwerpunkt](@ref image-gravitational-center)

@@ -72,4 +72,6 @@ You can also filter your file search by the file-type:
 
 
 
-> [Go to the chapter: Colors](@ref colors)
+
+
+> [Go to the chapter: Gravitational Center of Images](@ref image-gravitational-center)

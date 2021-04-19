@@ -10,6 +10,8 @@
     </tab>
     <tab type="user" url="@ref file-library" title="Erweitert">
         <tab type="user" url="@ref file-library" title="Dateibibliothek" />
+        <tab type="user" url="@ref file-search" title="Dateien Suchen" />
+        <tab type="user" url="@ref image-gravitational-center" title="Bildschwerpunkt" />
         <tab type="user" url="@ref colors" title="Farben" />
         <tab type="user" url="@ref newsletter" title="Newsletter" />
     </tab>

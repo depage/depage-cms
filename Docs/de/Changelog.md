@@ -30,6 +30,7 @@ v2.2.0 / 29.04.2021      {#v2-2-0}
 **Frontend**
 - Dateibibliothek verbessert
 - Neue Suchfunktion zur Dateibibliothek hinzugefügt
+- Fähigkeit hinzugefügt den Schwerpunkt von Bildern festzulegen
 
 
 v2.1.14 / 29.04.2021      {#v2-1-14}
