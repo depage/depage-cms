@@ -507,23 +507,26 @@ abstract class Transformer
          * call:getversion -> replaced by $depageVersion
          */
         // register stream to get documents from xmldb
-        \Depage\Cms\Streams\XmlDb::registerStream("xmldb", array(
+        \Depage\Cms\Streams\XmlDb::registerStream("xmldb", [
             "xmldb" => $this->xmlGetter,
             "transformer" => $this,
-        ));
+        ]);
 
         // register stream to get global xsl templates
         \Depage\Cms\Streams\Xslt::registerStream("xslt");
 
         // register stream to get page-links
-        \Depage\Cms\Streams\Pageref::registerStream("pageref", array(
+        \Depage\Cms\Streams\Pageref::registerStream("pageref", [
             "transformer" => $this,
-        ));
+        ]);
 
         // register stream to get links to library
-        \Depage\Cms\Streams\Libref::registerStream("libref", array(
+        \Depage\Cms\Streams\Libref::registerStream("libref", [
             "transformer" => $this,
-        ));
+        ]);
+        \Depage\Cms\Streams\Libref::registerStream("libid", [
+            "transformer" => $this,
+        ]);
     }
     // }}}
     // {{{ registerFunctions
