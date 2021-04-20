@@ -256,7 +256,7 @@ class Pages extends Base {
         list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
         $xpath = new \DOMXPath($xml);
-        $pages = $xpath->query("//pg:page");
+        $pages = $xpath->query("//pg:page | //pg:redirect");
 
         foreach ($pages as $page) {
             $doc = $this->xmlDb->getDoc($page->getAttribute("db:docref"));

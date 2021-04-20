@@ -439,7 +439,7 @@ class XmlNav {
         $xpath = new \DOMXpath($xml);
 
         $page = null;
-        $pages = $xpath->query("//pg:page[@url='{$url}']");
+        $pages = $xpath->query("//pg:page[@url='{$url}'] | //pg:redirect[@url='{$url}']");
 
         if ($pages && $pages->length) {
             // a page has activeUrl
