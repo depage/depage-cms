@@ -659,6 +659,18 @@ class FileLibrary
         $files = [];
         $path = $this->getPathByFolderId($folderId);
 
+        if (!$path) {
+            $query = $this->pdo->prepare(
+                "DELETE FROM {$this->tableFiles}
+                WHERE folder=:folderId"
+            );
+            $query->execute([
+                'folderId' => $folderId,
+            ]);
+
+            return $files;
+        }
+
         $query = $this->pdo->prepare(
             "SELECT f.* FROM {$this->tableFiles} AS f
             WHERE folder=:folderId
