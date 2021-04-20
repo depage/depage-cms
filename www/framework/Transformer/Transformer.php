@@ -209,7 +209,7 @@ abstract class Transformer
                 'settings' => "document('xmldb://settings')",
                 'colors' => "document('xmldb://colors')",
                 'languages' => "\$settings/proj:settings/proj:languages",
-                'currentPage' => "\$navigation//pg:page[@status = 'active']",
+                'currentPage' => "\$navigation//pg:*[@status = 'active']",
                 'libPath' => "'" . htmlspecialchars('file://' . str_replace(" ", "%20", realpath($this->libPath))) . "'",
                 'var-ga-Account' => "''",
                 'var-ga-Domain' => "''",
