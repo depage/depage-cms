@@ -215,7 +215,7 @@
             <xsl:when test="($src and $src != '') or ($srcset and $srcset != '') or ($alt and $alt != '')">
                 <img>
                     <xsl:choose>
-                        <xsl:when test="$src != '' and substring($src, 1, 9) = 'libref://'">
+                        <xsl:when test="starts-with($src, 'libref://') or starts-with($src, 'libid://')">
                             <xsl:attribute name="src">
                                 <xsl:value-of select="dp:getLibRef($src)"/>
                             </xsl:attribute>
@@ -267,12 +267,16 @@
         <xsl:param name="alt" select="@alt"/>
         <xsl:param name="title" select="@title"/>
         <xsl:param name="img_name" select="@img_name"/>
+        <xsl:param name="info" select="dp:fileinfo($src)/file" />
 
         <xsl:choose>
             <!-- {{{ svg image -->
-            <xsl:when test="starts-with($src, 'libref://') and '.svg' = substring($src, string-length($src) - string-length('.svg') + 1)">
+            <xsl:when test="$info/@extension = 'svg'">
                 <xsl:variable name="svgFile" select="concat($libPath, substring($src, 9))" />
+                <xsl:value-of select="$info/@fullpath" />
+                <!--
                 <xsl:copy-of select="document($svgFile)/*" />
+                -->
             </xsl:when>
             <!-- }}} -->
             <!-- {{{ other image -->
