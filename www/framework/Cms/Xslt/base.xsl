@@ -214,18 +214,9 @@
             <!-- {{{ plain image -->
             <xsl:when test="($src and $src != '') or ($srcset and $srcset != '') or ($alt and $alt != '')">
                 <img>
-                    <xsl:choose>
-                        <xsl:when test="starts-with($src, 'libref://') or starts-with($src, 'libid://')">
-                            <xsl:attribute name="src">
-                                <xsl:value-of select="dp:getLibRef($src)"/>
-                            </xsl:attribute>
-                        </xsl:when>
-                        <xsl:when test="$src != ''">
-                            <xsl:attribute name="src">
-                                <xsl:value-of select="$src"/>
-                            </xsl:attribute>
-                        </xsl:when>
-                    </xsl:choose>
+                    <xsl:attribute name="src">
+                        <xsl:value-of select="dp:getRef($src)"/>
+                    </xsl:attribute>
 
                     <xsl:attribute name="alt"><xsl:value-of select="$alt"/></xsl:attribute>
                     <xsl:if test="$srcset != ''"><xsl:attribute name="srcset"><xsl:value-of select="normalize-space($srcset)"/></xsl:attribute></xsl:if>
@@ -556,8 +547,8 @@
         </xsl:variable>
         <xsl:processing-instruction name="php">
             @header("Location: <xsl:value-of select="$url" />");
+            die("<xsl:value-of select="$url" />");
         ?</xsl:processing-instruction>
-        die();
     </xsl:template>
     <!-- }}} -->
 
