@@ -79,6 +79,7 @@ figure.thumb {
             margin-top: 15px;
         }
     }
+    picture:hover + figcaption .fileinfo,
     img:hover + figcaption .fileinfo {
         display: block;
     }
