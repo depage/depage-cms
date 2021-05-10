@@ -17,6 +17,7 @@ class MediaInfo
      */
     protected $defaults = array(
         'cache'       => null,
+        'identify'     => "identify",
         'ffprobe'     => "ffprobe",
         'mplayer'     => "mplayer",
     );
@@ -171,8 +172,8 @@ class MediaInfo
      * @return array
      */
     protected function getImageInfo() {
-        $imageinfo = @getimagesize($this->filename, $extras);
-        if ($imageinfo[2] > 0) {
+        $imageinfo = $this->getImageSize($this->filename, $extras);
+        if ($imageinfo[1] > 0) {
             $info = array();
 
             $info['isImage'] = true;
@@ -186,7 +187,7 @@ class MediaInfo
 
             $this->info = array_merge($this->info, $info);
         }
-        if(isset($extras['APP13'])) {
+        if (isset($extras['APP13'])) {
             $info = array();
             $iptc = iptcparse($extras['APP13']);
 
@@ -369,7 +370,7 @@ class MediaInfo
      * @return bool
      */
     protected function hasImageExtension() {
-        $extensions = array("png", "jpg", "jpeg", "gif", "webp");
+        $extensions = array("png", "jpg", "jpeg", "gif", "webp", "tif", "tiff", "pdf", "eps");
 
         return in_array(strtolower($this->info['extension']), $extensions);
 
@@ -447,6 +448,33 @@ class MediaInfo
         }
 
         return $output;
+    }
+    // }}}
+    // {{{ getImageSize()
+    /**
+     * @brief getImageSize
+     *
+     * @param mixed $file
+     * @return void
+     **/
+    protected function getImageSize($filename, &$extras)
+    {
+        $info = @getimagesize($filename, $extras);
+
+        if (!$info) {
+            $fileArg = escapeshellarg($filename);
+            if (substr($filename, -4) === ".pdf") {
+                $fileArg .= "[0]";
+            }
+            $cmd = "{$this->identify} -ping -format \"%wx%h\" {$fileArg}";
+            $result = $this->call($cmd);
+            $info = explode('x', $result[0]);
+
+            $finfo = new \finfo(\FILEINFO_MIME_TYPE);
+            $info['mime'] = $finfo->file($filename);
+        }
+
+        return $info;
     }
     // }}}
 }
