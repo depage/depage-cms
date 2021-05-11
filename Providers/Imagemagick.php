@@ -169,7 +169,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
         if (!$imageSize) {
             $pageNumber = $this->getPageNumber();
             $identify       = preg_replace('/convert$/', 'identify', $this->executable);
-            $command        = "{$identify} -format \"%wx%h\" " . escapeshellarg($this->input) . $pageNumber;
+            $command        = "{$identify} -ping -format \"%wx%h\" " . escapeshellarg($this->input) . $pageNumber;
             $escapedCommand = str_replace('!', '\!', escapeshellcmd($command));
 
             exec($escapedCommand . ' 2>&1', $commandOutput, $returnStatus);
