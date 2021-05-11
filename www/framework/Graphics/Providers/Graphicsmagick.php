@@ -58,7 +58,7 @@ class Graphicsmagick extends Imagemagick
         }
         if (!$imageSize) {
             $pageNumber = $this->getPageNumber();
-            exec("{$this->executable} identify -format \"%wx%h\" " . escapeshellarg($this->input) . $pageNumber . ' 2>&1', $commandOutput, $returnStatus);
+            exec("{$this->executable} identify -ping -format \"%wx%h\" " . escapeshellarg($this->input) . $pageNumber . ' 2>&1', $commandOutput, $returnStatus);
             if ($returnStatus === 0) {
                 $imageSize = explode('x', $commandOutput[0]);
             } else {
