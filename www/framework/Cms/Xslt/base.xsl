@@ -18,7 +18,7 @@
     <!-- {{{ edit:a -->
     <xsl:template match="edit:a" name="edit:a">
         <xsl:param name="href" select="@href"/>
-        <xsl:param name="href_id" select="@href_id"/>
+        <xsl:param name="href_id" select="dp:value(@href_id, substring-after($href, 'pageref://'))"/>
         <xsl:param name="type" select="@type"/>
         <xsl:param name="rel" select="@rel"/>
         <xsl:param name="pretext" select="@pretext"/>
@@ -48,16 +48,7 @@
 
             <a>
                 <!-- {{{ href -->
-                <xsl:attribute name="href">
-                    <xsl:choose>
-                        <xsl:when test="$href_id != ''">
-                            <xsl:value-of select="dp:getPageRef($href_id, $lang)" />
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:value-of select="dp:getRef($href)" />
-                        </xsl:otherwise>
-                    </xsl:choose>
-                </xsl:attribute>
+                <xsl:attribute name="href"><xsl:value-of select="dp:choose($href_id, dp:getPageRef($href_id, $lang), dp:getRef($href, $lang))" /></xsl:attribute>
                 <!-- }}} -->
                 <!-- {{{ attributes -->
                 <xsl:if test="$lang">
@@ -117,23 +108,16 @@
     <!-- }}} -->
     <!-- {{{ edit:a | edit:img href -->
     <xsl:template match="edit:a | edit:img" mode="href">
-        <xsl:param name="absolute" select="false()" />
         <xsl:param name="lang" select="$currentLang" />
+        <xsl:param name="absolute" select="false()" />
 
-        <xsl:choose>
-            <xsl:when test="@href_id != ''">
-                <xsl:value-of select="dp:getPageRef(@href_id, $lang, $absolute)" />
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:value-of select="dp:getRef(@href, $absolute)" />
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:value-of select="dp:getRef(@href, $lang, $absolute)" />
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ edit:img -->
     <xsl:template match="edit:img" name="edit:img">
         <xsl:param name="href" select="@href"/>
-        <xsl:param name="href_id" select="@href_id"/>
+        <xsl:param name="href_id" select="dp:value(@href_id, substring-after($href, 'pageref://'))"/>
         <xsl:param name="type" select="@type"/>
         <xsl:param name="rel" select="@rel"/>
         <xsl:param name="target" select="@target"/>
@@ -154,22 +138,13 @@
 
         <xsl:choose>
             <!-- {{{ image with link -->
-            <xsl:when test="($href and $href != '') or ($href_id and $href_id != '')">
+            <xsl:when test="$href != '' or $href_id != ''">
                 <!-- get name from meta-information if link is ref to page_id -->
                 <xsl:variable name="linktitle"><xsl:if test="$href_id"><xsl:value-of select="dp:getPage($href_id, '//pg:meta')/pg:meta/pg:title[@lang = $lang]/@value"/></xsl:if></xsl:variable>
 
                 <a>
                     <!-- {{{ href -->
-                    <xsl:attribute name="href">
-                        <xsl:choose>
-                            <xsl:when test="$href_id != ''">
-                                <xsl:value-of select="dp:getPageRef($href_id, $lang)" />
-                            </xsl:when>
-                            <xsl:otherwise>
-                                <xsl:value-of select="dp:getRef($href)" />
-                            </xsl:otherwise>
-                        </xsl:choose>
-                    </xsl:attribute>
+                    <xsl:attribute name="href"><xsl:value-of select="dp:choose($href_id, dp:getPageRef($href_id, $lang), dp:getRef($href, $lang))" /></xsl:attribute>
                     <!-- }}} -->
                     <!-- {{{ attributes -->
                     <xsl:choose>
@@ -241,7 +216,7 @@
     <!-- {{{ edit:img inline-svg -->
     <xsl:template match="edit:img" name="img-svg" mode="inline-svg">
         <xsl:param name="href" select="@href"/>
-        <xsl:param name="href_id" select="@href_id"/>
+        <xsl:param name="href_id" select="dp:value(@href_id, substring-after($href, 'pageref://'))"/>
         <xsl:param name="type" select="@type"/>
         <xsl:param name="rel" select="@rel"/>
         <xsl:param name="target" select="@target"/>
@@ -556,14 +531,7 @@
     <xsl:template name="php_redirect">
         <xsl:if test="$currentPage/@redirect = 'true'">
             @header("Location: <xsl:for-each select="//sec:redirect/edit:a[@lang = $currentLang]">
-                <xsl:choose>
-                    <xsl:when test="@href_id != ''">
-                        <xsl:value-of select="dp:getPageRef(@href_id, $currentLang, true())" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="dp:getRef(@href)" />
-                    </xsl:otherwise>
-                </xsl:choose>
+                <xsl:value-of select="dp:choose(@href, dp:getRef(@href, $currentLang, true()), dp:getPageRef(@href_id, $currentLang, true()))" />
             </xsl:for-each>");
             die();
         </xsl:if>

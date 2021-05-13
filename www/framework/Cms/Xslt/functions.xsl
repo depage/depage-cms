@@ -56,7 +56,7 @@
         <xsl:param name="b" />
 
         <xsl:choose>
-            <xsl:when test="not($a = '') and not($a = false())">
+            <xsl:when test="$a and not($a = '') and not($a = false())">
                 <func:result select="$a" />
             </xsl:when>
             <xsl:otherwise>
@@ -160,16 +160,17 @@
     <func:function name="dp:getRef">
         <xsl:param name="url" />
         <xsl:param name="lang" select="$currentLang" />
+        <xsl:param name="absolute" select="false()" />
 
         <xsl:choose>
             <xsl:when test="substring($url, 1, 8) = 'libid://'">
-                <func:result select="dp:getLibRef($url)"/>
+                <func:result select="dp:getLibRef($url, $absolute)"/>
             </xsl:when>
             <xsl:when test="substring($url, 1, 9) = 'libref://'">
-                <func:result select="dp:getLibRef($url)"/>
+                <func:result select="dp:getLibRef($url, $absolute)"/>
             </xsl:when>
             <xsl:when test="substring($url, 1, 10) = 'pageref://'">
-                <func:result select="dp:getPageRef(substring($url, 11))"/>
+                <func:result select="dp:getPageRef(substring-after($url, 'pageref://'), $lang, $absolute)"/>
             </xsl:when>
             <xsl:when test="substring($url, 1, 7) = 'mailto:'">
                 <func:result select="dp:replaceEmailChars($url)"/>
