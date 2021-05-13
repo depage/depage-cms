@@ -35,7 +35,7 @@
         <xsl:if test="@lang = $lang or not(@lang)">
             <!-- get name from meta-information if link is ref to page_id -->
             <xsl:variable name="pgmetaText">
-                <xsl:if test="$href_id and $content = '' and not($justapply)">
+                <xsl:if test="$href_id">
                     <xsl:copy-of select="dp:getPage($href_id, '//pg:meta')/pg:meta" />
                 </xsl:if>
             </xsl:variable>
