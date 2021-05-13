@@ -179,10 +179,7 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
             } else if (in_array($node->nodeName, ['href_id', 'href']) && $node->nodeType == \XML_ATTRIBUTE_NODE) {
                 $parent = $node->parentNode;
                 $href = $element->getValue();
-                if (strpos($href, "pageref://") === 0) {
-                    $parent->setAttribute("href_id", substr($href, 10));
-                    $parent->removeAttribute("href");
-                } else if (strpos($href, "libref://") === 0) {
+                if (strpos($href, "libref://") === 0) {
                     $parent->setAttribute("href", $this->fl->toLibid($href));
                     $parent->removeAttribute("href_id");
                 } else {
