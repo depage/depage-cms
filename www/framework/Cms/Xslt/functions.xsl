@@ -9,9 +9,11 @@
     xmlns:pg="http://cms.depagecms.net/ns/page"
     xmlns:func="http://exslt.org/functions"
     xmlns:exslt="http://exslt.org/common"
-    extension-element-prefixes="xsl dp func php exslt ">
+    extension-element-prefixes="xsl dp func php exslt pg ">
 
     <xsl:include href="xslt://nodetostring.xsl" />
+
+    <xsl:key name="page-by-id" match="pg:*" use="@db:id"/>
 
     <!-- aliases -->
     <!-- {{{ dp:getpage() -->
@@ -124,6 +126,23 @@
             </xsl:when>
             <xsl:otherwise>
                 <func:result select="dp:getDocument($docref, $xpath)" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:getMeta() -->
+    <!--
+        dp:getMeta(pageid)
+    -->
+    <func:function name="dp:getPageMeta">
+        <xsl:param name="pageId" />
+
+        <xsl:choose>
+            <xsl:when test="$pageId">
+                <func:result select="dp:getPage($pageId, '//pg:meta')/pg:meta" />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="/dp:non-existent-node-to-automatically-return-empty-result" />
             </xsl:otherwise>
         </xsl:choose>
     </func:function>

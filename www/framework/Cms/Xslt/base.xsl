@@ -13,7 +13,6 @@
     extension-element-prefixes="xsl exslt db proj pg sec edit ">
 
     <xsl:import href="xslt://functions.xsl" />
-    <xsl:key name="page-by-id" match="pg:*" use="@db:id"/>
 
     <!-- {{{ edit:a -->
     <xsl:template match="edit:a" name="edit:a">
@@ -34,12 +33,7 @@
 
         <xsl:if test="@lang = $lang or not(@lang)">
             <!-- get name from meta-information if link is ref to page_id -->
-            <xsl:variable name="pgmetaText">
-                <xsl:if test="$href_id">
-                    <xsl:copy-of select="dp:getPage($href_id, '//pg:meta')/pg:meta" />
-                </xsl:if>
-            </xsl:variable>
-            <xsl:variable name="pgmeta" select="exslt:node-set($pgmetaText)/pg:meta" />
+            <xsl:variable name="pgmeta" select="dp:getPageMeta($href_id)" />
             <xsl:variable name="linkdesc" select="dp:value(
                 $pgmeta/pg:linkdesc[@lang = $lang]/@value,
                 dp:getPageNode($href_id)/@name
@@ -47,7 +41,7 @@
             <xsl:variable name="title" select="$pgmeta/pg:title[@lang = $lang]/@value" />
 
             <a>
-                <xsl:call-template name="linkAttr">
+                <xsl:call-template name="dp:linkAttr">
                     <xsl:with-param name="href" select="$href" />
                     <xsl:with-param name="href_id" select="$href_id" />
                     <xsl:with-param name="type" select="$type" />
@@ -57,7 +51,6 @@
                     <xsl:with-param name="target" select="$target" />
                     <xsl:with-param name="lang" select="$lang" />
                     <xsl:with-param name="redirect" select="$redirect" />
-                    <xsl:with-param name="pgmetaText" select="$pgmetaText" />
                     <xsl:with-param name="pgmeta" select="$pgmeta" />
                 </xsl:call-template>
                 <!-- {{{ content -->
@@ -119,7 +112,7 @@
             <!-- {{{ image with link -->
             <xsl:when test="$href != '' or $href_id != ''">
                 <a>
-                    <xsl:call-template name="linkAttr">
+                    <xsl:call-template name="dp:linkAttr">
                         <xsl:with-param name="href" select="$href" />
                         <xsl:with-param name="href_id" select="$href_id" />
                         <xsl:with-param name="type" select="$type" />
@@ -233,8 +226,8 @@
         </xsl:choose>
     </xsl:template>
     <!-- }}} -->
-    <!-- {{{ linkAttr -->
-    <xsl:template name="linkAttr">
+    <!-- {{{ dp:linkAttr -->
+    <xsl:template name="dp:linkAttr">
         <xsl:param name="node" select="." />
 
         <xsl:param name="href" select="@href"/>
@@ -246,20 +239,24 @@
         <xsl:param name="target" select="@target"/>
         <xsl:param name="lang" select="$currentLang"/>
         <xsl:param name="redirect"/>
+        <xsl:param name="pgmeta" select="dp:getPageMeta($href_id)" />
 
-        <xsl:param name="pgmetaText">
-            <xsl:if test="$href_id">
-                <xsl:copy-of select="dp:getPage($href_id, '//pg:meta')/pg:meta" />
-            </xsl:if>
-        </xsl:param>
-        <xsl:param name="pgmeta" select="exslt:node-set($pgmetaText)/pg:meta" />
         <xsl:variable name="linkdesc" select="dp:value(
             $pgmeta/pg:linkdesc[@lang = $lang]/@value,
             dp:getPageNode($href_id)/@name
         )" />
         <xsl:variable name="title" select="$pgmeta/pg:title[@lang = $lang]/@value" />
 
-        <xsl:attribute name="href"><xsl:value-of select="dp:choose($href_id, dp:getPageRef($href_id, $lang), dp:getRef($href, $lang))" /></xsl:attribute>
+        <xsl:attribute name="href">
+            <xsl:choose>
+                <xsl:when test="$href_id">
+                    <xsl:value-of select="dp:getPageRef($href_id, $lang)" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:value-of select="dp:getRef($href, $lang)" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:attribute>
         <xsl:choose>
             <xsl:when test="$target != ''">
                 <xsl:attribute name="target"><xsl:value-of select="$target"/></xsl:attribute>
@@ -541,7 +538,14 @@
     <xsl:template name="php_redirect">
         <xsl:if test="$currentPage/@redirect = 'true'">
             @header("Location: <xsl:for-each select="//sec:redirect/edit:a[@lang = $currentLang]">
-                <xsl:value-of select="dp:choose(@href, dp:getRef(@href, $currentLang, true()), dp:getPageRef(@href_id, $currentLang, true()))" />
+                <xsl:choose>
+                    <xsl:when test="@href_id">
+                        <xsl:value-of select="dp:getPageRef(@href_id, $currentLang, true())" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="dp:getRef(@href, $currentLang, true())" />
+                    </xsl:otherwise>
+                </xsl:choose>
             </xsl:for-each>");
             die();
         </xsl:if>
