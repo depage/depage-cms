@@ -375,7 +375,7 @@
     </xsl:template>
 
     <xsl:template match="p" mode="linebreaks">
-        <xsl:apply-templates mode="linebreaks"/><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
+        <xsl:apply-templates /><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ p autolist -->
