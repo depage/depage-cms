@@ -375,7 +375,7 @@
     </xsl:template>
 
     <xsl:template match="p" mode="linebreaks">
-        <xsl:apply-templates /><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
+        <xsl:apply-templates mode="linebreaks" /><xsl:if test="position() != last()"><xsl:text> </xsl:text><br /></xsl:if>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ p autolist -->
@@ -433,6 +433,11 @@
             <xsl:with-param name="href" select="@href" />
             <xsl:with-param name="target" select="@target" />
         </xsl:call-template>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ a b i string em small linebreaks -->
+    <xsl:template match="a | b | i | strong | em | small" mode="linebreaks">
+        <xsl:apply-templates select="." />
     </xsl:template>
     <!-- }}} -->
 
