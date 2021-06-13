@@ -209,10 +209,10 @@ class Schema
         try {
             $this->pdo->query('SELECT 1 FROM ' . $tableName);
             $exists = true;
-        } catch (\PDOException $expected) {
+        } catch (\PDOException $e) {
             // only catch "table doesn't exist" exception
-            if ($expected->getCode() != '42S02') {
-                throw $expected;
+            if (!preg_match("/SQLSTATE\\[42S02\\]/", $e->getMessage())) {
+                throw $e;
             }
         }
 
