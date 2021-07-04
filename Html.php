@@ -483,7 +483,9 @@ class Html {
             if (is_object($param) && get_class($param) == "Depage\Html\Html") {
                 $param->clean = false;
             }
-            echo($param);
+            if (!empty($param)) {
+                echo($param);
+            }
         }
     }
     // }}}
@@ -511,16 +513,12 @@ class Html {
     protected function attr($name, $value = "")
     {
         if (is_array($name)) {
-            foreach($name as $attr => $value) {
-                if (!empty($value)) {
-                    echo(" $attr=\"");
-                    echo(trim(htmlspecialchars($value)));
-                    echo("\"");
-                }
+            foreach($name as $attr => $val) {
+                self::attr($attr, $val);
             }
-        } else if (!empty($value)) {
+        } else {
             echo(" $name=\"");
-            echo(trim(htmlspecialchars($value)));
+            echo(trim(htmlspecialchars($value, \ENT_HTML5, 'UTF-8')));
             echo("\"");
         }
     }
@@ -574,6 +572,30 @@ class Html {
         }
         $leave = $max - strlen ($rep);
         return substr_replace($string, $rep, $leave);
+    }
+    // }}}
+    // {{{ textContent()
+    /**
+     * @brief textContent
+     *
+     * @param mixed $htmlString
+     * @return void
+     **/
+    public static function textContent($htmlString)
+    {
+        return trim(html_entity_decode(strip_tags($htmlString)));
+    }
+    // }}}
+    // {{{ isEmpty()
+    /**
+     * @brief isEmpty
+     *
+     * @param mixed $htmlString
+     * @return void
+     **/
+    public static function isEmpty($htmlString)
+    {
+        return empty(self::textContent($htmlString));
     }
     // }}}
 
