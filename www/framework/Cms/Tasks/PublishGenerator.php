@@ -276,13 +276,14 @@ class PublishGenerator
 
         $this->queueInit();
         $this->queuePublishFiles();
+        $this->queuePublishIndex();
         if ($apiAvailable) {
             $this->queueUpdateSchema();
         }
         $this->queuePublishPages();
         $this->queuePublishSitemap();
         $this->queuePublishAtom();
-        $this->queuePublishIndex();
+        $this->queuePublishPageList();
         $this->queuePublishFinish();
         if ($this->project->hasNewsletter()) {
             $this->queuePublishNewsletter();
@@ -534,6 +535,25 @@ class PublishGenerator
         ], $this->initId);
     }
     // }}}
+    // {{{  queuePublishPageList()
+    /**
+     * @brief queuePublishPageList
+     *
+     * @return void
+     **/
+    protected function queuePublishPageList()
+    {
+        $this->task->addSubtask("publishing index", "
+            \$project = \$generator->getProject();
+            \$publisher->publishString(
+                \$project->generatePageIndex(%s),
+                %s
+            );", [
+                $this->publishId,
+                "lib/pageindex.php",
+        ], $this->initId);
+    }
+    // }}}
     // {{{ queuePublishFinish()
     /**
      * @brief queuePublishFinish
@@ -542,6 +562,18 @@ class PublishGenerator
      **/
     protected function queuePublishFinish()
     {
+        // @todo updated with humans.txt
+        // http://humanstxt.org/Standard.html
+        $version = \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion() . "\npublished at ";
+        $this->task->addSubtask("publishing info", "
+            \$publisher->publishString(
+                %s . date('r'),
+                %s
+            );", [
+                $version,
+                "publishInfo.txt",
+        ], $this->initId);
+
         $newlyPublishedPages = [];
 
         $languages = $this->project->getLanguages();

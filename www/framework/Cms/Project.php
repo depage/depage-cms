@@ -1417,6 +1417,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public function generateIndex($publishId)
     {
+        // @todo split index file into classes/index and configuration
         $xmlgetter = $this->getXmlGetter();
         $xml = $xmlgetter->getDocXml("pages");
 
@@ -1434,45 +1435,71 @@ class Project extends \Depage\Entity\Entity
 
         $urls = new \Depage\Publisher\Urls($publishPdo, $publishId);
 
-        $index = [];
-        $index[] = "<?php";
-        $index[] = substr(file_get_contents(__DIR__ . "/../Redirector/Redirector.php"), 5);
-        $index[] = substr(file_get_contents(__DIR__ . "/../Redirector/Result.php"), 5);
+        $i = [];
+        $i[] = "<?php";
+        $i[] = substr(file_get_contents(__DIR__ . "/../Redirector/Redirector.php"), 5);
+        $i[] = substr(file_get_contents(__DIR__ . "/../Redirector/Result.php"), 5);
 
-        $index[] = "namespace {";
+        $i[] = "namespace {";
 
-        $index[] = "\$redirector = new \\Depage\\Redirector\\Redirector(" . var_export($baseurl, true) . ");";
+        $i[] = "\$redirector = new \\Depage\\Redirector\\Redirector(" . var_export($baseurl, true) . ");";
 
-        $index[] = "\$redirector->setLanguages(" . var_export($languages, true) . ");";
-        $index[] = "\$redirector->setPages(" . var_export($urls->getCanonicalUrls(), true) . ");";
-        $index[] = "\$redirector->setAlternatePages(" . var_export($urls->getAlternateUrls(), true) . ");";
+        $i[] = "\$redirector->setLanguages(" . var_export($languages, true) . ");";
+        $i[] = "if (file_exists('lib/pageindex.php')) {";
+        $i[] = "    require_once('lib/pageindex.php');";
+        $i[] = "}";
+        $i[] = "\$redirector->setAlternatePages(" . var_export($urls->getAlternateUrls(), true) . ");";
 
         $projectConf = $this->getProjectConfig();
         if (isset($projectConf->aliases)) {
-            $index[] = "\$redirector->setAliases(" . var_export($projectConf->aliases->toArray(), true) . ");";
+            $i[] = "\$redirector->setAliases(" . var_export($projectConf->aliases->toArray(), true) . ");";
         }
         if (isset($projectConf->rootAliases)) {
-            $index[] = "\$redirector->setRootAliases(" . var_export($projectConf->rootAliases->toArray(), true) . ");";
+            $i[] = "\$redirector->setRootAliases(" . var_export($projectConf->rootAliases->toArray(), true) . ");";
         }
 
-        $index[] = "\$acceptLanguage = isset(\$_SERVER['HTTP_ACCEPT_LANGUAGE']) ? \$_SERVER['HTTP_ACCEPT_LANGUAGE'] : \"\";";
-        $index[] = "\$replacementScript = \$redirector->testAliases(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
-        $index[] = "if (!empty(\$replacementScript)) {";
-            $index[] = "    chdir(dirname(\$replacementScript));";
-            $index[] = "    include(basename(\$replacementScript));";
-            $index[] = "    die();";
-        $index[] = "}";
+        $i[] = "\$acceptLanguage = isset(\$_SERVER['HTTP_ACCEPT_LANGUAGE']) ? \$_SERVER['HTTP_ACCEPT_LANGUAGE'] : \"\";";
+        $i[] = "\$replacementScript = \$redirector->testAliases(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
+        $i[] = "if (!empty(\$replacementScript)) {";
+            $i[] = "    chdir(dirname(\$replacementScript));";
+            $i[] = "    include(basename(\$replacementScript));";
+            $i[] = "    die();";
+        $i[] = "}";
 
-        $index[] = "if (isset(\$_GET['notfound'])) {";
-            $index[] = "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
-        $index[] = "} else {";
-            $index[] = "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
-        $index[] = "}";
+        $i[] = "if (isset(\$_GET['notfound'])) {";
+            $i[] = "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
+        $i[] = "} else {";
+            $i[] = "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
+        $i[] = "}";
 
-        $index[] = "}";
+        $i[] = "}";
 
 
-        return implode("\n", $index);
+        return implode("\n", $i);
+    }
+    // }}}
+    // {{{ generatePageIndex()
+    /**
+     * @brief generatePageIndex
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function generatePageIndex($publishId)
+    {
+        $publishPdo = clone $this->pdo;
+        $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->name;
+
+        $conf = $targets[$publishId];
+        $baseurl = $this->getBaseUrl($publishId);
+
+        $urls = new \Depage\Publisher\Urls($publishPdo, $publishId);
+
+        $i = [];
+        $i[] = "<?php";
+        $i[] = "\$redirector->setPages(" . var_export($urls->getCanonicalUrls(), true) . ");";
+
+        return implode("\n", $i);
     }
     // }}}
     // {{{ generateCss()
