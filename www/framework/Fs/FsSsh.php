@@ -43,12 +43,17 @@ class FsSsh extends Fs
     // {{{ getConnection
     protected function getConnection(&$fingerprint = null)
     {
+        $port = $this->url['port'] ?? 22;
+        $options = [
+            'client_to_server' => [
+                'comp' => 'zlib,none',
+            ],
+            'server_to_client' => [
+                'comp' => 'zlib,none',
+            ],
+        ];
         if (!$this->connection) {
-            if (isset($this->url['port'])) {
-                $this->connection = \ssh2_connect($this->url['host'], $this->url['port']);
-            } else {
-                $this->connection = \ssh2_connect($this->url['host']);
-            }
+            $this->connection = \ssh2_connect($this->url['host'], $port);
         }
         $fingerprint = \ssh2_fingerprint($this->connection);
 
