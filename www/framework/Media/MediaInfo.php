@@ -304,11 +304,16 @@ class MediaInfo
         $info['width'] = $info['streams']['video'][0]['width'];
         $info['height'] = $info['streams']['video'][0]['height'];
 
-        if ($info['streams']['video'][0]['display_aspect_ratio'] == "0:1") {
+        if ($info['streams']['video'][0]['display_aspect_ratio'] == "0:1" ||
+            $info['streams']['video'][0]['display_aspect_ratio'] == "N/A"
+        ) {
             $info['displayAspectRatio'] = $info['width'] / $info['height'];
         } else if (count($info['streams']['video']) > 0 && $info['duration'] > 1) {
             list($aspectW, $aspectH) = explode(":", $info['streams']['video'][0]['display_aspect_ratio']);
-            $info['displayAspectRatio'] = $aspectW / $aspectH;
+            $info['displayAspectRatio'] = (int) $aspectW / (int) $aspectH;
+            if (is_nan($info['displayAspectRatio'])) {
+                $info['displayAspectRatio'] = null;
+            }
         }
         if (count($info['streams']['video']) > 0 && $info['duration'] > 1) {
             $info['isVideo'] = true;
