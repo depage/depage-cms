@@ -1,34 +1,79 @@
 $progressAddFallback: false !default;
 
+
 // {{{ progress
 @mixin progress($colorBack, $colorBar) {
-    & {
-        @include prefixer (appearance, none, webkit moz spec);
+    $animationId: unique-id();
+    $animationName: IndeterminateAnim_#{$animationId};
+    $stripesA: 0% 0% / 200% 200% repeat linear-gradient(to right, $colorBack 0%, $colorBar 50%, $colorBack 100%);
 
-        overflow: hidden;
-        height: 1em;
-        width: 6em;
+    @-webkit-keyframes #{$animationName} {
+        0%{background-position:0% 0%}
+        50%{background-position:100% 0%}
+        100%{background-position:0% 0%}
+    }
+    @-moz-keyframes #{$animationName} {
+        0%{background-position:0% 0%}
+        50%{background-position:100% 0%}
+        100%{background-position:0% 0%}
+    }
+    @keyframes #{$animationName} {
+        0%{background-position:0% 0%}
+        50%{background-position:100% 0%}
+        100%{background-position:0% 0%}
+    }
+
+
+    @include prefixer (appearance, none, webkit moz spec);
+
+    overflow: hidden;
+    height: 1em;
+    width: 6em;
+    background: $colorBack;
+    position: relative;
+    @content;
+
+    &::-webkit-progress-bar {
         background: $colorBack;
-        position: relative;
-        @content;
-
+    }
+    &::-webkit-progress-value {
+        background: $colorBar;
+    }
+    &::-moz-progress-bar {
+        background: $colorBar;
+    }
+    &::progress-bar {
+        background: $colorBack;
+    }
+    &::progress-value {
+        background: $colorBar;
+    }
+    &:indeterminate {
         &::-webkit-progress-bar {
-            background: $colorBack !important;
+            background: $stripesA;
+            -webkit-animation: $animationName 3s ease infinite;
         }
         &::-webkit-progress-value {
-            background: $colorBar !important;
+            opacity: 0;
         }
         &::-moz-progress-bar {
-            background: $colorBar !important;
+            background: $stripesA;
+            -moz-animation: $animationName 3s ease infinite;
+        }
+        &::-moz-progress-value {
+            opacity: 0;
         }
         &::progress-bar {
-            background: $colorBack !important;
+            background: $stripesA;
+            animation: $animationName 3s ease infinite;
         }
         &::progress-value {
-            background: $colorBar !important;
+            opacity: 0;
         }
+    }
 
-        // test fallback for internet explorer 9 ?
+    // test fallback for internet explorer 9 ?
+    @if ($progressAddFallback) {
         &:before {
             position: absolute;
             top: 0;
@@ -38,17 +83,15 @@ $progressAddFallback: false !default;
             display: block;
             background: $colorBar;
         }
-        @if ($progressAddFallback) {
-            @for $i from 0 through 100 {
-                $dec: $i / 100;
-                // for progress without max
-                &[value ^= '#{$dec}']:before {
-                    width: percentage($i / 100);
-                }
-                // for progress with max of 100 (for percent)
-                &[max = '100'][value ^= '#{$i}']:before {
-                    width: percentage($i / 100);
-                }
+        @for $i from 0 through 100 {
+            $dec: $i / 100;
+            // for progress without max
+            &[value ^= '#{$dec}']:before {
+                width: percentage($i / 100);
+            }
+            // for progress with max of 100 (for percent)
+            &[max = '100'][value ^= '#{$i}']:before {
+                width: percentage($i / 100);
             }
         }
     }
