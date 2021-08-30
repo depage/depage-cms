@@ -1,10 +1,10 @@
 $progressAddFallback: false !default;
 
-
 // {{{ progress
 @mixin progress($colorBack, $colorBar) {
-    $animationId: unique-id();
-    $animationName: IndeterminateAnim_#{$animationId};
+    //$animationId: unique-id();
+    $animationId: str-slice(ie-hex-str($colorBack), 2, -3) + str-slice(ie-hex-str($colorBar), 2, -3);
+    $animationName: IndeterminateAnim#{$animationId};
     $stripesA: 0% 0% / 200% 200% repeat linear-gradient(to right, $colorBack 0%, $colorBar 50%, $colorBack 100%);
 
     @-webkit-keyframes #{$animationName} {
@@ -23,9 +23,7 @@ $progressAddFallback: false !default;
         100%{background-position:0% 0%}
     }
 
-
     @include prefixer (appearance, none, webkit moz spec);
-
     overflow: hidden;
     height: 1em;
     width: 6em;

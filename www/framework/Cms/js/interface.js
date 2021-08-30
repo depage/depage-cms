@@ -2556,7 +2556,7 @@ var depageCMS = (function() {
                 currentTasks[id] = true;
 
                 if ($t.length == 0) {
-                    $t = $("<div id=\"" + id + "\"><strong></strong><progress max=\"100\" value=\"" + percent + "\"></progress><em></em><br /><em></em></div>").appendTo(wrapper);
+                    $t = $("<div id=\"" + id + "\"><strong></strong><progress max=\"100\"></progress><em></em><br /><em></em></div>").appendTo(wrapper);
 
                     if (taskId != "global") {
                         $b = $("<a class=\"button\"></a>")
@@ -2592,10 +2592,12 @@ var depageCMS = (function() {
                 var $p = $t.children("progress");
                 var $pText = $t.children("strong");
                 var targetP = percent;
-                var lastP = parseFloat($p.attr("value"));
+                var lastP = parseFloat($p.attr("value")) || 0;
 
                 $pText.text(lastP + "%");
-                $p.attr("value", lastP);
+                if (lastP != 0) {
+                    $p.attr("value", lastP);
+                }
                 $t.children("em").eq(0).text(name);
                 $t.children("em").eq(1).text(description);
 
@@ -2620,8 +2622,12 @@ var depageCMS = (function() {
                         return;
                     }
 
+                    lastP = newP;
+
                     $pText.text(newP + "%");
-                    $p.attr("value", newP);
+                    if (newP != 0) {
+                        $p.attr("value", newP);
+                    }
                 });
             });
         },
