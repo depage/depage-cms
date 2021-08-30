@@ -1448,7 +1448,6 @@ class Project extends \Depage\Entity\Entity
         $i[] = "if (file_exists('lib/pageindex.php')) {";
         $i[] = "    require_once('lib/pageindex.php');";
         $i[] = "}";
-        $i[] = "\$redirector->setAlternatePages(" . var_export($urls->getAlternateUrls(), true) . ");";
 
         $projectConf = $this->getProjectConfig();
         if (isset($projectConf->aliases)) {
@@ -1498,6 +1497,7 @@ class Project extends \Depage\Entity\Entity
         $i = [];
         $i[] = "<?php";
         $i[] = "\$redirector->setPages(" . var_export($urls->getCanonicalUrls(), true) . ");";
+        $i[] = "\$redirector->setAlternatePages(" . var_export($urls->getAlternateUrls(), true) . ");";
 
         return implode("\n", $i);
     }
