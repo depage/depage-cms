@@ -311,7 +311,7 @@ abstract class Transformer
 
             $this->clearUsedDocuments();
             $this->addToUsedDocuments($pagedataId);
-            $content = $this->transform($pageXml, [
+            $params = [
                 "currentLang" => $this->lang,
                 "currentPageId" => $pageId,
                 "currentPagedataId" => $pagedataId,
@@ -323,7 +323,11 @@ abstract class Transformer
                 "depagePreviewType" => $this->previewType,
                 "baseUrl" => $this->baseUrl,
                 "baseUrlStatic" => $this->baseUrlStatic,
-            ]);
+            ];
+            if (!empty($_GET['__dpPreviewColor'])) {
+                $params['currentColorscheme'] = $_GET['__dpPreviewColor'];
+            }
+            $content = $this->transform($pageXml, $params);
 
             $cleaner = new \Depage\Html\Cleaner();
             $content = $cleaner->clean($content);

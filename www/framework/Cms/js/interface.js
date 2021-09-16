@@ -1085,10 +1085,25 @@ var depageCMS = (function() {
                     }
 
                     var url = baseUrl + "project/" + projectName + "/colors/edit/" + nodeId + "/";
+                    if (!currentPreviewUrl) {
+                        currentPreviewUrl = baseUrl + "project/" + projectName + "/preview/html/dev/";
+                    } else {
+                        try {
+                            currentPreviewUrl = $previewFrame[0].contentWindow.location.href;
+                        } catch(error) {
+                        }
+                    }
+                    currentPreviewUrl = currentPreviewUrl.replace(/\?.*/, "");
+                    if (data.node.text != "Global Colors") {
+                        currentPreviewUrl += "?__dpPreviewColor=" + encodeURIComponent(data.node.text);
+                    }
+                    console.log(currentPreviewUrl);
 
                     $colorContainer.removeClass("loaded").load(url + "?ajax=true", function() {
                         $colorContainer.find("figure[data-name='unnamed_color']").addClass("selected");
                         $colorContainer.trigger("selectionChange.depage");
+
+                        localJS.preview(currentPreviewUrl);
                     });
                 })
                 .on("ready.jstree", function() {
