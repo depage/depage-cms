@@ -50,7 +50,7 @@ class Indexer
     /**
      * @brief xpathImages
      **/
-    protected $xpathImages = ".//img/@src | .//img/@srcset";
+    protected $xpathImages = ".//img/@src | .//img/@srcset | .//picture/source/@src | .//picture/source/@srcset";
 
     /**
      * @brief xpathLinks

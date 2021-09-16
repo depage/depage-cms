@@ -1,4 +1,6 @@
 #!/bin/bash
+domain=${1:-messages}
+
 if ! test -d locale
 then
     # search for locale dir if not in current path
@@ -41,19 +43,19 @@ xgettext \
 echo "processing languages"
 for lang in $languages; do
     echo "updating $lang..."
-    if [[ ! -a $localeDir/$lang/LC_MESSAGES/messages.po ]] ; then
+    if [[ ! -a $localeDir/$lang/LC_MESSAGES/$domain.po ]] ; then
         echo "copy template..."
         mkdir -p $localeDir/$lang/LC_MESSAGES
-        cp $potAll $localeDir/$lang/LC_MESSAGES/messages.po
+        cp $potAll $localeDir/$lang/LC_MESSAGES/$domain.po
     fi
-    if [[ -a framework/locale/$lang/LC_MESSAGES/messages.po ]] ; then
-        msgmerge --compendium=framework/locale/$lang/LC_MESSAGES/messages.po --backup=none --update $localeDir/$lang/LC_MESSAGES/messages.po $potAll
+    if [[ -a framework/locale/$lang/LC_MESSAGES/$domain.po ]] ; then
+        msgmerge --compendium=framework/locale/$lang/LC_MESSAGES/$domain.po --backup=none --update $localeDir/$lang/LC_MESSAGES/$domain.po $potAll
     else
-        msgmerge --backup=none --update $localeDir/$lang/LC_MESSAGES/messages.po $potAll
+        msgmerge --backup=none --update $localeDir/$lang/LC_MESSAGES/$domain.po $potAll
     fi
 
-    if [ $localeDir/$lang/LC_MESSAGES/messages.mo -ot $localeDir/$lang/LC_MESSAGES/messages.po ]; then
-        msgfmt -o $localeDir/$lang/LC_MESSAGES/messages.mo $localeDir/$lang/LC_MESSAGES/messages.po
+    if [ $localeDir/$lang/LC_MESSAGES/$domain.mo -ot $localeDir/$lang/LC_MESSAGES/$domain.po ]; then
+        msgfmt -o $localeDir/$lang/LC_MESSAGES/$domain.mo $localeDir/$lang/LC_MESSAGES/$domain.po
     fi
 
 done

@@ -54,6 +54,24 @@ Deleting Files
 Because the whole file library get synchronized to the live-server, it is recommended to delete unused files from time to time.
 You just have to select the files and delete them from the file list by clicking the *Delete* button. After confirming the delete action the file(s) will be removed from the library.
 
+Searching for files       {#file-search}
+===================
+
+To find files and images that have been uploaded to the file library, you can use the *File Search*.
+
+![Searching for files](images/file-library-search.png)
+
+You can search either by just the filename or include all metadata in the search. Metadata includes filename, folder name, image-, song- or video-metadata (which includes description, copyright etc).
+
+You can also filter your file search by the file-type:
+- Image
+- Video
+- Audio
+- PDF
 
 
-> [Go to the chapter: Colors](@ref colors)
+
+
+
+
+> [Go to the chapter: Gravitational Center of Images](@ref image-gravitational-center)

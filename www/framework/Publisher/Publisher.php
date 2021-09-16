@@ -68,6 +68,23 @@ class Publisher
     {
         $updated = false;
         $hash = hash_file("sha256", $source);
+
+        $this->publishFileWithHash($source, $target, $hash, $updated);
+    }
+    // }}}
+    // {{{ publishFileWithHash()
+    /**
+     * @brief publihes a local file to target
+     *
+     * @param string $source
+     * @param string $target
+     * @param string $hash
+     * @return void
+     **/
+    public function publishFileWithHash($source, $target, $hash, &$updated = false)
+    {
+        $updated = false;
+
         if ($this->fileNeedsUpdate($target, $hash)) {
             $this->mkdirForTarget($target);
             $this->fs->put($source, $target);
@@ -90,7 +107,24 @@ class Publisher
     public function publishString($content, $target, &$updated = false)
     {
         $updated = false;
+
         $hash = hash("sha256", $content);
+
+        $this->publishStringWithHash($content, $target, $hash, $updated);
+    }
+    // }}}
+    // {{{ publishStringWithHash()
+    /**
+     * @brief publishes string content directly to target
+     *
+     * @param string $content
+     * @param string $target
+     * @return void
+     **/
+    public function publishStringWithHash($content, $target, $hash, &$updated = false)
+    {
+        $updated = false;
+
         if ($this->fileNeedsUpdate($target, $hash)) {
             $this->mkdirForTarget($target);
             $this->fs->putString($target, $content);

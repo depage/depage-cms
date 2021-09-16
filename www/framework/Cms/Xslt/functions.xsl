@@ -9,9 +9,11 @@
     xmlns:pg="http://cms.depagecms.net/ns/page"
     xmlns:func="http://exslt.org/functions"
     xmlns:exslt="http://exslt.org/common"
-    extension-element-prefixes="xsl dp func php exslt ">
+    extension-element-prefixes="xsl dp func php exslt pg ">
 
     <xsl:include href="xslt://nodetostring.xsl" />
+
+    <xsl:key name="page-by-id" match="pg:*" use="@db:id"/>
 
     <!-- aliases -->
     <!-- {{{ dp:getpage() -->
@@ -56,11 +58,30 @@
         <xsl:param name="b" />
 
         <xsl:choose>
-            <xsl:when test="not($a = '') and not($a = false())">
+            <xsl:when test="$a and not($a = '') and not($a = false())">
                 <func:result select="$a" />
             </xsl:when>
             <xsl:otherwise>
                 <func:result select="$b" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:hasLangContent() -->
+    <!--
+        dp:hasLangContent($node, $lang)
+
+    -->
+    <func:function name="dp:hasLangContent">
+        <xsl:param name="node" select="." />
+        <xsl:param name="lang" select="$currentLang" />
+
+        <xsl:choose>
+            <xsl:when test="normalize-space(string($node)) != '' and (($currentPage/@multilang = 'true' or not($currentPage)) and ./@lang = $lang) or $currentPage/@multilang != 'true'">
+                <func:result select="true()" />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="false()" />
             </xsl:otherwise>
         </xsl:choose>
     </func:function>
@@ -109,6 +130,23 @@
         </xsl:choose>
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:getMeta() -->
+    <!--
+        dp:getMeta(pageid)
+    -->
+    <func:function name="dp:getPageMeta">
+        <xsl:param name="pageId" />
+
+        <xsl:choose>
+            <xsl:when test="$pageId">
+                <func:result select="dp:getPage($pageId, '//pg:meta')/pg:meta" />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="/dp:non-existent-node-to-automatically-return-empty-result" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:getPageRef() -->
     <!--
         dp:getPageRef(pageid)
@@ -141,13 +179,17 @@
     <func:function name="dp:getRef">
         <xsl:param name="url" />
         <xsl:param name="lang" select="$currentLang" />
+        <xsl:param name="absolute" select="false()" />
 
         <xsl:choose>
+            <xsl:when test="substring($url, 1, 8) = 'libid://'">
+                <func:result select="dp:getLibRef($url, $absolute)"/>
+            </xsl:when>
             <xsl:when test="substring($url, 1, 9) = 'libref://'">
-                <func:result select="dp:getLibRef($url)"/>
+                <func:result select="dp:getLibRef($url, $absolute)"/>
             </xsl:when>
             <xsl:when test="substring($url, 1, 10) = 'pageref://'">
-                <func:result select="dp:getPageRef(substring($url, 11))"/>
+                <func:result select="dp:getPageRef(substring-after($url, 'pageref://'), $lang, $absolute)"/>
             </xsl:when>
             <xsl:when test="substring($url, 1, 7) = 'mailto:'">
                 <func:result select="dp:replaceEmailChars($url)"/>
@@ -345,6 +387,17 @@
         <xsl:param name="extended" select="true()" />
 
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::fileinfo', string($path), string($extended))" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:includeUnparsed() -->
+    <!--
+        dp:includeUnparsed(libref)
+
+    -->
+    <func:function name="dp:includeUnparsed">
+        <xsl:param name="path" />
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::includeUnparsed', string($path))" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:glob() -->

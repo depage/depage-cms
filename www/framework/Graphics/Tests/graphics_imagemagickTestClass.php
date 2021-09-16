@@ -67,6 +67,11 @@ class graphics_imagemagickTestClass extends \Depage\Graphics\Providers\Imagemagi
         return parent::getQuality();
     }
 
+    public function getOptimize()
+    {
+        return parent::getOptimize();
+    }
+
     public function getBypass()
     {
         return $this->bypass;

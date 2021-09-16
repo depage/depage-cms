@@ -237,9 +237,11 @@ class Graphics
      *
      * @param  int    $width  output width
      * @param  int    $height output height
+     * @param  int    $centerX center of image from left in percent
+     * @param  int    $centerY center of image from top in percent
      * @return object $this
      **/
-    public function addThumbfill($width, $height)
+    public function addThumbfill($width, $height, $centerX = 50, $centerY = 50)
     {
         $this->queue[] = array('thumbfill', func_get_args());
 
@@ -394,6 +396,8 @@ class Graphics
         if (isset($this->outputLockFp)) {
             flock($this->outputLockFp, LOCK_UN);
             unlink($this->output . ".lock");
+
+            $this->outputLockFp = null;
         }
     }
     // }}}
@@ -486,6 +490,16 @@ class Graphics
                 $quality = $this->quality;
             } else {
                 $quality = 85;
+            }
+        } elseif ($this->outputFormat == "webp") {
+            if (
+                is_numeric($this->quality)
+                && $this->quality >= 0
+                && $this->quality <= 100
+            ) {
+                $quality = $this->quality;
+            } else {
+                $quality = 75;
             }
         } elseif ($this->outputFormat == 'png') {
             if (

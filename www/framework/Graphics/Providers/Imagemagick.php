@@ -90,9 +90,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
         if (!$this->bypassTest($newSize[0], $newSize[1])) {
             $resizeAction = $this->getResizeAction($newSize[0], $newSize[1]);
 
-            //$this->command .= " -colorspace Lab";
             $this->command .= " $resizeAction {$newSize[0]}x{$newSize[1]}!";
-            //$this->command .= " -colorspace sRGB";
 
             $this->size = $newSize;
         }
@@ -126,14 +124,31 @@ class Imagemagick extends \Depage\Graphics\Graphics
      *
      * @param  int  $width  output width
      * @param  int  $height output height
+     * @param  int  $centerX center of image from left in percent
+     * @param  int  $centerY center of image from top in percent
      * @return void
      **/
-    protected function thumbfill($width, $height)
+    protected function thumbfill($width, $height, $centerX = 50, $centerY = 50)
     {
         if (!$this->bypassTest($width, $height)) {
+            $newSize = $this->dimensions($width, null);
+            $centerX = $centerX / -100 + 0.5;
+            $centerY = $centerY / -100 + 0.5;
+
+            if ($newSize[1] < $height) {
+                $newSize = $this->dimensions(null, $height);
+                $x = round(($width - $newSize[0]) * $centerX);
+                $y = 0;
+            } else {
+                $x = 0;
+                $y = round(($height - $newSize[1]) * $centerY);
+            }
+            $x = ($x < 0) ? $x : '+' . $x;
+            $y = ($y < 0) ? $y : '+' . $y;
+
             $resizeAction = $this->getResizeAction($width, $height);
 
-            $this->command .= " -gravity Center $resizeAction {$width}x{$height}^ -extent {$width}x{$height}";
+            $this->command .= " -gravity Center $resizeAction {$width}x{$height}^ -extent {$width}x{$height}{$x}{$y}";
             $this->size = array($width, $height);
         }
     }
@@ -154,7 +169,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
         if (!$imageSize) {
             $pageNumber = $this->getPageNumber();
             $identify       = preg_replace('/convert$/', 'identify', $this->executable);
-            $command        = "{$identify} -format \"%wx%h\" " . escapeshellarg($this->input) . $pageNumber;
+            $command        = "{$identify} -ping -format \"%wx%h\" " . escapeshellarg($this->input) . $pageNumber;
             $escapedCommand = str_replace('!', '\!', escapeshellcmd($command));
 
             exec($escapedCommand . ' 2>&1', $commandOutput, $returnStatus);
@@ -163,7 +178,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
             } else {
                 $this->unlock();
 
-                throw new Exceptions\Exception(implode("\n", $commandOutput));
+                throw new \Depage\Graphics\Exceptions\Exception(implode("\n", $commandOutput));
             }
         }
 
@@ -202,7 +217,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
             $pageNumber = $this->getPageNumber();
 
             $this->command = "{$this->executable} {$background} ( " . escapeshellarg($this->input) . "{$pageNumber}{$this->command}";
-            $this->command .= " ) -flatten {$quality}{$optimize}";
+            $this->command .= " ) -colorspace sRGB -flatten {$quality}{$optimize}";
 
             $this->command .= " {$this->outputFormat}:" . escapeshellarg($this->output);
 
@@ -232,7 +247,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
         $descriptorspec = array(
             0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
             1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
-            2 => array("pipe", "a") // stderr is pip
+            2 => array("pipe", "w") // stderr is pipe that the child will write errors to
         );
         $process = proc_open("exec " . $command, $descriptorspec, $pipes);
 
@@ -314,6 +329,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
         if (
             $this->outputFormat == 'jpg'
             || $this->outputFormat == 'png'
+            || $this->outputFormat == 'webp'
         ) {
             return '-quality ' . parent::getQuality();
         } else {
@@ -329,15 +345,14 @@ class Imagemagick extends \Depage\Graphics\Graphics
      **/
     protected function getOptimize()
     {
-        $param = "";
-        if ($this->optimize) {
-            $param .= " -strip";
+        $param = " -strip";
 
-            if ($this->outputFormat == 'jpg') {
-                $param .= " -interlace Plane";
-            } else if ($this->outputFormat == 'png') {
-                $param .= " -define png:format=png00";
-            }
+        if ($this->outputFormat == 'jpg') {
+            $param .= " -interlace Plane";
+        } else if ($this->outputFormat == 'png') {
+            $param .= " -define png:format=png00";
+        } else if ($this->outputFormat == "webp" && $this->inputFormat == "png") {
+            $param .= " -define webp:lossless=true -define webp:image-hint=graph";
         }
 
         return $param;

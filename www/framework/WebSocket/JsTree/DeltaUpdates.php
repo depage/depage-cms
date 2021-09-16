@@ -7,12 +7,12 @@ class DeltaUpdates {
     // if we estimate 10 updates per second, then retain at least 30 updates. some buffer on top and we should be good.
     const MAX_UPDATES_BEFORE_RELOAD = 50;
 
-    function __construct($table_prefix, $pdo, $xmldb, $doc_id, $projectName, $seq_nr = -1) {
+    function __construct($table_prefix, $pdo, $xmldb, $doc_id, $project, $seq_nr = -1) {
         $this->table_name = $table_prefix . "_xmldeltaupdates";
         $this->pdo = $pdo;
         $this->xmldb = $xmldb;
         $this->doc_id = (int)$doc_id;
-        $this->projectName = $projectName;
+        $this->project = $project;
 
         $this->seq_nr = (int)$seq_nr;
         if ($this->seq_nr == -1)
@@ -38,8 +38,10 @@ class DeltaUpdates {
         $min_id_query->execute(array($this->doc_id));
         $row = $min_id_query->fetch();
 
-        $delete_query = $this->pdo->prepare("DELETE FROM " . $this->table_name . " WHERE id < ? AND doc_id = ?");
-        $delete_query->execute(array((int)$row["id"], $this->doc_id));
+        if ($row) {
+            $delete_query = $this->pdo->prepare("DELETE FROM " . $this->table_name . " WHERE id < ? AND doc_id = ?");
+            $delete_query->execute(array((int)$row["id"], $this->doc_id));
+        }
     }
 
     private function changedParentIds() {
@@ -96,8 +98,8 @@ class DeltaUpdates {
             return "";
 
         $result = array(
-            'nodes' => \Depage\Cms\JsTreeXmlToHtml::toHTML($changed_nodes, $this->projectName),
-            'projectName' => $this->projectName,
+            'nodes' => \Depage\Cms\JsTreeXmlToHtml::toHTML($changed_nodes, $this->project),
+            'projectName' => $this->project->name,
             'docId' => $this->doc_id,
             'seqNr' => $this->seq_nr,
         );

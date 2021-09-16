@@ -11,7 +11,7 @@
     </menu>
     <menu class="right">
         <?php
-            $hasFavicon = file_exists("projects/{$this->project->name}/lib/global/favicon.png");
+            $hasFavicon = $this->project ? file_exists("projects/{$this->project->name}/lib/global/favicon.png") : false;
         ?>
         <!-- add submenu for project -->
         <li><a <?php self::attr([

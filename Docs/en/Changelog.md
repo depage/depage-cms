@@ -3,7 +3,7 @@ Changelog     {#changelog}
 
 [TOC]
 
-Version 2.1   {#v2-1}
+Version 2.2   {#v2-2}
 ===========
 
 **User Interface Highlights**
@@ -17,6 +17,70 @@ Version 2.1   {#v2-1}
 - Enhanced [preview](@ref page-preview) to automatically show currently edited language
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.2.0 / 29.04.2021      {#v2-2-0}
+-------------------
+
+**Backend**
+- added new file library
+- enhanced performance when publishing file library
+- added ability to name and move folder in library while keeping file references
+
+**Frontend**
+- enhanced file library
+- added search interface for file library
+- added ability to choose gravitational center of images
+
+
+v2.1.14 / 29.04.2021      {#v2-1-14}
+-------------------
+
+**Backend**
+- added various small bug fixes
+- added enhancements for php 8
+
+**Frontend**
+- enhanced newsletter form
+- added download sharing to file library
+
+
+v2.1.13 / 26.01.2021      {#v2-1-13}
+-------------------
+
+**Backend**
+- updated and enhanced graphics classes
+- enhanced support for webp files
+- enhanced base xsl templates
+- enhanced support for picture elements
+
+
+v2.1.12 / 03.11.2020      {#v2-1-12}
+-------------------
+
+**Backend**
+- enhanced project updated task
+- enhanced base xsl templates
+
+
+v2.1.11 / 16.09.2020      {#v2-1-11}
+-------------------
+
+**Frontend**
+- added Custom UI addons for projects
+
+**Backend**
+- refactored api routing
+- optimized publishing and newsletter sending tasks
+- updated included http classes to latest version
+
+
+v2.1.10 / 03.08.2020      {#v2-1-10}
+-------------------
+
+**Backend**
+- made it possible to allow project specific api calls in preview
+- updated task runner to automatically retry failed subtasks
 
 
 v2.1.9 / 11.07.2020      {#v2-1-9}

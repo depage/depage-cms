@@ -425,11 +425,8 @@ class Newsletter
      * @param string $category
      * @return void
      **/
-    public function sendToSubscribers($category)
+    public function sendToSubscribers($task, $category)
     {
-        // @todo add these inside of task
-        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->name, $this->project->name);
-
         $subscribers = $this->getSubscribers($category);
 
         foreach ($subscribers as $lang => $emails) {
@@ -444,7 +441,7 @@ class Newsletter
             ]);
 
             foreach ($emails as $to) {
-                $this->sendLater($task, $initId, $to, $lang);
+                $this->queueSend($task, $initId, $to, $lang);
             }
         }
 
@@ -478,20 +475,20 @@ class Newsletter
         $recipients = array_unique(explode(",", $to));
 
         foreach($recipients as $i => $to) {
-            $this->sendLater($task, $initId, $to, $lang);
+            $this->queueSend($task, $initId, $to, $lang);
         }
 
         $task->begin();
     }
     // }}}
-    // {{{ sendLater()
+    // {{{ queueSend()
     /**
-     * @brief sendLater
+     * @brief queueSend
      *
      * @param mixed $
      * @return void
      **/
-    protected function sendLater($task, $initId, $to, $lang)
+    public function queueSend($task, $initId, $to, $lang)
     {
         $task->addSubtask("sending mail", "\$newsletter->send(\$mail, %s, %s);", [
             $to,

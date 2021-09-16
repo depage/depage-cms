@@ -1,6 +1,5 @@
 /*
  * @require framework/shared/jquery-1.12.3.min.js
- * @require framework/shared/jquery.cookie.js
  * @require framework/shared/jquery-sortable.js
  *
  * @require framework/shared/depage-jquery-plugins/depage-details.js
@@ -221,6 +220,9 @@ var depageCMS = (function() {
             $(".teaser").click( function() {
                 document.location = $("a", this)[0].href;
             });
+            $("fieldset.detail").depageDetails({
+                head: "legend"
+            });
         },
         // }}}
         // {{{ setupLoginCheck
@@ -299,9 +301,12 @@ var depageCMS = (function() {
             };
             ws.onerror = function(e) {
                 console.log("websocket error");
+                console.log(e);
             };
-            ws.onclose = function(e) {
-                setTimeout(localJS.setupNotifications, 1000);
+            ws.onclose = function() {
+                setTimeout(function() {
+                    localJS.setupNotifications();
+                }, 1000);
             };
         },
         // }}}
@@ -904,16 +909,31 @@ var depageCMS = (function() {
                     }
 
                     $.vakata.context.show($(this), {x: e.pageX, y:e.pageY}, {
-                        _delete: {
-                            label: locale.delete,
+                        _chooseCenter: {
+                            label: locale.chooseCenter,
                             action: function() {
-                                localJS.deleteSelectedFiles();
+                                localJS.chooseImageCenter($thumb);
                             }
                         },
                         _copyUrl: {
+                            separator_before: true,
                             label: locale.copyUrl,
                             action: function() {
                                 copyToClipboard($thumb.attr("data-url"));
+                            }
+                        },
+                        _shareFile: {
+                            label: locale.shareUrl,
+                            _disabled: $thumb.hasClass("not-published"),
+                            action: function() {
+                                $('<iframe src="mailto:?subject=' + locale.shareUrlSubject + '&body=' + $thumb.attr("data-url") + '">').appendTo('body').css("display", "none");
+                            }
+                        },
+                        _delete: {
+                            separator_before: true,
+                            label: locale.delete,
+                            action: function() {
+                                localJS.deleteSelectedFiles();
                             }
                         }
                     });
@@ -926,32 +946,120 @@ var depageCMS = (function() {
                         $ok.click();
                     }
                 });
+            $(".open-search").on("click", function() {
+                localJS.loadLibraryFiles("");
+                currentLibPath = "";
+                jstreeLibrary.deselect_all();
+            });
 
             localJS.setupFileList();
         },
         // }}}
         // {{{ setupFileList
         setupFileList: function() {
-            var $form = $(".upload-to-lib");
-            var $dropArea = $form.parents('.files');
-            var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($form);
+            var $uploadForm = $(".upload-to-lib");
+            var $searchForm = $(".search-lib").depageForm();
+            var $dropArea = $uploadForm.parents('.file-list');
+            var $progressArea = $("<div class=\"progressArea\"></div>").appendTo($uploadForm);
             var $fileContainer = $(".files .file-list");
 
-            $form.find('input[type="submit"]').remove();
-            $form.find('input[type="file"]').depageUploader({
-                $drop_area: $dropArea,
-                $progress_container: $progressArea
-            }).on('complete', function(e, html) {
-                localJS.loadLibraryFiles($form.find("p.input-file").attr("data-path"));
-            });
+            if ($uploadForm.length > 0) {
+                $(document)
+                    .off('dragover')
+                    .off('dragend')
+                    .off('drop');
 
-            $(".file-list ul").depageLiveFilter("li", "figcaption");
-            $(".file-list li").on("depage.filter-hidden", function() {
-                $("figure", this).removeClass("selected");
-                $fileContainer.trigger("selectionChange.depage");
-            });
+                $uploadForm.find('p.submit').remove();
+                $uploadForm.find('input[type="file"]').depageUploader({
+                    $drop_area: $dropArea,
+                    $progress_container: $progressArea
+                }).on('complete', function() {
+                    localJS.loadLibraryFiles($uploadForm.find("p.input-file").attr("data-path"));
+                });
+                $uploadForm.on("submit", function() {
+                    return false;
+                });
+            }
+
+            if ($searchForm.length > 0) {
+                localJS.setupFileSearch($searchForm);
+            }
+            $(".search").toggleClass("active", $searchForm.length > 0);
 
             $fileContainer.trigger("selectionChange.depage");
+        },
+        // }}}
+        // {{{ setupFileSearch
+        setupFileSearch: function($form) {
+            var query,
+                lastQuery,
+                loading = false,
+                $queryInput = $form.find('.input-search input');
+
+            var getQuery = function() {
+                var q = "";
+                $("input, select, textarea", $form).each(function() {
+                    var type = $(this).attr("type");
+                    if ((type == "search")) {
+                        q += this.value;
+                    } else if ((type == "radio")) {
+                        if (this.checked) {
+                            q += this.value;
+                        }
+                    }
+                });
+
+                return q;
+            };
+            var testForLoading = function() {
+                query = getQuery();
+
+                if (loading) {
+                    setTimeout(testForLoading, 100);
+                    return;
+                }
+                if (query == lastQuery) {
+                    return;
+                }
+
+                loadResults();
+            };
+            var loadResults = function() {
+                var url = baseUrl + "project/" + projectName + "/library/search/";
+                var $fileContainer = $(".files .file-list ul.results");
+
+                loading = true;
+                $fileContainer.empty().load(url + "?ajax=true ul.results > *", function() {
+                    lastQuery = query;
+                    loading = false;
+                });
+            };
+            var clearQuery = function() {
+                $queryInput[0].value = '';
+                $queryInput.change();
+            }
+
+            query = lastQuery = getQuery();
+
+            $form.find('p.submit')
+                .remove();
+            $queryInput
+                .select()
+                .on("keydown", function(e) {
+                    if (e.keyCode == 27) {
+                        clearQuery();
+                    }
+                });
+            $("<a class=\"clear\"></a>")
+                .insertAfter($queryInput)
+                .on('click', clearQuery);
+
+            $form.on("depageForm.autosaved", function() {
+                testForLoading();
+            });
+            $form.on("submit", function() {
+                return false;
+            });
         },
         // }}}
         // {{{ setupColorSchemes
@@ -1245,7 +1353,7 @@ var depageCMS = (function() {
                                 type: 'POST',
                                 url: baseUrl + "api/" + projectName + "/project/pageId/",
                                 data: { url: currentPreviewUrl },
-                                success: function(data, status) {
+                                success: function(data) {
                                     var node = jstreePages.get_node(data.pageId);
                                     if (node) {
                                         jstreePages.activate_node(node);
@@ -1455,6 +1563,9 @@ var depageCMS = (function() {
                     var $button = $("<a class=\"button choose-file\">…</a>").insertAfter($input.parent());
 
                     $input.on("change", function() {
+                        if ($input[0].value == "") {
+                            return;
+                        }
                         // image changed -> update thumbnail
                         var thumbUrl = url + "thumbnail/" + encodeURIComponent($input[0].value) + "/?ajax=true";
 
@@ -1479,8 +1590,32 @@ var depageCMS = (function() {
                         localJS.loadFileChooser($input);
                     });
                 });
-                $form.on("depageForm.autosaved", function() {
-                    $form.find(".doc-property-meta p.release a").removeClass("disabled");
+                $form.on("dblclick", "figure.thumb", function() {
+                    var $thumb = $(this);
+                    var $input = $thumb.next("p").find("input");
+
+                    localJS.chooseImageCenter($thumb, $input);
+                });
+                $form.on("contextmenu", "figure.thumb", function(e) {
+                    var $thumb = $(this);
+                    var $input = $thumb.next("p").find("input");
+
+                    $.vakata.context.show($(this), {x: e.pageX, y:e.pageY}, {
+                        _chooseCenter: {
+                            label: locale.chooseCenter,
+                            action: function() {
+                                localJS.chooseImageCenter($thumb, $input);
+                            }
+                        },
+                    });
+
+                    return false;
+                });
+                $form.on("click", "figure.thumb .choose-image-center-button", function() {
+                    var $thumb = $(this).parent();
+                    var $input = $thumb.next("p").find("input");
+
+                    localJS.chooseImageCenter($thumb, $input);
                 });
                 $form.find("input[type='color']").spectrum({
                     preferredFormat: "hex",
@@ -1489,6 +1624,9 @@ var depageCMS = (function() {
                     showInput: true,
                     showPalette: false,
                     showSelectionPalette: false
+                });
+                $form.on("depageForm.autosaved", function() {
+                    $form.find(".doc-property-meta p.release a").removeClass("disabled");
                 });
 
                 localJS.setFormState($form, $form.find(".doc-property-meta").data("protected") == 1);
@@ -1554,6 +1692,10 @@ var depageCMS = (function() {
                 });
 
                 $(document).on("keyup.depageFileChooser", function(e) {
+                    if ($(".dialog-full.choose-image-center").length > 0) {
+                        return;
+                    }
+
                     var key = e.which;
                     if (key === 27) { // ESC
                         localJS.removeFileChooser();
@@ -1592,7 +1734,7 @@ var depageCMS = (function() {
                 $input.trigger("change");
             }
 
-            $(document).off("keypress.depageFileChooser");
+            $(document).off("keyup.depageFileChooser");
             $(".toolbar-filelist").remove();
             if ((jstree = $(".tree.library .jstree-container").jstree(true))) {
                 jstree.destroy();
@@ -1715,6 +1857,175 @@ var depageCMS = (function() {
             });
 
             $body.data("depage.shyDialogue").showDialogue(pos.left, pos.top);
+        },
+        // }}}
+        // {{{ chooseImageCenter()
+        chooseImageCenter: function($thumb, $input) {
+            var libid = $thumb.data("libid") || false
+            if (!libid) {
+                return;
+            }
+            var fileId = libid.match(/libid:\/\/(\d+)\/(.*)/)[1];
+            var $dialog = $("<div class=\"dialog-full choose-image-center\"><div class=\"content\"><div class=\"dialog-bar\"></div><div class=\"center-selector scrollable-content\"><figure class=\"thumb\"></figure><div class=\"examples\"></div></div></div></div>");
+            var $selector = $dialog.find(".center-selector");
+            var $examples = $dialog.find(".examples");
+            var $dialogBar = $dialog.find(".dialog-bar");
+            var $zoomed = $dialog.find("figure.thumb");
+            var $img = $thumb.find("img").clone(false);
+            var $ok = $("<a class=\"button default\"></a>");
+            var $reset = $("<a class=\"button\"></a>");
+            var $cancel = $("<a class=\"button\"></a>");
+            var $cursor = $("<a class=\"cursor\"></a>");
+            var centerX = $thumb.data("center-x");
+            var centerY = $thumb.data("center-y");
+            var src = $img[0].src;
+            var dragging = false;
+
+            var createExample = function(className) {
+                var $copy = $img
+                    .clone(false);
+
+                $copy[0].src = src.replace(/\.t240x240\.png$/, ".t240xX.jpg");
+
+                $copy
+                    .addClass(className)
+                    .appendTo($examples);
+
+
+                return $copy;
+            }
+            var moveCursor = function(x, y) {
+                centerX = Math.min(100, Math.max(0, x));
+                centerY = Math.min(100, Math.max(0, y));
+
+                $cursor.css({
+                    left: centerX + "%",
+                    top:  centerY + "%"
+                });
+                $examples.children("img").css({
+                    'object-position': centerX + "% " + centerY + "%"
+                });
+            };
+            var save = function() {
+                $thumb.attr("data-center-x", centerX);
+                $thumb.attr("data-center-y", centerY);
+
+                $.ajax({
+                    async: true,
+                    type: 'POST',
+                    url: baseUrl + "api/" + projectName + "/library/set-image-center/",
+                    data: {
+                        fileId: fileId,
+                        centerX: centerX,
+                        centerY: centerY
+                    },
+                });
+            };
+
+            createExample("example1");
+            createExample("example2");
+            createExample("example3");
+            createExample("example4");
+
+            $img[0].src = src.replace(/\.t240x240\.png$/, ".t1024xX.jpg");
+
+            $ok
+                .text(locale.ok)
+                .appendTo($dialogBar)
+                .on("click", function() {
+                    save();
+
+                    localJS.removeImageCenterChooser($input);
+                });
+            $reset
+                .text(locale.reset)
+                .appendTo($dialogBar)
+                .on("click", function() {
+                    moveCursor(50, 50);
+                });
+            $cancel
+                .text(locale.cancel)
+                .appendTo($dialogBar)
+                .on("click", function() {
+                    localJS.removeImageCenterChooser();
+                });
+
+            $img.prependTo($zoomed);
+            $("<h1>" + locale.chooseCenterHint + "</h1>").insertBefore($zoomed);
+            $("<p>" + locale.chooseCenterExamples + "</p>").insertAfter($zoomed);
+            $dialog.appendTo($body);
+            $cursor
+                .insertBefore($img);
+
+            moveCursor(centerX, centerY);
+
+            $zoomed
+                .on("mousedown", function() {
+                    dragging = true;
+                })
+                .on("mouseup", function(e) {
+                    dragging = false;
+
+                    var rect = this.getBoundingClientRect();
+
+                    moveCursor(
+                        Math.round((e.clientX - rect.left) / $img.width() * 100),
+                        Math.round((e.clientY - rect.top) / $img.height() * 100)
+                    );
+                })
+                .on("mousemove", function(e) {
+                    if (!dragging) {
+                        return;
+                    }
+                    var rect = this.getBoundingClientRect();
+
+                    moveCursor(
+                        Math.round((e.clientX - rect.left) / $img.width() * 100),
+                        Math.round((e.clientY - rect.top) / $img.height() * 100)
+                    );
+
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    return false;
+                });
+
+            $(document).on("keyup.depageChooseImageCenter", function(e) {
+                var key = e.which;
+                if (key === 27) { // ESC
+                    localJS.removeImageCenterChooser();
+                } else if (key === 13) { // Enter
+                    $ok.click();
+                }
+            });
+
+            setTimeout(function() {
+                $dialog.addClass("visible");
+                $(".layout").addClass("no-live-help");
+            }, 50);
+        },
+        // }}}
+        // {{{ removeImageCenterChooser()
+        removeImageCenterChooser: function($input) {
+            var $dialog = $(".dialog-full.choose-image-center");
+
+            if (typeof $input !== 'undefined') {
+                var old = $input[0].value;
+                $input[0].value = "";
+                $input.trigger("change");
+
+                $input[0].value = old;
+                $input.trigger("change");
+            }
+
+            $dialog.removeClass("visible");
+            $(".layout").removeClass("no-live-help");
+
+            $(document).off("keyup.depageChooseImageCenter");
+
+            setTimeout(function() {
+                $dialog.remove();
+            }, 500);
         },
         // }}}
         // {{{ addColor()
@@ -2245,7 +2556,7 @@ var depageCMS = (function() {
                 currentTasks[id] = true;
 
                 if ($t.length == 0) {
-                    $t = $("<div id=\"" + id + "\"><strong></strong><progress max=\"100\" value=\"" + percent + "\"></progress><em></em><br /><em></em></div>").appendTo(wrapper);
+                    $t = $("<div id=\"" + id + "\"><strong></strong><progress max=\"100\"></progress><em></em><br /><em></em></div>").appendTo(wrapper);
 
                     if (taskId != "global") {
                         $b = $("<a class=\"button\"></a>")
@@ -2281,10 +2592,12 @@ var depageCMS = (function() {
                 var $p = $t.children("progress");
                 var $pText = $t.children("strong");
                 var targetP = percent;
-                var lastP = parseFloat($p.attr("value"));
+                var lastP = parseFloat($p.attr("value")) || 0;
 
                 $pText.text(lastP + "%");
-                $p.attr("value", lastP);
+                if (lastP != 0) {
+                    $p.attr("value", lastP);
+                }
                 $t.children("em").eq(0).text(name);
                 $t.children("em").eq(1).text(description);
 
@@ -2309,8 +2622,12 @@ var depageCMS = (function() {
                         return;
                     }
 
+                    lastP = newP;
+
                     $pText.text(newP + "%");
-                    $p.attr("value", newP);
+                    if (newP != 0) {
+                        $p.attr("value", newP);
+                    }
                 });
             });
         },

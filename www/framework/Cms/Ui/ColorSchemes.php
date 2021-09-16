@@ -40,8 +40,6 @@ class ColorSchemes extends Base
     // }}}
     // {{{ manager()
     function manager() {
-        $path = rawurldecode($path);
-
         // construct template
         $hLib = new Html("colorschemes.tpl", [
             'projectName' => $this->project->name,

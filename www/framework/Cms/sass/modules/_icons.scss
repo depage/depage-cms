@@ -3,7 +3,7 @@
     $iSize: 48px * $scale;
 
     background-repeat: no-repeat;
-    background-image: url(../images/icon_sprite.svg?202001161230);
+    background-image: url(../images/icon_sprite.svg?202104141947);
     background-size: (8 * $iSize) (24 * $iSize);
 
     @media (pointer:coarse) {
@@ -38,6 +38,8 @@
         upload: 0 5,
         upload-drag-over: 1 5,
         reload: 2 5,
+        search: 3 5,
+        search-white: 4 5,
         add: 0 6,
         remove: 1 6,
         add-white: 2 6,
@@ -81,6 +83,8 @@
         create: 0 17,
         duplicate: 1 17,
         delete: 2 17,
+        clear: 3 17,
+        choose-image-center: 4 17,
         checkbox-checked: 0 18 false,
         checkbox-unchecked: 1 18 false,
         checkbox-checked-white: 2 18 false,

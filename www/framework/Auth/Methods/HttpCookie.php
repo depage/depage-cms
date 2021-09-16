@@ -92,7 +92,7 @@ class HttpCookie extends Auth
 
                 $requestUrl = strstr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
                 if (rtrim($loginUrl, '/') != rtrim($requestUrl, '/')) {
-                    $redirectTo = urlencode($_SERVER['REQUEST_URI']);
+                    $redirectTo = urlencode($protocol . $_SERVER["HTTP_HOST"]  . $_SERVER['REQUEST_URI']);
 
                     \Depage\Depage\Runner::redirect("$loginUrl?redirectTo=$redirectTo");
                 }

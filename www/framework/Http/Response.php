@@ -45,12 +45,13 @@ class Response {
         "charset",
         "httpCode",
         "httpMessage",
+        "isRedirect",
         "redirectUrl",
     );
 
     // {{{ __construct()
-    public function __construct($headers = "", $body = "", $info = array()) {
-        $this->body = $body;
+    public function __construct($body = "", $headers = [], $info = []) {
+        $this->setBody($body);
         $this->info = $info;
 
         if (!is_array($headers)) {
@@ -69,9 +70,13 @@ class Response {
      * @param mixed $$
      * @return void
      **/
-    public function setBody($body)
+    public function setBody($body = "")
     {
-        $this->body = $body;
+        if (is_array($body)) {
+            $this->body = implode($body, "");
+        } else {
+            $this->body = (string) $body;
+        }
 
         return $this;
     }
@@ -103,17 +108,14 @@ class Response {
      **/
     public function getXml()
     {
-        $oldErrorHandler = set_error_handler(function() {});
-        $useInternalErrors = libxml_use_internal_errors(false);
+        $useErrors = libxml_use_internal_errors(true);
 
-        $doc = new \Depage\Xml\Document();
+        $doc = new \DOMDocument("1.0", "UTF-8");
         if (!$doc->loadHtml($this->body)) {
             throw new \Exception('Unable to parse response body into XML: ' . libxml_get_last_error());
         }
 
-        libxml_use_internal_errors($useInternalErrors);
-        set_error_handler($oldErrorHandler);
-        libxml_clear_errors();
+        libxml_use_internal_errors($useErrors);
 
         return $doc;
     }
@@ -152,6 +154,39 @@ class Response {
         }
 
         return $this;
+    }
+    // }}}
+    // {{{ sendHeaders()
+    /**
+     * @brief sendHeaders
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function sendHeaders()
+    {
+        foreach($this->headers as $header) {
+            header($header);
+        }
+    }
+    // }}}
+    // {{{ getHeader()
+    /**
+     * @brief getHeader
+     *
+     * @param mixed $key
+     * @return void
+     **/
+    public function getHeader($search)
+    {
+        foreach($this->headers as $header) {
+            list($key, $value) = array_replace(array("", ""), explode(": ", $header));
+            if (strtolower($key) == strtolower($search)) {
+                return trim($value);
+            }
+        }
+
+        return "";
     }
     // }}}
 

@@ -111,7 +111,7 @@ class Application implements \Wrench\Application\DataHandlerInterface,
             $project = \Depage\Cms\Project::loadByName($this->pdo, $xmldbCache, $projectName);
             $xmldb = $project->getXmlDb();
 
-            $this->deltaUpdates[$cid] = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $xmldb, $docId, $projectName);
+            $this->deltaUpdates[$cid] = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $xmldb, $docId, $project);
         }
 
         $this->clients[$cid][$client->getId()] = $client;

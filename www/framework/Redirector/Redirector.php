@@ -320,7 +320,6 @@ class Redirector
      **/
     public function testAliases($requestUri, $acceptLanguage = "")
     {
-        $url = $this->scheme . "://" . $this->host . $this->basePath;
         $request = $this->parseRequestUri($requestUri);
 
         foreach ($this->rootAliases as $regex => $repl) {
@@ -335,7 +334,6 @@ class Redirector
         } else if (!empty($this->languages)) {
             $lang = $this->getLanguageByBrowser($acceptLanguage);
         }
-        $url .= $lang . "/";
 
         foreach ($this->aliases as $regex => $repl) {
             $regex = "/" . str_replace("/", "\/", $regex) . "/";

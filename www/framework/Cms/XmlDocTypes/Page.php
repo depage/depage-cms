@@ -113,10 +113,14 @@ class Page extends Base
         $doc->clearCache();
 
         $pageInfo = $this->project->getXmlNav()->getPageInfo($this->document->getDocInfo()->name);
+        if (!isset($pageInfo->pageId)) {
+            return;
+        }
+
         $parentPageId = $doc->getParentIdById($pageInfo->pageId);
 
         $prefix = $this->xmlDb->pdo->prefix . "_proj_" . $this->project->name;
-        $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->xmlDb->pdo, $this->xmlDb, $doc->getDocId(), $this->project->name);
+        $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->xmlDb->pdo, $this->xmlDb, $doc->getDocId(), $this->project);
 
         $deltaUpdates->recordChange($parentPageId);
     }
@@ -206,7 +210,10 @@ class Page extends Base
 
     // {{{ testDocument
     public function testDocument($node) {
-        $changed = $this->testNodeLanguages($node);
+        $changed =
+            $this->testNodeLanguages($node) ||
+            $this->updateLibrefs($node) ||
+            $this->updatePagerefs($node);
 
         $this->addReleaseStatusAttributes($node->firstChild);
 
@@ -238,6 +245,64 @@ class Page extends Base
         } else {
             $node->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "false");
         }
+    }
+    // }}}
+
+    // {{{ updateLibrefs()
+    protected function updateLibrefs($node)
+    {
+        $changed = false;
+
+        $fl = new \Depage\Cms\FileLibrary($this->project->getPdo(), $this->project);
+
+        list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
+
+        $xpath = new \DOMXPath($xml);
+
+        $nodelist = $xpath->query("./descendant-or-self::node()[starts-with(@src, 'libref://')]", $node);
+        if ($nodelist->length > 0) {
+            for ($i = 0; $i < $nodelist->length; $i++) {
+                $src = $nodelist->item($i)->getAttribute('src');
+                $nodelist->item($i)->setAttribute('src', $fl->toLibid($src));
+            }
+
+            $changed = true;
+        }
+
+        $nodelist = $xpath->query("./descendant-or-self::node()[starts-with(@href, 'libref://')]", $node);
+        if ($nodelist->length > 0) {
+            for ($i = 0; $i < $nodelist->length; $i++) {
+                $src = $nodelist->item($i)->getAttribute('src');
+                $nodelist->item($i)->setAttribute('src', $fl->toLibid($src));
+            }
+
+            $changed = true;
+        }
+
+        return $changed;
+    }
+    // }}}
+    // {{{ updatePagerefs()
+    protected function updatePagerefs($node)
+    {
+        $changed = false;
+
+        list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
+
+        $xpath = new \DOMXPath($xml);
+
+        $nodelist = $xpath->query("./descendant-or-self::node()[@href_id != '']", $node);
+        if ($nodelist->length > 0) {
+            for ($i = 0; $i < $nodelist->length; $i++) {
+                $href = "pageref://" . $nodelist->item($i)->getAttribute('href_id');
+                $nodelist->item($i)->setAttribute('href', $href);
+                $nodelist->item($i)->removeAttribute('href_id');
+            }
+
+            $changed = true;
+        }
+
+        return $changed;
     }
     // }}}
 }

@@ -17,6 +17,7 @@ class MediaInfo
      */
     protected $defaults = array(
         'cache'       => null,
+        'identify'     => "identify",
         'ffprobe'     => "ffprobe",
         'mplayer'     => "mplayer",
     );
@@ -171,8 +172,8 @@ class MediaInfo
      * @return array
      */
     protected function getImageInfo() {
-        $imageinfo = @getimagesize($this->filename, $extras);
-        if ($imageinfo[2] > 0) {
+        $imageinfo = $this->getImageSize($this->filename, $extras);
+        if ($imageinfo[1] > 0) {
             $info = array();
 
             $info['isImage'] = true;
@@ -180,17 +181,20 @@ class MediaInfo
             $info['height'] = $imageinfo[1];
             $info['mime'] = $imageinfo['mime'];
             $info['displayAspectRatio'] = $info['width'] / $info['height'];
+            if (is_nan($info['displayAspectRatio'])) {
+                $info['displayAspectRatio'] = null;
+            }
 
             $this->info = array_merge($this->info, $info);
         }
-        if(isset($extras['APP13'])) {
+        if (isset($extras['APP13'])) {
             $info = array();
             $iptc = iptcparse($extras['APP13']);
 
             if (is_array($iptc)) {
                 foreach ($iptc as $key => $value) {
                     if (isset($this->iptcHeaders[$key])) {
-                        $info['iptc' . $this->iptcHeaders[$key]] = implode(", ", str_replace("\\n", " ", $value));
+                        $info['iptc' . $this->iptcHeaders[$key]] = $this->forceUTF8String($value);
                     }
                 }
             }
@@ -203,11 +207,11 @@ class MediaInfo
                 $info = array();
                 foreach ($exif as $key => $value) {
                     if (is_string($value)) {
-                        $info['exif' . $key] = $value;
+                        $info['exif' . $key] = $this->forceUTF8String($value);
                     }
                     if ($key == "COMPUTED") {
                         foreach ($value as $keySub => $valueSub) {
-                            $info['exifComputed' . $keySub] = $valueSub;
+                            $info['exifComputed' . $keySub] = $this->forceUTF8String($value);
                         }
                     }
                 }
@@ -300,11 +304,16 @@ class MediaInfo
         $info['width'] = $info['streams']['video'][0]['width'];
         $info['height'] = $info['streams']['video'][0]['height'];
 
-        if ($info['streams']['video'][0]['display_aspect_ratio'] == "0:1") {
+        if ($info['streams']['video'][0]['display_aspect_ratio'] == "0:1" ||
+            $info['streams']['video'][0]['display_aspect_ratio'] == "N/A"
+        ) {
             $info['displayAspectRatio'] = $info['width'] / $info['height'];
-        } else {
+        } else if (count($info['streams']['video']) > 0 && $info['duration'] > 1) {
             list($aspectW, $aspectH) = explode(":", $info['streams']['video'][0]['display_aspect_ratio']);
-            $info['displayAspectRatio'] = $aspectW / $aspectH;
+            $info['displayAspectRatio'] = (int) $aspectW / (int) $aspectH;
+            if (is_nan($info['displayAspectRatio'])) {
+                $info['displayAspectRatio'] = null;
+            }
         }
         if (count($info['streams']['video']) > 0 && $info['duration'] > 1) {
             $info['isVideo'] = true;
@@ -366,7 +375,7 @@ class MediaInfo
      * @return bool
      */
     protected function hasImageExtension() {
-        $extensions = array("png", "jpg", "jpeg", "gif");
+        $extensions = array("png", "jpg", "jpeg", "gif", "webp", "tif", "tiff", "pdf", "eps");
 
         return in_array(strtolower($this->info['extension']), $extensions);
 
@@ -399,6 +408,27 @@ class MediaInfo
     }
     // }}}
 
+    // {{{ forceUTF8String()
+    /**
+     * @brief forceUTF8String
+     *
+     * @param mixed $
+     * @return void
+     **/
+    protected function forceUTF8String($value)
+    {
+        if (is_array($value)) {
+            $str = [];
+            foreach ($value as $v) {
+                $str[] = str_replace("\\n", " ", $this->forceUTF8String($v));
+            }
+
+            return implode(", ", $str);
+        }
+
+        return mb_convert_encoding($value, "UTF-8", "UTF-8");
+    }
+    // }}}
     // {{{ call()
     /**
      * Call
@@ -423,6 +453,33 @@ class MediaInfo
         }
 
         return $output;
+    }
+    // }}}
+    // {{{ getImageSize()
+    /**
+     * @brief getImageSize
+     *
+     * @param mixed $file
+     * @return void
+     **/
+    protected function getImageSize($filename, &$extras)
+    {
+        $info = @getimagesize($filename, $extras);
+
+        if (!$info) {
+            $fileArg = escapeshellarg($filename);
+            if (substr($filename, -4) === ".pdf") {
+                $fileArg .= "[0]";
+            }
+            $cmd = "{$this->identify} -ping -format \"%wx%h\" {$fileArg}";
+            $result = $this->call($cmd);
+            $info = explode('x', $result[0]);
+
+            $finfo = new \finfo(\FILEINFO_MIME_TYPE);
+            $info['mime'] = $finfo->file($filename);
+        }
+
+        return $info;
     }
     // }}}
 }

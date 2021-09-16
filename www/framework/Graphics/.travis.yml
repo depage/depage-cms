@@ -1,14 +1,11 @@
 language: php
 php:
-    - 7.0
-    - 5.6
-    - 5.5
-    - 5.4
-    - 5.3
+    - 7.4
+    - 7.3
 
 install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq imagemagick graphicsmagick optipng pngcrush jpegoptim libjpeg-progs
 
 script:
-    phpunit --bootstrap Tests/bootstrap.php Tests
+    phpunit --bootstrap Tests/bootstrap.php --debug -v --no-coverage --process-isolation Tests

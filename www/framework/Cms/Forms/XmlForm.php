@@ -18,6 +18,8 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
      **/
     protected $dataNodeXpath = null;
 
+    protected $fl = null;
+
     // {{{ __construct()
     /**
      * @brief __construct
@@ -34,6 +36,7 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
             $this->dataNodeXpath->registerNamespace("proj", "http://cms.depagecms.net/ns/project");
             $this->dataNodeXpath->registerNamespace("db", "http://cms.depagecms.net/ns/database");
         }
+        $this->fl = $params['fl'] ?? null;
 
         parent::__construct($name, $params);
 
@@ -57,9 +60,11 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
             if (empty($element->dataPath)) {
                 continue;
             }
+
             $value = "";
-            preg_match("/(.*?)(\/@([-_a-z0-9]+))?$/i", $element->dataPath, $matches);
-            list($xpath, $nodeXpath, $attrXpath, $attrName) = $matches;
+            preg_match("/(.*?)(\/@([-_a-z0-9]+))?$/i", $element->dataPath, $m);
+
+            list($xpath, $nodeXpath, $attrXpath, $attrName) = array_pad($m, 4, '');
 
             $nodes = $this->dataNodeXpath->query($xpath);
 
@@ -110,6 +115,12 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
             } else if ($node->nodeName == 'href_id' && $node->nodeType == \XML_ATTRIBUTE_NODE) {
                 // @todo user url path instead of id?
                 $value = "pageref://{$node->nodeValue}";
+            } else if ($this->fl && ($node->nodeName == 'src' || $node->nodeName == 'href') && $node->nodeType == \XML_ATTRIBUTE_NODE) {
+                if (strpos($node->value, "libid://") === 0) {
+                    $value = $this->fl->toLibref($node->nodeValue);
+                } else {
+                    $value = $node->nodeValue;
+                }
             } else {
                 $value = $node->nodeValue;
             }
@@ -168,12 +179,20 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
             } else if (in_array($node->nodeName, ['href_id', 'href']) && $node->nodeType == \XML_ATTRIBUTE_NODE) {
                 $parent = $node->parentNode;
                 $href = $element->getValue();
-                if (substr($href, 0, 10) == "pageref://") {
-                    $parent->setAttribute("href_id", substr($href, 10));
-                    $parent->removeAttribute("href");
+                if (strpos($href, "libref://") === 0) {
+                    $parent->setAttribute("href", $this->fl->toLibid($href));
+                    $parent->removeAttribute("href_id");
                 } else {
                     $parent->setAttribute("href", $href);
                     $parent->removeAttribute("href_id");
+                }
+            } else if ($this->fl && in_array($node->nodeName, ['src']) && $node->nodeType == \XML_ATTRIBUTE_NODE) {
+                $parent = $node->parentNode;
+                $src = $element->getValue();
+                if (strpos($src, "libref://") === 0) {
+                    $parent->setAttribute("src", $this->fl->toLibid($src));
+                } else {
+                    $parent->setAttribute("src", $src);
                 }
             } else if ($node->nodeType == \XML_ATTRIBUTE_NODE) {
                 $node->parentNode->setAttribute($node->nodeName, $element->getValue());

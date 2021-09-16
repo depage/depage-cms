@@ -51,7 +51,7 @@ class Tree extends Base {
         if (!$this->project) {
             throw new \Depage\Cms\Exceptions\Project("not allowed");
         }
-        $this->deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, $this->projectName, 0);
+        $this->deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, $this->project, 0);
     }
     // }}}
 
@@ -494,10 +494,9 @@ class Tree extends Base {
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
 
         // @todo move node to trash for "pages" document?
-        $parent_id = $this->doc->getParentIdById($id);
-        $ids = $this->doc->deleteNode($id);
-        $status = count($ids) > 0;
-        if ($status) {
+        $parent_id = $this->doc->deleteNode($id);
+        if ($parent_id) {
+            $status = true;
             $this->recordChange($this->docId, [$parent_id]);
         }
 
@@ -747,7 +746,7 @@ class Tree extends Base {
         } else {
             $doc = $this->doc->getSubdocByNodeId($nodeId);
         }
-        $html = \Depage\Cms\JsTreeXmlToHtml::toHTML(array($doc), $this->projectName);
+        $html = \Depage\Cms\JsTreeXmlToHtml::toHTML(array($doc), $this->project);
 
         return current($html);
     }

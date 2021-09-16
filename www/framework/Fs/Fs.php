@@ -332,7 +332,7 @@ class Fs
     // }}}
 
     // {{{ depageFsErrorHandler
-    public function depageFsErrorHandler($errno, $errstr, $errfile, $errline, array $errcontext)
+    public function depageFsErrorHandler($errno, $errstr, $errfile, $errline)
     {
         restore_error_handler();
         throw new Exceptions\FsException($errstr);
@@ -459,7 +459,7 @@ class Fs
     // }}}
 
     // {{{ lsFilter
-    protected function lsFilter($path = '', $function)
+    protected function lsFilter($path, $function)
     {
         $ls = $this->ls($path);
         $pwd = $this->pwd();

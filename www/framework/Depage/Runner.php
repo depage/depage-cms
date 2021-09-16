@@ -394,7 +394,6 @@ class Runner {
     public function setEncoding($encoding = "utf-8") {
         if (is_callable("mb_internal_encoding")) {
             mb_internal_encoding($encoding);
-            mb_http_input($encoding);
             mb_http_output($encoding);
         }
         if (is_callable("iconv_set_encoding") && version_compare(PHP_VERSION, '5.6.0', '<')) {

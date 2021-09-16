@@ -3,7 +3,7 @@ Versionshistorie     {#changelog}
 
 [TOC]
 
-Version 2.1   {#v2-1}
+Version 2.2   {#v2-2}
 ===========
 
 **User Interface Highlights**
@@ -17,6 +17,70 @@ Version 2.1   {#v2-1}
 - Verbesserung der [Vorschau](@ref page-preview), so dass diese automatisch in der gerade bearbeiteten Sprache angezeigt wird
 - Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.2.0 / 29.04.2021      {#v2-2-0}
+-------------------
+
+**Backend**
+- Neue Dateibibliothek hinzugefügt
+- Performance beim Veröffentlichen der Dateibibliothek verbessert
+- Verschieben und Umbenennen von Ordnern in der Dateibibliothek hält Dateiverknüpfungen bei
+
+**Frontend**
+- Dateibibliothek verbessert
+- Neue Suchfunktion zur Dateibibliothek hinzugefügt
+- Fähigkeit hinzugefügt den Schwerpunkt von Bildern festzulegen
+
+
+v2.1.14 / 29.04.2021      {#v2-1-14}
+-------------------
+
+**Backend**
+- Verschiedene kleine Bugfixes hinzugefügt
+- Verbesserungen für PHP 8 hinzugefügt
+
+**Frontend**
+- Newsletter Formular optimiert
+- Download Link Sharing zur Dateibibliothek hinzugefügt
+
+
+v2.1.13 / 26.01.2021      {#v2-1-13}
+-------------------
+
+**Backend**
+- Graphics classes aktualisiert und verbessert
+- Support für webp Dateien verbessert
+- Basis XSL Vorlagen verbessert
+- Support für Picture Element verbessert
+
+
+v2.1.12 / 03.11.2020      {#v2-1-12}
+-------------------
+
+**Backend**
+- Project Update Task verbessert
+- Basis XSL Vorlagen verbessert
+
+
+v2.1.11 / 16.09.2020      {#v2-1-11}
+-------------------
+
+**Frontend**
+- Neue Front-End Addons für Projekte hinzugefügt
+
+**Backend**
+- Refactoring der API Klassen
+- Tasks zum Veröffentlichen und Versenden von Newsletters optimiert
+- Eingebettete HTTP Klassen auf die letzte Version aktualisiert
+
+
+v2.1.10 / 03.08.2020      {#v2-1-10}
+-------------------
+
+**Backend**
+- Vorschau aktualisiert, um projekt-spezifische API calls in der Vorschau zuzulassen
+- Task-Runner aktualisiert, um fehlgeschlagene Subtasks automatisch zu wiederholen
 
 
 v2.1.9 / 11.07.2020      {#v2-1-9}
@@ -33,7 +97,7 @@ v2.1.8 / 26.06.2020      {#v2-1-8}
 **Backend**
 - Performance Optimierungen zu XmlNav hinzugefügt
 - Performance Optimierungen beim Auto-Speichern von Doc-Properties hinzugefügt
-- Refactoring des Vreöffentlichungs-Tasks
+- Refactoring des Veröffentlichungs-Tasks
 - XSL Vorlagen für Atom-Feeds verbessert
 
 

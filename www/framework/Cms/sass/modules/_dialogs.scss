@@ -240,5 +240,113 @@ html[lang='de'] {
     }
 }
 // }}}
+// {{{ choose-image-center
+body > .choose-image-center {
+    $width: 512px;
+
+    > .content {
+        max-width: $width + 4 * 20px;
+        margin-left: auto;
+        margin-right: auto;
+        bottom: 2 * $toolbarHeight;
+
+        @media (pointer:coarse) {
+            > .content {
+                bottom: 2 * $toolbarHeight * $touchScale;
+            }
+        }
+    }
+    h1,
+    p {
+        text-align: center;
+    }
+    figure.thumb {
+        position: relative;
+        width: $width;
+        max-width: 100%;
+        margin: 10px auto;
+        padding: 0;
+        cursor: pointer;
+
+        &::after {
+            display: block;
+            content: " ";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        img {
+            width: $width;
+            max-width: 100%;
+            height: auto;
+            max-height: 100%;
+        }
+    }
+    .cursor {
+        $size: 40px;
+        position: absolute;
+        z-index: 11;
+        will-change: left, top;
+        cursor: pointer;
+
+        &::before {
+            position: absolute;
+            display: block;
+            content: " ";
+            width: $size;
+            height: $size;
+            left: -0.5 * $size;
+            top: -0.5 * $size;
+            border-style: solid;
+            border-width: 2px;
+            border-color: $textBrightColor;
+            border-radius: 50%;
+            background-color: $selectionBackgroundColor;
+        }
+    }
+    .examples {
+        $width: 51px;
+        text-align: center;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+        img {
+            display: inline-block;
+            border: 1px solid $backgroundBrightColor;
+            border-right: none;
+            object-fit: cover;
+            width: $width * 2;
+            height: $width * 2;
+        }
+        .example1 {
+            width: $width;
+        }
+        .example2 {
+        }
+        .example3 {
+            width: $width * 3;
+        }
+        .example4 {
+            width: $width * 4;
+            border-right: 1px solid $backgroundBrightColor;
+        }
+    }
+    .center-selector {
+        background: #ffffff;
+        padding: 10px;
+    }
+    .dialog-bar + .center-selector {
+        bottom: $toolbarHeight * 1.5;
+
+        @media (pointer:coarse) {
+            bottom: $toolbarHeight * 1.5 * $touchScale;
+        }
+    }
+}
+// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

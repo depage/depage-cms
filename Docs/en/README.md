@@ -19,6 +19,10 @@ Welcome to depage-cms.
 >
 > > [File Library](@ref file-library)
 > >
+> > [File Search](@ref file-search)
+> >
+> > [Gravitational center of images](@ref image-gravitational-center)
+> >
 > > [Colors](@ref colors)
 > >
 > > [Newsletter](@ref newsletter)

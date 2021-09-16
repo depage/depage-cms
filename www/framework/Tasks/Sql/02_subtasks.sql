@@ -22,3 +22,8 @@ CREATE TABLE `_subtasks` (
     @version 2.1.1
 */
 ALTER TABLE `_subtasks` ADD KEY `status` (`status`);
+
+/*
+    @version 2.1.10
+*/
+ALTER TABLE `_subtasks` ADD `retries` int(11) NOT NULL DEFAULT 0 AFTER `status`;

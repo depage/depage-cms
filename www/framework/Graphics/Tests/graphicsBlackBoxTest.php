@@ -1,53 +1,26 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use Depage\Graphics\Graphics;
 
 /**
  * Blackbox tests for all extensions, compares imagesizes/filesizes
  **/
-class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
+class graphicsBlackBoxTest extends TestCase
 {
-    protected $extensions   = array(
+    protected $extensions   = [
         'gd',
         'im',
         'gm',
-    );
-    protected $formats      = array(
-        array(1, 'gif'),
-        array(2, 'jpg'),
-        array(3, 'png'),
-    );
+    ];
+    protected $formats      = [
+        [\IMG_GIF, 'gif', 'image/gif'],
+        [\IMG_JPG, 'jpg', 'image/jpeg'],
+        [\IMG_PNG, 'png', 'image/png'],
+        [\IMG_WEBP, 'webp', 'image/webp'],
+    ];
     protected $maxDifference = 0.5;
 
-    // {{{ constructor()
-    /**
-     * Constructor function
-     **/
-    public function __construct()
-    {
-        $i = 1;
-        $types = imagetypes();
-        $aSupportedTypes = array();
-
-        $aPossibleImageTypeBits = array(
-            IMG_GIF  => 'gif',
-            IMG_JPG  => 'jpg',
-            IMG_PNG  => 'png',
-        );
-        if (defined('IMG_WEBP')) {
-            $aPossibleImageTypeBits[IMG_WEBP] = "webp";
-        }
-
-        foreach ($aPossibleImageTypeBits as $iImageTypeBits => $sImageTypeString) {
-            if (imagetypes() & $iImageTypeBits) {
-                $aSupportedTypes[] = array($i++, $sImageTypeString);
-            }
-        }
-
-        $this->formats = $aSupportedTypes;
-    }
-    // }}}
-    
     // {{{ clean()
     /**
      * Cleanup method, deletes output test images
@@ -56,7 +29,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
     {
         foreach ($this->extensions as $extension) {
             foreach ($this->formats as $format) {
-                $file = "output/test-{$extension}.{$format[1]}";
+                $file = __DIR__ . "/output/test-{$extension}.{$format[1]}";
                 if (file_exists($file)) {
                     unlink($file);
                 }
@@ -97,7 +70,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
     /**
      * Test runs for all format/graphic extension permutations
      **/
-    private function runSuite($width, $height, $message, $bypass = false)
+    public function runSuite($width, $height, $message, $bypass = false)
     {
         foreach ($this->formats as $inFormat) {
             foreach ($this->formats as $outFormat) {
@@ -114,7 +87,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
                     // can only check image dimensions and type
                     $this->assertSame($width, $info[0], "Width, {$errorMessage}");
                     $this->assertSame($height, $info[1], "Height, {$errorMessage}");
-                    $this->assertSame($outFormat[0], $info[2], "Type, {$errorMessage}");
+                    $this->assertSame($outFormat[2], $info['mime'], "Type, {$errorMessage}");
 
                     if ($bypass
                         && $inFormat == $outFormat
@@ -147,17 +120,20 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
     /**
      * Prepares fresh test objects
      **/
-    public function setUp()
+    public function setUp():void
     {
         $this->clean();
 
         foreach ($this->extensions as $extension) {
-            $this->graphics[$extension] = graphics::factory(array('extension' => $extension));
+            $this->graphics[$extension] = Graphics::factory(array('extension' => $extension));
+        }
+        if (!function_exists('imagewebp') && isset($this->formats[3])) {
+            unset($this->formats[3]);
         }
     }
     // }}}
     // {{{ tearDown()
-    public function tearDown()
+    public function tearDown():void
     {
         $this->clean();
     }
@@ -308,7 +284,7 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
         $this->runSuite(50, 100, 'thumb-checkerboard');
     }
     // }}}
-    
+
     // {{{ testThumbfillSimpleLargeWidth()
     /**
      * Tests thumbfill action (different formats for gd thumb method)
@@ -330,6 +306,58 @@ class graphicsBlackBoxTest extends PHPUnit_Framework_TestCase
     {
         foreach ($this->extensions as $extension) {
             $this->graphics[$extension]->addThumbfill(50, 100);
+        }
+
+        $this->runSuite(50, 100, 'thumbfill-simple');
+    }
+    // }}}
+    // {{{ testThumbfillSimpleLargeWidthTopLeft()
+    /**
+     * Tests thumbfill actionwith gravity towards top left
+     **/
+    public function testThumbfillSimpleLargeWidthTopLeft()
+    {
+        foreach ($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumbfill(100, 50, 0, 0);
+        }
+
+        $this->runSuite(100, 50, 'thumbfill-simple');
+    }
+    // }}}
+    // {{{ testThumbfillSimpleLargeWidthBottomRight()
+    /**
+     * Tests thumbfill actionwith gravity towards bottom right
+     **/
+    public function testThumbfillSimpleLargeWidthBottomRight()
+    {
+        foreach ($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumbfill(100, 50, 100, 100);
+        }
+
+        $this->runSuite(100, 50, 'thumbfill-simple');
+    }
+    // }}}
+    // {{{ testThumbfillSimpleLargeHeightTopLeft()
+    /**
+     * Tests thumbfill actionwith gravity towards top left
+     **/
+    public function testThumbfillSimpleLargeHeightTopLeft()
+    {
+        foreach ($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumbfill(50, 100, 0, 0);
+        }
+
+        $this->runSuite(50, 100, 'thumbfill-simple');
+    }
+    // }}}
+    // {{{ testThumbfillSimpleLargeHeightBottomRight()
+    /**
+     * Tests thumbfill actionwith gravity towards bottom right
+     **/
+    public function testThumbfillSimpleLargeHeightBottomRight()
+    {
+        foreach ($this->extensions as $extension) {
+            $this->graphics[$extension]->addThumbfill(50, 100, 100, 100);
         }
 
         $this->runSuite(50, 100, 'thumbfill-simple');

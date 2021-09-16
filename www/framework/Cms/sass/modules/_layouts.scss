@@ -15,6 +15,10 @@
         height: 48px;
         min-height: 48px;
         border-bottom: 1px solid $borderLightColor;
+
+        &.full {
+            width: 100%;
+        }
     }
     .bottom {
         position: absolute;

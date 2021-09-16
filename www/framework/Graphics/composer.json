@@ -1,5 +1,5 @@
 {
-    "name": "Depage/Graphics",
+    "name": "depage/graphics",
     "description": "depage-graphics is a helper class to get resized and optimized images and thumbnails.",
     "version": "1.4.0",
     "type": "library",
@@ -19,7 +19,7 @@
         "php": " >= 5.3"
     },
     "require-dev": {
-        "phpunit": "*"
+        "phpunit/phpunit": "^9"
     },
     "autoload": {
         "psr-4": { "Depage\\Graphics\\": "" }

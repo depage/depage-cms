@@ -12,8 +12,10 @@ class Imgurl
 {
     protected $options = array();
     protected $actions = array();
-    protected $invalidAction = false;
     protected $notFound = false;
+    public $id = "";
+    public $rendered = false;
+    protected $invalidAction = false;
     protected $cachePath = '';
     /*
      * action aliases
@@ -52,10 +54,16 @@ class Imgurl
      */
     protected function analyze($url)
     {
+        $this->invalidAction = false;
+        $this->notFound = false;
+        $this->rendered = false;
+        $this->id = "";
+        $this->actions = [];
+
         if (isset($this->options['baseUrl']) && isset($this->options['cachePath'])) {
             $baseUrl = rtrim($this->options['baseUrl'], '/');
             $this->cachePath = $this->options['cachePath'];
-            $relativePath = $this->options['relativePath'];
+            $relativePath = $this->options['relPath'] ?? '';
         } else if (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
             // we are using depage-framework so use constants for paths
             $info = parse_url(DEPAGE_BASE);
@@ -95,19 +103,18 @@ class Imgurl
         $imgUrl = substr($url, strlen($baseUrl) + 1);
 
         // get action parameters
-        preg_match("/(.*\.(jpg|jpeg|gif|png|webp|pdf|eps|svg|tif|tiff))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);
+        $success = preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);
 
-        $this->rendered = false;
-        $this->id = "";
-
-        if (isset($matches[3])) {
-            $this->id = rawurldecode($matches[0]);
-            $this->srcImg = $relativePath . rawurldecode($matches[1]);
-            $this->outImg = $this->cachePath . $this->id;
-            $this->actions = $this->analyzeActions($matches[3]);
-        } else {
+        if (!$success) {
             $this->invalidAction = true;
+
+            return;
         }
+
+        $this->id = rawurldecode($matches[0]);
+        $this->srcImg = $relativePath . rawurldecode($matches[1]);
+        $this->outImg = $this->cachePath . rawurldecode($matches[0]);
+        $this->actions = $this->analyzeActions($matches[3]);
     }
     // }}}
     // {{{ analyzeActions
@@ -116,9 +123,6 @@ class Imgurl
      */
     protected function analyzeActions($actionString)
     {
-        $this->invalidAction = false;
-        $this->notFound = false;
-        $this->actions = array();
         $actions = explode(".", $actionString);
 
         foreach ($actions as &$action) {
@@ -141,9 +145,9 @@ class Imgurl
                         $params[0] = "#{$params[0]}";
                     }
                 } else {
-                    foreach ($params as &$p) {
+                    foreach ($params as $i => &$p) {
                         $p = intval($p);
-                        if ($p == 0) {
+                        if ($p == 0 && $i < 2) {
                             $p = null;
                         }
                     }
@@ -174,12 +178,6 @@ class Imgurl
         if (!is_dir($outDir)) {
             mkdir($outDir, 0755, true);
         }
-        if (!file_exists($this->srcImg)) {
-            // src image does not exist
-            $this->notFound = true;
-
-            return $this;
-        }
         if (file_exists($this->outImg) && filemtime($this->outImg) >= filemtime($this->srcImg)) {
             // rendered image does exist already
             return $this;
@@ -198,9 +196,11 @@ class Imgurl
 
             // render image out
             $graphics->render($this->srcImg, $this->outImg);
+
             $this->rendered = true;
         } catch (Exceptions\FileNotFound $e) {
             $this->notFound = true;
+            return $this;
         } catch (Exceptions\Exception $e) {
             $this->invalidAction = true;
         }
@@ -219,9 +219,10 @@ class Imgurl
             header("HTTP/1.1 500 Internal Server Error");
             echo("invalid image action");
             die();
-        } else if ($this->notFound) {
+        }
+        if ($this->notFound) {
             header("HTTP/1.1 404 Not Found");
-            echo("File not found.");
+            echo("file not found");
             die();
         }
 
@@ -257,37 +258,54 @@ class Imgurl
     // {{{ addBackground()
     public function addBackground($background)
     {
-        $this->actions[] = "bg-{$background}";
+        $this->actions[] = "bg{$background}";
+
+        return $this;
     }
     // }}}
     // {{{ addCrop()
     public function addCrop($width, $height, $x = 0, $y = 0)
     {
         $this->actions[] = "crop{$width}x{$height}-{$x}x{$y}";
+
+        return $this;
     }
     // }}}
     // {{{ addResize()
     public function addResize($width, $height)
     {
-        $this->actions[] = "resize{$width}x{$height}";
+        $this->actions[] = "r{$width}x{$height}";
+
+        return $this;
     }
     // }}}
     // {{{ addThumb()
     public function addThumb($width, $height)
     {
-        $this->actions[] = "thumb{$width}x{$height}";
+        $this->actions[] = "t{$width}x{$height}";
+
+        return $this;
     }
     // }}}
     // {{{ addThumbfill()
-    public function addThumbfill($width, $height)
+    public function addThumbfill($width, $height, $centerX = 50, $centerY = 50)
     {
-        $this->actions[] = "thumbfill{$width}x{$height}";
+        $action = "tf{$width}x{$height}";
+        if ($centerX != 50 || $centerY != 50) {
+            $action .= "-{$centerX}x{$centerY}";
+        }
+
+        $this->actions[] = $action;
+
+        return $this;
     }
     // }}}
     // {{{ setQuality()
     public function setQuality($quality)
     {
         $this->actions[] = "q{$quality}";
+
+        return $this;
     }
     // }}}
 }

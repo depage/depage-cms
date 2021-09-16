@@ -655,6 +655,50 @@
         right: 0;
         bottom: 0;
     }
+    div.search {
+        position: absolute;
+        top: $infoHeight;
+        left: 0;
+        width: 100%;
+        height: $searchHeight;
+        background-color: $backgroundBrightColor;
+        z-index: 10;
+
+        a.open-search {
+            display: block;
+            position: relative;
+            color: $textBaseColor;
+            line-height: $searchHeight;
+            padding-left: $searchHeight - 2px;
+            cursor: pointer;
+
+            &::before {
+                display: block;
+                position: absolute;
+                content: " ";
+                top: ($searchHeight - ($iconSize * 2)) / 2;
+                left: ($searchHeight - ($iconSize * 2)) / 2;
+                width: $iconSize * 2;
+                height: $iconSize * 2;
+                @include icon-base("search", $iconSize * 2);
+            }
+        }
+
+        &.active {
+            background-color: $selectionBackgroundColor;
+
+            a.open-search {
+                color: $textBrightColor;
+
+                &::before {
+                    @include icon("search-white", $iconSize * 2);
+                }
+            }
+        }
+    }
+    div.search ~ .tree {
+        top: $searchHeight;
+    }
 }
 .trees-hidden .trees {
     display: none;

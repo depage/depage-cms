@@ -6,7 +6,7 @@ use \Depage\Html\Html;
 
 abstract class Transformer
 {
-    protected $projectName;
+    protected $project;
     protected $template;
     protected $xmlGetter;
     protected $xsltPath;
@@ -26,36 +26,36 @@ abstract class Transformer
     public $currentPath = "";
 
     // {{{ factory()
-    static public function factory($previewType, $xmlGetter, $projectName, $template, $transformCache = null)
+    static public function factory($previewType, $xmlGetter, $project, $template, $transformCache = null)
     {
         if ($previewType == "live") {
-            return new Live($xmlGetter, $projectName, $template, $transformCache);
+            return new Live($xmlGetter, $project, $template, $transformCache);
         } elseif ($previewType == "pre" || $previewType == "preview") {
-            return new Preview($xmlGetter, $projectName, $template, $transformCache);
+            return new Preview($xmlGetter, $project, $template, $transformCache);
         } elseif ($previewType == "history" || preg_match("/^(history).*$/", $previewType)) {
-            $t = new History($xmlGetter, $projectName, $template, null);
+            $t = new History($xmlGetter, $project, $template, null);
             $t->previewType = $previewType;
-            $t->baseUrl = DEPAGE_BASE . "project/{$projectName}/preview/{$template}/{$previewType}/";
-            $t->baseUrlStatic = DEPAGE_BASE . "project/{$projectName}/preview/{$template}/{$previewType}/";
+            $t->baseUrl = DEPAGE_BASE . "project/{$project->name}/preview/{$template}/{$previewType}/";
+            $t->baseUrlStatic = DEPAGE_BASE . "project/{$project->name}/preview/{$template}/{$previewType}/";
 
             return $t;
         } else {
-            return new Dev($xmlGetter, $projectName, $template, null);
+            return new Dev($xmlGetter, $project, $template, null);
         }
     }
    // }}}
     // {{{ constructor()
-    public function __construct($xmlGetter, $projectName, $template, $transformCache = null)
+    public function __construct($xmlGetter, $project, $template, $transformCache = null)
     {
         $this->xmlGetter = $xmlGetter;
-        $this->projectName = $projectName;
+        $this->project = $project;
         $this->template = $template;
         $this->transformCache = $transformCache;
 
         // @todo complete baseurl this in a better way, also based on previewTyoe
         // @todo fix this for live view !important
-        $this->baseUrl = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
-        $this->baseUrlStatic = DEPAGE_BASE . "project/{$this->projectName}/preview/{$this->template}/{$this->previewType}/";
+        $this->baseUrl = DEPAGE_BASE . "project/{$this->project->name}/preview/{$this->template}/{$this->previewType}/";
+        $this->baseUrlStatic = DEPAGE_BASE . "project/{$this->project->name}/preview/{$this->template}/{$this->previewType}/";
     }
     // }}}
     // {{{ lateInitialize()
@@ -65,11 +65,12 @@ abstract class Transformer
         $this->log = new \Depage\Log\Log();
 
         // set basic variables
-        //$this->prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
+        //$this->prefix = $this->pdo->prefix . "_proj_" . $this->project->name;
+        $this->fl = new \Depage\Cms\FileLibrary($this->project->getPdo(), $this->project);
 
-        $this->xsltPath = "projects/" . $this->projectName . "/xslt/";
-        $this->xmlPath = "projects/" . $this->projectName . "/xml/";
-        $this->libPath = "projects/" . $this->projectName . "/lib/";
+        $this->xsltPath = "projects/" . $this->project->name . "/xslt/";
+        $this->xmlPath = "projects/" . $this->project->name . "/xml/";
+        $this->libPath = "projects/" . $this->project->name . "/lib/";
 
         // get cache instance for templates
         $this->xsltCache = \Depage\Cache\Cache::factory("xslt");
@@ -104,7 +105,7 @@ abstract class Transformer
     // {{{ initXsltProc()
     public function initXsltProc()
     {
-        libxml_disable_entity_loader(false);
+        //libxml_disable_entity_loader(false);
         libxml_use_internal_errors(true);
 
         // @todo use own dtd loaded with caching instead of having own htmlentities file
@@ -148,7 +149,7 @@ abstract class Transformer
     protected function getXsltTemplate($template)
     {
         $regenerate = false;
-        $xslFile = "{$this->projectName}/{$template}/{$this->previewType}.xsl";
+        $xslFile = "{$this->project->name}/{$template}/{$this->previewType}.xsl";
         $files = glob("{$this->xsltPath}{$template}/*.xsl");
 
         if (count($files) == 0) {
@@ -201,20 +202,21 @@ abstract class Transformer
                 'baseUrl' => null,
                 'baseUrlStatic' => null,
                 'projectName' => null,
+                'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
             );
             $variables = array(
                 'navigation' => "document('xmldb://pages')",
                 'settings' => "document('xmldb://settings')",
                 'colors' => "document('xmldb://colors')",
                 'languages' => "\$settings/proj:settings/proj:languages",
-                'currentPage' => "\$navigation//pg:page[@status = 'active']",
-                'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
+                'currentPage' => "\$navigation//pg:*[@status = 'active']",
                 'libPath' => "'" . htmlspecialchars('file://' . str_replace(" ", "%20", realpath($this->libPath))) . "'",
                 'var-ga-Account' => "''",
                 'var-ga-Domain' => "''",
                 'var-pa-siteId' => "''",
                 'var-pa-Domain' => "''",
                 'var-fb-Account' => "''",
+                'var-pinterest-tagId' => "''",
             );
 
             // add variables from settings
@@ -283,7 +285,7 @@ abstract class Transformer
             throw new \Exception("page '{$urlPath}' does not exist");
         }
 
-        $this->savePath = "projects/" . $this->projectName . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
+        $this->savePath = "projects/" . $this->project->name . "/cache-" . $this->template . "-" . $this->lang . $this->currentPath;
 
         $content = $this->transformDoc($pageId, $pagedataId, $lang);
 
@@ -315,7 +317,7 @@ abstract class Transformer
                 "currentPagedataId" => $pagedataId,
                 "currentContentType" => "text/html",
                 "currentEncoding" => "UTF-8",
-                "projectName" => $this->projectName,
+                "projectName" => $this->project->name,
                 "depageVersion" => \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion(),
                 "depageIsLive" => $this->isLive ? "true" : "",
                 "depagePreviewType" => $this->previewType,
@@ -505,23 +507,26 @@ abstract class Transformer
          * call:getversion -> replaced by $depageVersion
          */
         // register stream to get documents from xmldb
-        \Depage\Cms\Streams\XmlDb::registerStream("xmldb", array(
+        \Depage\Cms\Streams\XmlDb::registerStream("xmldb", [
             "xmldb" => $this->xmlGetter,
             "transformer" => $this,
-        ));
+        ]);
 
         // register stream to get global xsl templates
         \Depage\Cms\Streams\Xslt::registerStream("xslt");
 
         // register stream to get page-links
-        \Depage\Cms\Streams\Pageref::registerStream("pageref", array(
+        \Depage\Cms\Streams\Pageref::registerStream("pageref", [
             "transformer" => $this,
-        ));
+        ]);
 
         // register stream to get links to library
-        \Depage\Cms\Streams\Libref::registerStream("libref", array(
+        \Depage\Cms\Streams\Libref::registerStream("libref", [
             "transformer" => $this,
-        ));
+        ]);
+        \Depage\Cms\Streams\Libref::registerStream("libid", [
+            "transformer" => $this,
+        ]);
     }
     // }}}
     // {{{ registerFunctions
@@ -546,6 +551,7 @@ abstract class Transformer
             "autokeywords" => [$this, "xsltAutokeywords"],
             "changesrc" => [$this, "xsltChangeSrc"],
             "fileinfo" => [$this, "xsltFileinfo"],
+            "includeUnparsed" => [$this, "xsltIncludeUnparsed"],
             "formatDate" => [$this, "xsltFormatDate"],
             "getLibRef" => [$this, "xsltGetLibRef"],
             "getPageRef" => [$this, "xsltGetPageRef"],
@@ -609,13 +615,13 @@ abstract class Transformer
      **/
     public function xsltGetLibRef($path, $absolute = false)
     {
+        $p = $this->fl->toLibref($path);
+
+        if ($p) $path = $p;
+
         $url = parse_url($path);
 
-        if (!empty($url['path'])) {
-            $path = "lib/" . $url['host'] . $url['path'];
-        } else {
-            $path = "lib/" . $url['host'];
-        }
+        $path = "lib/" . ($url['host'] ?? '') . ($url['path'] ?? '');
 
         if ($absolute != "relative" && !empty($this->baseUrlStatic) && $this->baseUrl != $this->baseUrlStatic) {
             $path = $this->baseUrlStatic . $path;
@@ -660,7 +666,7 @@ abstract class Transformer
             $path = $url->getRelativePathTo($path);
         }
         if ($this->routeHtmlThroughPhp) {
-            $path = preg_replace("/\.php$/", ".html", $path);
+            //$path = preg_replace("/\.php$/", ".html", $path);
         }
 
         return $path;
@@ -677,25 +683,39 @@ abstract class Transformer
      * @return    $xml (xml) file info as xml string
      */
     public function xsltFileinfo($path, $extended = "true") {
+        $info = $this->fl->getFileInfoByRef($path);
+
+        if (!$info) {
+            $xml = "<file exists=\"false\" />";
+            $doc = new \DOMDocument();
+            $doc->loadXML($xml);
+
+            return $doc;
+        }
+
+        return $info->toXml();
+    }
+    // }}}
+    // {{{ xsltIncludeUnparsed
+    /**
+     * gets fileinfo for libref path
+     *
+     * @public
+     *
+     * @param    $path (string) libref path to target file
+     *
+     * @return    $xml (xml) file info as xml string
+     */
+    public function xsltIncludeUnparsed($path) {
         $xml = "";
-        $path = "projects/" . $this->projectName . "/lib" . substr($path, 8);
+        $path = "projects/" . $this->project->name . "/lib" . substr($path, 8);
 
-        $fileinfo = new \Depage\Media\MediaInfo();
-
-        if ($extended === "false") {
-            $info = $fileinfo->getBasicInfo($path);
-        } else {
-            $info = $fileinfo->getInfo($path);
+        $xml = "<text>";
+        if (file_exists($path)) {
+            $xml .= htmlspecialchars(file_get_contents($path),
+                \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8");
         }
-        if (isset($info['date'])) {
-            $info['date'] = $info['date']->format("Y-m-d H:i:s");
-        }
-
-        $xml = "<file";
-        foreach ($info as $key => $value) {
-            $xml .= " $key=\"" . htmlspecialchars($value, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "\"";
-        }
-        $xml .= " />";
+        $xml .= "</text>";
 
         $doc = new \DOMDocument();
         $doc->loadXML($xml);
@@ -715,8 +735,8 @@ abstract class Transformer
      */
     public function xsltGlob($path) {
         $xml = "";
-        $path = "projects/" . $this->projectName . "/lib" . substr($path, 8);
-        $prefixLen = strlen("projects/" . $this->projectName . "/lib/");
+        $path = "projects/" . $this->project->name . "/lib" . substr($path, 8);
+        $prefixLen = strlen("projects/" . $this->project->name . "/lib/");
         $files = glob($path);
 
         $xml = "<glob>";
@@ -988,7 +1008,7 @@ abstract class Transformer
     {
         return array(
             'xmlGetter',
-            'projectName',
+            'project',
             'template',
             'xsltPath',
             'xmlPath',

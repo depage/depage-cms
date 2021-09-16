@@ -114,7 +114,11 @@ class Preview extends \Depage\Depage\Ui\Base
         $project = \Depage\Cms\Project::loadByName($this->pdo, $this->xmldbCache, $this->projectName);
         $project->setPreviewType($this->previewType);
 
-        if ($lang == "sitemap.xml") {
+        if ($lang == "api" && $project->isApiAvailable()) {
+            $redirector = new \Depage\Redirector\Redirector($project->getBaseUrl() . '/');
+            require($project->getProjectPath() . 'lib/global/api.php');
+            die();
+        } else if ($lang == "sitemap.xml") {
             $sitemap = new \Depage\Http\Response();
             $sitemap
                 ->setBody($project->generateSitemap())
@@ -176,7 +180,7 @@ class Preview extends \Depage\Depage\Ui\Base
         $xmlGetter = $this->project->getXmlGetter();
         $xmlGetter->timestamp = $this->timestamp;
 
-        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlGetter, $this->projectName, $this->template, $transformCache);
+        $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlGetter, $this->project, $this->template, $transformCache);
         $transformer->routeHtmlThroughPhp = true;
 
         $projectConfig = $this->project->getProjectConfig();

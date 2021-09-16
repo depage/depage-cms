@@ -74,6 +74,7 @@ class DocProperties extends Base
 
         $this->project = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->authUser, $this->projectName)[0];
         $this->xmldb = $this->project->getXmlDb($this->authUser->id);
+        $this->fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
 
         $this->languages = array_keys($this->project->getLanguages());
     }
@@ -124,6 +125,7 @@ class DocProperties extends Base
             'dataNode' => $node,
             'class' => "labels-on-top",
             'ttl' => $this->auth->sessionLifetime,
+            'fl' => $this->fl,
         ]);
 
         if ($node->getAttribute("icon")) {
@@ -158,15 +160,15 @@ class DocProperties extends Base
                 $doc->saveNode($node);
 
                 $prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-                $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->projectName, 0);
+                $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->project, 0);
                 $parentId = $doc->getParentIdById($this->nodeId);
-                $deltaUpdates->recordChange($this->nodeId);
+                $deltaUpdates->recordChange($parentId);
 
                 if ($released) {
                     // get pageId correctly
                     $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docRef);
                     $pageDoc = $this->xmldb->getDoc("pages");
-                    $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $pageDoc->getDocId(), $this->projectName, 0);
+                    $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $pageDoc->getDocId(), $this->project, 0);
                     $parentId = $pageDoc->getParentIdById($pageInfo->pageId);
                     $deltaUpdates->recordChange($parentId);
                 }
@@ -204,6 +206,8 @@ class DocProperties extends Base
         if ($_GET['ajax'] == "true") {
             $file = rawurldecode($file);
         }
+        $file = $this->fl->getFileInfoByRef($file);
+
         return new Html("thumbnail.tpl", [
             'file' => $file,
             'project' => $this->project,
@@ -330,6 +334,9 @@ class DocProperties extends Base
     protected function addPgRelease($currentNode)
     {
         $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docRef);
+        if (!$pageInfo) {
+            return;
+        }
         $lastchangeUser = \Depage\Auth\User::loadById($this->pdo, $pageInfo->lastchangeUid);
         $dateFormatter = new \Depage\Formatters\DateNatural();
 
@@ -399,21 +406,21 @@ class DocProperties extends Base
             // }}}
 
             $fs->addHtml("<div class=\"details\">");
-                // {{{ add changed date
-                $fs->addHtml(sprintf(
-                    _("<p class=\"date\">%s %s by %s</p>"),
-                    _("Changed"),
-                    $dateFormatter->format($pageInfo->lastchange, true),
-                    htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
-                ));
-                // }}}
-                // {{{ add url input
-                $fs->addUrl("url-$nodeId", [
-                    'label' => _("url"),
-                    'readonly' => true,
-                    'defaultValue' => $url,
-                ]);
-                // }}}
+            // {{{ add changed date
+            $fs->addHtml(sprintf(
+                _("<p class=\"date\">%s %s by %s</p>"),
+                _("Changed"),
+                $dateFormatter->format($pageInfo->lastchange, true),
+                htmlspecialchars($lastchangeUser->fullname ?? _("unknown user"))
+            ));
+            // }}}
+            // {{{ add url input
+            $fs->addUrl("url-{$this->docRef}", [
+                'label' => _("url"),
+                'readonly' => true,
+                'defaultValue' => $url,
+            ]);
+            // }}}
             // {{{ add restore from history interface
             if ($this->authUser->canEditTemplates()) {
                 $history = $this->doc->getHistory();
@@ -483,7 +490,7 @@ class DocProperties extends Base
         $navs = $this->project->getNavigations();
         $defaults = [];
         foreach ($navs as $key => $val) {
-            if ($pageInfo->nav[$key] == 'true') {
+            if (($pageInfo->nav[$key] ?? false) == 'true') {
                 $defaults[] = $key;
             }
         }
@@ -504,7 +511,7 @@ class DocProperties extends Base
         $tags = $this->project->getTags();
         $defaults = [];
         foreach ($tags as $key => $val) {
-            if ($pageInfo->tags[$key] == 'true') {
+            if (($pageInfo->tags[$key] ?? false) == 'true') {
                 $defaults[] = $key;
             }
         }
@@ -955,11 +962,11 @@ class DocProperties extends Base
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $f = $this->form->addFieldset("xmledit-$nodeId", [
+        $fs = $this->form->addFieldset("xmledit-$nodeId", [
             'label' => $this->getLabelForNode($node, _("Audio")),
-            'class' => "edit-audio",
+            'class' => "doc-property-fieldset edit-audio",
         ]);
-        $f->addText("xmledit-$nodeId-src", [
+        $fs->addText("xmledit-$nodeId-src", [
             'label' => $this->getLabelForNode($node, _("src")),
             'class' => "edit-src",
             'dataAttr' => [

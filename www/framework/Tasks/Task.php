@@ -17,7 +17,7 @@
 namespace Depage\Tasks;
 
 class Task {
-    private $tmpvars = array();
+    private $tmpvars = [];
 
     /**
      * @brief fp file pointer to file lock
@@ -73,7 +73,6 @@ class Task {
      * @brief subTasksRun array of subtask ids that where already run
      **/
     protected $subTasksRun = array();
-
 
     // {{{ constructor
     private function __construct($pdo) {
@@ -259,15 +258,44 @@ class Task {
     // }}}
     // {{{ setSubtaskStatus()
     public function setSubtaskStatus($subtask, $status) {
+        if ($status !== null) {
+            $status = mb_substr($status, 0, 240);
+        }
         $query = $this->pdo->prepare(
             "UPDATE {$this->tableSubtasks}
             SET status = :status
             WHERE id = :id"
         );
         $query->execute(array(
-            "status" => mb_substr($status, 0, 250),
+            "status" => $status,
             "id" => $subtask->id,
         ));
+    }
+    // }}}
+    // {{{ retrySubtask()
+    /**
+     * @brief retrySubtask
+     *
+     * @param $subtask to retry
+     * @return bool if task is retried
+     **/
+    public function retrySubtask($subtask)
+    {
+        $subtask->retries--;
+        $query = $this->pdo->prepare(
+            "UPDATE {$this->tableSubtasks}
+            SET retries = :retries
+            WHERE id = :id"
+        );
+        $query->execute(array(
+            "retries" => $subtask->retries,
+            "id" => $subtask->id,
+        ));
+        if ($subtask->retries > 0) {
+            return true;
+        }
+
+        return false;
     }
     // }}}
     // {{{ getNextSubtask();
@@ -284,6 +312,8 @@ class Task {
             $subtask = current($this->subtasks);
         }
         next($this->subtasks);
+
+        $this->retries = 0;
 
         return $subtask;
     }
@@ -304,6 +334,7 @@ class Task {
         unset($subtask, $_tmpindex, $_tmpvar);
 
         $_tmpnames = array_keys(get_defined_vars());
+        $this->tmpvars = [];
         foreach ($_tmpnames as $_tmpname)
         {
             // @todo only save in tempvars if task has subtask?
@@ -380,7 +411,7 @@ class Task {
      *
      * @return int return id of created subtask that can be used for depends_on
      */
-    public function addSubtask($name, $php, $params = array(), $depends_on = NULL) {
+    public function addSubtask($name, $php, $params = array(), $depends_on = NULL, $maxRetries = 3) {
         if (!is_array($params)) {
             $params = array();
         }
@@ -390,11 +421,12 @@ class Task {
         $phpCode = trim(vsprintf($php, $params));
         $query = $this->pdo->prepare(
             "INSERT INTO {$this->tableSubtasks}
-                (task_id, name, php, depends_on) VALUES (:taskId, :name, :php, :depends_on)"
+                (task_id, name, retries, php, depends_on) VALUES (:taskId, :name, :retries, :php, :depends_on)"
         );
         $query->execute(array(
             "taskId" => $this->taskId,
             "name" => $name,
+            "retries" => $maxRetries,
             "php" => $phpCode,
             "depends_on" => $depends_on,
         ));
