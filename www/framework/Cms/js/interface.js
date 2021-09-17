@@ -35,6 +35,7 @@ var depageCMS = (function() {
     var baseUrl = $("base").attr("href");
     var projectName;
     var currentPreviewUrl,
+        currentLoadedUrl,
         currentDocId,
         currentDocPropertyId,
         currentPreviewLang,
@@ -1085,26 +1086,16 @@ var depageCMS = (function() {
                     }
 
                     var url = baseUrl + "project/" + projectName + "/colors/edit/" + nodeId + "/";
-                    if (!currentPreviewUrl) {
-                        currentPreviewUrl = baseUrl + "project/" + projectName + "/preview/html/dev/";
-                    } else {
-                        try {
-                            currentPreviewUrl = $previewFrame[0].contentWindow.location.href;
-                        } catch(error) {
-                        }
-                    }
-                    currentPreviewUrl = currentPreviewUrl.replace(/\?.*/, "");
-                    if (data.node.text != "Global Colors") {
-                        currentPreviewUrl += "?__dpPreviewColor=" + encodeURIComponent(data.node.text);
-                    }
-                    console.log(currentPreviewUrl);
 
                     $colorContainer.removeClass("loaded").load(url + "?ajax=true", function() {
                         $colorContainer.find("figure[data-name='unnamed_color']").addClass("selected");
                         $colorContainer.trigger("selectionChange.depage");
-
-                        localJS.preview(currentPreviewUrl);
                     });
+
+                    localJS.updateColorPreview(data.node.text);
+                })
+                .on("rename_node.jstree", function(e, data) {
+                    localJS.updateColorPreview(data.node.text);
                 })
                 .on("ready.jstree", function() {
                     jstreeColors.activate_node($colorTreeContainer.find("ul:first li:first")[0]);
@@ -2357,6 +2348,21 @@ var depageCMS = (function() {
             trailing: true
         }),
         // }}}
+        // {{{ updateColorPreview
+        updateColorPreview: function(colorscheme) {
+            var url = currentLoadedUrl;
+
+            if (!url) {
+                url = baseUrl + "project/" + projectName + "/preview/html/dev/";
+            }
+            url = url.replace(/\?.*/, "");
+            if (colorscheme != "Global Colors") {
+                url += "?__dpPreviewColor=" + encodeURIComponent(colorscheme);
+            }
+
+            localJS.preview(url);
+        },
+        // }}}
         // {{{ help
         help: function(url) {
             if (typeof url == 'undefined' || url[0] == "/") return;
@@ -2448,6 +2454,7 @@ var depageCMS = (function() {
             previewUpdateTimer = setInterval(function () {
                 try {
                     title = $previewFrame[0].contentDocument.title;
+                    currentLoadedUrl = $previewFrame[0].contentWindow.location.href;
                 } catch(error) {
                 }
 
