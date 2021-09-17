@@ -364,6 +364,18 @@
         </xsl:choose>
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:cssEscape() -->
+    <!--
+        dp:cssEscape(text)
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:cssEscape">
+        <xsl:param name="arg" />
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::cssEscape', string($arg))" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:formatDate() -->
     <!--
         dp:formatDate(date)

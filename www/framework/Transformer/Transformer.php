@@ -554,12 +554,13 @@ abstract class Transformer
             "atomizeText" => [$this, "xsltAtomizeText"],
             "autokeywords" => [$this, "xsltAutokeywords"],
             "changesrc" => [$this, "xsltChangeSrc"],
+            "cssEscape" => [$this, "xsltCssEscape"],
             "fileinfo" => [$this, "xsltFileinfo"],
-            "includeUnparsed" => [$this, "xsltIncludeUnparsed"],
             "formatDate" => [$this, "xsltFormatDate"],
             "getLibRef" => [$this, "xsltGetLibRef"],
             "getPageRef" => [$this, "xsltGetPageRef"],
             "glob" => [$this, "xsltGlob"],
+            "includeUnparsed" => [$this, "xsltIncludeUnparsed"],
             "jsEscape" => [$this, "xsltJsEscape"],
             "phpEscape" => [$this, "xsltPhpEscape"],
             "replaceEmailChars" => [$this, "xsltReplaceEmailChars"],
@@ -871,13 +872,13 @@ abstract class Transformer
     // }}}
     // {{{ xsltPhpEscape()
     /**
-     * gets fileinfo for libref path
+     * escapes string for use as php code in xsl
      *
      * @public
      *
-     * @param    $path (string) libref path to target file
+     * @param    $string
      *
-     * @return    $xml (xml) file info as xml string
+     * @return    escaped string
      */
     public function xsltPhpEscape($string) {
         $value = var_export($string, true);
@@ -887,16 +888,32 @@ abstract class Transformer
     // }}}
     // {{{ xsltJsEscape()
     /**
-     * gets fileinfo for libref path
+     * escapes string for use in javascript code in xsl
      *
      * @public
      *
-     * @param    $path (string) libref path to target file
+     * @param    $string
      *
-     * @return    $xml (xml) file info as xml string
+     * @return    escaped string
      */
     public function xsltJsEscape($string) {
         $value = json_encode($string, \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_NUMERIC_CHECK);
+
+        return $value;
+    }
+    // }}}
+    // {{{ xsltCssEscape()
+    /**
+     * escapes css identifier for use in xsl
+     *
+     * @public
+     *
+     * @param    $string
+     *
+     * @return    escaped string
+     */
+    public function xsltCssEscape($string) {
+        $value = \Depage\Html\Html::getEscapedUrl($string);
 
         return $value;
     }
