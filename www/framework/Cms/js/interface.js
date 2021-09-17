@@ -36,6 +36,7 @@ var depageCMS = (function() {
     var projectName;
     var currentPreviewUrl,
         currentLoadedUrl,
+        currentColorScheme,
         currentDocId,
         currentDocPropertyId,
         currentPreviewLang,
@@ -2055,7 +2056,9 @@ var depageCMS = (function() {
         // {{{ saveColor()
         saveColor: _.throttle(function(nodeId, value) {
             var xmldb = new DepageXmldb(baseUrl, projectName, "colors");
-                xmldb.setAttribute(nodeId, "value", value);
+                xmldb.setAttribute(nodeId, "value", value, function() {
+                    localJS.updateColorPreview();
+                });
         }, 750, {
             leading: true,
             trailing: true
@@ -2350,14 +2353,17 @@ var depageCMS = (function() {
         // }}}
         // {{{ updateColorPreview
         updateColorPreview: function(colorscheme) {
+            if (typeof colorscheme != 'undefined') {
+                currentColorScheme = colorscheme
+            }
             var url = currentLoadedUrl;
 
             if (!url) {
                 url = baseUrl + "project/" + projectName + "/preview/html/dev/";
             }
             url = url.replace(/\?.*/, "");
-            if (colorscheme != "Global Colors") {
-                url += "?__dpPreviewColor=" + encodeURIComponent(colorscheme);
+            if (currentColorScheme != "Global Colors") {
+                url += "?__dpPreviewColor=" + encodeURIComponent(currentColorScheme);
             }
 
             localJS.preview(url);
