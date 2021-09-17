@@ -3,8 +3,8 @@
     $class = $this->class;
     $imgSrc = "projects/{$this->project->name}/lib/{$this->file->fullname}";
     if (in_array($this->file->ext, ['png', 'jpg', 'jpeg', 'gif', 'pdf'])) {
-        $thumbSrc = $imgSrc . ".t240x240.png";
-        $thumbSrc2 = $imgSrc . ".t240x240.webp";
+        $thumbSrc = $imgSrc . ".t320x320.png";
+        $thumbSrc2 = $imgSrc . ".t320x320.webp";
     } else if (in_array($this->file->ext, ['svg'])) {
         $thumbSrc = $imgSrc;
     } else {

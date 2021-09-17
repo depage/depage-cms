@@ -1,13 +1,16 @@
 // {{{ div.color
 figure.thumb.color {
-    $width: $thumbSize;
-    $height: $thumbSize * 0.5;
-
     .preview {
         display: block;
-        width: $width;
-        height: $height;
+        width: $thumbSize - 8px;
+        height: $thumbSize * 0.5 - 8px;
         @include radius(4px);
+    }
+    @media screen and (max-width: 1030px) {
+        .preview {
+            width: $thumbSizeSmall - 8px;
+            height: $thumbSizeSmall * 0.5 - 8px;
+        }
     }
 }
 // }}}
@@ -62,6 +65,10 @@ figure.thumb.color {
 // {{{ .colorschemes .color-list
 .colorschemes .color-list {
     @extend .file-list;
+
+    ul {
+        padding-bottom: 0;
+    }
 }
 // }}}
 // {{{ .colorschemes .color-property

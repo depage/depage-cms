@@ -1,20 +1,18 @@
 // {{{ figure.thumb
 figure.thumb {
     $iconSize: 24px;
-    $width: $thumbSize;
-    $height: $thumbSize;
 
     border: 1px solid $backgroundBrightColor;
     background: #ffffff;
     position: relative;
-    width: $width + 8px;
+    width: $thumbSize;
     padding: 3px;
     @include radius(6px);
 
     img {
         display: block;
-        width: $width;
-        height: $height;
+        width: $thumbSize - 8px;
+        height: $thumbSize - 8px;
     }
     figcaption {
         font-size: $fSizeS;
@@ -41,7 +39,7 @@ figure.thumb {
         border: 1px solid none;
         padding: 5px 15px;
         left: 100%;
-        top: $height;
+        top: $thumbSize;
         left: 0;
         width: 230%;
         text-align: left;
@@ -82,6 +80,17 @@ figure.thumb {
     picture:hover + figcaption .fileinfo,
     img:hover + figcaption .fileinfo {
         display: block;
+    }
+    @media screen and (max-width: 1030px) {
+        width: $thumbSizeSmall;
+
+        img {
+            width: $thumbSizeSmall - 8px;
+            height: $thumbSizeSmall - 8px;
+        }
+        .fileinfo {
+            top: $thumbSizeSmall;
+        }
     }
 }
 // }}}
@@ -149,7 +158,6 @@ figure.thumb {
         margin-bottom: 15px;
     }
     ul {
-        padding-right: $thumbSize;
         padding-bottom: 2 * $thumbSize;
     }
     li {

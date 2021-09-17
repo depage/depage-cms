@@ -367,7 +367,10 @@
     }
     p {
         clear: none;
-        margin-left: $thumbSize + 20px;
+        margin-left: $thumbSize + 15px;
+        @media screen and (max-width: 1030px) {
+            margin-left: $thumbSizeSmall + 15px;
+        }
     }
 }
 // }}}

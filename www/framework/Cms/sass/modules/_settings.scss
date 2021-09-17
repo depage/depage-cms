@@ -55,7 +55,8 @@ $menuLineHeight: 30px !global;
 $searchHeight: 2 * $treeLineHeight !global;
 $iconSize: 24px !global;
 $helpIconSize: 32px !global;
-$thumbSize: 120px !global;
+$thumbSize: round($treeWidth * 0.75 - 1.5 * 16px + 1px) !global;
+$thumbSizeSmall: round($treeWidth * 0.5 - 1.5 * 16px + 1px) !global;
 $actionIconHeight: $treeLineHeight * 0.5 + 4px !global;
 $checkboxSize: 36px;
 
