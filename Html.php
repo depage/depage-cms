@@ -510,7 +510,7 @@ class Html {
      * @param mixed $name, $value
      * @return void
      **/
-    protected function attr($name, $value = "")
+    static function attr($name, $value = "")
     {
         if (is_array($name)) {
             foreach($name as $attr => $val) {
