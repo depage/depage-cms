@@ -1,5 +1,5 @@
 <div <?php self::attr([
-        "class" => "edit layout layout-left",
+        "class" => "edit layout layout-tree",
     ]); ?>>
     <div class="trees">
         <header class="info info-tree-pages">
@@ -23,6 +23,10 @@
         ]); ?>>
         </div>
     </div>
+</div>
+<div <?php self::attr([
+        "class" => "edit layout layout-left",
+    ]); ?>>
     <header class="info info-doc-properties">
         <h1><?php self::e(_("Document Properties")); ?></h1>
     </header>

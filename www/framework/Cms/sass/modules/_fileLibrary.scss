@@ -115,7 +115,7 @@ figure.thumb {
         max-width: 100%;
     }
     .files {
-        left: $treeWidth;
+        left: 0;
         right: 0;
     }
 
@@ -126,16 +126,6 @@ figure.thumb {
         right: 0;
         top: 0;
         bottom: 0;
-    }
-}
-.toolbar ~ .library {
-    .trees,
-    .files {
-        top: $toolbarHeight;
-
-        @media (pointer:coarse) {
-            top: $toolbarHeight * $touchScale;
-        }
     }
 }
 // }}}

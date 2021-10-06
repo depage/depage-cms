@@ -41,7 +41,6 @@
         padding: 1px 8px;
         display: block;
         height: 100%;
-        overflow: hidden;
         text-align: left;
 
         ul {
@@ -61,6 +60,7 @@
         }
         &.preview {
             margin-right: auto;
+            width: $treeWidth * 0.7;
         }
         &.right {
             li menu {

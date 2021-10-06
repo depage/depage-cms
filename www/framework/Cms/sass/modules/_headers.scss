@@ -3,6 +3,7 @@ header.info {
     position: absolute;
     left: 0;
     height: $infoHeight;
+    width: 100%;
     border-bottom: 1px solid $borderColor;
     background: $backgroundColor;
     z-index: 5001;
@@ -27,7 +28,6 @@ header.info {
     &.info-tree-pages,
     &.info-tree-pagedata {
         left: 0;
-        width: $treeWidth;
     }
     &.info-tree-pages {
         top: 0;
@@ -36,7 +36,6 @@ header.info {
         top: 50%;
     }
     &.info-doc-properties {
-        left: $treeWidth - 1;
         border-left: 1px solid $borderColor;
     }
 }

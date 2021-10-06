@@ -617,6 +617,9 @@
     position: absolute;
     background: #ffffff;
     width: $treeWidth;
+    top: 0;
+    left: 0;
+    bottom: 0;
     overflow: hidden;
     border-right: 1px solid $borderColor;
 
@@ -702,11 +705,6 @@
 }
 .trees-hidden .trees {
     display: none;
-}
-.layout-left .trees {
-    top: 0;
-    left: 0;
-    bottom: 0;
 }
 // }}}
 

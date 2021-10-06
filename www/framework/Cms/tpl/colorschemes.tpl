@@ -1,5 +1,5 @@
 <div <?php self::attr([
-        "class" => "colorschemes layout-left",
+        "class" => "layout colorschemes layout-tree",
     ]); ?>>
     <div class="trees">
         <header class="info info-tree-colors">
@@ -14,6 +14,10 @@
             <?php self::e($this->tree); ?>
         </div>
     </div>
+</div>
+<div <?php self::attr([
+        "class" => "layout colorschemes layout-left",
+    ]); ?>>
     <div class="colorscheme">
         <header class="info info-colors">
             <h1><?php self::e(_("Colors")); ?></h1>

@@ -258,9 +258,7 @@ html {
     header.info ~ .scrollable-content {
         top: $infoHeight;
     }
-    .layout-left,
-    .layout-right,
-    .layout-full {
+    .layout {
         position: absolute;
         top: 0;
         bottom: 0;
@@ -270,17 +268,27 @@ html {
             right: 0;
         }
     }
-    #toolbarmain ~ .layout-left,
-    #toolbarmain ~ .layout-right,
-    #toolbarmain ~ .layout-full {
+    #toolbarmain ~ .layout {
         top: $toolbarHeight;
 
         @media (pointer:coarse) {
             top: $toolbarHeight * $touchScale;
         }
     }
+    --tree-width: #{$treeWidth};
+    --edit-width: #{$editWidth};
+
+    .layout-tree {
+        left: 0;
+        width: var(--tree-width);
+    }
     .layout-left {
         left: 0;
+        width: var(--edit-width);
+    }
+    .layout-tree + .layout-left {
+        left: var(--tree-width);
+        width: calc(var(--edit-width) - var(--tree-width));
     }
     .layout-right {
         right: 0;
@@ -289,14 +297,18 @@ html {
         left: 0;
         right: 0;
     }
-    --edit-width: #{$editWidth};
-    --tree-width: #{$treeWidth};
+    .layout-tree + .layout-full {
+        left: var(--tree-width);
+    }
 
     // layout basics
     &.layout-left-full {
         .layout-left {
             right: 0;
             width: 100%;
+        }
+        .layout-tree + .layout-left {
+            width: calc(100% - var(--tree-width));
         }
         .layout-right {
             left: 100%;
@@ -307,9 +319,11 @@ html {
         }
     }
     &.layout-right-full {
+        .layout-tree {
+            left: calc(-1 * var(--edit-width));
+        }
         .layout-left {
             left: calc(-1 * var(--edit-width));
-            width: var(--edit-width);
         }
         .layout-right {
             left: 0;
@@ -321,8 +335,7 @@ html {
     }
     &.layout-split {
         .layout-left {
-            left: 0;
-            width: var(--edit-width);
+            //width: var(--edit-width);
             max-width: 100%;
         }
         .layout-right {
