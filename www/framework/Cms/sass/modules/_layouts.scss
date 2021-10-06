@@ -270,9 +270,9 @@ html {
             right: 0;
         }
     }
-    .toolbar ~ .layout-left,
-    .toolbar ~ .layout-right,
-    .toolbar ~ .layout-full {
+    #toolbarmain ~ .layout-left,
+    #toolbarmain ~ .layout-right,
+    #toolbarmain ~ .layout-full {
         top: $toolbarHeight;
 
         @media (pointer:coarse) {
@@ -289,6 +289,8 @@ html {
         left: 0;
         right: 0;
     }
+    --edit-width: #{$editWidth};
+    --tree-width: #{$treeWidth};
 
     // layout basics
     &.layout-left-full {
@@ -300,45 +302,49 @@ html {
             left: 100%;
             width: 0;
         }
+        .toolbar menu.right {
+            margin-left: auto;
+        }
     }
     &.layout-right-full {
         .layout-left {
-            left: -$editWidth;
-            width: $editWidth;
+            left: calc(-1 * var(--edit-width));
+            width: var(--edit-width);
         }
         .layout-right {
             left: 0;
             width: 100%;
         }
         .toolbar menu.preview {
-            left: 160px;
             display: block;
         }
     }
     &.layout-split {
         .layout-left {
             left: 0;
-            width: $editWidth;
+            width: var(--edit-width);
             max-width: 100%;
         }
         .layout-right {
-            left: $editWidth;
+            left: var(--edit-width);
             right: 0;
             border-left: 1px solid $borderColor;
         }
         .toolbar menu.preview {
-            left: $editWidth;
             display: block;
+        }
+        .toolbar menu.left {
+            width: var(--edit-width);
         }
     }
     &.layout-tree-split {
         .layout-left {
             left: 0;
-            width: $editWidth * 0.85;
+            width: calc(var(--edit-width) * 0.85);
             max-width: 100%;
         }
         .layout-right {
-            left: $treeWidth;
+            left: var(--tree-width);
             right: 0;
             border-left: 1px solid #000000;
         }
@@ -346,89 +352,27 @@ html {
 
     // layouts for media sizes
     @media screen and (min-width: 1800px) {
-        $currentEditWidth: $editWidth + 0.5 * $treeWidth;
-
-        &.layout-right-full {
-            .layout-left {
-                left: -$currentEditWidth;
-                width: $currentEditWidth;
-            }
-        }
-        &.layout-split {
-            .layout-left {
-                width: $currentEditWidth;
-            }
-            .layout-right {
-                left: $currentEditWidth;
-            }
-            .toolbar menu.preview {
-                left: $currentEditWidth;
-            }
-        }
+        --edit-width: #{$editWidth + 0.5 * $treeWidth};
     }
     @media screen and (min-width: 2100px) {
-        $currentEditWidth: $editWidth + 1 * $treeWidth;
-
-        &.layout-right-full {
-            .layout-left {
-                left: -$currentEditWidth;
-                width: $currentEditWidth;
-            }
-        }
-        &.layout-split {
-            .layout-left {
-                width: $currentEditWidth;
-            }
-            .layout-right {
-                left: $currentEditWidth;
-            }
-            .toolbar menu.preview {
-                left: $currentEditWidth;
-            }
-        }
+        --edit-width: #{$editWidth + 1 * $treeWidth};
     }
     @media screen and (max-width: 1340px) {
-        $currentEditWidth: $editWidth - 0.5 * $treeWidth;
-
-        &.layout-right-full {
-            .layout-left {
-                left: -$currentEditWidth;
-                width: $currentEditWidth;
-            }
-        }
-        &.layout-split {
-            .layout-left {
-                width: $currentEditWidth;
-            }
-            .layout-right {
-                left: $currentEditWidth;
-            }
-            .toolbar menu.preview {
-                left: $currentEditWidth;
-            }
-        }
+        --edit-width: #{$editWidth - 0.5 * $treeWidth};
     }
     @media screen and (max-width: 1030px) {
-        $currentEditWidth: $editWidth - 1 * $treeWidth;
+        --edit-width: #{$editWidth - 1 * $treeWidth};
 
-        &.layout-right-full {
-            .layout-left {
-                left: -$currentEditWidth;
-                width: $currentEditWidth;
-            }
-        }
         &.layout-split {
-            .layout-left {
-                width: $currentEditWidth;
-            }
-            .layout-right {
-                left: $currentEditWidth;
-            }
             #toolbarmain menu.preview {
-                left: $currentEditWidth;
-                margin-left: -230px;
-                width: 230px;
                 text-align: right;
+            }
+            .toolbar menu.left {
+                width: auto;
+            }
+            .toolbar menu.preview {
+                margin-right: 0;
+                margin-left: auto;
             }
         }
     }

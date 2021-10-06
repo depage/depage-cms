@@ -16,6 +16,10 @@
 }
 .toolbar {
     height: $toolbarHeight;
+    display: flex;
+    flex-direction: row;
+    justify-items: stretch;
+    width: 100%;
 
     @media (pointer:coarse) {
         height: $toolbarHeight * $touchScale;
@@ -37,6 +41,7 @@
         padding: 1px 8px;
         display: block;
         height: 100%;
+        overflow: hidden;
         text-align: left;
 
         ul {
@@ -50,15 +55,14 @@
         &.right,
         &.preview,
         &.left {
-            position: absolute;
-            top: 0;
+            //margin: auto;
         }
         &.left {
-            left: 0;
+        }
+        &.preview {
+            margin-right: auto;
         }
         &.right {
-            right: 0;
-
             li menu {
                 right: 0;
                 left: auto;

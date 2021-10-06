@@ -314,9 +314,9 @@ var depageCMS = (function() {
         // }}}
         // {{{ setupToolbar
         setupToolbar: function() {
-            $toolbarLeft = $("#toolbarmain > menu.left");
-            $toolbarPreview = $("#toolbarmain > menu.preview");
-            $toolbarRight = $("#toolbarmain > menu.right");
+            $toolbarLeft = $("#toolbarmain > .toolbar > menu.left");
+            $toolbarPreview = $("#toolbarmain > .toolbar > menu.preview");
+            $toolbarRight = $("#toolbarmain > .toolbar > menu.right");
 
             var layouts = [
                 "left-full",
@@ -397,7 +397,7 @@ var depageCMS = (function() {
             });
 
             // add menu navigation
-            var $menus = $("#toolbarmain > menu > li");
+            var $menus = $("#toolbarmain > .toolbar > menu > li");
             var menuOpen = false;
 
             $menus.each(function() {
