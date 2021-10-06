@@ -60,9 +60,10 @@
         }
         &.preview {
             margin-right: auto;
-            width: $treeWidth * 0.7;
+            width: 175px;
         }
         &.right {
+            text-align: right;
             li menu {
                 right: 0;
                 left: auto;

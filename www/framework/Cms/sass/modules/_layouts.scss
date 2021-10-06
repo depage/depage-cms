@@ -237,6 +237,9 @@
 // }}}
 // {{{ layouts
 html {
+    --tree-width: #{$treeWidth};
+    --edit-width: #{$editWidth};
+
     // base styles for layouts
     header.info,
     .toolbar menu.preview,
@@ -275,23 +278,25 @@ html {
             top: $toolbarHeight * $touchScale;
         }
     }
-    --tree-width: #{$treeWidth};
-    --edit-width: #{$editWidth};
 
+    // default layout (= layout-left-full)
     .layout-tree {
         left: 0;
         width: var(--tree-width);
     }
     .layout-left {
         left: 0;
-        width: var(--edit-width);
+        right: 0;
+        width: 100%;
     }
     .layout-tree + .layout-left {
         left: var(--tree-width);
-        width: calc(var(--edit-width) - var(--tree-width));
+        width: calc(100% - var(--tree-width));
     }
     .layout-right {
         right: 0;
+        left: 100%;
+        width: 0;
     }
     .layout-full {
         left: 0;
@@ -301,23 +306,7 @@ html {
         left: var(--tree-width);
     }
 
-    // layout basics
-    &.layout-left-full {
-        .layout-left {
-            right: 0;
-            width: 100%;
-        }
-        .layout-tree + .layout-left {
-            width: calc(100% - var(--tree-width));
-        }
-        .layout-right {
-            left: 100%;
-            width: 0;
-        }
-        .toolbar menu.right {
-            margin-left: auto;
-        }
-    }
+    // layout right full
     &.layout-right-full {
         .layout-tree {
             left: calc(-1 * var(--edit-width));
@@ -333,14 +322,19 @@ html {
             display: block;
         }
     }
+    // split layout
     &.layout-split {
         .layout-left {
-            //width: var(--edit-width);
             max-width: 100%;
+            width: var(--edit-width);
+        }
+        .layout-tree + .layout-left {
+            width: calc(var(--edit-width) - var(--tree-width));
         }
         .layout-right {
             left: var(--edit-width);
             right: 0;
+            width: auto;
             border-left: 1px solid $borderColor;
         }
         .toolbar menu.preview {
@@ -350,6 +344,7 @@ html {
             width: var(--edit-width);
         }
     }
+    // tree split layout
     &.layout-tree-split {
         .layout-left {
             left: 0;
@@ -372,20 +367,29 @@ html {
     }
     @media screen and (max-width: 1340px) {
         --edit-width: #{$editWidth - 0.5 * $treeWidth};
-    }
-    @media screen and (max-width: 1030px) {
-        --edit-width: #{$editWidth - 1 * $treeWidth};
 
         &.layout-split {
-            #toolbarmain menu.preview {
-                text-align: right;
-            }
             .toolbar menu.left {
                 width: auto;
             }
             .toolbar menu.preview {
                 margin-right: 0;
                 margin-left: auto;
+            }
+            .toolbar menu.right {
+                width: calc(100% - var(--edit-width));
+            }
+        }
+    }
+    @media screen and (max-width: 1030px) {
+        --edit-width: #{$editWidth - 1 * $treeWidth};
+
+        &.layout-split {
+            .toolbar menu.preview {
+                margin-left: auto;
+            }
+            .toolbar menu.right {
+                width: auto;
             }
         }
     }

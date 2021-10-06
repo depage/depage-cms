@@ -2220,13 +2220,13 @@ var depageCMS = (function() {
                 currentLayout = "left-full";
                 $(".preview-buttons").hide();
             } else {
-                $(".preview-buttons").css({display: "inline"});
+                $(".preview-buttons").css({display: "inline-block"});
             }
             $html
                 .removeClass("layout-left-full layout-right-full layout-tree-split layout-split")
                 .addClass("layout-" + currentLayout);
 
-            var $buttons = $toolbarRight.find(".layout-buttons a")
+            $toolbarRight.find(".layout-buttons a")
                 .removeClass("active")
                 .filter("." + currentLayout).addClass("active");
 
