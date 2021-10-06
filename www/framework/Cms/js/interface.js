@@ -2487,6 +2487,8 @@ var depageCMS = (function() {
                             jstreePages.activate_node(node);
                             jstreePages.get_node(node, true)[0].scrollIntoView();
                         }
+
+                        $window.triggerHandler("switchLayout", "split");
                     }
                 });
             } else {
