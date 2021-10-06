@@ -390,7 +390,7 @@ class Newsletter
     public function transform($previewType, $lang)
     {
         $this->project->setPreviewType($previewType);
-        $transformer = \Depage\Transformer\Transformer::factory($previewType, $this->project->getXmlGetter(), $this->project->name, "newsletter");
+        $transformer = \Depage\Transformer\Transformer::factory($previewType, $this->project->getXmlGetter(), $this->project, "newsletter");
 
         if ($previewType == "live") {
             $targets = $this->project->getPublishingTargets();
