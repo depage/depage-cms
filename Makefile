@@ -76,11 +76,11 @@ pushdev: all
 	    --exclude 'cache/' \
 	    www/framework www/conf www/index.php jonas@depage.net:/var/www/depagecms/net.depage.editbeta/
 
-pushtwins: all
+pushminime: all
 	rsync \
 	    -k -r -v -c \
 	    --delete \
 	    --exclude '.DS_Store' \
 	    --exclude '.git' \
 	    --exclude 'cache/' \
-	 \   www/framework www/conf www/index.php jonas@twins:/var/www/depagecms/net.depage.edit/
+	    www/framework www/conf www/index.php jonas@minime:/Tank/Test/www-depage/www/depagecms/net.depage.edit/
