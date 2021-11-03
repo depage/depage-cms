@@ -14,6 +14,7 @@
     <xsl:include href="xslt://nodetostring.xsl" />
 
     <xsl:key name="page-by-id" match="pg:*" use="@db:id"/>
+    <xsl:key name="colorscheme-by-name" match="proj:colorscheme" use="@name"/>
 
     <!-- aliases -->
     <!-- {{{ dp:getpage() -->
@@ -209,16 +210,18 @@
         <xsl:param name="name" />
         <xsl:param name="colorscheme" select="$currentColorscheme" />
 
-        <xsl:choose>
-            <xsl:when test="$colors//proj:colorscheme[@name = $colorscheme]/color[@name = $name]">
-                <!-- color from named colorscheme -->
-                <func:result select="translate($colors//proj:colorscheme[@name = $colorscheme]/color[@name = $name]/@value,'ABCDEF','abcdef')" />
-            </xsl:when>
-            <xsl:otherwise>
-                <!-- color from default colorscheme -->
-                <func:result select="translate($colors//color[@name = $name]/@value,'ABCDEF','abcdef')" />
-            </xsl:otherwise>
-        </xsl:choose>
+        <xsl:for-each select="$colors">
+            <xsl:choose>
+                <xsl:when test="key('colorscheme-by-name', $colorscheme)/color[@name = $name]">
+                    <!-- color from named colorscheme -->
+                    <func:result select="translate(key('colorscheme-by-name', $colorscheme)/color[@name = $name]/@value,'ABCDEF','abcdef')" />
+                </xsl:when>
+                <xsl:otherwise>
+                    <!-- color from default colorscheme -->
+                    <func:result select="translate(.//color[@name = $name]/@value,'ABCDEF','abcdef')" />
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:for-each>
     </func:function>
     <!-- }}} -->
 
