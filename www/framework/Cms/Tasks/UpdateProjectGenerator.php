@@ -64,15 +64,33 @@ class UpdateProjectGenerator
             $xslSrc,
         ]);
 
+        $task->beginTaskTransaction();
+
+        $task->addSubtask("syncing file library", "\$generator->syncFileLibrary();");
+
         include($updateSrc);
 
         $task->addSubtask("releasing updated documents", "\$generator->releaseDocuments();");
         $task->addSubtask("clearing transform cache", "\$project->clearTransformCache();");
 
+        $task->commitTaskTransaction();
+
         return $task;
     }
     // }}}
 
+    // {{{ syncFileLibrary()
+    /**
+     * @brief syncFileLibrary
+     *
+     * @return void
+     **/
+    public function syncFileLibrary()
+    {
+        $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
+        $fl->syncLibrary();
+    }
+    // }}}
     // {{{ updateXmlForNodeId()
     /**
     * @brief updateXmlForNodeId

@@ -274,6 +274,8 @@ class PublishGenerator
             $this->getTransformCache()->clearAll();
         }
 
+        $this->task->beginTaskTransaction();
+
         $this->queueInit();
         $this->queuePublishFiles();
         $this->queuePublishIndex();
@@ -289,6 +291,8 @@ class PublishGenerator
             $this->queuePublishNewsletter();
         }
         $this->queueCleanup();
+
+        $this->task->commitTaskTransaction();
     }
     // }}}
 

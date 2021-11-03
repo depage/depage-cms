@@ -402,6 +402,30 @@ class Task {
     }
     // }}}
 
+    // {{{ beginTaskTransaction()
+    /**
+     * @brief beginTaskTransaction
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function beginTaskTransaction()
+    {
+        $this->pdo->beginTransaction();
+    }
+    // }}}
+    // {{{ commitTaskTransaction()
+    /**
+     * @brief commitTaskTransaction
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function commitTaskTransaction()
+    {
+        $this->pdo->commit();
+    }
+    // }}}
     // {{{ addSubtask()
     /* addSubtask only creates task in db.
      * the current instance is NOT modified.
@@ -445,6 +469,8 @@ class Task {
      * depends_on references another task in this array by index.
      */
     public function addSubtasks($tasks) {
+        $this->beginTaskTransaction();
+
         foreach ($tasks as &$task) {
             if (!is_array($task)) {
                 throw new \Exception ("malformed task array");
@@ -458,6 +484,8 @@ class Task {
 
             $task["id"] = $this->addSubtask($task["name"], $task["php"], array(), $depends_on);
         }
+
+        $this->commitTaskTransaction();
     }
     // }}}
 

@@ -57,6 +57,8 @@ class NewsletterSenderGenerator extends PublishGenerator
         $this->task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->taskName, $this->project->name);
         $subscribers = $newsletter->getSubscribers($category);
 
+        $this->task->beginTaskTransaction();
+
         foreach ($subscribers as $lang => $emails) {
             $mail = new \Depage\Mail\Mail($from);
             $mail->setSubject($newsletter->getSubject($lang))
@@ -77,6 +79,7 @@ class NewsletterSenderGenerator extends PublishGenerator
             }
         }
 
+        $this->task->commitTaskTransaction();
     }
     // }}}
 }

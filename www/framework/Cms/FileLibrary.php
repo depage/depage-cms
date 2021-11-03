@@ -178,6 +178,8 @@ class FileLibrary
 
         $files = $this->fs->lsFiles(trim($path . "/*", '/'));
 
+        $this->pdo->beginTransaction();
+
         foreach ($files as $file) {
             $fpath = $this->rootPath . $file;
             $fname = basename($file);
@@ -201,6 +203,8 @@ class FileLibrary
                 'id' => $info->id,
             ]);
         }
+
+        $this->pdo->commit();
 
         return $folderId;
     }
