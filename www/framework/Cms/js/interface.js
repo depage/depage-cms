@@ -1874,7 +1874,6 @@ var depageCMS = (function() {
             }
             var fileId = libid.match(/libid:\/\/(\d+)\/(.*)/)[1];
             var $dialog = $("<div class=\"dialog-full choose-image-center\"><div class=\"content\"><div class=\"dialog-bar\"></div><div class=\"center-selector scrollable-content\"><figure class=\"thumb\"></figure><div class=\"examples\"></div></div></div></div>");
-            var $selector = $dialog.find(".center-selector");
             var $examples = $dialog.find(".examples");
             var $dialogBar = $dialog.find(".dialog-bar");
             var $zoomed = $dialog.find("figure.thumb");
@@ -1892,7 +1891,7 @@ var depageCMS = (function() {
                 var $copy = $img
                     .clone(false);
 
-                $copy[0].src = src.replace(/\.t240x240\.png$/, ".t240xX.jpg");
+                $copy[0].src = src.replace(/\.t\d+x\d+\.png$/, ".t320xX.jpg");
 
                 $copy
                     .addClass(className)
@@ -1934,7 +1933,7 @@ var depageCMS = (function() {
             createExample("example3");
             createExample("example4");
 
-            $img[0].src = src.replace(/\.t240x240\.png$/, ".t1024xX.jpg");
+            $img[0].src = src.replace(/\.t\d+x\d+\.png$/, ".t1024xX.jpg");
 
             $ok
                 .text(locale.ok)
