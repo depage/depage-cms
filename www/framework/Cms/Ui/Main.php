@@ -392,10 +392,15 @@ class Main extends Base {
         $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->xmldbCache);
 
         foreach ($projects as $project) {
-            $project->updateProjectSchema();
+            $generator = new \Depage\Cms\Tasks\UpdateProjectGenerator($this->pdo, $project, $this->authUser->id);
+            $task = $generator->createUpdater("updating projects");
         }
 
-        return "updated";
+        if ($task) {
+            $task->begin();
+        }
+
+        return "updated scheduled";
     }
     // }}}
     // {{{ info()

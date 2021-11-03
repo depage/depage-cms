@@ -21,6 +21,17 @@ class UpdateProjectGenerator
      * @brief updatedDocuments
      **/
     protected $updatedDocuments = [];
+
+    /**
+     * @brief initId
+     **/
+    protected $initId = null;
+
+    /**
+     * @brief taskName
+     **/
+    protected $taskName = '';
+
     // {{{ __construct()
     /**
      * @brief __construct
@@ -43,19 +54,15 @@ class UpdateProjectGenerator
      * @param mixed
      * @return void
      **/
-    public function createUpdater()
+    public function createUpdater($taskName = null)
     {
-        $updateSrc = $this->project->getProjectPath() . "xslt/update.php";
-        if (!file_exists($updateSrc)) {
-            return false;
-        }
+        $this->taskName = $taskName ?? "Updating project '{$this->project->name}'";
 
         $xslSrc = $this->project->getProjectPath() . "xslt/update/update.xsl";
         $xmldb = $this->project->getXmlDb();
 
-        $this->taskName = "Updating project '{$this->project->name}'";
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->taskName, $this->name);
-        $initId = $task->addSubtask("init", "
+        $this->initId = $task->addSubtask("init", "
             \$generator = %s;
             \$project = \$generator->project;
             \$xsltProc = \$project->getXsltProcessor(%s);
@@ -66,16 +73,41 @@ class UpdateProjectGenerator
 
         $task->beginTaskTransaction();
 
-        $task->addSubtask("syncing file library", "\$generator->syncFileLibrary();");
+        $task->addSubtask("syncing file library of {$this->project->name}", "\$generator->syncFileLibrary();", [], $this->initId);
 
-        include($updateSrc);
+        $updateSrc = $this->project->getProjectPath() . "xslt/update.php";
+        if (file_exists($updateSrc)) {
+            include($updateSrc);
+        }
 
-        $task->addSubtask("releasing updated documents", "\$generator->releaseDocuments();");
-        $task->addSubtask("clearing transform cache", "\$project->clearTransformCache();");
+        $task->addSubtask("releasing updated documents of {$this->project->name}", "\$generator->releaseDocuments();", [], $this->initId);
+        $task->addSubtask("clearing transform cache of {$this->project->name}", "\$project->clearTransformCache();", [], $this->initId);
 
         $task->commitTaskTransaction();
 
         return $task;
+    }
+    // }}}
+
+    // {{{ queueXslUpdate()
+    /**
+     * @brief queueXslUpdate
+     *
+     * @param mixed $xpath
+     * @return void
+     **/
+    public function queueXslUpdate($xpath)
+    {
+        $xmldb = $this->project->getXmlDb();
+        $ids = $xmldb->getNodeIdsByXpath($xpath);
+
+        if (!empty($ids)) {
+            $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->taskName, $this->name);
+
+            foreach ($ids as $id) {
+                $task->addSubtask("updating xml for '$xpath' in '$id' in '{$this->project->name}'", "\$generator->updateXmlForNodeId(\$xsltProc, %s);", [$id], $this->initId);
+            }
+        }
     }
     // }}}
 
@@ -165,6 +197,7 @@ class UpdateProjectGenerator
             'pdo',
             'taskName',
             'userId',
+            'initId',
             'project',
         ];
     }
