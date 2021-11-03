@@ -242,7 +242,7 @@ html {
 
     // base styles for layouts
     header.info,
-    .toolbar menu.preview,
+    .toolbar menu,
     .layout {
         @include transition(200ms, "left, right, width");
     }
@@ -378,6 +378,7 @@ html {
             }
             .toolbar menu.right {
                 width: calc(100% - var(--edit-width));
+                margin-left: 0;
             }
         }
     }

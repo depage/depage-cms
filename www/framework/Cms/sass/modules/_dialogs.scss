@@ -98,6 +98,7 @@ body > .dialog-full {
         z-index: 100;
         height: $toolbarHeight * 1.5;
         border-top: 1px solid $borderColor;
+        background: $backgroundColor;
         padding: 0 15px;
         text-align: center;
 
@@ -128,7 +129,7 @@ body > .dialog-full {
             }
         }
     }
-    .dialog-bar + .library {
+    .dialog-bar ~ .library {
         .trees,
         .files {
             bottom: $toolbarHeight * 1.5;
