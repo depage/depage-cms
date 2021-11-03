@@ -440,7 +440,7 @@ class MediaInfo
      * @return string output
      */
     private function call($cmd) {
-        $cmd = escapeshellcmd($cmd) . ' 2>&1';
+        $cmd = escapeshellcmd($cmd);
 
         exec($cmd, $output, $var);
 
