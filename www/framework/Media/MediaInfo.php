@@ -202,7 +202,7 @@ class MediaInfo
             $this->info = array_merge($this->info, $info);
         }
         if (function_exists("exif_read_data") && isset($info['mime']) && ($info['mime'] == 'image/jpeg' || $info['mime'] == 'image/tif')) {
-            $exif = exif_read_data($this->filename);
+            $exif = @exif_read_data($this->filename);
             if ($exif) {
                 $info = array();
                 foreach ($exif as $key => $value) {
@@ -221,31 +221,42 @@ class MediaInfo
         }
 
         // copyright
-        if (!empty($this->info['iptcCopyright'])) {
-            $this->info['copyright'] = $this->info['iptcCopyright'];
-        } else if (!empty($this->info['exifComputedCopyright'])) {
-            $this->info['copyright'] = $this->info['exifComputedCopyright'];
-        } else {
-            $this->info['copyright'] = "";
-        }
+        $this->info['copyright'] = self::nonEmpty(
+            $this->info['iptcCopyright'] ?? '',
+            $this->info['exifCopyright'] ?? '',
+            $this->info['exifComputedCopyright'] ?? ''
+        );
 
         // description
-        if (!empty($this->info['iptcCaption'])) {
-            $this->info['description'] = $this->info['iptcCaption'];
-        } else if (!empty($this->info['exifImageDescription'])) {
-            $this->info['description'] = $this->info['exifImageDescription'];
-        } else {
-            $this->info['description'] = "";
-        }
+        $this->info['description'] = self::nonEmpty(
+            $this->info['iptcCaption'] ?? '',
+            $this->info['exifImageDescription'] ?? ''
+        );
 
         // keywords
-        if (!empty($this->info['iptcKeywords'])) {
-            $this->info['keywords'] = $this->info['iptcKeywords'];
-        } else {
-            $this->info['keywords'] = "";
-        }
+        $this->info['descrikeywordsption'] = self::nonEmpty(
+            $this->info['iptcKeywords'] ?? ''
+        );
 
         return $this->info;
+    }
+    // }}}
+    // {{{ nonEmtpy()
+    /**
+     * @brief nonEmtpy
+     *
+     * @param mixed ...$param
+     * @return void
+     **/
+    public static function nonEmpty(...$params)
+    {
+        foreach ($params as $p) {
+            if (!empty($p)) {
+                return $p;
+            }
+        }
+
+        return "";
     }
     // }}}
     // {{{ getMediaInfo()
