@@ -1933,6 +1933,8 @@ var depageCMS = (function() {
             createExample("example3");
             createExample("example4");
 
+            $img.attr("width", $thumb.attr("data-width"));
+            $img.attr("height", $thumb.attr("data-height"));
             $img[0].src = src.replace(/\.t\d+x\d+\.png$/, ".t1024xX.jpg");
 
             $ok
