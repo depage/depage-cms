@@ -102,7 +102,9 @@
 
             $input = $("input.jstree-rename-input");
 
-            if (this._data.nodeTypes.rootNodeType == "proj:library") {
+            if (this._data.nodeTypes.rootNodeType == "proj:library" ||
+                this._data.nodeTypes.rootNodeType == "proj:colorschemes"
+            ) {
                 $input
                     .attr("pattern", "^[a-zA-Z0-9\-_]*$")
                     .on("keypress", function(e) {

@@ -13,7 +13,7 @@ class Colors extends Base {
         $this->availableNodes = [
             'proj:colorscheme' => (object) [
                 'name' => _("Colorscheme"),
-                'new' => _("(Untitled Colorscheme)"),
+                'newName' => _("New-Colorscheme"),
                 'icon' => "",
                 'attributes' => [],
             ],
