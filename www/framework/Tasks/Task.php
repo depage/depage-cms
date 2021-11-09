@@ -57,7 +57,7 @@ class Task {
     /**
      * @brief numberOfSubtasks number of subtasks to load at the same time
      **/
-    protected $numberOfSubtasks = 200;
+    protected $numberOfSubtasks = 100;
 
     /**
      * @brief timeToCheckSubtasks seconds after which task runner will check for new subtask
