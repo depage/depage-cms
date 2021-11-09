@@ -1489,9 +1489,6 @@ class Project extends \Depage\Entity\Entity
         $publishPdo = clone $this->pdo;
         $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->name;
 
-        $conf = $targets[$publishId];
-        $baseurl = $this->getBaseUrl($publishId);
-
         $urls = new \Depage\Publisher\Urls($publishPdo, $publishId);
 
         $i = [];
