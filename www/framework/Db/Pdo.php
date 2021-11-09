@@ -21,6 +21,7 @@ class Pdo
     private $username;
     private $password;
     private $driver_options;
+    private $transactionDepth = 0;
     // }}}
 
     // {{{ constructor
@@ -85,6 +86,43 @@ class Pdo
         }
 
         return $this->pdo;
+    }
+    // }}}
+
+    // {{{ beginTransaction()
+    /**
+     * @brief beginTransaction
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function beginTransaction()
+    {
+        if (is_null($this->pdo)) {
+            $this->lateInitialize();
+        }
+
+        if ($this->transactionDepth == 0) {
+            $this->pdo->beginTransaction();
+        }
+
+        $this->transactionDepth++;
+    }
+    // }}}
+    // {{{ commit()
+    /**
+     * @brief commit
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function commit()
+    {
+        $this->transactionDepth--;
+
+        if ($this->transactionDepth == 0) {
+            $this->pdo->commit();
+        }
     }
     // }}}
 
@@ -155,6 +193,12 @@ class Pdo
      */
     public function __wakeup()
     {
+    }
+    // }}}
+    // {{{ __clone()
+    public function __clone()
+    {
+        $this->pdo = null;
     }
     // }}}
 
