@@ -12,7 +12,6 @@
 
         <?php $this->includeJs("interface", [
             "framework/Cms/js/interface.js",
-            "framework/shared/jquery.cookie.js",
             "framework/HtmlForm/lib/js/effect.js",
         ]); ?>
         <?php $this->includeCss("interface", [
