@@ -73,7 +73,10 @@ class UpdateProjectGenerator
 
         $task->beginTaskTransaction();
 
+        $task->addSubtask("updating project schema of {$this->project->name}", "\$generator->updateProjectSchema();", [], $this->initId);
         $task->addSubtask("syncing file library of {$this->project->name}", "\$generator->syncFileLibrary();", [], $this->initId);
+
+        $this->queueDocumentTest();
 
         $updateSrc = $this->project->getProjectPath() . "xslt/update.php";
         if (file_exists($updateSrc)) {
@@ -110,7 +113,38 @@ class UpdateProjectGenerator
         }
     }
     // }}}
+    // {{{ queueDocumentTest()
+    /**
+     * @brief queueDocumentTest
+     *
+     * @return void
+     **/
+    public function queueDocumentTest()
+    {
+        $xmldb = $this->project->getXmlDb();
+        $docs = $xmldb->getDocuments();
 
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->taskName, $this->name);
+
+        foreach ($docs as $doc) {
+            $docId = $doc->getDocId();
+
+            $task->addSubtask("testing document '$docId' in '{$this->project->name}'", "\$generator->testDoc(%s);", [$docId], $this->initId);
+        }
+    }
+    // }}}
+
+    // {{{ updateProjectSchema()
+    /**
+     * @brief updateProjectSchema
+     *
+     * @return void
+     **/
+    public function updateProjectSchema()
+    {
+        $this->project->updateProjectSchema();
+    }
+    // }}}
     // {{{ syncFileLibrary()
     /**
      * @brief syncFileLibrary
@@ -161,6 +195,24 @@ class UpdateProjectGenerator
         } else if ($node->saveXml() != $newNode->saveXml()) {
             $doc->saveNode($newNode);
         }
+    }
+    // }}}
+    // {{{ testDoc()
+    /**
+    * @briefreadDoc
+    *
+    * @param int $docId
+    * @return void
+    **/
+    public function testDoc($docId)
+    {
+        $xmldb = $this->project->getXmlDb();
+
+        $doc = $xmldb->getDoc($docId);
+        if (!isset($this->updatedDocuments[$docId])) {
+            $this->updatedDocuments[$docId] = $doc->isReleased();
+        }
+        $doc->getXml();
     }
     // }}}
     // {{{ releaseDocuments()
