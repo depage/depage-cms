@@ -481,7 +481,7 @@ class FileLibrary
 
     // {{{ getFileInfoByRef()
     /**
-     * @brief getFileInfoByLibref
+     * @brief getFileInfoByRef 
      *
      * @param mixed $libref
      * @return void

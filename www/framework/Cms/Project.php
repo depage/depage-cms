@@ -277,7 +277,7 @@ class Project extends \Depage\Entity\Entity
      **/
     public static function updateSchema($pdo)
     {
-        $schema = new \Depage\DB\Schema($pdo);
+        $schema = new \Depage\Db\Schema($pdo);
 
         $schema->setReplace(
             function ($tableName) use ($pdo) {
@@ -327,7 +327,7 @@ class Project extends \Depage\Entity\Entity
         $xmldb = $this->getXmlDb();
         $xmldb->updateSchema();
 
-        $schema = new \Depage\DB\Schema($this->pdo);
+        $schema = new \Depage\Db\Schema($this->pdo);
 
         $schema->setReplace(
             function ($tableName) use ($projectName) {
