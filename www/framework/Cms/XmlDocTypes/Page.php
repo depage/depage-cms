@@ -210,10 +210,11 @@ class Page extends Base
 
     // {{{ testDocument
     public function testDocument($node) {
-        $changed =
-            $this->testNodeLanguages($node) ||
-            $this->updateLibrefs($node) ||
-            $this->updatePagerefs($node);
+        $changed = false;
+
+        $changed = $this->testNodeLanguages($node) || $changed;
+        $changed = $this->updateLibrefs($node) || $changed;
+        $changed = $this->updatePagerefs($node) || $changed;
 
         $this->addReleaseStatusAttributes($node->firstChild);
 
@@ -263,20 +264,24 @@ class Page extends Base
         if ($nodelist->length > 0) {
             for ($i = 0; $i < $nodelist->length; $i++) {
                 $src = $nodelist->item($i)->getAttribute('src');
-                $nodelist->item($i)->setAttribute('src', $fl->toLibid($src));
+                $libid = $fl->toLibid($src);
+                if ($libid) {
+                    $nodelist->item($i)->setAttribute('src', $libid);
+                    $changed = true;
+                }
             }
-
-            $changed = true;
         }
 
         $nodelist = $xpath->query("./descendant-or-self::node()[starts-with(@href, 'libref://')]", $node);
         if ($nodelist->length > 0) {
             for ($i = 0; $i < $nodelist->length; $i++) {
-                $src = $nodelist->item($i)->getAttribute('src');
-                $nodelist->item($i)->setAttribute('src', $fl->toLibid($src));
+                $href = $nodelist->item($i)->getAttribute('href');
+                $libid = $fl->toLibid($href);
+                if ($libid) {
+                    $nodelist->item($i)->setAttribute('href', $libid);
+                    $changed = true;
+                }
             }
-
-            $changed = true;
         }
 
         return $changed;
