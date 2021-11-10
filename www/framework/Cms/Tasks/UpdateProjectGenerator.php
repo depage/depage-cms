@@ -18,11 +18,6 @@ namespace Depage\Cms\Tasks;
 class UpdateProjectGenerator
 {
     /**
-     * @brief updatedDocuments
-     **/
-    protected $updatedDocuments = [];
-
-    /**
      * @brief initId
      **/
     protected $initId = null;
@@ -83,7 +78,7 @@ class UpdateProjectGenerator
             include($updateSrc);
         }
 
-        $task->addSubtask("releasing updated documents of {$this->project->name}", "\$generator->releaseDocuments();", [], $this->initId);
+        $this->queueDocumentRelease();
         $task->addSubtask("clearing transform cache of {$this->project->name}", "\$project->clearTransformCache();", [], $this->initId);
 
         $task->commitTaskTransaction();
@@ -133,6 +128,28 @@ class UpdateProjectGenerator
         }
     }
     // }}}
+    // {{{ queueDocumentRelease()
+    /**
+     * @brief queueDocumentRelease
+     *
+     * @return void
+     **/
+    public function queueDocumentRelease()
+    {
+        $xmldb = $this->project->getXmlDb();
+        $docs = $xmldb->getDocuments();
+
+        $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->taskName, $this->name);
+
+        foreach ($docs as $doc) {
+            $docId = $doc->getDocId();
+
+            if ($doc->isReleased()) {
+                $task->addSubtask("releasing document '$docId' in '{$this->project->name}'", "\$generator->releaseDoc(%s);", [$docId], $this->initId);
+            }
+        }
+    }
+    // }}}
 
     // {{{ updateProjectSchema()
     /**
@@ -173,9 +190,6 @@ class UpdateProjectGenerator
             return;
         }
         $docId = $doc->getDocId();
-        if (!isset($this->updatedDocuments[$docId])) {
-            $this->updatedDocuments[$docId] = $doc->isReleased();
-        }
         $node = $doc->getSubdocByNodeId($id);
 
         if (!$newNode = $xsltProc->transformToDoc($node)) {
@@ -209,30 +223,23 @@ class UpdateProjectGenerator
         $xmldb = $this->project->getXmlDb();
 
         $doc = $xmldb->getDoc($docId);
-        if (!isset($this->updatedDocuments[$docId])) {
-            $this->updatedDocuments[$docId] = $doc->isReleased();
-        }
         $doc->getXml();
     }
     // }}}
-    // {{{ releaseDocuments()
+    // {{{ releaseDoc()
     /**
-     * @brief releaseDocuments
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function releaseDocuments()
+    * @briefreleaseDoc
+    *
+    * @param int $docId
+    * @return void
+    **/
+    public function releaseDoc($docId)
     {
         $xmldb = $this->project->getXmlDb();
 
-        foreach ($this->updatedDocuments as $docId => $released) {
-            if ($released) {
-                $doc = $xmldb->getDoc($docId);
-                $doc->getHistory()->save($this->userId, true);
-                $doc->clearCache();
-            }
-        }
+        $doc = $xmldb->getDoc($docId);
+        $doc->getHistory()->save($this->userId, true);
+        $doc->clearCache();
     }
     // }}}
 
