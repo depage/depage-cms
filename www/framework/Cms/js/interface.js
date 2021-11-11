@@ -581,7 +581,7 @@ var depageCMS = (function() {
 
                 $sortable.find(".sortable").each( function() {
                     var $container = $(this);
-                    var $head = $(this).find("h1");
+                    var $head = $container.find("h1");
 
                     $head.on("click", function() {
                         if ($container.hasClass("active")) {
@@ -602,7 +602,7 @@ var depageCMS = (function() {
                                 title: locale.delete,
                                 classes: 'default',
                                 click: function(e) {
-                                    var $input = $form.find("p.node-name");
+                                    var $input = $container.find("p.node-name");
 
                                     xmldb.deleteNode($input.data("nodeid"));
 
