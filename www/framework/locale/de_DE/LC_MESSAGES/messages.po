@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-14 19:49+0200\n"
+"POT-Creation-Date: 2021-11-09 13:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2007,7 +2007,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: Cms/Ui/Main.php:173 Cms/tpl/toolbar_main.tpl:28
+#: Cms/Ui/Main.php:173 Cms/tpl/toolbar_main.tpl:29
 msgid "Projects"
 msgstr "Projekte"
 
@@ -2057,7 +2057,7 @@ msgstr "Variablen"
 
 #: Cms/Ui/Project.php:75 Cms/Ui/Newsletter.php:48 Cms/tpl/projectlist.tpl:29
 #: Cms/tpl/newsletterList.tpl:49 Cms/tpl/publish.tpl:5
-#: Cms/tpl/toolbar_main.tpl:52
+#: Cms/tpl/toolbar_main.tpl:53
 msgid "Publish"
 msgstr "Publizieren"
 
@@ -2144,13 +2144,13 @@ msgstr "Seiten freigeben für Projekt '%s'"
 msgid "Unreleased Pages for Project '%s'"
 msgstr "Nicht freigegebene Seiten für Projekt '%s'"
 
-#: Cms/Ui/Project.php:614
+#: Cms/Ui/Project.php:613
 #, php-format
 msgid "Deleted %d pages."
 msgstr "%d Seiten gelöscht."
 
 #: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:39 Cms/tpl/projectlist.tpl:22
-#: Cms/tpl/newsletterList.tpl:47 Cms/tpl/toolbar_main.tpl:42
+#: Cms/tpl/newsletterList.tpl:47 Cms/tpl/toolbar_main.tpl:43
 #: Cms/Forms/ReleasePages.php:77
 msgid "Edit"
 msgstr "Editieren"
@@ -2438,12 +2438,12 @@ msgstr "Sie haben eine neue Benachrichtigung von %s erhalten:"
 msgid "Your faithful servant on"
 msgstr "Ihr treuer Helfer auf"
 
-#: Cms/Tasks/PublishGenerator.php:667
+#: Cms/Tasks/PublishGenerator.php:703
 #, php-format
 msgid "%s published"
 msgstr "%s veröffentlicht"
 
-#: Cms/Tasks/PublishGenerator.php:669
+#: Cms/Tasks/PublishGenerator.php:705
 msgid ""
 "The following pages got published:\n"
 "\n"
@@ -2459,7 +2459,7 @@ msgstr "Abbrechen"
 msgid "Choose"
 msgstr "Auswählen"
 
-#: Cms/js/locale.php:23 Cms/tpl/thumbnail.tpl:75
+#: Cms/js/locale.php:23 Cms/tpl/thumbnail.tpl:83
 msgid "Choose image center"
 msgstr "Bildschwerpunkt festlegen"
 
@@ -2560,7 +2560,7 @@ msgstr ""
 msgid "News- or blog-post"
 msgstr "News- oder Blogeintrag"
 
-#: Cms/js/locale.php:49 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:95
+#: Cms/js/locale.php:49 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:96
 msgid "No current tasks."
 msgstr "Keine aktuellen Tasks."
 
@@ -2622,11 +2622,11 @@ msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr "%s bittet um eine Seitenfreigabe von '%s' für Projekt '%s'."
 
 #: Cms/tpl/settings.tpl:5 Cms/tpl/projectlist.tpl:44
-#: Cms/tpl/toolbar_main.tpl:55 Cms/tpl/toolbar_main.tpl:68
+#: Cms/tpl/toolbar_main.tpl:56 Cms/tpl/toolbar_main.tpl:69
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: Cms/tpl/helpLink.tpl:3 Cms/tpl/help.tpl:7 Cms/tpl/toolbar_main.tpl:92
+#: Cms/tpl/helpLink.tpl:3 Cms/tpl/help.tpl:7 Cms/tpl/toolbar_main.tpl:93
 msgid "Help"
 msgstr "Hilfe"
 
@@ -2643,9 +2643,9 @@ msgid "Preview your project"
 msgstr "Vorschau des Projektes"
 
 #: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:18
-#: Cms/tpl/projectmain.tpl:42 Cms/tpl/publish.tpl:18
-#: Cms/Forms/ReleasePages.php:54 Cms/Forms/ReleasePages.php:76
-#: Cms/Forms/NewsletterPublish.php:63
+#: Cms/tpl/colorschemes.tpl:50 Cms/tpl/projectmain.tpl:46
+#: Cms/tpl/publish.tpl:18 Cms/Forms/ReleasePages.php:54
+#: Cms/Forms/ReleasePages.php:76 Cms/Forms/NewsletterPublish.php:63
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -2662,7 +2662,7 @@ msgid "Manage file library"
 msgstr "Verwalte die Dateibibliothek"
 
 #: Cms/tpl/projectlist.tpl:38 Cms/tpl/projectLibrary.tpl:6
-#: Cms/tpl/toolbar_main.tpl:46
+#: Cms/tpl/toolbar_main.tpl:47
 msgid "Library"
 msgstr "Dateibibliothek"
 
@@ -2670,8 +2670,8 @@ msgstr "Dateibibliothek"
 msgid "Add and edit colors"
 msgstr "Bearbeite die Farben"
 
-#: Cms/tpl/projectlist.tpl:41 Cms/tpl/colorschemes.tpl:19
-#: Cms/tpl/toolbar_main.tpl:49
+#: Cms/tpl/projectlist.tpl:41 Cms/tpl/colorschemes.tpl:23
+#: Cms/tpl/toolbar_main.tpl:50
 msgid "Colors"
 msgstr "Farben"
 
@@ -2733,17 +2733,22 @@ msgstr "Farbschemata"
 msgid "A list of all available color schemes"
 msgstr "Eine Auflistung aller verfügbaren Farbschemata"
 
-#: Cms/tpl/colorschemes.tpl:23
+#: Cms/tpl/colorschemes.tpl:27
 msgid "Available colors"
 msgstr "Verfügbare Farben"
 
-#: Cms/tpl/colorschemes.tpl:30
+#: Cms/tpl/colorschemes.tpl:34
 msgid "Color Properties"
 msgstr "Farb-Eigenschaften"
 
-#: Cms/tpl/colorschemes.tpl:34
+#: Cms/tpl/colorschemes.tpl:38
 msgid "Change you color here."
 msgstr "Ändere Deine Farbe hier."
+
+#: Cms/tpl/colorschemes.tpl:46 Cms/tpl/projectmain.tpl:42
+#: Cms/tpl/publish.tpl:14
+msgid "The preview of the currently selected page."
+msgstr "Vorschau der aktuellen Seite."
 
 #: Cms/tpl/home.tpl:3
 msgid "Dashboard"
@@ -2775,21 +2780,17 @@ msgstr ""
 "hinzufügen. Wählen Sie ein Element aus, um es in den Dokumenteigenschaften "
 "anzuzeigen →."
 
-#: Cms/tpl/projectmain.tpl:27
+#: Cms/tpl/projectmain.tpl:31
 msgid "Document Properties"
 msgstr "Dokument Eigenschaften"
 
-#: Cms/tpl/projectmain.tpl:31
+#: Cms/tpl/projectmain.tpl:35
 msgid ""
 "Document properties:\\nHere you can edit all properties of the currently "
 "selected element."
 msgstr ""
 "Dokument Eigenschaften:\\nHier können Sie alle Eigenschaften des aktuell "
 "ausgewählten Elements bearbeiten."
-
-#: Cms/tpl/projectmain.tpl:38 Cms/tpl/publish.tpl:14
-msgid "The preview of the currently selected page."
-msgstr "Vorschau der aktuellen Seite."
 
 #: Cms/tpl/projectLibrary.tpl:8
 msgid "File Search"
@@ -2803,28 +2804,28 @@ msgstr ""
 "Dateibaum:\\nHier können Sie Ordner hinzufügen, umbenennen und löschen. "
 "Wählen Sie einen Ordner aus, um seinen Inhalt anzuzeigen."
 
-#: Cms/tpl/projectLibrary.tpl:20
+#: Cms/tpl/projectLibrary.tpl:24
 msgid "Files"
 msgstr "Dateien"
 
-#: Cms/tpl/projectLibrary.tpl:24
+#: Cms/tpl/projectLibrary.tpl:28
 msgid "Files:\\nHere you can manage the files of the current folder."
 msgstr ""
 "Dateien:\\nHier können sie die Dateien, des aktuellen Ordners verwalten."
 
-#: Cms/tpl/thumbnail.tpl:46
+#: Cms/tpl/thumbnail.tpl:53
 msgid "Changed: "
 msgstr "Geändert: "
 
-#: Cms/tpl/thumbnail.tpl:47
+#: Cms/tpl/thumbnail.tpl:54
 msgid "Folder: "
 msgstr "Ordner: "
 
-#: Cms/tpl/thumbnail.tpl:49
+#: Cms/tpl/thumbnail.tpl:56
 msgid "Published: "
 msgstr "Publiziert: "
 
-#: Cms/tpl/thumbnail.tpl:51
+#: Cms/tpl/thumbnail.tpl:58
 msgid ""
 "File has not been published yet.\n"
 "Publish your project to make the file available online."
@@ -2873,27 +2874,27 @@ msgstr "Willkommen bei depage-cms"
 msgid "Add New User"
 msgstr "Neuen Benutzer hinzufügen"
 
-#: Cms/tpl/toolbar_main.tpl:6
+#: Cms/tpl/toolbar_main.tpl:7
 msgid "Go to dashboard"
 msgstr "Gehe zum Dashboard"
 
-#: Cms/tpl/toolbar_main.tpl:20
+#: Cms/tpl/toolbar_main.tpl:21
 msgid "Change current project"
 msgstr "Aktuelles Projekt ändern"
 
-#: Cms/tpl/toolbar_main.tpl:78
+#: Cms/tpl/toolbar_main.tpl:79
 msgid "Change user settings or logout"
 msgstr "Benutzereinstellungen ändern oder logout"
 
-#: Cms/tpl/toolbar_main.tpl:82
+#: Cms/tpl/toolbar_main.tpl:83
 msgid "Account settings"
 msgstr "Benutzereinstellungen"
 
-#: Cms/tpl/toolbar_main.tpl:99
+#: Cms/tpl/toolbar_main.tpl:101
 msgid "More help"
 msgstr "Weitere Hilfe"
 
-#: Cms/tpl/toolbar_main.tpl:101
+#: Cms/tpl/toolbar_main.tpl:103
 msgid "Open Online Documentation"
 msgstr "Online Dokumentation öffnen"
 
@@ -3325,12 +3326,15 @@ msgid "Separator"
 msgstr "Trenner"
 
 #: Cms/XmlDocTypes/Colors.php:16
-msgid "(Untitled Colorscheme)"
-msgstr "(Unbenanntes Farbschema)"
+msgid "New-Colorscheme"
+msgstr "Neues-Farbschema"
 
 #: Cms/XmlDocTypes/Library.php:23
 msgid "Untitled"
 msgstr "Unbenannt"
+
+#~ msgid "(Untitled Colorscheme)"
+#~ msgstr "(Unbenanntes Farbschema)"
 
 #~ msgid "There are no unreleased pages."
 #~ msgstr "Es gibt keine nicht freigegebenen Seiten"
