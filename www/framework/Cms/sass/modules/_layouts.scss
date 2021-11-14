@@ -284,6 +284,16 @@ html {
         left: 0;
         width: var(--tree-width);
     }
+    .layout-tree-top {
+        top: 0;
+        bottom: 50%;
+        border-bottom: 1px solid $borderColor;
+    }
+    .layout-tree-bottom,
+    #toolbarmain ~ .layout-tree-bottom {
+        top: 50%;
+        bottom: 0;
+    }
     .layout-left {
         left: 0;
         right: 0;

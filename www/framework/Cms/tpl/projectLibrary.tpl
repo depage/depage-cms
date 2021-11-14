@@ -1,19 +1,17 @@
 <div <?php self::attr([
         "class" => "library layout layout-tree",
     ]); ?>>
-    <div class="trees">
-        <header class="info info-tree-library">
-            <h1><?php self::e(_("Library")); ?></h1>
-        </header>
-        <div class="search active"><a class="open-search"><?php self::t(_("File Search")); ?></a></div>
-        <div <?php self::attr([
-            'class' => "tree library",
-            'data-url' => "project/{$this->projectName}/tree/lib/",
-            'data-live-help' => _("File tree:\\nHere you can add, rename and delete folders. Select a folder to show its contents."),
-            'data-live-help-class' => "icon icon-tree",
-        ]); ?>>
-            <?php self::e($this->tree); ?>
-        </div>
+    <header class="info info-tree-library">
+        <h1><?php self::e(_("Library")); ?></h1>
+    </header>
+    <div class="search active"><a class="open-search"><?php self::t(_("File Search")); ?></a></div>
+    <div <?php self::attr([
+        'class' => "tree library",
+        'data-url' => "project/{$this->projectName}/tree/lib/",
+        'data-live-help' => _("File tree:\\nHere you can add, rename and delete folders. Select a folder to show its contents."),
+        'data-live-help-class' => "icon icon-tree",
+    ]); ?>>
+        <?php self::e($this->tree); ?>
     </div>
 </div>
 <div <?php self::attr([

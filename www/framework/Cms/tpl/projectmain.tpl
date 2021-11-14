@@ -1,7 +1,6 @@
 <div <?php self::attr([
-        "class" => "edit layout layout-tree",
+        "class" => "edit layout layout-tree layout-tree-top",
     ]); ?>>
-    <div class="trees">
         <header class="info info-tree-pages">
             <h1><?php self::e(_("Pages")); ?></h1>
         </header>
@@ -13,6 +12,10 @@
             'data-live-help-class' => "icon icon-tree",
         ]); ?>>
         </div>
+</div>
+<div <?php self::attr([
+        "class" => "edit layout layout-tree layout-tree-bottom",
+    ]); ?>>
         <header class="info info-tree-pagedata">
             <h1><?php self::e(_("Document")); ?></h1>
         </header>
@@ -22,7 +25,6 @@
             'data-live-help-class' => "icon icon-tree",
         ]); ?>>
         </div>
-    </div>
 </div>
 <div <?php self::attr([
         "class" => "edit layout layout-left",

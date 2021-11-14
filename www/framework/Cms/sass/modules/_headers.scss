@@ -25,16 +25,6 @@ header.info {
             color: #666666;
         }
     }
-    &.info-tree-pages,
-    &.info-tree-pagedata {
-        left: 0;
-    }
-    &.info-tree-pages {
-        top: 0;
-    }
-    &.info-tree-pagedata {
-        top: 50%;
-    }
     &.info-doc-properties {
         border-left: 1px solid $borderColor;
     }

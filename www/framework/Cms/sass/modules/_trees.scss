@@ -613,19 +613,18 @@
 // }}}
 
 // {{{ trees layout
-.trees {
-    position: absolute;
+.layout-tree {
     background: #ffffff;
-    width: $treeWidth;
-    top: 0;
-    left: 0;
-    bottom: 0;
     overflow: hidden;
     border-right: 1px solid $borderColor;
 
     .tree {
         position: absolute;
         background: $backgroundLighterColor;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
 
         .jstree-container {
             position: absolute;
@@ -644,19 +643,6 @@
                 border-bottom-color: $selectionBackgroundColor;
             }
         }
-    }
-    .tree.pages {
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 50%;
-        border-bottom: 1px solid $borderColor;
-    }
-    .tree.pagedata {
-        top: 50%;
-        left: 0;
-        right: 0;
-        bottom: 0;
     }
     div.search {
         position: absolute;
@@ -702,9 +688,6 @@
     div.search ~ .tree {
         top: $searchHeight;
     }
-}
-.trees-hidden .trees {
-    display: none;
 }
 // }}}
 
