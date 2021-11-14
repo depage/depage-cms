@@ -21,10 +21,6 @@
     justify-items: stretch;
     width: 100%;
 
-    @media (pointer:coarse) {
-        height: $toolbarHeight * $touchScale;
-    }
-
     .preview-buttons {
         display: inline;
         list-style: none !important;
@@ -81,11 +77,6 @@
             line-height: $toolbarHeight - 10px;
             height: $toolbarHeight - 3px;
 
-            @media (pointer:coarse) {
-                line-height: $toolbarHeight * $touchScale - 10px;
-                height: $toolbarHeight * $touchScale - 3px;
-            }
-
             &.disabled {
                 &,
                 &:hover {
@@ -120,11 +111,6 @@
                     margin-top: -2px;
                     margin-left: -5px;
                     margin-right: 2px;
-
-                    @media (pointer:coarse) {
-                        width: $toolbarHeight * $touchScale - 6px;
-                        height: $toolbarHeight * $touchScale - 6px;
-                    }
                 }
             }
             &.icon-only {
@@ -132,14 +118,6 @@
 
                 &:before {
                     margin-right: 20px;
-                }
-
-                @media (pointer:coarse) {
-                    width: 32px * $touchScale;
-
-                    &:before {
-                        margin-right: 20px * $touchScale;
-                    }
                 }
             }
             &.icon-depagecms,
@@ -152,14 +130,6 @@
                     &:before {
                         margin-right: 20px;
                     }
-
-                    @media (pointer:coarse) {
-                        width: 32px * $touchScale;
-
-                        &:before {
-                            margin-right: 20px * $touchScale;
-                        }
-                    }
                 }
             }
             &.icon-user,
@@ -169,14 +139,6 @@
 
                     &:before {
                         margin-right: 20px;
-                    }
-
-                    @media (pointer:coarse) {
-                        width: 32px * $touchScale;
-
-                        &:before {
-                            margin-right: 20px * $touchScale;
-                        }
                     }
                 }
             }
@@ -244,10 +206,6 @@
             left: 0;
             border-top: none;
             height: auto;
-
-            @media (pointer:coarse) {
-                top: $toolbarHeight * $touchScale;
-            }
 
             li {
                 width: 100%;
@@ -385,25 +343,16 @@
         }
     }
     .pills {
+        margin-left: 1em;
+        margin-right: 1em;
+
         a.button,
         a.toggle-button {
             width: 28px;
-            border-right: 1px solid #dddddd;
-            @include radius(0);
+            @include radius(3px);
+            border: 1px solid transparent;
 
-            &:first-child {
-                margin-left: 1em;
-                @include radius(3px, "top", "left");
-                @include radius(3px, "bottom", "left");
-            }
-            &:last-child {
-                margin-right: 1em;
-                @include radius(3px, "top", "right");
-                @include radius(3px, "bottom", "right");
-                border-right: none;
-            }
             &:hover {
-                background-color: $backgroundLighterColor;
                 background-color: $selectionBackgroundColor;
             }
         }
@@ -413,53 +362,79 @@
         }
     }
     .layout-buttons a {
-        @include icon-base();
+        position: relative;
         text-indent: -1000em;
         width: 24px;
 
-        &.to-layout-left-full {
+        &:before {
+            @include icon-base();
+            content: " ";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 24px;
+            height: 21px;
+        }
+        &.to-layout-left-full:before {
             @include icon("layout-left-full", $iconSize);
         }
-        &.to-layout-split {
+        &.to-layout-split:before {
             @include icon("layout-split", $iconSize);
         }
-        &.to-layout-tree-split {
+        &.to-layout-tree-split:before {
             @include icon("layout-tree-split", $iconSize);
         }
-        &.to-layout-pages {
+        &.to-layout-pages:before {
             @include icon("layout-pages", $iconSize);
         }
-        &.to-layout-document {
+        &.to-layout-document:before {
             @include icon("layout-document", $iconSize);
         }
-        &.to-layout-properties {
+        &.to-layout-properties:before {
             @include icon("layout-properties", $iconSize);
         }
-        &.to-layout-right-full {
+        &.to-layout-right-full:before {
             @include icon("layout-right-full", $iconSize);
         }
         &.active,
         &:hover {
-            &.to-layout-left-full {
+            &.to-layout-left-full:before {
                 @include icon("layout-left-full-active", $iconSize);
             }
-            &.to-layout-split {
+            &.to-layout-split:before {
                 @include icon("layout-split-active", $iconSize);
             }
-            &.to-layout-tree-split {
+            &.to-layout-tree-split:before {
                 @include icon("layout-tree-split-active", $iconSize);
             }
-            &.to-layout-pages {
+            &.to-layout-pages:before {
                 @include icon("layout-pages-active", $iconSize);
             }
-            &.to-layout-document {
+            &.to-layout-document:before {
                 @include icon("layout-document-active", $iconSize);
             }
-            &.to-layout-properties {
+            &.to-layout-properties:before {
                 @include icon("layout-properties-active", $iconSize);
             }
-            &.to-layout-right-full {
+            &.to-layout-right-full:before {
                 @include icon("layout-right-full-active", $iconSize);
+            }
+        }
+    }
+    @media screen and (max-width: $breakMobile) {
+        .layout-buttons {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: $toolbarHeight + 1px;
+            margin: 0;
+            background-color: #ffffff;
+            border-bottom: 1px solid $borderColor;
+
+            a.toggle-button {
+                width: 16%;
+                height: $toolbarHeight;
+                margin: 0;
             }
         }
     }

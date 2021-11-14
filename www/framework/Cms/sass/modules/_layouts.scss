@@ -271,11 +271,12 @@ html {
             right: 0;
         }
     }
-    #toolbarmain ~ .layout {
+    #toolbarmain ~ .layout,
+    &.layout-document #toolbarmain ~ .layout-tree-bottom {
         top: $toolbarHeight;
 
-        @media (pointer:coarse) {
-            top: $toolbarHeight * $touchScale;
+        @media screen and (max-width: $breakMobile) {
+            top: 2 * $toolbarHeight + 2px;
         }
     }
 
@@ -391,13 +392,6 @@ html {
     &.layout-document .layout-tree-bottom {
         display: block;
         top: 0;
-    }
-    &.layout-document #toolbarmain ~ .layout-tree-bottom {
-        top: $toolbarHeight;
-
-        @media (pointer:coarse) {
-            top: $toolbarHeight * $touchScale;
-        }
     }
     &.layout-properties .layout-left {
         display: block;
