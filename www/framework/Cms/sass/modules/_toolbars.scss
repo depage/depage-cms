@@ -349,7 +349,7 @@
         a.button,
         a.toggle-button {
             width: 28px;
-            @include radius(3px);
+            border-radius: 3px;
             border: 1px solid transparent;
 
             &:hover {
@@ -373,7 +373,7 @@
             left: 0;
             top: 0;
             width: 24px;
-            height: 21px;
+            height: 23px;
         }
         &.to-layout-left-full:before {
             @include icon("layout-left-full", $iconSize);
@@ -421,7 +421,18 @@
             }
         }
     }
+    @media screen and (min-width: $breakMobile) {
+        .to-layout-pages,
+        .to-layout-document,
+        .to-layout-properties {
+            display: none;
+        }
+    }
     @media screen and (max-width: $breakMobile) {
+        .to-layout-left-full,
+        .to-layout-split {
+            display: none;
+        }
         .layout-buttons {
             position: fixed;
             left: 0;
@@ -432,9 +443,11 @@
             border-bottom: 1px solid $borderColor;
 
             a.toggle-button {
-                width: 16%;
+                width: 25%;
+                max-width: none;
                 height: $toolbarHeight;
                 margin: 0;
+                border-radius: 0;
             }
         }
     }
