@@ -404,10 +404,12 @@
             }
             &:hover {
                 background-color: $backgroundLighterColor;
+                background-color: $selectionBackgroundColor;
             }
         }
         a.toggle-button.active {
             color: #4E4C4B;
+            background-color: $selectionBackgroundColor;
         }
     }
     .layout-buttons a {
@@ -415,31 +417,49 @@
         text-indent: -1000em;
         width: 24px;
 
-        &.left-full {
-            @include icon("left-full", $iconSize);
+        &.to-layout-left-full {
+            @include icon("layout-left-full", $iconSize);
         }
-        &.split {
-            @include icon("split", $iconSize);
+        &.to-layout-split {
+            @include icon("layout-split", $iconSize);
         }
-        &.tree-split {
-            @include icon("tree-split", $iconSize);
+        &.to-layout-tree-split {
+            @include icon("layout-tree-split", $iconSize);
         }
-        &.right-full {
-            @include icon("right-full", $iconSize);
+        &.to-layout-pages {
+            @include icon("layout-pages", $iconSize);
+        }
+        &.to-layout-document {
+            @include icon("layout-document", $iconSize);
+        }
+        &.to-layout-properties {
+            @include icon("layout-properties", $iconSize);
+        }
+        &.to-layout-right-full {
+            @include icon("layout-right-full", $iconSize);
         }
         &.active,
         &:hover {
-            &.left-full {
-                @include icon("left-full-active", $iconSize);
+            &.to-layout-left-full {
+                @include icon("layout-left-full-active", $iconSize);
             }
-            &.split {
-                @include icon("split-active", $iconSize);
+            &.to-layout-split {
+                @include icon("layout-split-active", $iconSize);
             }
-            &.tree-split {
-                @include icon("tree-split-active", $iconSize);
+            &.to-layout-tree-split {
+                @include icon("layout-tree-split-active", $iconSize);
             }
-            &.right-full {
-                @include icon("right-full-active", $iconSize);
+            &.to-layout-pages {
+                @include icon("layout-pages-active", $iconSize);
+            }
+            &.to-layout-document {
+                @include icon("layout-document-active", $iconSize);
+            }
+            &.to-layout-properties {
+                @include icon("layout-properties-active", $iconSize);
+            }
+            &.to-layout-right-full {
+                @include icon("layout-right-full-active", $iconSize);
             }
         }
     }

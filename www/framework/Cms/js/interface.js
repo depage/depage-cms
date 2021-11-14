@@ -320,9 +320,12 @@ var depageCMS = (function() {
 
             var layouts = [
                 "left-full",
-                "split",
                 //"tree-split",
-                "right-full"
+                "split",
+                "pages", // mobile
+                "document", // mobile
+                "properties", // mobile
+                "right-full",
             ];
 
             // add tree actions
@@ -333,7 +336,7 @@ var depageCMS = (function() {
             for (var i in layouts) {
                 var newLayout = layouts[i];
                 var tooltip = locale["layout-" + newLayout];
-                var $button = $("<a class=\"toggle-button " + newLayout + "\" aria-label=\"" + tooltip + "\" data-tooltip=\"" + tooltip + "\"></a>")
+                var $button = $("<a class=\"toggle-button to-layout-" + newLayout + "\" aria-label=\"" + tooltip + "\" data-tooltip=\"" + tooltip + "\"></a>")
                     .appendTo($layoutButtons)
                     .on("click", {layout: newLayout}, localJS.switchLayout);
             }
@@ -561,7 +564,7 @@ var depageCMS = (function() {
             $("a.preview").on("click", function(e) {
                 if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
 
-                if (currentLayout != "split" && currentLayout != "tree-split") {
+                if (currentLayout != "split" && currentLayout != "tree-split" && currrentLoyout != "preview") {
                     $window.triggerHandler("switchLayout", "split");
                 }
                 localJS.preview(this.href);
@@ -2224,12 +2227,18 @@ var depageCMS = (function() {
                 $(".preview-buttons").css({display: "inline-block"});
             }
             $html
-                .removeClass("layout-left-full layout-right-full layout-tree-split layout-split")
+                .removeClass(function(i, className) {
+                    var classes = className.split(" ");
+                    classes = classes.filter(function(c) {
+                        return c.match(/layout-/);
+                    });
+                    return classes.join('');
+                })
                 .addClass("layout-" + currentLayout);
 
             $toolbarRight.find(".layout-buttons a")
                 .removeClass("active")
-                .filter("." + currentLayout).addClass("active");
+                .filter(".to-layout-" + currentLayout).addClass("active");
 
             if (currentLayout != "left-full") {
                 localJS.updatePreview();

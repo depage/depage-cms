@@ -3,7 +3,7 @@
     $iSize: 48px * $scale;
 
     background-repeat: no-repeat;
-    background-image: url(../images/icon_sprite.svg?202104141947);
+    background-image: url(../images/icon_sprite.svg?202111141727);
     background-size: (8 * $iSize) (24 * $iSize);
 
     @media (pointer:coarse) {
@@ -27,14 +27,20 @@
         tasks: 0 2,
         settings: 1 2,
         colors: 2 2,
-        left-full: 0 3,
-        split: 1 3,
-        tree-split: 2 3,
-        right-full: 3 3,
-        left-full-active: 0 4,
-        split-active: 1 4,
-        tree-split-active: 2 4,
-        right-full-active: 3 4,
+        layout-left-full: 0 3,
+        layout-split: 1 3,
+        layout-tree-split: 2 3,
+        layout-pages: 3 3,
+        layout-document: 4 3,
+        layout-properties: 5 3,
+        layout-right-full: 6 3,
+        layout-left-full-active: 0 4,
+        layout-split-active: 1 4,
+        layout-tree-split-active: 2 4,
+        layout-pages-active: 3 4,
+        layout-document-active: 4 4,
+        layout-properties-active: 5 4,
+        layout-right-full-active: 6 4,
         upload: 0 5,
         upload-drag-over: 1 5,
         reload: 2 5,

@@ -367,6 +367,44 @@ html {
             border-left: 1px solid #000000;
         }
     }
+    // single view layouts
+    &.layout-pages,
+    &.layout-document,
+    &.layout-properties {
+        .layout-tree,
+        .layout-tree-top,
+        .layout-tree-bottom,
+        .layout-left,
+        .layout-right {
+            left: 0;
+            right: 0;
+            width: auto;
+            border-left: none;
+            border-right: none;
+            display: none;
+        }
+    }
+    &.layout-pages .layout-tree-top {
+        display: block;
+        bottom: 0;
+    }
+    &.layout-document .layout-tree-bottom {
+        display: block;
+        top: 0;
+    }
+    &.layout-document #toolbarmain ~ .layout-tree-bottom {
+        top: $toolbarHeight;
+
+        @media (pointer:coarse) {
+            top: $toolbarHeight * $touchScale;
+        }
+    }
+    &.layout-properties .layout-left {
+        display: block;
+    }
+    &.layout-right-full .layout-right {
+        display: block;
+    }
 
     // layouts for media sizes
     @media screen and (min-width: 1800px) {
