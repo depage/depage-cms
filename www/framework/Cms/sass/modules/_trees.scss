@@ -101,11 +101,14 @@
 .jstree-node.jstree-hidden {
     display: none;
 }
-.jstree-contextmenu .jstree-anchor {
-    -webkit-user-select: none;
-    /* disable selection/Copy of UIWebView */
-    -webkit-touch-callout: none;
-    /* disable the IOS popup when long-press on a link */
+.jstree-contextmenu .jstree-anchor,
+.jstree {
+    -webkit-touch-callout: none; /* disable the IOS popup when long-press on a link */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 }
 // }}}
 // {{{ #jstree-marker

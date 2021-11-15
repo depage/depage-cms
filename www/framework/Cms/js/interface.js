@@ -173,7 +173,10 @@ var depageCMS = (function() {
             $previewFrame = $("#previewFrame");
             $helpFrame = $("#helpFrame");
 
-            $window.triggerHandler("switchLayout", "split");
+            var mobileMediaQuery = window.matchMedia("(max-width: 765px)");
+
+            mobileMediaQuery.addEventListener('change', localJS.onMobileSwitch);
+            localJS.onMobileSwitch(mobileMediaQuery);
 
             // setup ajax timers
             setTimeout(localJS.updateAjaxContent, 1000);
@@ -2212,6 +2215,17 @@ var depageCMS = (function() {
         },
         // }}}
 
+        // {{{ onResize
+        onMobileSwitch: function(e) {
+            if (e.matches) {
+                // mobile
+                $window.triggerHandler("switchLayout", "pages");
+            } else {
+                // default
+                $window.triggerHandler("switchLayout", "split");
+            }
+        },
+        // }}}
         // {{{ switchLayout
         switchLayout: function(event, layout) {
             currentLayout = layout;
@@ -2242,6 +2256,11 @@ var depageCMS = (function() {
 
             if (currentLayout != "left-full") {
                 localJS.updatePreview();
+            }
+            if (currentLayout == "pages") {
+                $pageTreeContainer.children(".jstree-container").jstree(true).gainFocus();
+            } else if (currentLayout == "document") {
+                $pagedataTreeContainer.children(".jstree-container").jstree(true).gainFocus();
             }
         },
         // }}}
