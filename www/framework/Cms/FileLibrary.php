@@ -481,7 +481,7 @@ class FileLibrary
 
     // {{{ getFileInfoByRef()
     /**
-     * @brief getFileInfoByRef 
+     * @brief getFileInfoByRef
      *
      * @param mixed $libref
      * @return void
@@ -794,7 +794,7 @@ class FileLibrary
             $doc = $xmldb->createDoc('Depage\Cms\XmlDocTypes\Library', "files");
 
             $xml = new \Depage\Xml\Document();
-            $xml->load(__DIR__ . "/../XmlDocTypes/LibraryXml/library.xml");
+            $xml->load(__DIR__ . "/XmlDocTypes/LibraryXml/library.xml");
 
             $nodeId = $doc->save($xml);
         }

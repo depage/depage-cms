@@ -175,13 +175,13 @@ class FileLibrary extends Base
     {
         $files = $_POST['files'];
 
+        $xmldb = $this->project->getXmlDb();
+        $doc = $xmldb->getDoc("files");
+        $dth = $doc->getDocTypeHandler();
+
         foreach ($files as $file) {
             if (strpos($file, "libref://") === 0) {
                 $file = substr($file, 9);
-
-                $xmldb = $this->project->getXmlDb();
-                $doc = $xmldb->getDoc("files");
-                $dth = $doc->getDocTypeHandler();
 
                 $dth->moveToTrash($file);
             }
