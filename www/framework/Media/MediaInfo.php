@@ -487,7 +487,7 @@ class MediaInfo
             }
             $cmd = "{$this->identify} -ping -format \"%wx%h\" {$fileArg}";
             $result = $this->call($cmd);
-            $info = explode('x', $result[0]);
+            $info = explode('x', $result[0] ?? '');
 
             $finfo = new \finfo(\FILEINFO_MIME_TYPE);
             $info['mime'] = $finfo->file($filename);
