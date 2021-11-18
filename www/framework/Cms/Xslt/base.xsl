@@ -195,11 +195,8 @@
         <xsl:choose>
             <!-- {{{ svg image -->
             <xsl:when test="$info/@extension = 'svg'">
-                <xsl:variable name="svgFile" select="concat($libPath, substring($src, 9))" />
-                <xsl:value-of select="$info/@fullpath" />
-                <!--
+                <xsl:variable name="svgFile" select="concat($libPath, substring($info/@fullpath, 4))" />
                 <xsl:copy-of select="document($svgFile)/*" />
-                -->
             </xsl:when>
             <!-- }}} -->
             <!-- {{{ other image -->
