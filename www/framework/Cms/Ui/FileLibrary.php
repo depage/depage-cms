@@ -114,6 +114,7 @@ class FileLibrary extends Base
         $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
         $folderId = $fl->syncFiles($path);
 
+
         $files = $fl->getFilesInFolder($folderId);
 
         return new Html("fileListing.tpl", [
