@@ -75,6 +75,7 @@ class FileInfo
     {
         $fields = [
             'filename',
+            'folder',
             'mime',
             'hash',
             'filesize',
