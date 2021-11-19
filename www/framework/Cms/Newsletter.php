@@ -194,9 +194,10 @@ class Newsletter
 
         foreach ($pages as $page) {
             if ($page->released == true) {
-                $ids = $xmldb->getNodeIdsByXpath($xpath, $page->id);
+                $doc = $xmldb->getDoc($page->id);
+                $ids = $doc->getNodeIdsByXpath($xpath);
                 if (count($ids) > 0) {
-                    $page->alreadyUsed = isset($usedPages[$page->name]);
+                    $page->alreadyUsed = $usedPages[$page->name] ?? false;
                     $candidates[$page->name] = $page;
                 }
             }
