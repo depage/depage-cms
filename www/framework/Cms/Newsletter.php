@@ -193,7 +193,7 @@ class Newsletter
         }
 
         foreach ($pages as $page) {
-            if ($page->released == true) {
+            if ($page->released || $page->published) {
                 $doc = $xmldb->getDoc($page->id);
                 $ids = $doc->getNodeIdsByXpath($xpath);
                 if (count($ids) > 0) {
