@@ -13,24 +13,31 @@ Version 2.2   {#v2-2}
 - Completely overhauled [text editor](@ref text-editor)
 - New [Project shortcuts](@ref project-shortcuts) to quickly add new news- or blog posts
 - Revamped [file library](@ref file-library)
+- New [file search](@ref file-search)
+- New function to [choose gravitational centers](@ref image-gravitational-center) for images
 - New editor for [color schemes](@ref colors)
 - Enhanced [preview](@ref page-preview) to automatically show currently edited language
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
-v2.2.0 / 29.04.2021      {#v2-2-0}
+v2.2.0 / 19.11.2021      {#v2-2-0}
 -------------------
 
 **Backend**
 - added new file library
+- added new file search
 - enhanced performance when publishing file library
 - added ability to name and move folder in library while keeping file references
+- added new to task to automatically update all projects
+- enhanced base xsl templates
 
 **Frontend**
 - enhanced file library
 - added search interface for file library
 - added ability to choose gravitational center of images
+- added live-preview when editing color schemes
+- fixed various smaller bugs
 
 
 v2.1.14 / 29.04.2021      {#v2-1-14}
