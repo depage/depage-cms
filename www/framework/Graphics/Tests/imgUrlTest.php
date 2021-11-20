@@ -139,6 +139,50 @@ class imgUrlTest extends TestCase
     }
     // }}}
 
+    // {{{ testBaseUrlSTatic()
+    public function testBaseUrlSTatic()
+    {
+        $actions = [
+            'r100x100',
+            'r-100x100',
+            'resize100x100',
+            'resize-100x100',
+        ];
+        $baseUrl = "https://host.com/path/";
+        $baseUrlStatic = "https://static.host.com/path/";
+        $imgurl = new imgurlTestClass([
+            'baseUrl' => $baseUrl,
+            'baseUrlStatic' => $baseUrlStatic,
+            'cachePath' => "lib/cache/",
+            'relPath' => 'lib/',
+        ]);
+        foreach ($actions as $action) {
+            $imgurl->analyze($baseUrl . "test.png.$action.png");
+
+            $this->assertSame([
+                [
+                    'addResize',
+                    [100, 100]
+                ],
+            ], $imgurl->getActions());
+            $this->assertSame("lib/test.png", $imgurl->getSrcImg());
+            $this->assertSame("lib/cache/test.png.$action.png", $imgurl->getOutImg());
+        }
+        foreach ($actions as $action) {
+            $imgurl->analyze($baseUrlStatic . "test.png.$action.png");
+
+            $this->assertSame([
+                [
+                    'addResize',
+                    [100, 100]
+                ],
+            ], $imgurl->getActions());
+            $this->assertSame("lib/test.png", $imgurl->getSrcImg());
+            $this->assertSame("lib/cache/test.png.$action.png", $imgurl->getOutImg());
+        }
+    }
+    // }}}
+
     // {{{ testImageExtensions()
     public function testImageExtensions()
     {
