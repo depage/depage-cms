@@ -231,6 +231,7 @@ class PublishGenerator
             'executable' => $options->executable,
             'optimize' => $options->optimize,
             'baseUrl' => $this->project->getBaseUrl($this->publishId),
+            'baseUrlStatic' => $this->project->getBaseUrlStatic($this->publishId),
             'cachePath' => $projectPath . "lib/cache/graphics/",
             'relPath' => $projectPath,
         ]);
