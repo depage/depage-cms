@@ -8,6 +8,7 @@
         "templates"
     ],
     "require": {
+        "depage/formatters": "dev-master",
         "php": " >= 5.3"
     },
     "autoload": {
@@ -17,9 +18,8 @@
         "email": "info@depage.net",
         "source": "https://github.com/depage/depage-html",
         "issues": "https://github.com/depage/depage-html/issues"
-
     },
-    "time": "2015-09-07",
+    "time": "2017-02-21",
     "license": [
         "MIT",
         "GPL-2.0"
