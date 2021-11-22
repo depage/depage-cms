@@ -365,56 +365,17 @@ class Html {
             $media = "";
         }
 
-        if ($this->param['env'] === "production") {
-            // production environement
-            $mtimes = $this->getFileModTimes($files);
-            $identifier = "{$name}_" . sha1(serialize(array($files, $mtimes))) . ".css";
-
-            // get cache instance
-            $cache = \Depage\Cache\Cache::factory("css");
-
-            if ($cache->age($identifier) === false) {
-                $src = "";
-
-                foreach ($files as $file) {
-                    $css = file_get_contents($file);
-
-                    // replace relative path with new path relative to cache
-                    $css = str_replace("url(../", "url(../../" . dirname(dirname($file)) . "/", $css);
-                    $css = str_replace("url('../", "url('../../" . dirname(dirname($file)) . "/", $css);
-                    $css = str_replace("url(\"../", "url(\"../../" . dirname(dirname($file)) . "/", $css);
-
-                    $src .= $css;
-                }
-
-                $cssmin = \Depage\CssMin\CssMin::factory(array(
-                ));
-                $src = $cssmin->minifySrc($src);
-
-                // save cache file
-                $cache->setFile($identifier, $src, true);
-            }
-
-            if (!$inline) {
-                echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"" . $cache->getUrl($identifier) . "\">\n");
-            } else {
-                echo("<style type=\"text/css\" $media>\n");
-                echo($cache->getFile($identifier));
-                echo("</style>\n");
+        // development environement
+        if (!$inline) {
+            foreach ($files as $file) {
+                echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"$file\">\n");
             }
         } else {
-            // development environement
-            if (!$inline) {
+            echo("<style type=\"text/css\" $media>\n");
                 foreach ($files as $file) {
-                    echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"$file\">\n");
+                    readfile($file);
                 }
-            } else {
-                echo("<style type=\"text/css\" $media>\n");
-                    foreach ($files as $file) {
-                        readfile($file);
-                    }
-                echo("</style>\n");
-            }
+            echo("</style>\n");
         }
     }
     // }}}
@@ -516,7 +477,7 @@ class Html {
             foreach($name as $attr => $val) {
                 self::attr($attr, $val);
             }
-        } else {
+        } else if (!empty($value) || is_numeric($value)) {
             echo(" $name=\"");
             echo(trim(htmlspecialchars($value, \ENT_HTML5, 'UTF-8')));
             echo("\"");
