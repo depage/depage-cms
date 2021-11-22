@@ -105,7 +105,9 @@ class Imgurl
 
         // get image name
         $imgUrl = $url;
-        if (strpos($url, $baseUrlStatic) === 0) {
+        if ($baseUrl == "") {
+            $imgUrl = substr($url, 1);
+        } else if (strpos($url, $baseUrlStatic) === 0) {
             $imgUrl = substr($url, strlen($baseUrlStatic) + 1);
         } else if (strpos($url, $baseUrl) === 0) {
             $imgUrl = substr($url, strlen($baseUrl) + 1);
