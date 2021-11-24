@@ -183,6 +183,12 @@
         <xsl:param name="absolute" select="false()" />
 
         <xsl:choose>
+            <xsl:when test="substring($url, 1, 8) = 'libid://' and substring-after($url, '.') != ''">
+                <xsl:variable name="before" select="substring-before($url, '.')" />
+                <xsl:variable name="after" select="substring-after($url, '.')" />
+
+                <func:result select="concat(dp:getLibRef($before, $absolute), '.', $after)"/>
+            </xsl:when>
             <xsl:when test="substring($url, 1, 8) = 'libid://'">
                 <func:result select="dp:getLibRef($url, $absolute)"/>
             </xsl:when>
@@ -404,6 +410,17 @@
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::fileinfo', string($path), string($extended))" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:filesInFolder() -->
+    <!--
+        dp:filesInFolder(libref)
+
+    -->
+    <func:function name="dp:filesInFolder">
+        <xsl:param name="folderId" />
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::filesInFolder', string($folderId))" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:includeUnparsed() -->
     <!--
         dp:includeUnparsed(libref)
@@ -413,17 +430,6 @@
         <xsl:param name="path" />
 
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::includeUnparsed', string($path))" />
-    </func:function>
-    <!-- }}} -->
-    <!-- {{{ dp:glob() -->
-    <!--
-        dp:glob(libref)
-
-    -->
-    <func:function name="dp:glob">
-        <xsl:param name="path" />
-
-        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::glob', string($path))" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:pageVisible() -->

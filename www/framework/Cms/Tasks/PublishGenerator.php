@@ -231,6 +231,7 @@ class PublishGenerator
             'executable' => $options->executable,
             'optimize' => $options->optimize,
             'baseUrl' => $this->project->getBaseUrl($this->publishId),
+            'baseUrlStatic' => $this->project->getBaseUrlStatic($this->publishId),
             'cachePath' => $projectPath . "lib/cache/graphics/",
             'relPath' => $projectPath,
         ]);
@@ -333,15 +334,11 @@ class PublishGenerator
         $conf = $this->project->getPublishingTargets()[$this->publishId];
 
         $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
-        $fsLocal = \Depage\Fs\Fs::factory($libPath);
 
-        // getting all directories in library
-        $dirs = $fsLocal->lsDir("*");
+        $fl->syncLibrary();
+        $folders = $fl->getAllFolderIds();
 
-        while (count($dirs) > 0) {
-            $dir = array_pop($dirs);
-            $folderId = $fl->syncFiles($dir);
-
+        foreach ($folders as $folderId) {
             // adding tasks for all files
             $files = $fl->getFilesInFolder($folderId);
             foreach ($files as $file) {
@@ -351,8 +348,6 @@ class PublishGenerator
                     $file->hash,
                 ], $this->initId);
             }
-
-            $dirs = array_merge($dirs, $fsLocal->lsDir($dir . "/*"));
         }
     }
     // }}}

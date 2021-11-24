@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-09 13:22+0100\n"
+"POT-Creation-Date: 2021-11-18 01:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2413,12 +2413,12 @@ msgstr ""
 msgid "Your faithful servant on"
 msgstr ""
 
-#: Cms/Tasks/PublishGenerator.php:703
+#: Cms/Tasks/PublishGenerator.php:697
 #, php-format
 msgid "%s published"
 msgstr ""
 
-#: Cms/Tasks/PublishGenerator.php:705
+#: Cms/Tasks/PublishGenerator.php:699
 msgid ""
 "The following pages got published:\n"
 "\n"
@@ -3263,7 +3263,7 @@ msgstr ""
 msgid "(Untitled Page)"
 msgstr ""
 
-#: Cms/XmlDocTypes/Pages.php:40 Cms/XmlDocTypes/Library.php:22
+#: Cms/XmlDocTypes/Pages.php:40 Cms/XmlDocTypes/Library.php:20
 msgid "Folder"
 msgstr ""
 
@@ -3283,6 +3283,6 @@ msgstr ""
 msgid "New-Colorscheme"
 msgstr ""
 
-#: Cms/XmlDocTypes/Library.php:23
+#: Cms/XmlDocTypes/Library.php:21
 msgid "Untitled"
 msgstr ""

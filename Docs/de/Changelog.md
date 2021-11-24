@@ -13,24 +13,31 @@ Version 2.2   {#v2-2}
 - Vollständig überarbeiteter [Text Editor](@ref text-editor)
 - Neuer [Projektschnellzugriff](@ref project-shortcuts), um schnell neue News- oder Blog-Einträge hinzuzufügen
 - Neue [Dateibibliothek](@ref file-library)
+- Neue [Dateisuche](@ref file-search)
+- Neue Funktion zur [Auswahl des Bildschwerpunkts](@ref image-gravitational-center)
 - Neues Interface zur Bearbeitung der Farbschemata [color schemes](@ref colors)
 - Verbesserung der [Vorschau](@ref page-preview), so dass diese automatisch in der gerade bearbeiteten Sprache angezeigt wird
 - Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
 
-v2.2.0 / 29.04.2021      {#v2-2-0}
+v2.2.0 / 19.11.2021      {#v2-2-0}
 -------------------
 
 **Backend**
 - Neue Dateibibliothek hinzugefügt
+- Neue Dateisuche hinzugefügt
 - Performance beim Veröffentlichen der Dateibibliothek verbessert
 - Verschieben und Umbenennen von Ordnern in der Dateibibliothek hält Dateiverknüpfungen bei
+- Neuer Task hinzugefügt, um alle Projekte zu aktualisieren
+- Basis XSL-Templates optimiert
 
 **Frontend**
 - Dateibibliothek verbessert
 - Neue Suchfunktion zur Dateibibliothek hinzugefügt
 - Fähigkeit hinzugefügt den Schwerpunkt von Bildern festzulegen
+- Live-Vorschau beim Bearbeiten von Farbschemata hinzugefügt
+- Verschiedene kleinere Bugs behoben
 
 
 v2.1.14 / 29.04.2021      {#v2-1-14}

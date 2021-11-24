@@ -173,7 +173,7 @@ class MediaInfo
      */
     protected function getImageInfo() {
         $imageinfo = $this->getImageSize($this->filename, $extras);
-        if ($imageinfo[1] > 0) {
+        if (isset($imageinfo[1]) && $imageinfo[1] > 0) {
             $info = array();
 
             $info['isImage'] = true;
@@ -312,18 +312,21 @@ class MediaInfo
             }
         }
 
-        $info['width'] = $info['streams']['video'][0]['width'];
-        $info['height'] = $info['streams']['video'][0]['height'];
+        $vStream = $info['streams']['video'][0] ?? false;
+        if ($vStream) {
+            $info['width'] = $vStream['width'];
+            $info['height'] = $vStream['height'];
 
-        if ($info['streams']['video'][0]['display_aspect_ratio'] == "0:1" ||
-            $info['streams']['video'][0]['display_aspect_ratio'] == "N/A"
-        ) {
-            $info['displayAspectRatio'] = $info['width'] / $info['height'];
-        } else if (count($info['streams']['video']) > 0 && $info['duration'] > 1) {
-            list($aspectW, $aspectH) = explode(":", $info['streams']['video'][0]['display_aspect_ratio']);
-            $info['displayAspectRatio'] = (int) $aspectW / (int) $aspectH;
-            if (is_nan($info['displayAspectRatio'])) {
-                $info['displayAspectRatio'] = null;
+            if ($vStream['display_aspect_ratio'] == "0:1" ||
+                $vStream['display_aspect_ratio'] == "N/A"
+            ) {
+                $info['displayAspectRatio'] = $info['width'] / $info['height'];
+            } else {
+                list($aspectW, $aspectH) = explode(":", $vStream['display_aspect_ratio']);
+                $info['displayAspectRatio'] = (int) $aspectW / (int) $aspectH;
+                if (is_nan($info['displayAspectRatio'])) {
+                    $info['displayAspectRatio'] = null;
+                }
             }
         }
         if (count($info['streams']['video']) > 0 && $info['duration'] > 1) {
@@ -484,7 +487,7 @@ class MediaInfo
             }
             $cmd = "{$this->identify} -ping -format \"%wx%h\" {$fileArg}";
             $result = $this->call($cmd);
-            $info = explode('x', $result[0]);
+            $info = explode('x', $result[0] ?? '');
 
             $finfo = new \finfo(\FILEINFO_MIME_TYPE);
             $info['mime'] = $finfo->file($filename);

@@ -22,6 +22,8 @@ class Html {
 
     public $contentType = "text/html";
     public $charset = "UTF-8";
+    public $templatePath = "";
+    public $clean = false;
 
     // {{{ substitutes
     protected static $substitutes = array(
@@ -128,6 +130,8 @@ class Html {
      */
     public function setHtmlOptions($param) {
         $this->param = $param;
+        $this->templatePath = $param['template_path'] ?? "";
+        $this->clean = $param['clean'] ?? false;
 
         foreach ($this->args as $arg) {
             // set to parent params to params if not set
@@ -146,6 +150,18 @@ class Html {
                 }
             }
         }
+    }
+    // }}}
+    // {{{ addArg()
+    /**
+     * @brief addArg
+     *
+     * @param mixed $name, $value
+     * @return void
+     **/
+    public function addArg($name, $value)
+    {
+        $this->args[$name] = $value;
     }
     // }}}
     // {{{ __get()
@@ -201,21 +217,18 @@ class Html {
 
         ob_start();
         try {
+            $contents = [];
             if ($this->template !== null) {
-                require($this->param["template_path"] . $this->template);
-                /*
-                if(!@include($this->param["template_path"] . $this->template)) {
-                    echo("<h1>Template error</h1>");
-                    echo("<p>Could not load template '$this->template'<p>");
-                }
-                */
+                require($this->templatePath . $this->template);
             } else {
                 if (isset($this->content)) {
-                    self::e($this->content);
+                    $contents[] = $this->content;
                 } else if (is_array($this->args)) {
-                    foreach ($this->args as $arg) {
-                        self::e($arg);
-                    }
+                    $contents = $this->args;
+                }
+
+                foreach($contents as $c) {
+                    self::e($c);
                 }
             }
         } catch (Exception $e) {
@@ -234,7 +247,7 @@ class Html {
      * @return output
      */
     public function clean($html) {
-        if (isset($this->param["clean"]) && $this->param["clean"]) {
+        if ($this->clean) {
             $cleaner = new \Depage\Html\Cleaner();
             $html = $cleaner->clean($html);
         }
@@ -402,6 +415,18 @@ class Html {
         }
     }
     // }}}
+    // {{{ sp()
+    /**
+     * outputs escaped text for use in html and html-attributes
+     *
+     * @param   $text (string) text to escape
+     *
+     * @return  void
+     */
+    static function sp($text = "", ...$params) {
+        echo(htmlspecialchars(sprintf($text, ...$params)));
+    }
+    // }}}
     // {{{ e()
     /**
      * outputs all given parameters
@@ -413,10 +438,15 @@ class Html {
     static function e($param = "") {
         if (is_array($param)) {
             foreach ($param as $p) {
-                echo($p);
+                self::e($p);
             }
         } else {
-            echo($param);
+            if (is_object($param) && get_class($param) == "Depage\Html\Html") {
+                $param->clean = false;
+            }
+            if (!empty($param)) {
+                echo($param);
+            }
         }
     }
     // }}}
@@ -441,19 +471,15 @@ class Html {
      * @param mixed $name, $value
      * @return void
      **/
-    protected function attr($name, $value = "")
+    static function attr($name, $value = "")
     {
         if (is_array($name)) {
-            foreach($name as $attr => $value) {
-                if (!empty($value)) {
-                    echo(" $attr=\"");
-                    echo(trim(htmlspecialchars($value)));
-                    echo("\"");
-                }
+            foreach($name as $attr => $val) {
+                self::attr($attr, $val);
             }
         } else if (!empty($value) || is_numeric($value)) {
             echo(" $name=\"");
-            echo(trim(htmlspecialchars($value)));
+            echo(trim(htmlspecialchars($value, \ENT_HTML5, 'UTF-8')));
             echo("\"");
         }
     }
@@ -509,8 +535,32 @@ class Html {
         return substr_replace($string, $rep, $leave);
     }
     // }}}
+    // {{{ textContent()
+    /**
+     * @brief textContent
+     *
+     * @param mixed $htmlString
+     * @return void
+     **/
+    public static function textContent($htmlString)
+    {
+        return trim(html_entity_decode(strip_tags($htmlString)));
+    }
+    // }}}
+    // {{{ isEmpty()
+    /**
+     * @brief isEmpty
+     *
+     * @param mixed $htmlString
+     * @return void
+     **/
+    public static function isEmpty($htmlString)
+    {
+        return empty(self::textContent($htmlString));
+    }
+    // }}}
 
-    // {{{ format_date()
+    // {{{ formatDate()
     /**
      * formats date parameter based on current locale
      * @param   $date (DateTime | int) either a DateTime object or an integer timestamp
@@ -518,17 +568,18 @@ class Html {
      *
      * @todo move into Depage\Formatters Namespace
      */
-    static function format_date($date, $date_format = \IntlDateFormatter::LONG, $time_format = \IntlDateFormatter::SHORT, $pattern = null) {
+    static function formatDate($date, $date_format = \IntlDateFormatter::LONG, $time_format = \IntlDateFormatter::SHORT, $pattern = null) {
         if (!is_integer($date_format)) {
             $pattern = $date_format;
             $date_format = \IntlDateFormatter::LONG;
         }
-        // there is not getlocale, so use setlocale with null
-        $current_locale = setlocale(LC_ALL, null);
-        $fmt = new \IntlDateFormatter($current_locale, $date_format, $time_format, null, null, $pattern);
+
+        $fmt = self::getDateFormatter($date_format, $time_format, $pattern);
 
         if ($date instanceof \DateTime) {
             $timestamp = $date->getTimestamp();
+        } else if (is_string($date)) {
+            $timestamp = strtotime($date);
         } else {
             $timestamp = $date;
         }
@@ -536,16 +587,61 @@ class Html {
         return $fmt->format($timestamp);
     }
     // }}}
-    // {{{ format_number()
+    // {{{ formatDateNatural()
+    /**
+     * formats date parameter based on current locale
+     * @param   $date (DateTime | int) either a DateTime object or an integer timestamp
+     * @return  string
+     *
+     * @todo move into Depage\Formatters Namespace
+     */
+    static function formatDateNatural($date, $addTime = false) {
+        $fmt = new \Depage\Formatters\DateNatural();
+        if ($date instanceof \DateTime) {
+            $timestamp = $date->getTimestamp();
+        } else if (is_string($date)) {
+            $timestamp = strtotime($date);
+        } else {
+            $timestamp = $date;
+        }
+
+        return $fmt->format($timestamp, $addTime);
+    }
+    // }}}
+    // {{{ formatNumber()
     /*
      * @todo move into Depage\Formatters Namespace
      */
-    static function format_number($number, $format = \NumberFormatter::DECIMAL) {
+    static function formatNumber($number, $format = \NumberFormatter::DECIMAL) {
         // there is not getlocale, so use setlocale with null
         $current_locale = setlocale(LC_ALL, null);
         $fmt = new \NumberFormatter($current_locale, $format);
 
         return $fmt->format($number);
+    }
+    // }}}
+
+    // {{{ getDateFormatter()
+    /**
+     * @brief getDateFormatter
+     *
+     * @param mixed $locale, $dateFormat, $timeFormat, $pattern
+     * @return void
+     **/
+    static function getDateFormatter($dateFormat, $timeFormat, $pattern)
+    {
+        // there is not getlocale, so use setlocale with null
+        $locale = setlocale(LC_ALL, null);
+        $hash = "$dateFormat#$timeFormat#$pattern";
+
+        static $fmts = [];
+
+        if (!isset($fmts[$hash])) {
+            $fmts[$hash] = new \IntlDateFormatter($locale, $dateFormat, $timeFormat, null, null, $pattern);
+        }
+
+
+        return $fmts[$hash];
     }
     // }}}
 

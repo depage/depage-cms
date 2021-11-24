@@ -384,7 +384,7 @@ class Indexer
             $nodes = $this->xpath->query($this->xpathImages, $contentNode);
             foreach ($nodes as $node) {
                 $src = $node->value;
-                if (preg_match_all("/([^ ]+) [^ ]+,?/", $src, $matches)) {
+                if (preg_match_all("/([^ ,]+) [^ ]+,?/", $src, $matches)) {
                     foreach ($matches[1] as $img) {
                         $images[] = $img;
                     }

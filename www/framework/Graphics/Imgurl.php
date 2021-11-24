@@ -98,9 +98,20 @@ class Imgurl
             }
             $this->cachePath = $relativePath . "lib/cache/graphics/";
         }
+        $baseUrlStatic = $baseUrl;
+        if (isset($this->options['baseUrlStatic'])) {
+            $baseUrlStatic = rtrim($this->options['baseUrlStatic'], '/');
+        }
 
         // get image name
-        $imgUrl = substr($url, strlen($baseUrl) + 1);
+        $imgUrl = $url;
+        if ($baseUrl == "") {
+            $imgUrl = substr($url, 1);
+        } else if (strpos($url, $baseUrlStatic) === 0) {
+            $imgUrl = substr($url, strlen($baseUrlStatic) + 1);
+        } else if (strpos($url, $baseUrl) === 0) {
+            $imgUrl = substr($url, strlen($baseUrl) + 1);
+        }
 
         // get action parameters
         $success = preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);

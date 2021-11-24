@@ -14,8 +14,6 @@ class Library extends Base {
     public function __construct($xmlDb, $document) {
         parent::__construct($xmlDb, $document);
 
-        $doctypePage = new \Depage\Cms\XmlDocTypes\Page($this->xmlDb, null);
-
         // list of elements that may created by a user
         $this->availableNodes = [
             'proj:folder' => (object) [

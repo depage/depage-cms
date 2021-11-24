@@ -75,6 +75,7 @@ class FileInfo
     {
         $fields = [
             'filename',
+            'folder',
             'mime',
             'hash',
             'filesize',
@@ -82,8 +83,6 @@ class FileInfo
             'height',
             'centerX',
             'centerY',
-            'displayAspectRatio',
-            'duration',
             'artist',
             'title',
             'album',
@@ -112,6 +111,8 @@ class FileInfo
         $node->setAttribute("tag_artist", $this->artist);
         $node->setAttribute("filemtime", $this->lastmod->getTimestamp());
         $node->setAttribute("date", $this->lastmod->format("Y-m-d H:i:s"));
+        $node->setAttribute("duration", number_format($this->duration, 5));
+        $node->setAttribute("displayAspectRatio", number_format($this->displayAspectRatio, 5));
 
         foreach ($fields as $key) {
             $node->setAttribute($key, $this->$key);

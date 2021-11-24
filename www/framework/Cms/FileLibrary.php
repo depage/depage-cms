@@ -78,6 +78,8 @@ class FileLibrary
         $this->syncLibraryTree();
         $dirs = $this->fs->lsDir("*");
 
+        $this->syncFiles("/");
+
         while (count($dirs) > 0) {
             $dir = array_pop($dirs);
             $folderId = $this->syncFiles($dir);
@@ -378,7 +380,9 @@ class FileLibrary
 
         $query = "/proj:library";
         foreach ($dirs as $dir) {
-            $query .= "/proj:folder[@name = '" . htmlentities($dir) . "']";
+            if ($dir != "") {
+                $query .= "/proj:folder[@name = '" . htmlentities($dir) . "']";
+            }
         }
         $query .= "/@db:id";
 
@@ -412,12 +416,12 @@ class FileLibrary
 
         $xpath = new \DOMXPath($xml);
 
-        $query = "//proj:folder[@db:id = '$id']/@url";
+        $query = "//proj:*[@db:id = '$id']";
 
         $result = $xpath->evaluate($query);
 
         if ($result->length == 1) {
-            $this->pathById[$id] = $result->item(0)->nodeValue;
+            $this->pathById[$id] = $result->item(0)->getAttribute("url") ?? "/";
 
             return $this->pathById[$id];
         }
@@ -481,7 +485,7 @@ class FileLibrary
 
     // {{{ getFileInfoByRef()
     /**
-     * @brief getFileInfoByRef 
+     * @brief getFileInfoByRef
      *
      * @param mixed $libref
      * @return void
@@ -533,7 +537,7 @@ class FileLibrary
         $path = dirname($fullpath) . "/";
         $folderId = $this->getFolderIdByPath($path);
 
-        if (!$folderId) {
+        if ($folderId === false) {
             return false;
         }
 
@@ -663,7 +667,7 @@ class FileLibrary
         $files = [];
         $path = $this->getPathByFolderId($folderId);
 
-        if (!$path) {
+        if ($path === false) {
             $query = $this->pdo->prepare(
                 "DELETE FROM {$this->tableFiles}
                 WHERE folder=:folderId"
@@ -692,6 +696,28 @@ class FileLibrary
         }
 
         return $files;
+    }
+    // }}}
+    // {{{ getAllFolderIds()
+    /**
+     * @brief getAllFolderIds
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getAllFolderIds()
+    {
+        $ids = [];
+
+        $query = $this->pdo->prepare(
+            "SELECT DISTINCT f.folder FROM {$this->tableFiles} AS f",
+        [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
+
+        $query->execute();
+
+        $ids = $query->fetchAll(\PDO::FETCH_COLUMN, 0);
+
+        return $ids;
     }
     // }}}
 
@@ -794,7 +820,7 @@ class FileLibrary
             $doc = $xmldb->createDoc('Depage\Cms\XmlDocTypes\Library', "files");
 
             $xml = new \Depage\Xml\Document();
-            $xml->load(__DIR__ . "/../XmlDocTypes/LibraryXml/library.xml");
+            $xml->load(__DIR__ . "/XmlDocTypes/LibraryXml/library.xml");
 
             $nodeId = $doc->save($xml);
         }

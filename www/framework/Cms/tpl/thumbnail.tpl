@@ -50,10 +50,10 @@
             <?php if (isset($this->file->width)) { ?>
                 <p><?php self::t($this->file->width . " × " . $this->file->height); ?></p>
             <?php } ?>
-            <p class="change-date"><?php self::t(_("Changed: ") . self::format_date($this->file->lastmod)); ?></p>
+            <p class="change-date"><?php self::t(_("Changed: ") . self::formatDate($this->file->lastmod)); ?></p>
             <p class="folder"><?php self::t(_("Folder: ") . '/' . dirname($this->file->fullname) . '/'); ?></p>
             <?php if ($lastPublishDate) { ?>
-                <p class="publishing-status"><?php self::t(_("Published: ") . self::format_date($lastPublishDate)); ?></p>
+                <p class="publishing-status"><?php self::t(_("Published: ") . self::formatDate($lastPublishDate)); ?></p>
             <?php } else { ?>
                 <p class="publishing-status"><?php self::t(_("File has not been published yet.\nPublish your project to make the file available online."), true); ?></p>
             <?php } ?>

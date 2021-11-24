@@ -556,6 +556,7 @@ abstract class Transformer
             "changesrc" => [$this, "xsltChangeSrc"],
             "cssEscape" => [$this, "xsltCssEscape"],
             "fileinfo" => [$this, "xsltFileinfo"],
+            "filesInFolder" => [$this, "xsltFilesInFolder"],
             "formatDate" => [$this, "xsltFormatDate"],
             "getLibRef" => [$this, "xsltGetLibRef"],
             "getPageRef" => [$this, "xsltGetPageRef"],
@@ -701,6 +702,30 @@ abstract class Transformer
         return $info->toXml();
     }
     // }}}
+    // {{{ xsltFilesInFolder
+    /**
+     * gets fileinfo for all files in a specific folder
+     *
+     * @public
+     *
+     * @param    $id (int) id of folder
+     *
+     * @return    $xml (xml) file infos of files
+     */
+    public function xsltFilesInFolder($folderId) {
+        $files = $this->fl->getFilesInFolder($folderId);
+
+        $doc = new \DOMDocument();
+        $doc->loadXML("<files />");
+
+        foreach ($files as $f) {
+            $node = $doc->importNode($f->toXML()->documentElement, true);
+            $doc->documentElement->appendChild($node);
+        }
+
+        return $doc;
+    }
+    // }}}
     // {{{ xsltIncludeUnparsed
     /**
      * gets fileinfo for libref path
@@ -721,35 +746,6 @@ abstract class Transformer
                 \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8");
         }
         $xml .= "</text>";
-
-        $doc = new \DOMDocument();
-        $doc->loadXML($xml);
-
-        return $doc;
-    }
-    // }}}
-    // {{{ xsltGlob
-    /**
-     * gets list of files for libref path
-     *
-     * @public
-     *
-     * @param    $path (string) libref path to target file
-     *
-     * @return    $xml (xml) file info as xml string
-     */
-    public function xsltGlob($path) {
-        $xml = "";
-        $path = "projects/" . $this->project->name . "/lib" . substr($path, 8);
-        $prefixLen = strlen("projects/" . $this->project->name . "/lib/");
-        $files = glob($path);
-
-        $xml = "<glob>";
-        foreach ($files as $filename) {
-            $filename = "libref://" . substr($filename, $prefixLen);
-            $xml .= "<file>" . htmlspecialchars($filename, \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8") . "</file>";
-        }
-        $xml .= "</glob>";
 
         $doc = new \DOMDocument();
         $doc->loadXML($xml);
