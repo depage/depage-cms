@@ -48,13 +48,11 @@
         //background: $backgroundLighterColor;
     }
     .toolbar a {
-        border: 1px solid transparent;
         color: $textBaseColor;
 
         &:hover {
-            @include gradient(lighten($backgroundColor, 10%), lighten($backgroundColor, 2%));
-            border-top-color: lighten($backgroundColor, 12%);
-            border-bottom-color: darken($backgroundColor, 0%);
+            color: $textBrightColor;
+            background-color: $selectionBackgroundColor;
         }
     }
     .projectlist a:hover {

@@ -381,16 +381,17 @@
     .layout-buttons a {
         position: relative;
         text-indent: -1000em;
-        width: calc(24px * var(--touch-scale));
+        width: calc($iconSize * var(--touch-scale));
 
         &:before {
             @include icon-base();
             content: " ";
+            display: block;
             position: absolute;
             left: 0;
-            top: 0;
-            width: calc(24px * var(--touch-scale));
-            height: calc(24px * var(--touch-scale));
+            top: 1px;
+            width: calc(#{$iconSize} * var(--touch-scale));
+            height: calc(#{$iconSize} * var(--touch-scale));
         }
         &.to-layout-left-full:before {
             @include icon("layout-left-full", $iconSize);
