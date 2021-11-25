@@ -140,27 +140,17 @@
 .box-small {
     @media screen and (min-width: 1000px) {
         .content {
-            padding-left: 32px + 10px;
+            padding-left: calc((32px + 10px) * var(--touch-scale));
         }
         .content::before {
             display: block;
             position: absolute;
-            top: 4px;
+            top: calc(4px * var(--touch-scale));
             left: 0;
             content: " ";
-            width: 32px;
-            height: 32px;
+            width: calc(32px * var(--touch-scale));
+            height: calc(32px * var(--touch-scale));
             @include icon-base("none");
-        }
-    }
-    @media screen and (pointer:coarse) and (min-width: 1000px) {
-        .content {
-            padding-left: (32px + 10px) * $touchScale;
-        }
-        .content::before {
-            top: 4px * $touchScale;
-            width: 32px * $touchScale;
-            height: 32px * $touchScale;
         }
     }
 }

@@ -163,9 +163,9 @@
             position: absolute;
             font-weight: bold !important;
             right: $treeLineHeight * 0.5;
-            width: $actionIconHeight;
-            height: $actionIconHeight;
-            line-height: $actionIconHeight - 3px;
+            width: calc(#{$actionIconHeight} * var(--touch-scale));
+            height: calc(#{$actionIconHeight} * var(--touch-scale));
+            line-height: calc(#{$actionIconHeight - 3px} * var(--touch-scale));
             @include radius($actionIconHeight * 0.5);
             color: $selectionTextColor;
             text-align: center;

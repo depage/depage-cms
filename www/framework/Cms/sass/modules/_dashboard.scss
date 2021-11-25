@@ -138,23 +138,15 @@
     }
     dl {
         text-indent: 0;
-        margin: 12px 0 48px 28px;
-
-        @media (pointer:coarse) {
-            margin-left: 28px * $touchScale;
-        }
+        margin: 12px 0 48px calc(28px * var(--touch-scale));
     }
     dt {
         position: relative;
         padding: 0;
         margin: 0;
         width: 100%;
-        min-height: 32px;
+        min-height: calc(32px * var(--touch-scale));
         @include clearfix();
-
-        @media (pointer:coarse) {
-            height: 32px * $touchScale;
-        }
     }
     dd {
         position: relative;
@@ -163,31 +155,21 @@
         margin-bottom: 12px;
         background: #ffffff;
     }
-    img.thumb { position: absolute;
-        top: 0;
-        left: -28px;
+    img.thumb {
+        position: absolute;
         display: block;
-        width: 24px;
-        height: 24px;
-
-        @media (pointer:coarse) {
-            left: -28px * $touchScale;
-            width: 24px * $touchScale;
-            height: 24px * $touchScale;
-        }
+        top: 0;
+        left: calc(-28px * var(--touch-scale));
+        width: calc(24px * var(--touch-scale));
+        height: calc(24px * var(--touch-scale));
     }
     dt strong,
     a.button {
         float: left;
-        line-height: 20px;
-        height: 26px;
+        line-height: calc(20px * var(--touch-scale));
+        height: calc(26px * var(--touch-scale));
         padding: 1px 7px;
         border: 1px solid transparent;
-
-        @media (pointer:coarse) {
-            line-height: 20px * $touchScale;
-            height: 26px * $touchScale;
-        }
     }
     a.button {
         color: $textLighterColor;

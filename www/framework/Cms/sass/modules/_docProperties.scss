@@ -295,18 +295,17 @@
         }
     }
 
+    span.opener,
+    i.icon {
+        --touch-scale: 1;
+    }
     i.icon {
         display: table-cell;
         margin-top: -2px;
         padding: 0;
-        width: $iconSize;
-        height: $iconSize;
+        width: calc(#{$iconSize} * var(--touch-scale));
+        height: calc(#{$iconSize} * var(--touch-scale));
         @include icon-base("", $iconSize);
-
-        @media (pointer:coarse) {
-            width: $iconSize * $touchScale;
-            height: $iconSize * $touchScale;
-        }
     }
     i.icon-published {
         @include icon("published", $iconSize);

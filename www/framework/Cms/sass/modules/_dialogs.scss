@@ -53,7 +53,7 @@ body > .dialog-full {
     position: absolute;
     left: 0;
     right: 0;
-    top: $toolbarHeight - 1px;
+    top: calc(#{$toolbarHeight} * var(--touch-scale) - 1px);
     bottom: 0;
     z-index: 5002;
     opacity: 0;
@@ -63,7 +63,7 @@ body > .dialog-full {
     > .content {
         position: absolute;
         top: 0;
-        bottom: $toolbarHeight;
+        bottom: calc(#{$toolbarHeight} * var(--touch-scale));
         left: 60px;
         right: 60px;
         background: $backgroundColor;
@@ -75,13 +75,6 @@ body > .dialog-full {
         @include transform(translateY(-100%));
         @include radius(10px, "bottom", "left");
         @include radius(10px, "bottom", "right");
-    }
-    @media (pointer:coarse) {
-        top: $toolbarHeight * $touchScale - 1px;
-
-        > .content {
-            bottom: $toolbarHeight * $touchScale;
-        }
     }
     &.visible {
         opacity: 1;
@@ -96,15 +89,11 @@ body > .dialog-full {
         right: 0;
         bottom: 0;
         z-index: 100;
-        height: $toolbarHeight * 1.5;
+        height: calc(#{$toolbarHeight * 1.5} * var(--touch-scale));
         border-top: 1px solid $borderColor;
         background: $backgroundColor;
         padding: 0 15px;
         text-align: center;
-
-        @media (pointer:coarse) {
-            height: $toolbarHeight * 1.5 * $touchScale;
-        }
 
         .button {
             display: inline-block;
@@ -132,11 +121,7 @@ body > .dialog-full {
     .dialog-bar ~ .library {
         .trees,
         .files {
-            bottom: $toolbarHeight * 1.5;
-
-            @media (pointer:coarse) {
-                bottom: $toolbarHeight * 1.5 * $touchScale;
-            }
+            bottom: calc(#{$toolbarHeight * 1.5} * var(--touch-scale));
         }
     }
 
@@ -249,13 +234,7 @@ body > .choose-image-center {
         max-width: $width + 4 * 20px;
         margin-left: auto;
         margin-right: auto;
-        bottom: 2 * $toolbarHeight;
-
-        @media (pointer:coarse) {
-            > .content {
-                bottom: 2 * $toolbarHeight * $touchScale;
-            }
-        }
+        bottom: calc(#{2 * $toolbarHeight} * var(--touch-scale));
     }
     h1,
     p {
@@ -341,11 +320,7 @@ body > .choose-image-center {
         padding: 10px;
     }
     .dialog-bar + .center-selector {
-        bottom: $toolbarHeight * 1.5;
-
-        @media (pointer:coarse) {
-            bottom: $toolbarHeight * 1.5 * $touchScale;
-        }
+        bottom: calc(#{$toolbarHeight * 1.5} * var(--touch-scale));
     }
 }
 // }}}
