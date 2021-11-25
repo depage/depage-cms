@@ -8,6 +8,7 @@
  * @require framework/Cms/js/jstree/jstree.focus.js
  * @require framework/Cms/js/jstree/jstree.toolbar.js
  * @require framework/Cms/js/jstree/jstree.nodeActions.js
+ * @require framework/Cms/js/jstree/jstree.nodeNavigation.js
  * @require framework/Cms/js/jstree/jstree.nodeTypes.js
  * @require framework/Cms/js/jstree/jstree.deltaUpdates.js
  * @require framework/Cms/js/jstree/jstree.types.js
@@ -366,6 +367,7 @@
             "focus",
             "toolbar",
             "nodeActions",
+            "nodeNavigation",
             "nodeTypes",
             "deltaUpdates",
         ],

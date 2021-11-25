@@ -2258,9 +2258,13 @@ var depageCMS = (function() {
                 localJS.updatePreview();
             }
             if (currentLayout == "pages") {
-                $pageTreeContainer.children(".jstree-container").jstree(true).gainFocus();
+                if ($pageTreeContainer.children(".jstree-container").length > 0) {
+                    $pageTreeContainer.children(".jstree-container").jstree(true).gainFocus();
+                }
             } else if (currentLayout == "document") {
-                $pagedataTreeContainer.children(".jstree-container").jstree(true).gainFocus();
+                if ($pagedataTreeContainer.children(".jstree-container").length > 0) {
+                    $pagedataTreeContainer.children(".jstree-container").jstree(true).gainFocus();
+                }
             }
         },
         // }}}

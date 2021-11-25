@@ -149,16 +149,21 @@
         background: $insertMarkerBackground;
         z-index: 99;
     }
-    > .jstree-node-actions {
+    > .jstree-node-actions,
+    > .jstree-node-navigation {
         position: absolute;
         display: block;
         right: 0;
         top: 0;
-        width: 1.5 * $treeLineHeight;
-        height: $treeLineHeight;
+        width: calc(#{1.5 * $treeLineHeight} * var(--touch-scale));
+        height: calc(#{$treeLineHeight} * var(--touch-scale));
         cursor: pointer;
         z-index: 100;
-
+    }
+    > .jstree-node-actions {
+        @media screen and (max-width: $breakMobile) {
+            right: calc(#{1 * $treeLineHeight} * var(--touch-scale));
+        }
         &::after {
             position: absolute;
             font-weight: bold !important;
@@ -172,6 +177,18 @@
             @include icon-base("add-white", $actionIconHeight);
             background-color: $insertMarkerBackground;
         }
+    }
+    > .jstree-node-navigation {
+        display: none;
+        width: calc(#{$treeLineHeight} * var(--touch-scale));
+        @include icon-base("mobile-next", $treeLineHeight)
+
+        @media screen and (max-width: $breakMobile) {
+            display: block;
+        }
+    }
+    .jstree-clicked ~ .jstree-node-navigation {
+        @include icon-base("mobile-next-white", $treeLineHeight)
     }
     &.insert-into,
     &.insert-before,
