@@ -27,15 +27,11 @@ form.lastchanged_pages {
         margin-top: 3px;
         display: block;
         float: right;
-        line-height: 20px;
-        height: 26px;
+        line-height: calc(20px * var(--touch-scale));
+        height: calc(26px * var(--touch-scale));
         padding: 1px 7px;
         border: 1px solid transparent;
 
-        @media (pointer:coarse) {
-            line-height: 20px * $touchScale;
-            height: 26px * $touchScale;
-        }
         color: $textLighterColor;
 
         &:hover {

@@ -75,7 +75,7 @@ progress {
     display: none;
 
     @media (pointer:coarse) {
-        top: $toolbarHeight * $touchScale;
+        top: calc(#{$toolbarHeight} * var(--touch-scale))
     }
 
     > .task-overview {

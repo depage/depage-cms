@@ -46,7 +46,7 @@
     &:active {
         text-decoration: none;
         color: inherit;
-        margin-left: 2 * $iconSize;
+        margin-left: calc(#{2 * $iconSize} * var(--touch-scale));
         padding-left: 6px;
     }
     > span.hint {
@@ -55,10 +55,10 @@
 
         > span.mini-thumb {
             position: absolute;
-            top: ($treeLineHeight - $iconSize) / 2;
-            left: -1 * $iconSize - 1px;
-            width: $iconSize;
-            height: $iconSize;
+            top: calc(#{($treeLineHeight - $iconSize) / 2} * var(--touch-scale));
+            left: calc(#{-1 * $iconSize - 1px} * var(--touch-scale));
+            width: calc(#{$iconSize} * var(--touch-scale));
+            height: calc(#{$iconSize} * var(--touch-scale));
             display: block;
             background-color: #ffffff;
             background-size: 100% 100%;
@@ -75,7 +75,7 @@
 }
 .jstree-anchor > .jstree-icon {
     top: 0;
-    left: -1 * $iconSize - 1px;
+    left: calc(#{-1 * $iconSize - 1px} * var(--touch-scale));
 }
 .jstree-ocl {
     cursor: pointer;
@@ -112,7 +112,6 @@
 }
 // }}}
 // {{{ #jstree-marker
-//.jstree-node > .jstree-anchor::before,
 #jstree-marker {
     position: absolute;
     padding: 0;
@@ -367,33 +366,29 @@
     display: none !important;
 }
 .jstree-node {
-    min-height: $treeLineHeight;
-    line-height: $treeLineHeight;
-    margin-left: $iconSize;
-    min-width: $treeLineHeight;
+    min-height: calc(#{$treeLineHeight} * var(--touch-scale));
+    line-height: calc(#{$treeLineHeight} * var(--touch-scale));
+    margin-left: calc(#{$iconSize} * var(--touch-scale));
+    min-width: calc(#{$treeLineHeight} * var(--touch-scale));
 }
 .jstree-anchor {
-    line-height: $treeLineHeight;
-    height: $treeLineHeight;
+    line-height: calc(#{$treeLineHeight} * var(--touch-scale));
+    height: calc(#{$treeLineHeight} * var(--touch-scale));
 }
 .jstree-icon {
-    width: $iconSize;
-    height: $treeLineHeight;
-    line-height: $treeLineHeight;
+    width: calc(#{$iconSize} * var(--touch-scale));
+    height: calc(#{$treeLineHeight} * var(--touch-scale));
+    line-height: calc(#{$treeLineHeight} * var(--touch-scale));
 }
 .jstree-icon.jstree-themeicon {
     cursor: grab;
 }
 .jstree-ocl {
-    width: $iconSize;
+    width: calc(#{$iconSize} * var(--touch-scale));
 }
 .jstree-icon,
 .jstree-ocl {
     @include icon-base("none", $iconSize);
-}
-.jstree-node {
-    background-position: -292px -4px;
-    background-repeat: repeat-y;
 }
 .jstree-node > .jstree-anchor > input.jstree-rename-input {
     position: absolute !important;
@@ -438,35 +433,6 @@
 .jstree-disabled.jstree-clicked {
     background: #efefef;
 }
-.jstree-checkbox {
-    background-position: -164px -4px;
-}
-.jstree-checkbox:hover {
-    background-position: -164px -36px;
-}
-.jstree-clicked > .jstree-checkbox,
-.jstree-checked > .jstree-checkbox {
-    background-position: -228px -4px;
-}
-.jstree-clicked > .jstree-checkbox:hover,
-.jstree-checked > .jstree-checkbox:hover {
-    background-position: -228px -36px;
-}
-.jstree-anchor > .jstree-undetermined {
-    background-position: -196px -4px;
-}
-.jstree-anchor > .jstree-undetermined:hover {
-    background-position: -196px -36px;
-}
-.jstree-checkbox-disabled {
-    opacity: 0.8;
-    filter: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\'><filter id=\'jstree-grayscale\'><feColorMatrix type=\'matrix\' values=\'0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0 0 0 1 0\'/></filter></svg>#jstree-grayscale");
-    /* Firefox 10+ */
-    filter: gray;
-    /* IE6-9 */
-    -webkit-filter: grayscale(100%);
-    /* Chrome 19+ & Safari 6+ */
-}
 .jstree-themeicon-custom {
     background-color: transparent;
     background-image: none;
@@ -477,7 +443,7 @@
     margin-right: 0;
 }
 #jstree-dnd {
-    line-height: $treeLineHeight;
+    line-height: calc(#{$treeLineHeight} * var(--touch-scale));
     padding: 0 4px;
 }
 #jstree-dnd .jstree-ok,
@@ -487,9 +453,9 @@
 }
 #jstree-dnd i {
     background: transparent;
-    width: $treeLineHeight;
-    height: $treeLineHeight;
-    line-height: $treeLineHeight;
+    width: calc(#{$treeLineHeight} * var(--touch-scale));
+    height: calc(#{$treeLineHeight} * var(--touch-scale));
+    line-height: calc(#{$treeLineHeight} * var(--touch-scale));
 }
 #jstree-dnd .jstree-ok {
     background-position: -4px -68px;
@@ -569,49 +535,6 @@
 }
 .icon-sec_separator > .jstree-icon {
     background-image: none;
-}
-// }}}
-
-// {{{ touch size adjustments
-@media (pointer:coarse) {
-    .jstree-node {
-        min-height: $treeLineHeight * $touchScale;
-        line-height: $treeLineHeight * $touchScale;
-        margin-left: $iconSize * $touchScale;
-        min-width: $treeLineHeight * $touchScale;
-    }
-    .jstree-icon {
-        width: $iconSize * $touchScale;
-        height: $treeLineHeight * $touchScale;
-        line-height: $treeLineHeight * $touchScale;
-    }
-    .jstree-anchor {
-        line-height: $treeLineHeight * $touchScale;
-        height: $treeLineHeight * $touchScale;
-
-        &,
-        &:link,
-        &:visited,
-        &:hover,
-        &:empty,
-        &:active {
-            margin-left: 2 * $iconSize * $touchScale;
-        }
-        > span.hint {
-            > span.mini-thumb {
-                top: ($treeLineHeight * $touchScale - $iconSize * $touchScale) / 2;
-                left: -1 * $iconSize * $touchScale - 1px;
-                width: $iconSize * $touchScale;
-                height: $iconSize * $touchScale;
-            }
-        }
-        > .jstree-icon {
-            left: -1 * $iconSize * $touchScale - 1px;
-        }
-    }
-    .jstree-ocl {
-        width: $iconSize * $touchScale;
-    }
 }
 // }}}
 
