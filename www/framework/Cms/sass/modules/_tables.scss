@@ -1,6 +1,6 @@
 // {{{ .datatable
 div.datatable {
-    margin-top: $toolbarHeight + $infoHeight;
+    margin-top: calc(#{$toolbarHeight + $infoHeight} * var(--touch-scale));
     max-width: 100%;
     overflow-x: auto;
     overflow-y: visible;

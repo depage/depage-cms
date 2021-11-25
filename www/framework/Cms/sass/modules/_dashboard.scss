@@ -81,7 +81,7 @@
 // {{{ box-users
 .box-users {
     @extend .box-full;
-    margin-top: $toolbarHeight * 2;
+    margin-top: calc(#{$toolbarHeight * 2} * var(--touch-scale));
 }
 .dashboard .box-users {
     @extend .box-aside;

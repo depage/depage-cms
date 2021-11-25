@@ -15,7 +15,7 @@
     }
 }
 .toolbar {
-    height: $toolbarHeight;
+    height: calc(#{$toolbarHeight} * var(--touch-scale));
     display: flex;
     flex-direction: row;
     justify-items: stretch;
@@ -74,8 +74,8 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: $toolbarHeight - 10px;
-            height: $toolbarHeight - 3px;
+            line-height: calc(#{$toolbarHeight - 10px} * var(--touch-scale));
+            height: calc(#{$toolbarHeight - 3px} * var(--touch-scale));
 
             &.disabled {
                 &,
@@ -104,8 +104,8 @@
                 &:before {
                     content: " ";
                     display: inline-block;
-                    width: $toolbarHeight - 6px;
-                    height: $toolbarHeight - 6px;
+                    width: calc(#{$toolbarHeight - 6px} * var(--touch-scale));
+                    height: calc(#{$toolbarHeight - 6px} * var(--touch-scale));
                     @include icon-base();
                     vertical-align: top;
                     margin-top: -2px;
@@ -202,7 +202,7 @@
         padding: 0;
 
         menu {
-            top: $toolbarHeight - 3px;
+            top: calc(#{$toolbarHeight - 3px} * var(--touch-scale));
             left: 0;
             border-top: none;
             height: auto;
@@ -437,7 +437,7 @@
             position: fixed;
             left: 0;
             right: 0;
-            top: $toolbarHeight + 1px;
+            top: calc(#{$toolbarHeight + 1px} * var(--touch-scale));
             margin: 0;
             background-color: #ffffff;
             border-bottom: 1px solid $borderColor;
@@ -445,7 +445,7 @@
             a.toggle-button {
                 width: 25%;
                 max-width: none;
-                height: $toolbarHeight;
+                height: calc(#{$toolbarHeight} * var(--touch-scale));
                 margin: 0;
                 border-radius: 0;
             }

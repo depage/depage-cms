@@ -110,7 +110,7 @@
 // {{{ .box-small
 .box-small {
     @extend .box;
-    margin-top: $toolbarHeight * 2;
+    margin-top: calc(#{$toolbarHeight * 2} * var(--touch-scale));
 
     .content {
         width: 100%;
@@ -242,7 +242,7 @@ html {
         @extend %scrollY;
 
         &.top {
-            padding-top: 1.5 * $toolbarHeight;
+            padding-top: calc(#{$toolbarHeight * 1.5} * var(--touch-scale));
         }
     }
     header.info ~ .scrollable-content {
@@ -260,10 +260,10 @@ html {
     }
     #toolbarmain ~ .layout,
     &.layout-document #toolbarmain ~ .layout-tree-bottom {
-        top: $toolbarHeight;
+        top: calc(#{$toolbarHeight} * var(--touch-scale));
 
         @media screen and (max-width: $breakMobile) {
-            top: 2 * $toolbarHeight + 2px;
+            top: calc(#{2 * $toolbarHeight } * var(--touch-scale) + 2px);
         }
     }
 

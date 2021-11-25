@@ -97,8 +97,8 @@ body > .dialog-full {
 
         .button {
             display: inline-block;
-            height: $toolbarHeight;
-            line-height: $toolbarHeight;
+            height: calc(#{$toolbarHeight} * var(--touch-scale));
+            line-height: calc(#{$toolbarHeight} * var(--touch-scale));
             padding: 0 10px;
             margin: 7px 7px;
             background: $backgroundLighterColor;
