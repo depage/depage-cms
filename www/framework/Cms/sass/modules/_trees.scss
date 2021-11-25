@@ -243,10 +243,10 @@
 .jstree-root-add-button {
     position: relative;
     display: block;
-    height: 2 * $treeLineHeight;
-    width: 2 * $treeLineHeight;
+    height: calc(#{2 * $treeLineHeight} * var(--touch-scale));
+    width: calc(#{2 * $treeLineHeight} * var(--touch-scale));
     cursor: pointer;
-    margin-top: 1.5 * $treeLineHeight;
+    margin-top: calc(#{$treeLineHeight} * var(--touch-scale));
     text-indent: -1000em;
 
 
@@ -256,8 +256,8 @@
         font-weight: bold !important;
         bottom: $treeLineHeight * 0.5 + ($treeLineHeight - $actionIconHeight) * 0.5;
         left: $treeLineHeight - 1px;
-        width: $actionIconHeight;
-        height: $actionIconHeight;
+        width: calc(#{$actionIconHeight} * var(--touch-scale));
+        height: calc(#{$actionIconHeight} * var(--touch-scale));
         color: $selectionTextColor;
         background-color: $backgroundColor;
         text-align: center;

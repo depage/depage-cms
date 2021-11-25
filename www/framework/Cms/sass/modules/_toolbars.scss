@@ -196,15 +196,19 @@
                 @include icon("help-active", 24px);
             }
             &.menu-project {
-                @media screen and (max-width: $breakMobile) {
-                    width: calc(#{$toolbarHeight} * var(--touch-scale));
-                }
                 img.thumb {
                     position: static;
                     display: inline-block;
                     vertical-align: middle;
                     width: calc(18px * var(--touch-scale));
                     height: calc(18px * var(--touch-scale));
+                }
+                @media screen and (max-width: $breakMobile) {
+                    width: calc(#{$toolbarHeight} * var(--touch-scale));
+
+                    img.thumb {
+                        margin-right: 20px;
+                    }
                 }
             }
         }
@@ -466,6 +470,11 @@
                 height: calc(#{$toolbarHeight} * var(--touch-scale));
                 margin: 0;
                 border-radius: 0;
+
+                &::before {
+                    left: 50%;
+                    margin-left: calc(#{$iconSize * -0.5 - 2px} * var(--touch-scale));
+                }
             }
         }
     }
