@@ -62,4 +62,26 @@ $thumbSizeSmall: round($treeWidth * 0.5 - 1.5 * 16px - 0px) !global;
 $actionIconHeight: $treeLineHeight * 0.5 + 4px !global;
 $checkboxSize: 36px;
 
+html {
+    --tree-width: #{$treeWidth};
+    --edit-width: #{$editWidth};
+    --touch-scale: 1;
+
+    @media (pointer:coarse) {
+        --touch-scale: #{$touchScale};
+    }
+    @media screen and (min-width: 1800px) {
+        --edit-width: #{$editWidth + 0.5 * $treeWidth};
+    }
+    @media screen and (min-width: 2100px) {
+        --edit-width: #{$editWidth + 1 * $treeWidth};
+    }
+    @media screen and (max-width: 1340px) {
+        --edit-width: #{$editWidth - 0.5 * $treeWidth};
+    }
+    @media screen and (max-width: 1030px) {
+        --edit-width: #{$editWidth - 1 * $treeWidth};
+    }
+}
+
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

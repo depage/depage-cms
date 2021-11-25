@@ -135,6 +135,10 @@
             position: absolute;
             z-index: 100;
             opacity: 0;
+
+            + span {
+                --touch-scale: 1;
+            }
         }
         input[type="radio"] + span {
             padding-left: $checkboxSize;

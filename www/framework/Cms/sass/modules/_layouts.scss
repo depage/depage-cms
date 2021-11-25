@@ -237,9 +237,6 @@
 // }}}
 // {{{ layouts
 html {
-    --tree-width: #{$treeWidth};
-    --edit-width: #{$editWidth};
-
     // base styles for layouts
     header.info,
     .toolbar menu,
@@ -369,15 +366,7 @@ html {
         }
     }
     // layouts for media sizes
-    @media screen and (min-width: 1800px) {
-        --edit-width: #{$editWidth + 0.5 * $treeWidth};
-    }
-    @media screen and (min-width: 2100px) {
-        --edit-width: #{$editWidth + 1 * $treeWidth};
-    }
     @media screen and (max-width: 1340px) {
-        --edit-width: #{$editWidth - 0.5 * $treeWidth};
-
         &.layout-split {
             .toolbar menu.left {
                 width: auto;
@@ -393,8 +382,6 @@ html {
         }
     }
     @media screen and (max-width: 1030px) {
-        --edit-width: #{$editWidth - 1 * $treeWidth};
-
         &.layout-split {
             .toolbar menu.preview {
                 margin-left: auto;
