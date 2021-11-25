@@ -56,7 +56,21 @@
         }
         &.preview {
             margin-right: auto;
-            width: 175px;
+            width: calc(175px * var(--touch-scale));
+
+            @media screen and (max-width: $breakMobile) {
+                width: calc(#{$toolbarHeight - 6px} * var(--touch-scale));
+                overflow: hidden;
+
+                a {
+                    display: none;
+                }
+                a.icon-reload {
+                    display: inline-block;
+                    padding-left: 0;
+                    padding-right: 0;
+                }
+            }
         }
         &.right {
             text-align: right;
@@ -182,12 +196,15 @@
                 @include icon("help-active", 24px);
             }
             &.menu-project {
+                @media screen and (max-width: $breakMobile) {
+                    width: calc(#{$toolbarHeight} * var(--touch-scale));
+                }
                 img.thumb {
                     position: static;
                     display: inline-block;
                     vertical-align: middle;
-                    width: 18px;
-                    height: 18px;
+                    width: calc(18px * var(--touch-scale));
+                    height: calc(18px * var(--touch-scale));
                 }
             }
         }
@@ -364,7 +381,7 @@
     .layout-buttons a {
         position: relative;
         text-indent: -1000em;
-        width: 24px;
+        width: calc(24px * var(--touch-scale));
 
         &:before {
             @include icon-base();
@@ -372,8 +389,8 @@
             position: absolute;
             left: 0;
             top: 0;
-            width: 24px;
-            height: 23px;
+            width: calc(24px * var(--touch-scale));
+            height: calc(24px * var(--touch-scale));
         }
         &.to-layout-left-full:before {
             @include icon("layout-left-full", $iconSize);

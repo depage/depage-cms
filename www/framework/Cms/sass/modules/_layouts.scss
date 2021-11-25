@@ -420,11 +420,17 @@ html {
                 display: block;
                 z-index: 2;
             }
+            .toolbar menu.left .tree-actions {
+                display: none;
+            }
         }
         &.layout-right-full {
             .layout-right {
                 display: block;
                 z-index: 2;
+            }
+            .toolbar menu.left .tree-actions {
+                display: none;
             }
         }
     }
