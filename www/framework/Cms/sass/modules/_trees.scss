@@ -336,23 +336,32 @@
 }
 .jstree-anchor,
 .jstree-animated {
-    transition: background-color 0.15s, box-shadow 0.15s;
+    &::before {
+        transition: background-color 0.15s;
+    }
 }
-.jstree-hovered {
-    background: $backgroundColor;
-}
+.jstree-hovered,
 .jstree-context {
-    background: $backgroundColor;
+    &::before {
+        background: $backgroundColor;
+    }
 }
-.jstree-clicked::before {
-    content: " ";
-    display: block;
-    position: absolute;
-    left: calc(#{1 * $iconSize} * var(--touch-scale));
-    right: 0;
-    top: 0;
-    bottom: 0;
-    z-index: -1;
+.jstree-anchor,
+.jstree-hovered,
+.jstree-context,
+.jstree-hovered,
+.jstree-context,
+.jstree-clicked {
+    &::before {
+        content: " ";
+        display: block;
+        position: absolute;
+        left: calc(#{1 * $iconSize} * var(--touch-scale));
+        right: 0;
+        top: 0;
+        bottom: 0;
+        z-index: -1;
+    }
 }
 .jstree-clicked,
 .jstree-clicked.jstree-hovered {
@@ -434,7 +443,7 @@
 .jstree-node > .jstree-anchor > input.jstree-rename-input {
     position: absolute !important;
     display: block !important;
-    left: 0 !important;
+    left: calc(#{$iconSize} * var(--touch-scale)) !important;
     top: 0 !important;
     width: 100% !important;
     height: 100% !important;
@@ -472,7 +481,9 @@
     background: transparent;
 }
 .jstree-disabled.jstree-clicked {
-    background: #efefef;
+    &::before {
+        background: #efefef;
+    }
 }
 .jstree-themeicon-custom {
     background-color: transparent;

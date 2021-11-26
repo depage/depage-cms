@@ -128,7 +128,7 @@
                 }
             }
             &.icon-only {
-                width: 32px;
+                width: calc(32px * var(--touch-scale));
 
                 &:before {
                     margin-right: 20px;
@@ -139,7 +139,7 @@
             &.icon-duplicate,
             &.icon-delete {
                 @media screen and (max-width: 800px) {
-                    width: 32px;
+                    width: calc(32px * var(--touch-scale));
 
                     &:before {
                         margin-right: 20px;
@@ -149,7 +149,7 @@
             &.icon-user,
             &.icon-projects {
                 @media screen and (max-width: 1200px) {
-                    width: 30px;
+                    width: calc(32px * var(--touch-scale));
 
                     &:before {
                         margin-right: 20px;
