@@ -1389,6 +1389,9 @@ var depageCMS = (function() {
                         }
 
                         jstreePages.activate_node($tree.find("ul:first li:first")[0]);
+                        if (currentLayout == "pages") {
+                            jstreePages.gainFocus();
+                        }
                     })
                     .jstree(true);
             });
@@ -1433,6 +1436,10 @@ var depageCMS = (function() {
                             jstreePagedata.open_all();
                         });
                         jstreePagedata.activate_node($tree.find("ul:first li:first")[0]);
+
+                        if (currentLayout == "document") {
+                            jstreePagedata.gainFocus();
+                        }
                     })
                     .on("refresh.jstree refresh_node.jstree", function (e, updatedIds) {
                         localJS.updatePreview(updatedIds);

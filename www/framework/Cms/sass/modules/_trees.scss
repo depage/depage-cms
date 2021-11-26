@@ -46,8 +46,12 @@
     &:active {
         text-decoration: none;
         color: inherit;
-        margin-left: calc(#{2 * $iconSize} * var(--touch-scale));
-        padding-left: 6px;
+        margin-left: calc(#{1 * $iconSize} * var(--touch-scale));
+        padding-left: calc(#{1 * $iconSize + 6px} * var(--touch-scale));
+        padding-right: calc(#{1 * $iconSize} * var(--touch-scale));
+        width: calc(100% - 29px);
+        text-overflow: ellipsis;
+        overflow: hidden;
     }
     > span.hint {
         margin-left: 10px;
@@ -56,7 +60,7 @@
         > span.mini-thumb {
             position: absolute;
             top: calc(#{($treeLineHeight - $iconSize) / 2} * var(--touch-scale));
-            left: calc(#{-1 * $iconSize - 1px} * var(--touch-scale));
+            left: 0;
             width: calc(#{$iconSize} * var(--touch-scale));
             height: calc(#{$iconSize} * var(--touch-scale));
             display: block;
@@ -76,6 +80,7 @@
 .jstree-anchor > .jstree-icon {
     top: 0;
     left: calc(#{-1 * $iconSize - 1px} * var(--touch-scale));
+    left: 0;
 }
 .jstree-ocl {
     cursor: pointer;
@@ -143,7 +148,8 @@
         content: " ";
         display: none;
         position: absolute;
-        left: 0;
+        left: calc(#{1 * $iconSize} * var(--touch-scale));
+        //left: 0;
         right: 0;
         height: 2px;
         background: $insertMarkerBackground;
@@ -338,16 +344,34 @@
 .jstree-context {
     background: $backgroundColor;
 }
+.jstree-clicked::before {
+    content: " ";
+    display: block;
+    position: absolute;
+    left: calc(#{1 * $iconSize} * var(--touch-scale));
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+}
 .jstree-clicked,
 .jstree-clicked.jstree-hovered {
-    background: $backgroundColor;
     color: $textBaseColor !important;
+    background: transparent !important;
+    z-index: 10;
+
+    &::before {
+        background: $backgroundColor;
+    }
 }
 .jstree-focus {
     .jstree-clicked,
     .jstree-clicked.jstree-hovered {
-        background: $selectionBackgroundColor;
         color: $selectionTextColor !important;
+
+        &::before {
+            background: $selectionBackgroundColor;
+        }
     }
 }
 .jstree-no-icons .jstree-anchor > .jstree-themeicon {
@@ -479,17 +503,6 @@
 }
 #jstree-dnd .jstree-er {
     background-position: -36px -68px;
-}
-.jstree-ellipsis {
-    overflow: hidden;
-}
-.jstree-ellipsis .jstree-anchor {
-    width: calc(100% - 29px);
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-.jstree-ellipsis.jstree-no-icons .jstree-anchor {
-    width: calc(100% - 5px);
 }
 // }}}
 
