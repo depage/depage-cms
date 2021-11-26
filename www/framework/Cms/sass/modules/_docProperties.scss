@@ -339,6 +339,7 @@
         margin-top: 20px;
     }
     figure.thumb .choose-image-center-button {
+        --touch-scale: 1;
         $size: 20px;
         display: block;
         position: absolute;

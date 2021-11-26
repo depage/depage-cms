@@ -63,18 +63,24 @@ body > .dialog-full {
     > .content {
         position: absolute;
         top: 0;
-        bottom: calc(#{$toolbarHeight} * var(--touch-scale));
-        left: 60px;
-        right: 60px;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background: $backgroundColor;
         padding: 11px;
-        border: 1px solid $borderColor;
         overflow: hidden;
-        @include box-shadow($darkShadow);
         @include transition(500ms, "transform");
         @include transform(translateY(-100%));
-        @include radius(10px, "bottom", "left");
-        @include radius(10px, "bottom", "right");
+
+        @media screen and (min-width: $breakMobile) {
+            bottom: calc(#{$toolbarHeight} * var(--touch-scale));
+            left: 60px;
+            right: 60px;
+            border: 1px solid $borderColor;
+            @include radius(10px, "bottom", "left");
+            @include radius(10px, "bottom", "right");
+            @include box-shadow($darkShadow);
+        }
     }
     &.visible {
         opacity: 1;
@@ -88,7 +94,7 @@ body > .dialog-full {
         left: 0;
         right: 0;
         bottom: 0;
-        z-index: 100;
+        z-index: 1000;
         height: calc(#{$toolbarHeight * 1.5} * var(--touch-scale));
         border-top: 1px solid $borderColor;
         background: $backgroundColor;
@@ -231,10 +237,12 @@ body > .choose-image-center {
     $width: 512px;
 
     > .content {
-        max-width: $width + 4 * 20px;
-        margin-left: auto;
-        margin-right: auto;
-        bottom: calc(#{2 * $toolbarHeight} * var(--touch-scale));
+        @media screen and (min-width: $breakMobile) {
+            max-width: $width + 4 * 20px;
+            margin-left: auto;
+            margin-right: auto;
+            bottom: calc(#{2 * $toolbarHeight} * var(--touch-scale));
+        }
     }
     h1,
     p {

@@ -21,10 +21,6 @@
     justify-items: stretch;
     width: 100%;
 
-    .preview-buttons {
-        display: inline;
-        list-style: none !important;
-    }
     .tree-actions span {
         display: none;
 
@@ -138,7 +134,7 @@
             &.icon-create,
             &.icon-duplicate,
             &.icon-delete {
-                @media screen and (max-width: 800px) {
+                @media screen and (max-width: $breakMobile) {
                     width: calc(32px * var(--touch-scale));
 
                     &:before {
@@ -148,7 +144,7 @@
             }
             &.icon-user,
             &.icon-projects {
-                @media screen and (max-width: 1200px) {
+                @media screen and (max-width: $breakTablet) {
                     width: calc(32px * var(--touch-scale));
 
                     &:before {
@@ -382,10 +378,45 @@
             background-color: $selectionBackgroundColor;
         }
     }
-    .layout-buttons a {
+}
+// }}}
+// {{{ layout-buttons
+.layout-buttons {
+    position: fixed;
+    right: 200px;
+    top: 0;
+    height: calc(#{$toolbarHeight} * var(--touch-scale));
+    display: flex;
+    width: auto;
+    z-index: 6010;
+    flex-direction: row;
+    justify-items: stretch;
+
+    @media screen and (min-width: $breakTablet) {
+        right: 300px;
+    }
+    @media screen and (max-width: $breakMobile) {
+        position: fixed;
+        left: 0;
+        right: 0;
+        width: 100%;
+        top: calc(#{$toolbarHeight + 1px} * var(--touch-scale));
+        margin: 0;
+        background-color: #ffffff;
+        border-bottom: 1px solid $borderColor;
+        z-index: 4000;
+    }
+
+    a.toggle-button {
         position: relative;
         text-indent: -1000em;
-        width: calc($iconSize * var(--touch-scale));
+        display: block;
+        width: calc(#{$iconSize + 2px} * var(--touch-scale));
+        height: calc(#{$iconSize + 2px} * var(--touch-scale));
+
+        @media screen and (min-width: $breakMobile) {
+            margin-top: 2px;
+        }
 
         &:before {
             @include icon-base();
@@ -444,38 +475,28 @@
         }
     }
     @media screen and (min-width: $breakMobile) {
-        .to-layout-pages,
-        .to-layout-document,
-        .to-layout-properties {
+        a.to-layout-pages,
+        a.to-layout-document,
+        a.to-layout-properties {
             display: none;
         }
     }
     @media screen and (max-width: $breakMobile) {
-        .to-layout-left-full,
-        .to-layout-split {
-            display: none;
-        }
-        .layout-buttons {
-            position: fixed;
-            left: 0;
-            right: 0;
-            top: calc(#{$toolbarHeight + 1px} * var(--touch-scale));
+        a.toggle-button {
+            width: 25% !important;
+            max-width: none;
+            height: calc(#{$toolbarHeight} * var(--touch-scale));
             margin: 0;
-            background-color: #ffffff;
-            border-bottom: 1px solid $borderColor;
+            border-radius: 0;
 
-            a.toggle-button {
-                width: 25%;
-                max-width: none;
-                height: calc(#{$toolbarHeight} * var(--touch-scale));
-                margin: 0;
-                border-radius: 0;
-
-                &::before {
-                    left: 50%;
-                    margin-left: calc(#{$iconSize * -0.5 - 2px} * var(--touch-scale));
-                }
+            &::before {
+                left: 50%;
+                margin-left: calc(#{$iconSize * -0.5 - 2px} * var(--touch-scale));
             }
+        }
+        a.to-layout-left-full,
+        a.to-layout-split {
+            display: none;
         }
     }
 }

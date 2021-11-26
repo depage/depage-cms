@@ -183,7 +183,7 @@
     .content {
         position: relative;
 
-        @media screen and (max-width: 768px) {
+        @media screen and (max-width: $breakMobile) {
             width: 100%;
             padding-top: 12px;
         }
@@ -200,7 +200,7 @@
             opacity: 1;
             @include icon-base();
 
-            @media screen and (max-width: 768px) {
+            @media screen and (max-width: $breakMobile) {
                 display: none;
             }
         }
@@ -213,7 +213,7 @@
     .scrollable-content &:first-child {
         margin-top: 100px;
 
-        @media screen and (max-width: 768px) {
+        @media screen and (max-width: $breakMobile) {
             margin-top: 0;
         }
 
@@ -356,7 +356,7 @@ html {
         }
     }
     // layouts for media sizes
-    @media screen and (max-width: 1340px) {
+    @media screen and (max-width: $breakTablet) {
         &.layout-split {
             .toolbar menu.left {
                 width: auto;
@@ -371,27 +371,17 @@ html {
             }
         }
     }
-    @media screen and (max-width: 1030px) {
-        &.layout-split {
-            .toolbar menu.preview {
-                margin-left: auto;
-            }
-            .toolbar menu.right {
-                width: auto;
-            }
-        }
-    }
     @media screen and (max-width: $breakMobile) {
         // single view layouts
         &.layout-pages,
         &.layout-document,
         &.layout-properties,
         &.layout-right-full {
-            .layout-tree,
-            .layout-tree-top,
-            .layout-tree-bottom,
-            .layout-left,
-            .layout-right {
+            body > .layout-tree,
+            body > .layout-tree-top,
+            body > .layout-tree-bottom,
+            body > .layout-left,
+            body > .layout-right {
                 left: 0;
                 right: 0;
                 top: 0;
@@ -404,19 +394,19 @@ html {
             }
         }
         &.layout-pages {
-            .layout-tree-top {
+            body > .layout-tree-top {
                 display: block;
                 z-index: 2;
             }
         }
         &.layout-document {
-            .layout-tree-bottom {
+            body > .layout-tree-bottom {
                 display: block;
                 z-index: 2;
             }
         }
         &.layout-properties {
-            .layout-left {
+            body > .layout-left {
                 display: block;
                 z-index: 2;
             }
@@ -425,7 +415,7 @@ html {
             }
         }
         &.layout-right-full {
-            .layout-right {
+            body > .layout-right {
                 display: block;
                 z-index: 2;
             }

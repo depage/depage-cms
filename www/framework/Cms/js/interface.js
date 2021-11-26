@@ -56,7 +56,8 @@ var depageCMS = (function() {
         $helpFrame;
     var $toolbarLeft,
         $toolbarPreview,
-        $toolbarRight;
+        $toolbarRight,
+        $toolbarLayout;
 
     var $pageTreeContainer,
         $pagedataTreeContainer,
@@ -320,6 +321,7 @@ var depageCMS = (function() {
             $toolbarLeft = $("#toolbarmain > .toolbar > menu.left");
             $toolbarPreview = $("#toolbarmain > .toolbar > menu.preview");
             $toolbarRight = $("#toolbarmain > .toolbar > menu.right");
+            $toolbarLayout = $("<menu class=\"toolbar layout-buttons\" data-live-help=\"" + locale.layoutSwitchHelp + "\"></menu>").insertAfter("#toolbarmain");
 
             var layouts = [
                 "left-full",
@@ -334,13 +336,12 @@ var depageCMS = (function() {
             // add tree actions
             $toolbarLeft.append("<li class=\"tree-actions\"></li>");
 
-            // add layout buttons
-            var $layoutButtons = $("<li class=\"pills preview-buttons layout-buttons\" data-live-help=\"" + locale.layoutSwitchHelp + "\"></li>").prependTo($toolbarRight);
+            // add layout button
             for (var i in layouts) {
                 var newLayout = layouts[i];
                 var tooltip = locale["layout-" + newLayout];
                 var $button = $("<a class=\"toggle-button to-layout-" + newLayout + "\" aria-label=\"" + tooltip + "\" data-tooltip=\"" + tooltip + "\"></a>")
-                    .appendTo($layoutButtons)
+                    .appendTo($toolbarLayout)
                     .on("click", {layout: newLayout}, localJS.switchLayout);
             }
 
@@ -2257,7 +2258,7 @@ var depageCMS = (function() {
                 })
                 .addClass("layout-" + currentLayout);
 
-            $toolbarRight.find(".layout-buttons a")
+            $toolbarLayout.find("a")
                 .removeClass("active")
                 .filter(".to-layout-" + currentLayout).addClass("active");
 

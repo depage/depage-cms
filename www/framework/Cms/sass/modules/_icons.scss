@@ -3,7 +3,7 @@
     $iSize: 48px * $scale;
 
     background-repeat: no-repeat;
-    background-image: url(../images/icon_sprite.svg?202111251743);
+    background-image: url(../images/icon_sprite.svg?202111261543);
     background-size: calc(#{(8 * $iSize)} * var(--touch-scale)) calc(#{(24 * $iSize)} * var(--touch-scale));
 
     @if ($name != "") {
