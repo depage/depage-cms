@@ -1,5 +1,5 @@
 <div <?php self::attr([
-        "class" => "library layout layout-tree",
+        "class" => "library layout layout-tree layout-tree-full",
     ]); ?>>
     <header class="info info-tree-library">
         <h1><?php self::e(_("Library")); ?></h1>

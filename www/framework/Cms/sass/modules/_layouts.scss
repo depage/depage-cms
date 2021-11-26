@@ -305,7 +305,7 @@ html {
     }
 
     // layout right full
-    &.layout-right-full {
+    &.layout-preview {
         .layout-tree {
             left: calc(-1 * var(--edit-width));
         }
@@ -376,11 +376,13 @@ html {
         &.layout-pages,
         &.layout-document,
         &.layout-properties,
-        &.layout-right-full {
+        &.layout-full,
+        &.layout-preview {
             body > .layout-tree,
             body > .layout-tree-top,
             body > .layout-tree-bottom,
             body > .layout-left,
+            body > .layout-full,
             body > .layout-right {
                 left: 0;
                 right: 0;
@@ -394,7 +396,8 @@ html {
             }
         }
         &.layout-pages {
-            body > .layout-tree-top {
+            body > .layout-tree-top,
+            body > .layout-tree-full {
                 display: block;
                 z-index: 2;
             }
@@ -406,7 +409,8 @@ html {
             }
         }
         &.layout-properties {
-            body > .layout-left {
+            body > .layout-left,
+            body > .layout-full {
                 display: block;
                 z-index: 2;
             }
@@ -414,7 +418,7 @@ html {
                 display: none;
             }
         }
-        &.layout-right-full {
+        &.layout-preview {
             body > .layout-right {
                 display: block;
                 z-index: 2;

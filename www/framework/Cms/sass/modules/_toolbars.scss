@@ -446,8 +446,8 @@
         &.to-layout-properties:before {
             @include icon("layout-properties", $iconSize);
         }
-        &.to-layout-right-full:before {
-            @include icon("layout-right-full", $iconSize);
+        &.to-layout-preview:before {
+            @include icon("layout-preview", $iconSize);
         }
         &.active,
         &:hover {
@@ -469,21 +469,15 @@
             &.to-layout-properties:before {
                 @include icon("layout-properties-active", $iconSize);
             }
-            &.to-layout-right-full:before {
-                @include icon("layout-right-full-active", $iconSize);
+            &.to-layout-preview:before {
+                @include icon("layout-preview-active", $iconSize);
             }
-        }
-    }
-    @media screen and (min-width: $breakMobile) {
-        a.to-layout-pages,
-        a.to-layout-document,
-        a.to-layout-properties {
-            display: none;
         }
     }
     @media screen and (max-width: $breakMobile) {
         a.toggle-button {
-            width: 25% !important;
+            //width: 25% !important;
+            flex-grow: 1;
             max-width: none;
             height: calc(#{$toolbarHeight} * var(--touch-scale));
             margin: 0;
@@ -493,10 +487,6 @@
                 left: 50%;
                 margin-left: calc(#{$iconSize * -0.5 - 2px} * var(--touch-scale));
             }
-        }
-        a.to-layout-left-full,
-        a.to-layout-split {
-            display: none;
         }
     }
 }

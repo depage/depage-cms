@@ -59,6 +59,8 @@ var depageCMS = (function() {
         $toolbarRight,
         $toolbarLayout;
 
+    var mobileMediaQuery = window.matchMedia("(max-width: 765px)");
+
     var $pageTreeContainer,
         $pagedataTreeContainer,
         $docPropertiesContainer;
@@ -164,17 +166,14 @@ var depageCMS = (function() {
             $html = $("html");
             $html.addClass("javascript");
             $body = $("body");
+            $previewFrame = $("#previewFrame");
+            $helpFrame = $("#helpFrame");
 
             localJS.setup();
 
             // setup global events
             $window.on("statechangecomplete", localJS.setup);
             $window.on("switchLayout", localJS.switchLayout);
-
-            $previewFrame = $("#previewFrame");
-            $helpFrame = $("#helpFrame");
-
-            var mobileMediaQuery = window.matchMedia("(max-width: 765px)");
 
             mobileMediaQuery.addEventListener('change', localJS.onMobileSwitch);
             localJS.onMobileSwitch(mobileMediaQuery);
@@ -323,27 +322,10 @@ var depageCMS = (function() {
             $toolbarRight = $("#toolbarmain > .toolbar > menu.right");
             $toolbarLayout = $("<menu class=\"toolbar layout-buttons\" data-live-help=\"" + locale.layoutSwitchHelp + "\"></menu>").insertAfter("#toolbarmain");
 
-            var layouts = [
-                "left-full",
-                //"tree-split",
-                "split",
-                "pages", // mobile
-                "document", // mobile
-                "properties", // mobile
-                "right-full",
-            ];
-
             // add tree actions
             $toolbarLeft.append("<li class=\"tree-actions\"></li>");
 
-            // add layout button
-            for (var i in layouts) {
-                var newLayout = layouts[i];
-                var tooltip = locale["layout-" + newLayout];
-                var $button = $("<a class=\"toggle-button to-layout-" + newLayout + "\" aria-label=\"" + tooltip + "\" data-tooltip=\"" + tooltip + "\"></a>")
-                    .appendTo($toolbarLayout)
-                    .on("click", {layout: newLayout}, localJS.switchLayout);
-            }
+            localJS.updateLayoutButtons();
 
             // add button placeholder
             var $previewButtons = $("<li class=\"preview-buttons\"></li>").prependTo($toolbarPreview);
@@ -568,7 +550,9 @@ var depageCMS = (function() {
             $("a.preview").on("click", function(e) {
                 if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
 
-                if (currentLayout != "split" && currentLayout != "tree-split" && currrentLoyout != "preview") {
+                if (mobileMediaQuery.matches) {
+                    $window.triggerHandler("switchLayout", "preview");
+                } else if (currentLayout != "split" && currentLayout != "tree-split" && currentLayout != "preview") {
                     $window.triggerHandler("switchLayout", "split");
                 }
                 localJS.preview(this.href);
@@ -2223,7 +2207,7 @@ var depageCMS = (function() {
         },
         // }}}
 
-        // {{{ onResize
+        // {{{ onMobileSwitch
         onMobileSwitch: function(e) {
             if (e.matches) {
                 // mobile
@@ -2232,6 +2216,7 @@ var depageCMS = (function() {
                 // default
                 $window.triggerHandler("switchLayout", "split");
             }
+            localJS.updateLayoutButtons();
         },
         // }}}
         // {{{ switchLayout
@@ -2243,7 +2228,6 @@ var depageCMS = (function() {
             }
 
             if ($("div.preview").length === 0) {
-                currentLayout = "left-full";
                 $(".preview-buttons").hide();
             } else {
                 $(".preview-buttons").css({display: "inline-block"});
@@ -2371,10 +2355,54 @@ var depageCMS = (function() {
                     currentPreviewUrl = unescape(url);
                     $previewFrame[0].src = currentPreviewUrl;
 
+                    localJS.updateLayoutButtons();
 
-                    $window.triggerHandler("switchLayout", "split");
+                    if (mobileMediaQuery.matches) {
+                        $window.triggerHandler("switchLayout", "preview");
+                    } else {
+                        $window.triggerHandler("switchLayout", "split");
+                    }
                 });
             }
+        },
+        // }}}
+        // {{{ updateLayoutButtons
+        updateLayoutButtons: function() {
+            var layouts = [];
+
+            $toolbarLayout.empty();
+
+            if (mobileMediaQuery.matches) {
+                if ($(".layout-tree").length == 1) {
+                    layouts.push("pages");
+                }
+                if ($(".layout-tree-top").length == 1) {
+                    layouts.push("pages");
+                }
+                if ($(".layout-tree-bottom").length == 1) {
+                    layouts.push("document");
+                }
+                layouts.push("properties");
+            } else {
+                layouts.push("left-full");
+                if ($previewFrame.length == 1) {
+                    layouts.push("split");
+                }
+            }
+            if ($previewFrame.length == 1) {
+                layouts.push("preview");
+            }
+
+            // add layout button
+            for (var i in layouts) {
+                var newLayout = layouts[i];
+                var tooltip = locale["layout-" + newLayout];
+                var activeClass = newLayout == currentLayout ? " active" : "";
+                $("<a class=\"toggle-button to-layout-" + newLayout + activeClass + "\" aria-label=\"" + tooltip + "\" data-tooltip=\"" + tooltip + "\"></a>")
+                    .appendTo($toolbarLayout)
+                    .on("click", {layout: newLayout}, localJS.switchLayout);
+            }
+
         },
         // }}}
         // {{{ updatePreview
