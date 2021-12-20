@@ -43,6 +43,10 @@ class Newsletter
                 "from" => "",
             ];
         }
+
+        if (!isset($this->conf->listUnsubscribe)) {
+            $this->conf->listUnsubscribe = "<mailto:{$this->conf->from}?subject=unsubscribe>";
+        }
     }
     // }}}
     // {{{ loadAll()
@@ -432,9 +436,10 @@ class Newsletter
 
         foreach ($subscribers as $lang => $emails) {
             $mail = new \Depage\Mail\Mail($this->conf->from);
-            $mail->setSubject($this->getSubject($lang))
+            $mail
+                ->setListUnsubscribe($this->conf->listUnsubscribe)
+                ->setSubject($this->getSubject($lang))
                 ->setHtmlText($this->transform("live", $lang));
-            // @todo add header List-Unsubscribe:
 
             $initId = $task->addSubtask("initializing mail", "\$mail = %s; \$newsletter = %s;", [
                 $mail,
@@ -464,9 +469,10 @@ class Newsletter
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->name, $this->project->name);
 
         $mail = new \Depage\Mail\Mail($this->conf->from);
-        $mail->setSubject($this->getSubject($lang))
+        $mail
+            ->setListUnsubscribe($this->conf->listUnsubscribe)
+            ->setSubject($this->getSubject($lang))
             ->setHtmlText($this->transform("live", $lang));
-        // @todo add header List-Unsubscribe:
 
         $initId = $task->addSubtask("initializing mail", "\$mail = %s; \$newsletter = %s;", [
             $mail,
