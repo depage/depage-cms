@@ -52,19 +52,20 @@ namespace Depage\Mail;
 class Mail
 {
     protected $version = "2.0.0";
-    protected $sender;
-    protected $recipients;
-    protected $cc;
-    protected $bcc;
-    protected $replyto;
-    protected $returnPath;
-    protected $subject;
-    protected $text;
-    protected $htmlText;
-    protected $trackerImage;
+    protected $sender = "";
+    protected $recipients = "";
+    protected $cc = "";
+    protected $bcc = "";
+    protected $replyto = "";
+    protected $returnPath = "";
+    protected $listUnsubscribe = "";
+    protected $subject = "";
+    protected $text = "";
+    protected $htmlText = "";
+    protected $trackerImage = "";
     protected $dontShowEmail = true;
     protected $attachements = array();
-    protected $boundary;
+    protected $boundary = "";
     protected $encoding = "UTF-8";
     protected $eol = PHP_EOL;
     protected $mailFunction = "mail";
@@ -173,6 +174,20 @@ class Mail
     public function setReturnPath($email)
     {
         $this->returnPath = $email;
+
+        return $this;
+    }
+    // }}}
+    // {{{ setListUnsubscribe()
+    /**
+     * @brief Sets the list-unsubscribe header
+     *
+     * @param  string $subject new reply-to address
+     * @return object returns the mail object (for chaining)
+     */
+    public function setListUnsubscribe($header)
+    {
+        $this->listUnsubscribe = $header;
 
         return $this;
     }
@@ -306,6 +321,9 @@ class Mail
         }
         if ($this->returnPath != "") {
             $headers .= "Return-Path: {$this->returnPath}{$this->eol}";
+        }
+        if ($this->listUnsubscribe != "") {
+            $headers .= "List-Unsubscribe: {$this->listUnsubscribe}{$this->eol}";
         }
         if ($this->cc != "") {
             $headers .= "CC: " . $this->normalizeRecipients($this->cc) . $this->eol;

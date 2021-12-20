@@ -153,6 +153,17 @@ class MailTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals("reply@domain.com", $parts[1]['headers']['reply-to']);
     }
     // }}}
+    // {{{ testListUnsubscribe()
+    public function testListUnsubscribe()
+    {
+        $this->mail->setListUnsubscribe("<mailto:unsubscribe@domain.com?subject=unsubscribe>");
+
+        $parts = $this->parseMailParts($this->mail->getEml());
+
+        $this->assertMatchesRegularExpression("/^List-Unsubscribe: <mailto:unsubscribe@domain.com\?subject=unsubscribe>$/m", $this->mail->getHeaders());
+        $this->assertEquals("<mailto:unsubscribe@domain.com?subject=unsubscribe>", $parts[1]['headers']['list-unsubscribe']);
+    }
+    // }}}
     // {{{ testPlainText()
     public function testPlainText()
     {
