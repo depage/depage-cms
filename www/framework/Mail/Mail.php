@@ -186,7 +186,7 @@ class Mail
      */
     public function setText($mailtext)
     {
-        $mailtext = $this->normalizeLineEndings($mailtext);
+        $mailtext = $this->normalizeLineEndings((string) $mailtext);
 
         $this->text = $mailtext;
 
@@ -205,8 +205,7 @@ class Mail
      */
     public function setHtmlText($mailtext)
     {
-        // @todo add option to insert/replace tracking image
-        $mailtext = $this->normalizeLineEndings($mailtext);
+        $mailtext = $this->normalizeLineEndings((string) $mailtext);
 
         $this->htmlText = $mailtext;
         $this->text = $this->stripTags($mailtext);
