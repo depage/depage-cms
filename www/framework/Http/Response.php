@@ -73,7 +73,7 @@ class Response {
     public function setBody($body = "")
     {
         if (is_array($body)) {
-            $this->body = implode($body, "");
+            $this->body = implode('', $body);
         } else {
             $this->body = (string) $body;
         }
@@ -92,7 +92,6 @@ class Response {
     {
         $data = json_decode((string) $this->body, true);
         if (JSON_ERROR_NONE !== json_last_error()) {
-            var_dump($data);
             throw new \Exception('Unable to parse response body into JSON: ' . json_last_error());
         }
 
@@ -168,6 +167,22 @@ class Response {
         foreach($this->headers as $header) {
             header($header);
         }
+    }
+    // }}}
+    // {{{ getStatus()
+    /**
+     * @brief getStatus
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getStatus()
+    {
+        preg_match('|HTTP/\d\.\d\s+(\d+)\s+(.*)|', $this->headers[0] ?? '', $matches);
+        return (object) [
+            'code' => $matches[1] ?? '',
+            'message' => $matches[2] ?? ''
+        ];
     }
     // }}}
     // {{{ getHeader()
