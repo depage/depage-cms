@@ -1,0 +1,38 @@
+{
+    "name": "depage/http",
+    "description": "depage-http - an easy wrapper for curl.",
+    "type": "library",
+    "keywords": [
+        "http",
+        "https",
+        "curl",
+        "request",
+        "response",
+        "GET",
+        "POST"
+    ],
+    "require": {
+        "php": " >= 5.3"
+    },
+    "autoload": {
+        "psr-4": { "Depage\\Http\\": "" }
+    },
+    "support": {
+        "email": "info@depage.net",
+        "source": "https://github.com/depage/depage-http",
+        "issues": "https://github.com/depage/depage-http/issues"
+
+    },
+    "time": "2015-06-03",
+    "license": [
+        "MIT",
+        "GPL-2.0"
+    ],
+    "authors": [
+        {
+            "name": "Frank Hellenkamp",
+            "homepage": "http://depage.net",
+            "role": "Developer"
+        }
+    ]
+}
