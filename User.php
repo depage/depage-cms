@@ -526,14 +526,14 @@ class User extends \Depage\Entity\PdoEntity
     }
     // }}}
 
-    // {{{ isDisabled()
+    // {{{ getDisabled()
     /**
-     * @brief isDisabled
+     * @brief getDisabled
      *
      * @param mixed
      * @return void
      **/
-    public function isDisabled()
+    public function getDisabled()
     {
         return false;
     }

@@ -149,7 +149,7 @@ class HttpCookie extends Auth
                 $user = User::loadByUsername($this->pdo, $username);
             }
 
-            if ($user->isDisabled()) {
+            if ($user->disabled) {
                 return false;
             }
 
@@ -200,7 +200,7 @@ class HttpCookie extends Auth
 
                 $user = User::loadBySid($this->pdo, $this->getSid());
 
-                if ($user->isDisabled()) {
+                if ($user->disabled) {
                     return false;
                 }
 

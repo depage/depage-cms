@@ -17,14 +17,14 @@ namespace Depage\Auth;
  */
 class DeletedUser extends User
 {
-    // {{{ isDisabled()
+    // {{{ getDisabled()
     /**
-     * @brief isDisabled
+     * @brief getDisabled
      *
      * @param mixed
      * @return void
      **/
-    public function isDisabled()
+    public function getDisabled()
     {
         return true;
     }
