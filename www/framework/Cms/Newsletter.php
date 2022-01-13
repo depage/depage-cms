@@ -482,7 +482,11 @@ class Newsletter
         $recipients = array_unique(explode(",", $to));
 
         foreach($recipients as $i => $to) {
-            $this->queueSend($task, $initId, $to, $lang);
+            $to = trim($to);
+
+            if (!empty($to)) {
+                $this->queueSend($task, $initId, $to, $lang);
+            }
         }
 
         $task->begin();

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-18 01:49+0100\n"
+"POT-Creation-Date: 2022-01-13 12:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -203,11 +203,11 @@ msgstr ""
 msgid "mandatory field"
 msgstr ""
 
-#: Mail/Mail.php:348
+#: Mail/Mail.php:364
 msgid "This is a MIME encapsulated multipart message."
 msgstr ""
 
-#: Mail/Mail.php:349
+#: Mail/Mail.php:365
 msgid "Please use a MIME-compliant e-mail program to open it."
 msgstr ""
 
@@ -2149,11 +2149,11 @@ msgstr ""
 msgid "User is not allowed to send newsletters"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:172
+#: Cms/Ui/Newsletter.php:171
 msgid "Publish Newsletter"
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:173
+#: Cms/Ui/Newsletter.php:172
 msgid ""
 "You can send the newsletter to a group of your subscribers (e.g. 'Default') "
 "or to a comma separated list of custom emails for testing."
@@ -2413,12 +2413,12 @@ msgstr ""
 msgid "Your faithful servant on"
 msgstr ""
 
-#: Cms/Tasks/PublishGenerator.php:697
+#: Cms/Tasks/PublishGenerator.php:698
 #, php-format
 msgid "%s published"
 msgstr ""
 
-#: Cms/Tasks/PublishGenerator.php:699
+#: Cms/Tasks/PublishGenerator.php:700
 msgid ""
 "The following pages got published:\n"
 "\n"
@@ -2568,19 +2568,27 @@ msgstr ""
 msgid "Select all"
 msgstr ""
 
-#: Cms/js/locale.php:59
-msgid "Mail Link to file"
+#: Cms/js/locale.php:59 Cms/Forms/NewsletterPublish.php:29
+msgid "Send Now"
 msgstr ""
 
 #: Cms/js/locale.php:60
-msgid "Link to file"
+msgid "Are your sure you want to send this newsletter to"
 msgstr ""
 
 #: Cms/js/locale.php:61
-msgid "Finished uploading/Cancel"
+msgid "Mail Link to file"
 msgstr ""
 
 #: Cms/js/locale.php:62
+msgid "Link to file"
+msgstr ""
+
+#: Cms/js/locale.php:63
+msgid "Finished uploading/Cancel"
+msgstr ""
+
+#: Cms/js/locale.php:64
 msgid "Change zoom level of preview."
 msgstr ""
 
@@ -2617,7 +2625,7 @@ msgstr ""
 #: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:18
 #: Cms/tpl/colorschemes.tpl:50 Cms/tpl/projectmain.tpl:46
 #: Cms/tpl/publish.tpl:18 Cms/Forms/ReleasePages.php:54
-#: Cms/Forms/ReleasePages.php:76 Cms/Forms/NewsletterPublish.php:63
+#: Cms/Forms/ReleasePages.php:76 Cms/Forms/NewsletterPublish.php:64
 msgid "Preview"
 msgstr ""
 
@@ -2987,10 +2995,6 @@ msgstr ""
 msgid "All pages are already released."
 msgstr ""
 
-#: Cms/Forms/NewsletterPublish.php:29
-msgid "Send Now"
-msgstr ""
-
 #: Cms/Forms/NewsletterPublish.php:49
 #, php-format
 msgid "%s (%d recipient)"
@@ -3006,7 +3010,7 @@ msgstr ""
 msgid "Recipients"
 msgstr ""
 
-#: Cms/Forms/NewsletterPublish.php:59
+#: Cms/Forms/NewsletterPublish.php:60
 msgid "Emails"
 msgstr ""
 
