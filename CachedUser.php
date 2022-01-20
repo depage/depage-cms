@@ -46,8 +46,8 @@ class CachedUser
     protected static function cacheUser($user)
     {
         self::$usersById[$user->id] = $user;
-        self::$usersByUsername[$user->name] = $user;
-        self::$usersByEmail[$user->email] = $user;
+        self::$usersByUsername[strtolower($user->name)] = $user;
+        self::$usersByEmail[strtolower($user->email)] = $user;
     }
     // }}}
     // {{{ clearCache()
@@ -76,11 +76,11 @@ class CachedUser
      * @return      User
      */
     static public function loadByUsername($pdo, $username) {
-        if (!isset(self::$usersByUsername[$username])) {
+        if (!isset(self::$usersByUsername[strtolower($username)])) {
             self::cacheUser(User::loadByUsername($pdo, $username));
         }
 
-        return self::$usersByUsername[$username];
+        return self::$usersByUsername[strtolower($username)];
     }
     // }}}
     // {{{ loadByEmail()
@@ -95,11 +95,11 @@ class CachedUser
      * @return      User
      */
     static public function loadByEmail($pdo, $email) {
-        if (!isset(self::$usersByEmail[$email])) {
+        if (!isset(self::$usersByEmail[strtolower($email)])) {
             self::cacheUser(User::loadByEmail($pdo, $email));
         }
 
-        return self::$usersByEmail[$email];
+        return self::$usersByEmail[strtolower($email)];
     }
     // }}}
     // {{{ loadById()
