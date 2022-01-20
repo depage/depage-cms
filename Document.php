@@ -993,10 +993,39 @@ class Document
                 "DELETE FROM {$this->table_xml}
                 WHERE id_doc = :doc_id AND id = :node_id"
             );
-            $query->execute([
-                'doc_id' => $this->doc_id,
-                'node_id' => $node_id,
-            ]);
+            try {
+                $query->execute([
+                    'doc_id' => $this->doc_id,
+                    'node_id' => $node_id,
+                ]);
+            } catch (\PDOException $e) {
+                $pad = 5;
+                $childquery = $this->pdo->prepare(
+                    "WITH RECURSIVE tree (id, id_parent, lvl, sortkey) AS
+                        (
+                        SELECT id, id_parent, 0, CAST('' AS CHAR(5000))
+                            FROM {$this->table_xml} AS xml
+                            WHERE id = :id AND id_doc = :doc_id
+                        UNION ALL
+                        SELECT x.id, x.id_parent, lvl + 1, CONCAT(sortkey, LPAD(IFNULL(x.pos + 1, 0), {$pad}, '0'))
+                            FROM {$this->table_xml} AS x INNER JOIN tree AS t
+                            ON x.id_parent = t.id
+                        )
+                        SELECT * FROM tree ORDER BY sortkey DESC;",
+                    [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
+                $childquery->execute([
+                    'doc_id' => $this->doc_id,
+                    'id' => $node_id,
+                ]);
+                $id = $childquery->fetchColumn();
+                do {
+                    $id = $childquery->fetchColumn();
+                    $query->execute([
+                        'doc_id' => $this->doc_id,
+                        'node_id' => $id,
+                    ]);
+                } while ($id);
+            }
 
             // update position of remaining nodes
             $query = $this->pdo->prepare(
