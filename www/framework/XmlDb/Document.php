@@ -546,26 +546,19 @@ class Document
     {
         $info = $this->getDocInfo();
 
-        $query = $this->pdo->prepare(
-            "REPLACE {$this->table_docs}
-            SET
-                id = :id,
-                name = :name,
-                rootid = :rootid,
-                type = :type,
-                ns = :ns"
-        );
-
         $this->beginTransactionAltering();
 
         if ($info) {
+            $this->pdo->exec("SET FOREIGN_KEY_CHECKS=0;");
+            $query = $this->pdo->prepare(
+                "DELETE FROM {$this->table_xml}
+                WHERE
+                    id_doc = :id"
+            );
             $query->execute([
-                'id' => $info->id,
-                'name' => $info->name,
-                'rootid' => $info->rootid,
-                'type' => $info->type,
-                'ns' => $info->namespaces,
+                'id' => $info->id
             ]);
+            $this->pdo->exec("SET FOREIGN_KEY_CHECKS=1;");
         }
 
         $this->endTransaction();
@@ -1656,6 +1649,9 @@ class Document
      */
     protected function getNodeArrayForSaving(&$node_array, $node, $parent_index = null, $pos = 0, $stripwhitespace = true)
     {
+        if (!$node) {
+            return;
+        }
         $type = $node->nodeType;
 
         if ($type === XML_DOCUMENT_NODE) {
