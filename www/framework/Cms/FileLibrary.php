@@ -47,6 +47,14 @@ class FileLibrary
      **/
     protected $pathById = [];
 
+    /**
+     * @brief excludedPath
+     **/
+    protected $excludedPath = [
+        '^\/cache\/',
+        '\/.git\/',
+    ];
+
     // {{{ __construct()
     /**
      * @brief__construct
@@ -607,25 +615,24 @@ class FileLibrary
         $query = $this->pdo->prepare(
             "SELECT f.* FROM {$this->tableFiles} AS f
             WHERE
-                hash=:hash
-            ORDER BY folder DESC
-            LIMIT 1"
+                hash=:hash"
         );
 
         $query->execute([
             'hash' => $hash,
         ]);
 
-        $info = $query->fetchObject("Depage\\Cms\\FileInfo");
+        while ($file = $query->fetchObject("Depage\\Cms\\FileInfo")) {
+            $path = $this->getPathByFolderId($file->folder);
 
-        if (!$info) {
-            return false;
+            if ($this->isPathExcluded($path)) continue;
+
+            $file->init($path);
+
+            return $file;
         }
 
-        $path = $this->getPathByFolderId($info->folder);
-        $info->init($path);
-
-        return $info;
+        return false;
     }
     // }}}
 
@@ -794,7 +801,7 @@ class FileLibrary
         while ($file = $query->fetchObject("Depage\\Cms\\FileInfo")) {
             $path = $this->getPathByFolderId($file->folder);
 
-            if (strpos($path, "/cache/") === 0) continue;
+            if ($this->isPathExcluded($path)) continue;
 
             $file->init($path);
 
@@ -805,6 +812,22 @@ class FileLibrary
     }
     // }}}
 
+    // {{{ isPathExcluded()
+    /**
+     * @brief isPathExcluded
+     *
+     * @param mixed $path
+     * @return void
+     **/
+    protected function isPathExcluded($path)
+    {
+        foreach ($this->excludedPath as $pattern) {
+            if (preg_match("/$pattern/", $path)) return true;
+        }
+
+        return false;
+    }
+    // }}}
     // {{{ getFilesDoc()
     /**
      * @brief getDoc
