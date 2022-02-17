@@ -16,13 +16,8 @@
         </li>
     <?php } ?>
 </ul>
-<?php if ($this->showCurrent) { ?>
-    <div class="bottom">
-        <a href="users/" class="button"><?php self::t(_("All Users")); ?></a>
-    </div>
-<?php } else { ?>
-    <div class="bottom">
-        <a href="user/+/" class="button new"><?php self::t(_("Add New User")); ?></a>
-    </div>
-<?php } ?>
+<div class="bottom">
+    <a href="users/" class="button"><?php self::t(_("All Users")); ?></a>
+</div>
+
 <?php // vim:set ft=php sw=4 sts=4 fdm=marker et :

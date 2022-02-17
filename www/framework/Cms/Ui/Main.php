@@ -284,17 +284,16 @@ class Main extends Base {
         // filter users by user
         $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
         $user = $this->user;
+        $projectsByUser = [];
 
-        $users = array_filter($users, function($u) use ($projects, $user) {
-            if ($u->id == $user->id) {
-                return true;
-            }
+        $users = array_filter($users, function($u) use ($projects, $user, &$projectsByUser) {
+            $userProjects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $u);
+            $projectsByUser[$u->id] = array_intersect($projects, $userProjects);
+
             if ($user->canEditAllUsers()) {
                 return true;
             }
-            $userProjects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $u);
-            $shared = array_intersect($projects, $userProjects);
-            if (count($shared) > 0) {
+            if (count($projectsByUser[$u->id]) > 0) {
                 return true;
             }
 
@@ -306,10 +305,11 @@ class Main extends Base {
             'class' => "box-users",
             'title' => _("Users"),
             'updateUrl' => $updateUrl,
-            'liveHelp' => _("Shows the users that are currently logged in"),
-            'content' => new Html("userlist.tpl", [
+            'liveHelp' => $showCurrent ? _("Shows the users that are currently logged in") : _("Shows all users"),
+            'content' => new Html($showCurrent ? "userlist.tpl" : "usertable.tpl", [
                 'title' => $this->basetitle,
                 'users' => $users,
+                'projectsByUser' => $projectsByUser,
                 'showCurrent' => $showCurrent,
             ]),
         ], $this->htmlOptions);
