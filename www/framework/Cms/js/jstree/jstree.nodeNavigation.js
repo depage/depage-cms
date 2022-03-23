@@ -62,7 +62,6 @@
                     inst.activate_node(node);
 
                     var rootNodeType = inst._data.nodeTypes.rootNodeType;
-                    console.log(rootNodeType);
                     if (rootNodeType == "proj:pages_struct") {
                         $(window).triggerHandler("switchLayout", "document");
                     } else {

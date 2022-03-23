@@ -161,7 +161,7 @@
         display: block;
         right: 0;
         top: 0;
-        width: calc(#{1.5 * $treeLineHeight} * var(--touch-scale));
+        width: calc(#{2 * $treeLineHeight} * var(--touch-scale));
         height: calc(#{$treeLineHeight} * var(--touch-scale));
         cursor: pointer;
         z-index: 100;

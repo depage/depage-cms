@@ -249,9 +249,14 @@
             } else if ($(e.target).hasClass("hint")) {
                 $target = $target.parent();
             }
-            setTimeout(function() {
-                jstree.edit($target);
-            }, 50);
+
+            if (window.matchMedia("(max-width: 765px)")) {
+                $target.parent().children(".jstree-node-navigation").click();
+            } else {
+                setTimeout(function() {
+                    jstree.edit($target);
+                }, 50);
+            }
 
         }, base);
         // }}}
