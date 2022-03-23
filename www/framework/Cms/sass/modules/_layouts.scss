@@ -258,10 +258,13 @@ html {
             right: 0;
         }
     }
-    #toolbarmain ~ .layout,
-    &.layout-document #toolbarmain ~ .layout-tree-bottom {
+    #toolbarmain + .layout-buttons ~ .layout,
+    &.layout-document #toolbarmain + .layout-buttons ~ .layout-tree-bottom {
         top: calc(#{$toolbarHeight} * var(--touch-scale));
 
+    }
+    #toolbarmain + .layout-buttons.visible ~ .layout,
+    &.layout-document #toolbarmain + .layout-buttons.visible ~ .layout-tree-bottom {
         @media screen and (max-width: $breakMobile) {
             top: calc(#{2 * $toolbarHeight } * var(--touch-scale) + 2px);
         }

@@ -2258,6 +2258,10 @@ var depageCMS = (function() {
                 currentLayout = event.data.layout;
             }
 
+            if ($toolbarLayout.find("a.to-layout-" + currentLayout).length == 0) {
+                currentLayout = "properties";
+            }
+
             if ($("div.preview").length === 0) {
                 $(".preview-buttons").hide();
             } else {
@@ -2434,6 +2438,7 @@ var depageCMS = (function() {
                     .on("click", {layout: newLayout}, localJS.switchLayout);
             }
 
+            $toolbarLayout.toggleClass("visible", layouts.length > 1);
         },
         // }}}
         // {{{ updatePreview

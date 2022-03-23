@@ -386,11 +386,15 @@
     right: 200px;
     top: 0;
     height: calc(#{$toolbarHeight} * var(--touch-scale));
-    display: flex;
+    display: none;
     width: auto;
     z-index: 6010;
     flex-direction: row;
     justify-items: stretch;
+
+    &.visible {
+        display: flex;
+    }
 
     @media screen and (min-width: $breakTablet) {
         right: 300px;
