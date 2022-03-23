@@ -479,7 +479,7 @@ class Html {
             }
         } else if (!empty($value) || is_numeric($value)) {
             echo(" $name=\"");
-            echo(trim(htmlspecialchars($value, \ENT_HTML5, 'UTF-8')));
+            echo(trim(htmlspecialchars($value, \ENT_COMPAT, 'UTF-8')));
             echo("\"");
         }
     }
