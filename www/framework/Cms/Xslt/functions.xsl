@@ -9,7 +9,8 @@
     xmlns:pg="http://cms.depagecms.net/ns/page"
     xmlns:func="http://exslt.org/functions"
     xmlns:exslt="http://exslt.org/common"
-    extension-element-prefixes="xsl dp func php exslt pg ">
+    xmlns:str="http://exslt.org/strings"
+    extension-element-prefixes="xsl dp func php exslt str pg ">
 
     <xsl:include href="xslt://nodetostring.xsl" />
 
@@ -458,6 +459,33 @@
         </xsl:variable>
 
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::autokeywords', string($keywords), string($contentString))" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:srcset() -->
+    <!--
+        dp:srcset(realSrc, sizes, ext, action, center)
+    -->
+    <func:function name="dp:srcset">
+        <xsl:param name="realSrc" />
+        <xsl:param name="sizes" select="''" />
+        <xsl:param name="ext" select="'jpg'" />
+        <xsl:param name="action" select="'tf'" />
+        <xsl:param name="center" select="''" />
+
+        <xsl:variable name="sizeNodes" select="str:tokenize($sizes, ',')" />
+
+        <xsl:variable name="srcset">
+            <xsl:for-each select="$sizeNodes">
+                <xsl:if test="position() &gt; 1">, </xsl:if>
+                <xsl:variable name="currentSize" select="substring-before(normalize-space(.), ' ')" />
+                <xsl:variable name="mediaSize" select="substring-after(normalize-space(.), ' ')" />
+                <xsl:value-of select="concat($realSrc, '.', $action, $currentSize, $center, '.', $ext, ' ', $mediaSize)" />
+            </xsl:for-each>
+        </xsl:variable>
+
+        <func:result>
+            <xsl:value-of select="normalize-space($srcset)" />
+        </func:result>
     </func:function>
     <!-- }}} -->
 

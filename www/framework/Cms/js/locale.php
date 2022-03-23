@@ -60,6 +60,8 @@
             "rename" => _("Rename"),
             "reset" => _("Reset"),
             "selectAll" => _("Select all"),
+            "sendNow" => _("Send Now"),
+            "sendConfirmQuestion" => _("Are your sure you want to send this newsletter to"),
             "shareUrl" => _("Mail Link to file"),
             "shareUrlSubject" => _("Link to file"),
             "uploadFinishedCancel" => _("Finished uploading/Cancel"),

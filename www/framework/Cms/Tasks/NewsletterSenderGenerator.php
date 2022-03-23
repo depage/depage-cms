@@ -23,7 +23,7 @@ class NewsletterSenderGenerator extends PublishGenerator
      *
      * @return void
      **/
-    public function createNewsletterSender($publishId, $newsletter, $from, $category)
+    public function createNewsletterSender($publishId, $newsletter, $category)
     {
         $this->publishId = $publishId;
         $this->taskName = "Publishing '{$this->project->name}/{$this->publishId}'";
@@ -34,11 +34,10 @@ class NewsletterSenderGenerator extends PublishGenerator
         $this->task->addSubtask("initializing publishing task", "
             \$generator = %s;
             \$generator->queueSubtasks();
-            \$generator->queueSendNewsletter(%s, %s, %s);
+            \$generator->queueSendNewsletter(%s, %s);
         ", [
             $this,
             $newsletter,
-            $from,
             $category
         ]);
 
@@ -52,7 +51,7 @@ class NewsletterSenderGenerator extends PublishGenerator
      * @param mixed $category
      * @return void
      **/
-    public function queueSendNewsletter($newsletter, $from, $category)
+    public function queueSendNewsletter($newsletter, $category)
     {
         $this->task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->taskName, $this->project->name);
         $subscribers = $newsletter->getSubscribers($category);
@@ -60,10 +59,11 @@ class NewsletterSenderGenerator extends PublishGenerator
         $this->task->beginTaskTransaction();
 
         foreach ($subscribers as $lang => $emails) {
-            $mail = new \Depage\Mail\Mail($from);
-            $mail->setSubject($newsletter->getSubject($lang))
+            $mail = new \Depage\Mail\Mail($newsletter->conf->from);
+            $mail
+                ->setListUnsubscribe($newsletter->conf->listUnsubscribe)
+                ->setSubject($newsletter->getSubject($lang))
                 ->setHtmlText($newsletter->transform("live", $lang));
-            // @todo add header List-Unsubscribe:
 
             $initId = $this->task->addSubtask(
                 "initializing mail",

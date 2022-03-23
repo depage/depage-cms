@@ -146,7 +146,6 @@ class Newsletter extends Base
                 $task = $generator->createNewsletterSender(
                     $publishId,
                     $this->newsletter,
-                    $this->newsletter->conf->from,
                     $values['to']
                 );
                 $task->begin();

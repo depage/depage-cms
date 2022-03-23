@@ -449,7 +449,7 @@ class Task {
         );
         $query->execute(array(
             "taskId" => $this->taskId,
-            "name" => $name,
+            "name" => mb_substr($name, 0, 250),
             "retries" => $maxRetries,
             "php" => $phpCode,
             "depends_on" => $depends_on,

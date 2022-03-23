@@ -84,7 +84,9 @@ class HttpCookie extends Auth
                 $loginUrl = Html::link($this->loginUrl, "auto");
 
                 // set protocol
-                if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
+                if (($_SERVER['HTTPS'] ?? "off") != "off") {
+                    $protocol = "https://";
+                } elseif (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? "") == "https") {
                     $protocol = "https://";
                 } else {
                     $protocol = "http://";

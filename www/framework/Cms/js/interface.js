@@ -196,6 +196,7 @@ var depageCMS = (function() {
             localJS.setupTooltips();
             localJS.setupProjectList();
             localJS.setupNewsletterList();
+            localJS.setupNewsletterPublish();
             localJS.setupSortables();
             localJS.setupForms();
             localJS.setupHelp();
@@ -539,6 +540,36 @@ var depageCMS = (function() {
                     },{
                         title: locale.delete,
                         message : locale.deleteQuestion,
+                        actionActiveTimeout: 1000,
+                        directionMarker: true
+                    });
+            });
+        },
+        // }}}
+        // {{{ setupNewsletterPublish
+        setupNewsletterPublish: function() {
+            $(".depage-form.newsletter.publish").each(function() {
+                var $form = $(this);
+                var $submit = $form.find(".submit input")
+                    .depageShyDialogue({
+                        ok: {
+                            title: locale.sendNow,
+                            classes: 'default',
+                            click: function(e) {
+                                $form.submit();
+
+                                return true;
+                            }
+                        },
+                        cancel: {
+                            title: locale.cancel
+                        }
+                    },{
+                        title: locale.sendNow + "?",
+                        message: function() {
+                            var rec = $form.find(".recipients input:checked").parent().attr("title") || "";
+                            return locale.sendConfirmQuestion + " '" + rec + "'";
+                        },
                         actionActiveTimeout: 1000,
                         directionMarker: true
                     });

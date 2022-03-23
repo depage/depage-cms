@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-18 01:49+0100\n"
+"POT-Creation-Date: 2022-03-23 18:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -150,9 +150,10 @@ msgstr ""
 msgid "Leave a message..."
 msgstr "Nachricht hinterlassen..."
 
-#: Comments/Forms/commentform.php:36 Cms/Forms/Project/Publish.php:38
-#: Cms/Forms/Project/Variable.php:37 Cms/Forms/Project/Tag.php:37
-#: Cms/Forms/Project/Navigation.php:37 Cms/Forms/Project/Language.php:37
+#: Comments/Forms/commentform.php:36 Cms/tpl/usertable.tpl:3
+#: Cms/Forms/Project/Publish.php:38 Cms/Forms/Project/Variable.php:37
+#: Cms/Forms/Project/Tag.php:37 Cms/Forms/Project/Navigation.php:37
+#: Cms/Forms/Project/Language.php:37
 msgid "Name"
 msgstr "Name"
 
@@ -205,11 +206,11 @@ msgstr "Muss leer bleiben"
 msgid "mandatory field"
 msgstr "Pflichtfeld"
 
-#: Mail/Mail.php:348
+#: Mail/Mail.php:364
 msgid "This is a MIME encapsulated multipart message."
 msgstr ""
 
-#: Mail/Mail.php:349
+#: Mail/Mail.php:365
 msgid "Please use a MIME-compliant e-mail program to open it."
 msgstr ""
 
@@ -2007,7 +2008,7 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: Cms/Ui/Main.php:173 Cms/tpl/toolbar_main.tpl:29
+#: Cms/Ui/Main.php:173 Cms/tpl/usertable.tpl:5 Cms/tpl/toolbar_main.tpl:29
 msgid "Projects"
 msgstr "Projekte"
 
@@ -2023,13 +2024,17 @@ msgstr ""
 msgid "Shows the currently running background tasks"
 msgstr "Zeigt die aktuell laufenden Hintergrundtasks an"
 
-#: Cms/Ui/Main.php:307
+#: Cms/Ui/Main.php:306
 msgid "Users"
 msgstr "Benutzer"
 
-#: Cms/Ui/Main.php:309
+#: Cms/Ui/Main.php:308
 msgid "Shows the users that are currently logged in"
 msgstr "Zeigt alle aktuell angemeldeten Benutzer"
+
+#: Cms/Ui/Main.php:308
+msgid "Shows all users"
+msgstr "Zeigt alle Benutzer"
 
 #: Cms/Ui/Main.php:337
 msgid "News"
@@ -2169,11 +2174,11 @@ msgstr ""
 msgid "User is not allowed to send newsletters"
 msgstr "Dieser Benutzer darf keine Newsletter versenden"
 
-#: Cms/Ui/Newsletter.php:172
+#: Cms/Ui/Newsletter.php:171
 msgid "Publish Newsletter"
 msgstr "Newsletter veröffentlichen"
 
-#: Cms/Ui/Newsletter.php:173
+#: Cms/Ui/Newsletter.php:172
 msgid ""
 "You can send the newsletter to a group of your subscribers (e.g. 'Default') "
 "or to a comma separated list of custom emails for testing."
@@ -2340,7 +2345,7 @@ msgstr "Beschreibung"
 msgid "Headline"
 msgstr "Überschrift"
 
-#: Cms/Ui/DocProperties.php:816
+#: Cms/Ui/DocProperties.php:816 Cms/tpl/usertable.tpl:4
 msgid "Type"
 msgstr "Typ"
 
@@ -2438,12 +2443,12 @@ msgstr "Sie haben eine neue Benachrichtigung von %s erhalten:"
 msgid "Your faithful servant on"
 msgstr "Ihr treuer Helfer auf"
 
-#: Cms/Tasks/PublishGenerator.php:697
+#: Cms/Tasks/PublishGenerator.php:698
 #, php-format
 msgid "%s published"
 msgstr "%s veröffentlicht"
 
-#: Cms/Tasks/PublishGenerator.php:699
+#: Cms/Tasks/PublishGenerator.php:700
 msgid ""
 "The following pages got published:\n"
 "\n"
@@ -2552,63 +2557,93 @@ msgid "Switch to split layout"
 msgstr "Zum geteilten Layout wechseln"
 
 #: Cms/js/locale.php:47
+#, fuzzy
+msgid "Switch to page tree"
+msgstr "Zum geteilten Layout wechseln"
+
+#: Cms/js/locale.php:48
+#, fuzzy
+msgid "Switch to document tree"
+msgstr "Zum Nur-Editier-Layout wechseln"
+
+#: Cms/js/locale.php:49
+#, fuzzy
+msgid "Switch to document properties"
+msgstr "Dokument Eigenschaften"
+
+#: Cms/js/locale.php:50
+#, fuzzy
+msgid "Switch to document preview"
+msgstr "Zum Nur-Vorschau Layout wechseln"
+
+#: Cms/js/locale.php:51
 msgid "Switch layout to: Edit-only, Split-view and Preview-only"
 msgstr ""
 "Zwischen Layouts wechseln: Nur-Editieren, Geteilte Ansicht und Nur-Vorschau"
 
-#: Cms/js/locale.php:48
+#: Cms/js/locale.php:52
 msgid "News- or blog-post"
 msgstr "News- oder Blogeintrag"
 
-#: Cms/js/locale.php:49 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:96
+#: Cms/js/locale.php:53 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:96
 msgid "No current tasks."
 msgstr "Keine aktuellen Tasks."
 
-#: Cms/js/locale.php:50
+#: Cms/js/locale.php:54
 msgid "Ok"
 msgstr ""
 
-#: Cms/js/locale.php:51
+#: Cms/js/locale.php:55
 msgid "Paste"
 msgstr "Einfügen"
 
-#: Cms/js/locale.php:52
+#: Cms/js/locale.php:56
 msgid "Filter Projects"
 msgstr "Projekte filtern"
 
-#: Cms/js/locale.php:53
+#: Cms/js/locale.php:57
 msgid "Reload"
 msgstr "Aktualisieren"
 
-#: Cms/js/locale.php:54 Cms/js/locale.php:55
+#: Cms/js/locale.php:58 Cms/js/locale.php:59
 msgid "Reload page preview"
 msgstr "Seitenvorschau neu laden"
 
-#: Cms/js/locale.php:56
+#: Cms/js/locale.php:60
 msgid "Rename"
 msgstr "Umbenennen"
 
-#: Cms/js/locale.php:57
+#: Cms/js/locale.php:61
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: Cms/js/locale.php:58
+#: Cms/js/locale.php:62
 msgid "Select all"
 msgstr "Alles markieren"
 
-#: Cms/js/locale.php:59
+#: Cms/js/locale.php:63 Cms/Forms/NewsletterPublish.php:29
+msgid "Send Now"
+msgstr "Jetzt senden"
+
+#: Cms/js/locale.php:64
+msgid "Are your sure you want to send this newsletter to"
+msgstr ""
+"Sind Sie sicher, dass Sie diesen Newsletter an die folgenden Empfänger "
+"senden möchten:"
+
+#: Cms/js/locale.php:65
 msgid "Mail Link to file"
 msgstr "Sende Link zur Datei per Email"
 
-#: Cms/js/locale.php:60
+#: Cms/js/locale.php:66
 msgid "Link to file"
 msgstr "Link zu Datei"
 
-#: Cms/js/locale.php:61
+#: Cms/js/locale.php:67
 msgid "Finished uploading/Cancel"
 msgstr "Upload beenden/abbrechen"
 
-#: Cms/js/locale.php:62
+#: Cms/js/locale.php:68
 msgid "Change zoom level of preview."
 msgstr "Ändern Sie die Zoomstufe der Vorschau"
 
@@ -2643,9 +2678,9 @@ msgid "Preview your project"
 msgstr "Vorschau des Projektes"
 
 #: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:18
-#: Cms/tpl/colorschemes.tpl:50 Cms/tpl/projectmain.tpl:46
+#: Cms/tpl/colorschemes.tpl:48 Cms/tpl/projectmain.tpl:48
 #: Cms/tpl/publish.tpl:18 Cms/Forms/ReleasePages.php:54
-#: Cms/Forms/ReleasePages.php:76 Cms/Forms/NewsletterPublish.php:63
+#: Cms/Forms/ReleasePages.php:76 Cms/Forms/NewsletterPublish.php:64
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -2661,7 +2696,7 @@ msgstr "Projektschnellzugriff"
 msgid "Manage file library"
 msgstr "Verwalte die Dateibibliothek"
 
-#: Cms/tpl/projectlist.tpl:38 Cms/tpl/projectLibrary.tpl:6
+#: Cms/tpl/projectlist.tpl:38 Cms/tpl/projectLibrary.tpl:5
 #: Cms/tpl/toolbar_main.tpl:47
 msgid "Library"
 msgstr "Dateibibliothek"
@@ -2670,7 +2705,7 @@ msgstr "Dateibibliothek"
 msgid "Add and edit colors"
 msgstr "Bearbeite die Farben"
 
-#: Cms/tpl/projectlist.tpl:41 Cms/tpl/colorschemes.tpl:23
+#: Cms/tpl/projectlist.tpl:41 Cms/tpl/colorschemes.tpl:21
 #: Cms/tpl/toolbar_main.tpl:50
 msgid "Colors"
 msgstr "Farben"
@@ -2691,6 +2726,10 @@ msgstr ""
 msgid "add new project"
 msgstr "Neues Projekt hinzufügen"
 
+#: Cms/tpl/usertable.tpl:35
+msgid "Add New User"
+msgstr "Neuen Benutzer hinzufügen"
+
 #: Cms/tpl/fileSearch.tpl:1
 msgid "File Library"
 msgstr "Dateibibliothek"
@@ -2707,7 +2746,7 @@ msgstr "Um eine neue Datei hochzuladen, bitte wähle zunächst den Zielordner."
 msgid "No matching files found."
 msgstr "Keine passenden Dateien gefunden."
 
-#: Cms/tpl/userprofile.tpl:9 Cms/tpl/userlist.tpl:21
+#: Cms/tpl/userprofile.tpl:9 Cms/tpl/userlist.tpl:20
 msgid "All Users"
 msgstr "Alle Benutzer"
 
@@ -2725,27 +2764,27 @@ msgstr "Newsletter"
 msgid "The preview of the current newsletter."
 msgstr "Vorschau des aktuellen Newsletters."
 
-#: Cms/tpl/colorschemes.tpl:6
+#: Cms/tpl/colorschemes.tpl:5
 msgid "Color Schemes"
 msgstr "Farbschemata"
 
-#: Cms/tpl/colorschemes.tpl:11
+#: Cms/tpl/colorschemes.tpl:10
 msgid "A list of all available color schemes"
 msgstr "Eine Auflistung aller verfügbaren Farbschemata"
 
-#: Cms/tpl/colorschemes.tpl:27
+#: Cms/tpl/colorschemes.tpl:25
 msgid "Available colors"
 msgstr "Verfügbare Farben"
 
-#: Cms/tpl/colorschemes.tpl:34
+#: Cms/tpl/colorschemes.tpl:32
 msgid "Color Properties"
 msgstr "Farb-Eigenschaften"
 
-#: Cms/tpl/colorschemes.tpl:38
+#: Cms/tpl/colorschemes.tpl:36
 msgid "Change you color here."
 msgstr "Ändere Deine Farbe hier."
 
-#: Cms/tpl/colorschemes.tpl:46 Cms/tpl/projectmain.tpl:42
+#: Cms/tpl/colorschemes.tpl:44 Cms/tpl/projectmain.tpl:44
 #: Cms/tpl/publish.tpl:14
 msgid "The preview of the currently selected page."
 msgstr "Vorschau der aktuellen Seite."
@@ -2754,11 +2793,11 @@ msgstr "Vorschau der aktuellen Seite."
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#: Cms/tpl/projectmain.tpl:6
+#: Cms/tpl/projectmain.tpl:5
 msgid "Pages"
 msgstr "Seiten"
 
-#: Cms/tpl/projectmain.tpl:12
+#: Cms/tpl/projectmain.tpl:11
 msgid ""
 "Page tree:\\nHere you can add, rename and delete pages. Select a page to "
 "edit it in the content tree below ↓."
@@ -2767,11 +2806,11 @@ msgstr ""
 "Wählen Sie eine Seite aus, um sie in der Dokumentenstruktur unten anzuzeigen "
 "↓."
 
-#: Cms/tpl/projectmain.tpl:17
+#: Cms/tpl/projectmain.tpl:20
 msgid "Document"
 msgstr "Dokument"
 
-#: Cms/tpl/projectmain.tpl:21
+#: Cms/tpl/projectmain.tpl:24
 msgid ""
 "Document tree:\\nHere you can add content to your pages. Select an element "
 "to edit its properties in the pane on the right →."
@@ -2780,11 +2819,11 @@ msgstr ""
 "hinzufügen. Wählen Sie ein Element aus, um es in den Dokumenteigenschaften "
 "anzuzeigen →."
 
-#: Cms/tpl/projectmain.tpl:31
+#: Cms/tpl/projectmain.tpl:33
 msgid "Document Properties"
 msgstr "Dokument Eigenschaften"
 
-#: Cms/tpl/projectmain.tpl:35
+#: Cms/tpl/projectmain.tpl:37
 msgid ""
 "Document properties:\\nHere you can edit all properties of the currently "
 "selected element."
@@ -2792,11 +2831,11 @@ msgstr ""
 "Dokument Eigenschaften:\\nHier können Sie alle Eigenschaften des aktuell "
 "ausgewählten Elements bearbeiten."
 
-#: Cms/tpl/projectLibrary.tpl:8
+#: Cms/tpl/projectLibrary.tpl:7
 msgid "File Search"
 msgstr "Datei-Suche"
 
-#: Cms/tpl/projectLibrary.tpl:12
+#: Cms/tpl/projectLibrary.tpl:11
 msgid ""
 "File tree:\\nHere you can add, rename and delete folders. Select a folder to "
 "show its contents."
@@ -2804,11 +2843,11 @@ msgstr ""
 "Dateibaum:\\nHier können Sie Ordner hinzufügen, umbenennen und löschen. "
 "Wählen Sie einen Ordner aus, um seinen Inhalt anzuzeigen."
 
-#: Cms/tpl/projectLibrary.tpl:24
+#: Cms/tpl/projectLibrary.tpl:22
 msgid "Files"
 msgstr "Dateien"
 
-#: Cms/tpl/projectLibrary.tpl:28
+#: Cms/tpl/projectLibrary.tpl:26
 msgid "Files:\\nHere you can manage the files of the current folder."
 msgstr ""
 "Dateien:\\nHier können sie die Dateien, des aktuellen Ordners verwalten."
@@ -2869,10 +2908,6 @@ msgstr "Zuletzt veröffentlicht"
 #: Cms/tpl/welcome.tpl:6
 msgid "Welcome to depage-cms"
 msgstr "Willkommen bei depage-cms"
-
-#: Cms/tpl/userlist.tpl:25
-msgid "Add New User"
-msgstr "Neuen Benutzer hinzufügen"
 
 #: Cms/tpl/toolbar_main.tpl:7
 msgid "Go to dashboard"
@@ -3033,10 +3068,6 @@ msgstr "Geändert von %s, %s"
 msgid "All pages are already released."
 msgstr "Alle Seiten sind bereits freigegeben."
 
-#: Cms/Forms/NewsletterPublish.php:29
-msgid "Send Now"
-msgstr "Jetzt senden"
-
 #: Cms/Forms/NewsletterPublish.php:49
 #, php-format
 msgid "%s (%d recipient)"
@@ -3052,7 +3083,7 @@ msgstr "Benutzerdefinierte Empfänger"
 msgid "Recipients"
 msgstr "Empfänger"
 
-#: Cms/Forms/NewsletterPublish.php:59
+#: Cms/Forms/NewsletterPublish.php:60
 msgid "Emails"
 msgstr "E-Mails"
 
@@ -3959,9 +3990,6 @@ msgstr "Unbenannt"
 
 #~ msgid "Requesting Document Release"
 #~ msgstr "Anfrage zur Seitenfreigabe"
-
-#~ msgid "Shows all users"
-#~ msgstr "Zeigt alle Benutzer"
 
 #~ msgid "projects"
 #~ msgstr "Projekte"

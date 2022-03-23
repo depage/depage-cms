@@ -350,10 +350,39 @@ table.recent-changes {
     }
 }
 // }}}
-// {{{ users
-ul.users h3,
-ul.users p {
-    display: inline;
+// {{{ table.users
+table.users {
+    margin-bottom: 40px;
+
+    th,
+    td {
+        text-align: left;
+        vertical-align: top;
+        padding: 7px 10px 7px 0;
+    }
+    th {
+        font-weight: bold;
+        border-bottom: 1px solid $borderColor;
+    }
+    td.user-name,
+    td.user-type {
+        white-space: nowrap;
+    }
+    td.user-projects  {
+        width: 50%;
+
+        p {
+            display: inline;
+            font-size: $fSizeXS;
+
+            &:after {
+                content: ", ";
+            }
+            &:last-child:after {
+                content: "";
+            }
+        }
+    }
 }
 // }}}
 // {{{ tasks

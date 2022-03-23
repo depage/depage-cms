@@ -96,13 +96,13 @@ class XmlNav {
             $this->urlsByPageId[$id] = $node->getAttribute("url");
             $this->docRefByPageId[$id] = $docref;
             $this->pageIdByDocRef[$docref] = $id;
+            $this->nodeByDocRef[$docref] = $node;
 
             // only for pages and redirects
             if ($node->nodeName != "pg:page" && $node->nodeName != "pg:redirect") {
                 continue;
             }
             $this->pageIdByUrl[$node->getAttribute("url")] = $id;
-            $this->nodeByDocRef[$docref] = $node;
             $this->pageOrderByDocRef[$docref] = $i;
 
             $i++;
@@ -150,7 +150,9 @@ class XmlNav {
         foreach ($this->nodeByDocRef as $docref => $pos) {
             $this->getPageInfo($docref);
         }
-        return $this->pageInfoByDocRef;
+        return array_filter($this->pageInfoByDocRef, function($page) {
+            return $page->pageType != "pg:folder";
+        });
     }
     // }}}
     // {{{ getRecentlyChangedPages()
@@ -337,12 +339,13 @@ class XmlNav {
 
         $this->pagedataIdByPageId[$this->pageIdByDocRef[$docref]] = $docInfo->id;
         $docInfo->pageId = $node->getAttribute("db:id");
-        $docInfo->pageOrder = $this->pageOrderByDocRef[$docref];
+        $docInfo->pageOrder = $this->pageOrderByDocRef[$docref] ?? null;
         $docInfo->url = $node->getAttribute("url");
         $docInfo->fileType = $node->getAttribute("file_type");
         $docInfo->published = $node->getAttribute("db:published") == "true";
         $docInfo->released = $node->getAttribute("db:released") == "true";
         $docInfo->protected = $node->getAttribute("db:protected") == "true";
+        $docInfo->pageType = $node->nodeName;
 
         $docInfo->nav = [];
         $docInfo->tags = [];

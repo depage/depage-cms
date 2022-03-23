@@ -35,9 +35,9 @@
 
             base.options = $.extend({},$.depage.liveFilter.defaultOptions, options);
 
-            var extraAttr = "";
+            var extraAttr = ' autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"';
             if (base.options.autofocus) {
-                extraAttr += " autofocus";
+                extraAttr += ' autofocus';
             }
 
             // Put your initialization code here

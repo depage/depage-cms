@@ -546,26 +546,19 @@ class Document
     {
         $info = $this->getDocInfo();
 
-        $query = $this->pdo->prepare(
-            "REPLACE {$this->table_docs}
-            SET
-                id = :id,
-                name = :name,
-                rootid = :rootid,
-                type = :type,
-                ns = :ns"
-        );
-
         $this->beginTransactionAltering();
 
         if ($info) {
+            $this->pdo->exec("SET FOREIGN_KEY_CHECKS=0;");
+            $query = $this->pdo->prepare(
+                "DELETE FROM {$this->table_xml}
+                WHERE
+                    id_doc = :id"
+            );
             $query->execute([
-                'id' => $info->id,
-                'name' => $info->name,
-                'rootid' => $info->rootid,
-                'type' => $info->type,
-                'ns' => $info->namespaces,
+                'id' => $info->id
             ]);
+            $this->pdo->exec("SET FOREIGN_KEY_CHECKS=1;");
         }
 
         $this->endTransaction();
@@ -1000,10 +993,39 @@ class Document
                 "DELETE FROM {$this->table_xml}
                 WHERE id_doc = :doc_id AND id = :node_id"
             );
-            $query->execute([
-                'doc_id' => $this->doc_id,
-                'node_id' => $node_id,
-            ]);
+            try {
+                $query->execute([
+                    'doc_id' => $this->doc_id,
+                    'node_id' => $node_id,
+                ]);
+            } catch (\PDOException $e) {
+                $pad = 5;
+                $childquery = $this->pdo->prepare(
+                    "WITH RECURSIVE tree (id, id_parent, lvl, sortkey) AS
+                        (
+                        SELECT id, id_parent, 0, CAST('' AS CHAR(5000))
+                            FROM {$this->table_xml} AS xml
+                            WHERE id = :id AND id_doc = :doc_id
+                        UNION ALL
+                        SELECT x.id, x.id_parent, lvl + 1, CONCAT(sortkey, LPAD(IFNULL(x.pos + 1, 0), {$pad}, '0'))
+                            FROM {$this->table_xml} AS x INNER JOIN tree AS t
+                            ON x.id_parent = t.id
+                        )
+                        SELECT * FROM tree ORDER BY sortkey DESC;",
+                    [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
+                $childquery->execute([
+                    'doc_id' => $this->doc_id,
+                    'id' => $node_id,
+                ]);
+                $id = $childquery->fetchColumn();
+                do {
+                    $id = $childquery->fetchColumn();
+                    $query->execute([
+                        'doc_id' => $this->doc_id,
+                        'node_id' => $id,
+                    ]);
+                } while ($id);
+            }
 
             // update position of remaining nodes
             $query = $this->pdo->prepare(
@@ -1656,6 +1678,9 @@ class Document
      */
     protected function getNodeArrayForSaving(&$node_array, $node, $parent_index = null, $pos = 0, $stripwhitespace = true)
     {
+        if (!$node) {
+            return;
+        }
         $type = $node->nodeType;
 
         if ($type === XML_DOCUMENT_NODE) {
