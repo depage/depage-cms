@@ -18,7 +18,6 @@
         margin-right: 10px;
         margin-bottom: 10px;
     }
-
 }
 .layout-left .doc-properties {
     left: 0;
@@ -127,6 +126,7 @@
             border-color: transparent !important;
             border-bottom-color: $backgroundLighterColor !important;
             @include radius(0);
+
         }
         .textarea,
         .textarea .textarea-content {
@@ -151,6 +151,31 @@
                 @include radius($cornerRadius, "bottom", "left");
                 @include radius($cornerRadius, "bottom", "right");
                 border-bottom-color: transparent !important;
+            }
+        }
+    }
+    @media (pointer:coarse) {
+        &.lang-fieldset {
+            .depage-label {
+                padding-top: 8px * $touchScale;
+            }
+            input,
+            textarea {
+                font-size: $fSizeM * $touchScale !important;
+            }
+            .textarea {
+                h1,
+                h2,
+                h3,
+                h4,
+                h5,
+                h6,
+                li,
+                dt,
+                dd,
+                p {
+                    font-size: $fSizeM * $touchScale !important;
+                }
             }
         }
     }

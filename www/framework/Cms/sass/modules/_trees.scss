@@ -604,14 +604,22 @@
             border-bottom: 1px solid transparent;
             @include transition(300ms, "background-color");
 
+
             @media (pointer:coarse) {
                 --touch-scale: #{$touchScaleTree};
+
+                li {
+                    font-size: $fSizeM * $touchScale;
+                }
             }
 
             &.jstree-focus {
                 background: $textBrightColor;
-                border-top-color: $selectionBackgroundColor;
-                border-bottom-color: $selectionBackgroundColor;
+
+                @media screen and (min-width: $breakMobile) {
+                    border-top-color: $selectionBackgroundColor;
+                    border-bottom-color: $selectionBackgroundColor;
+                }
             }
         }
     }

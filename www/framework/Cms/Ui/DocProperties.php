@@ -293,7 +293,7 @@ class DocProperties extends Base
 
             $this->fs = $this->form->addFieldset("xmledit-$nodeId-lang-fs", [
                 'label' => $label,
-                'class' => "doc-property-fieldset $class",
+                'class' => "doc-property-fieldset lang-fieldset $class",
             ]);
         }
 
