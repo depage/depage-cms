@@ -157,11 +157,11 @@
     @media (pointer:coarse) {
         &.lang-fieldset {
             .depage-label {
-                padding-top: 8px * $touchScale;
+                padding-top: 8px * $touchScaleFont;
             }
             input,
             textarea {
-                font-size: $fSizeM * $touchScale !important;
+                font-size: $fSizeM * $touchScaleFont !important;
             }
             .textarea {
                 h1,
@@ -174,7 +174,7 @@
                 dt,
                 dd,
                 p {
-                    font-size: $fSizeM * $touchScale !important;
+                    font-size: $fSizeM * $touchScaleFont !important;
                 }
             }
         }

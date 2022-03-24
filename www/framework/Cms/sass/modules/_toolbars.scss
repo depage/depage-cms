@@ -84,7 +84,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: calc(#{$toolbarHeight - 10px} * var(--touch-scale));
+            line-height: calc(#{$toolbarHeight - 6px} * var(--touch-scale));
             height: calc(#{$toolbarHeight - 3px} * var(--touch-scale));
 
             &.disabled {
@@ -99,7 +99,6 @@
 
             &.home:hover {
                 background: transparent;
-                border: 1px solid transparent;
             }
 
             &.icon-depagecms,
@@ -118,7 +117,7 @@
                     height: calc(#{$toolbarHeight - 6px} * var(--touch-scale));
                     @include icon-base();
                     vertical-align: top;
-                    margin-top: -2px;
+                    margin-top: 0;
                     margin-left: -5px;
                     margin-right: 2px;
                 }
@@ -428,7 +427,7 @@
             display: block;
             position: absolute;
             left: 0;
-            top: 1px;
+            top: calc(2px * var(--touch-scale));
             width: calc(#{$iconSize} * var(--touch-scale));
             height: calc(#{$iconSize} * var(--touch-scale));
         }

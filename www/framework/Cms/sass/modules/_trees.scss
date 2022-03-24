@@ -170,6 +170,9 @@
         @media screen and (max-width: $breakMobile) {
             right: calc(#{1 * $treeLineHeight} * var(--touch-scale));
         }
+        @media (pointer:coarse) {
+            display: none !important;
+        }
         &::after {
             position: absolute;
             font-weight: bold !important;
@@ -609,7 +612,7 @@
                 --touch-scale: #{$touchScaleTree};
 
                 li {
-                    font-size: $fSizeM * $touchScale;
+                    font-size: $fSizeM * $touchScaleFont;
                 }
             }
 
