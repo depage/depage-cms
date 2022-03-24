@@ -281,7 +281,9 @@ html {
         border-bottom: 1px solid $borderColor;
     }
     .layout-tree-bottom,
-    #toolbarmain ~ .layout-tree-bottom {
+    #toolbarmain ~ .layout-tree-bottom,
+    #toolbarmain + .layout-buttons ~ .layout-tree-bottom,
+    &.layout-document #toolbarmain + .layout-buttons ~ .layout-tree-bottom {
         top: 50%;
         bottom: 0;
     }

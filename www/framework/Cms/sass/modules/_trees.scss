@@ -604,6 +604,10 @@
             border-bottom: 1px solid transparent;
             @include transition(300ms, "background-color");
 
+            @media (pointer:coarse) {
+                --touch-scale: #{$touchScaleTree};
+            }
+
             &.jstree-focus {
                 background: $textBrightColor;
                 border-top-color: $selectionBackgroundColor;
