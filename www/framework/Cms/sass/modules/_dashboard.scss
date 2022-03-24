@@ -139,6 +139,10 @@
     dl {
         text-indent: 0;
         margin: 12px 0 48px calc(28px * var(--touch-scale));
+
+        @media screen and (max-width: $breakMobile) {
+            margin-left: 0;
+        }
     }
     dt {
         position: relative;
@@ -147,6 +151,10 @@
         width: 100%;
         min-height: calc(32px * var(--touch-scale));
         @include clearfix();
+
+        @media screen and (max-width: $breakMobile) {
+            padding-left: calc(32px * var(--touch-scale));
+        }
     }
     dd {
         position: relative;
@@ -162,6 +170,10 @@
         left: calc(-28px * var(--touch-scale));
         width: calc(24px * var(--touch-scale));
         height: calc(24px * var(--touch-scale));
+
+        @media screen and (max-width: $breakMobile) {
+            left: 0;
+        }
     }
     dt strong,
     a.button {
@@ -181,6 +193,9 @@
     }
     .buttons {
         float: right;
+        @media screen and (max-width: $breakMobile) {
+            //float: left;
+        }
     }
     dd > .buttons {
         margin-bottom: 20px;
@@ -196,10 +211,10 @@
                 display: block;
                 content: " ";
                 position: absolute;
-                top: -2px;
-                left: -2px;
-                width: 2em;
-                height: 2em;
+                top: calc(-2px * var(--touch-scale));
+                left: calc(-2px * var(--touch-scale));
+                width: calc(2em * var(--touch-scale));
+                height: calc(2em * var(--touch-scale));
                 background-color: transparent;
             }
         }
@@ -212,42 +227,66 @@
     }
     a {
         overflow: hidden;
+        position: relative;
+        height: calc(30px * var(--touch-scale));
 
+        &.icon-edit,
+        &.icon-publish,
         &.icon-add,
         &.icon-library,
         &.icon-colors,
         &.icon-settings {
-            width: 30px;
+            padding-left: calc(30px * var(--touch-scale));
 
             &:before {
                 content: " ";
-                display: inline-block;
-                width: 24px;
-                height: 24px;
+                display: block;
+                position: absolute;
+                top: 0;
+                left: calc(2px * var(--touch-scale));
+                width: calc(30px * var(--touch-scale));
+                height: calc(30px * var(--touch-scale));
                 @include icon-base();
-                margin-bottom: -8px;
-                margin-left: -4px;
-                margin-right: 6px;
             }
-            @media screen and (max-width: 1340px) {
-                width: 30px;
-
-                &:before {
-                    margin-right: 20px;
-                }
+        }
+        &.icon-add,
+        &.icon-library,
+        &.icon-colors,
+        &.icon-settings {
+            width: calc(30px * var(--touch-scale));
+            text-indent: -1000em;
+            padding-left: 0;
+        }
+        @media screen and (max-width: $breakMobile) {
+            &.icon-edit,
+            &.icon-publish {
+                width: calc(30px * var(--touch-scale));
+                text-indent: -1000em;
+                padding-left: 0;
             }
+        }
+        &.icon-edit:before {
+            @include icon("edit", 24px);
+        }
+        &.icon-publish:before {
+            @include icon("publish", 24px);
         }
         &.icon-add:before {
-            @include icon("add", 22px);
+            @include icon("add", 24px);
         }
         &.icon-library:before {
-            @include icon("folder", 22px);
+            @include icon("folder", 24px);
         }
         &.icon-colors:before {
-            @include icon("colors", 22px);
+            @include icon("colors", 24px);
         }
         &.icon-settings:before {
-            @include icon("settings", 22px);
+            @include icon("settings", 24px);
+        }
+        @media screen and (max-width: $breakMobile) {
+            &.preview {
+                display: none;
+            }
         }
     }
     dt strong {
@@ -285,10 +324,14 @@
     display: block;
     content: " ";
     float: left;
-    width: 24px;
-    height: 24px;
+    width: calc(24px * var(--touch-scale));
+    height: calc(24px * var(--touch-scale));
     margin-top: 1px;
     @include icon-base("closed", 24px);
+
+    @media screen and (max-width: $breakMobile) {
+        display: none;
+    }
 }
 .projectlist dl dt.active {
     .opener {
