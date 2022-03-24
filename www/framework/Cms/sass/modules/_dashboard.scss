@@ -193,8 +193,13 @@
     }
     .buttons {
         float: right;
+
         @media screen and (max-width: $breakMobile) {
-            //float: left;
+            float: left;
+
+            a.preview {
+                display: none;
+            }
         }
     }
     dd > .buttons {
@@ -282,11 +287,6 @@
         }
         &.icon-settings:before {
             @include icon("settings", 24px);
-        }
-        @media screen and (max-width: $breakMobile) {
-            &.preview {
-                display: none;
-            }
         }
     }
     dt strong {
