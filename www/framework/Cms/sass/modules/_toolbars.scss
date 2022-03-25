@@ -280,6 +280,10 @@
             .project-shortcuts + .projects {
                 position: relative;
                 padding-top: 20px + 10px;
+
+                @media screen and (max-width: $breakMobile) {
+                    display: none;
+                }
             }
             .project .button {
                 position: relative;
