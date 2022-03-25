@@ -873,6 +873,10 @@ var depageCMS = (function() {
                 })
                 .on("ready.jstree", function() {
                     $fileContainer.click();
+
+                    if (currentLayout == "pages") {
+                        jstreeLibrary.gainFocus();
+                    }
                 })
                 .on("focus.jstree", function() {
                     $fileContainer.removeClass("focus");
@@ -894,7 +898,7 @@ var depageCMS = (function() {
                     $fileContainer.addClass("focus");
                     $toolbar.addClass("visible");
 
-                    $libraryTreeContainer.jstree(true).looseFocus();
+                    jstreeLibrary.looseFocus();
                 })
                 .on("click", "figure", function(e) {
                     var $thumbs = $fileContainer.find("figure");
@@ -1124,6 +1128,10 @@ var depageCMS = (function() {
                 .on("ready.jstree", function() {
                     jstreeColors.activate_node($colorTreeContainer.find("ul:first li:first")[0]);
                     $colorContainer.click();
+
+                    if (currentLayout == "pages") {
+                        jstreeColors.gainFocus();
+                    }
                 })
                 .on("focus.jstree", function() {
                     $colorContainer.removeClass("focus");
@@ -1145,7 +1153,7 @@ var depageCMS = (function() {
                     $colorContainer.addClass("focus");
                     $toolbar.addClass("visible");
 
-                    $colorTreeContainer.jstree(true).looseFocus();
+                    jstreeColors.looseFocus();
                 })
                 .on("click", "figure", function() {
                     var $thumbs = $colorContainer.find("figure");
@@ -1406,6 +1414,7 @@ var depageCMS = (function() {
                         }
 
                         jstreePages.activate_node($tree.find("ul:first li:first")[0]);
+
                         if (currentLayout == "pages") {
                             jstreePages.gainFocus();
                         }
@@ -1697,8 +1706,8 @@ var depageCMS = (function() {
             currentLibForceSize = $inputParent.attr("data-forceSize") || "";
             currentLibPath = path;
 
-            $pageTreeContainer.children(".jstree-container").jstree(true).looseFocus();
-            $pagedataTreeContainer.children(".jstree-container").jstree(true).looseFocus();
+            jstreePages.looseFocus();
+            jstreePagedata.looseFocus();
 
             var $dialogContainer = $("<div class=\"dialog-full\"><div class=\"content\"></div></div>")
                 .appendTo($body);
@@ -1779,7 +1788,7 @@ var depageCMS = (function() {
 
 
             // focus document tree
-            $pagedataTreeContainer.children(".jstree-container").jstree(true).gainFocus();
+            jstreePagedata.gainFocus();
 
             $dialogContainer.removeClass("visible");
             $(".layout").removeClass("no-live-help");
@@ -2286,6 +2295,7 @@ var depageCMS = (function() {
             if (currentLayout != "left-full") {
                 localJS.updatePreview();
             }
+
             // @todo make gaining focus of current child more general
             if (currentLayout == "pages") {
                 if (jstreePages) {
