@@ -1143,8 +1143,10 @@ var depageCMS = (function() {
                 .on("selectionChange.depage", function() {
                     var $color = $colorContainer.find(".selected");
                     if ($color.length > 0) {
+                        $colorContainer.parent().addClass("color-selected");
                         $deleteButton.removeClass("disabled");
                     } else {
+                        $colorContainer.parent().removeClass("color-selected");
                         $deleteButton.addClass("disabled");
                     }
                     localJS.setupColorProperties($color);

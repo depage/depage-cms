@@ -40,23 +40,19 @@ figure.thumb.color {
         left: 0;
         right: 0;
     }
-    .colorscheme {
-        bottom: $treeWidth * 2;
+    .colorscheme.color-selected {
+        bottom: 50%;
     }
     .colorprops {
+        display: none;
+    }
+    .colorscheme.color-selected + .colorprops {
+        display: block;
         top: auto;
-        height: $treeWidth * 2;
+        height: 50%;
         bottom: 0;
         border-top: 1px solid $borderColor;
         background: $backgroundLighterColor;
-    }
-    @media screen and (min-width: 1340px) {
-        .colorscheme {
-            bottom: $treeWidth * 1.5;
-        }
-        .colorprops {
-            height: $treeWidth * 1.5;
-        }
     }
 
     .tree,
