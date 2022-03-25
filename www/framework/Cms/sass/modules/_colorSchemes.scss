@@ -1,16 +1,21 @@
 // {{{ div.color
 figure.thumb.color {
+    width: 100%;
+    height: $thumbSizeSmall * 0.5;
+
     .preview {
         display: block;
-        width: $thumbSize - 8px;
-        height: $thumbSize * 0.5 - 8px;
+        width: $thumbSizeSmall * 0.5 - 8px;
+        height: $thumbSizeSmall * 0.5 - 8px;
         @include radius(4px);
+        float: left;
+        margin-right: 10px;
     }
-    @media screen and (max-width: 1030px) {
-        .preview {
-            width: $thumbSizeSmall - 8px;
-            height: $thumbSizeSmall * 0.5 - 8px;
-        }
+    figcaption {
+        text-align: left;
+        line-height: $thumbSizeSmall * 0.5 - 8px;
+        margin: 0;
+        font-size: $fSizeM;
     }
 }
 // }}}
@@ -72,6 +77,10 @@ figure.thumb.color {
 
     ul {
         padding-bottom: 0;
+
+        li {
+            display: block;
+        }
     }
 }
 // }}}
@@ -94,6 +103,13 @@ figure.thumb.color {
         }
         .sp-initial {
             float: none;
+        }
+    }
+    .sp-initial {
+        margin-top: 10px;
+
+        @media screen and (max-width: 1340px) {
+            display: none;
         }
     }
     .sp-palette,
