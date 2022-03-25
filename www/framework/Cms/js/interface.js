@@ -45,6 +45,7 @@ var depageCMS = (function() {
         currentLibForceSize = "",
         currentTasksTimeout = null,
         currentTasks = {},
+        layouts = [],
         previewStarted = 0,
         previewLoading = false,
         previewLoadTime = 0,
@@ -2252,14 +2253,15 @@ var depageCMS = (function() {
         // }}}
         // {{{ switchLayout
         switchLayout: function(event, layout) {
+            var $layoutButtons = $toolbarLayout.find("a");
             currentLayout = layout;
 
             if (typeof event.data != "undefined" && typeof event.data.layout != "undefined") {
                 currentLayout = event.data.layout;
             }
 
-            if ($toolbarLayout.find("a.to-layout-" + currentLayout).length == 0) {
-                currentLayout = "properties";
+            if (layouts.filter(l => l == currentLayout).length == 0) {
+                currentLayout = layouts[0];
             }
 
             if ($("div.preview").length === 0) {
@@ -2277,20 +2279,25 @@ var depageCMS = (function() {
                 })
                 .addClass("layout-" + currentLayout);
 
-            $toolbarLayout.find("a")
+            $layoutButtons
                 .removeClass("active")
                 .filter(".to-layout-" + currentLayout).addClass("active");
 
             if (currentLayout != "left-full") {
                 localJS.updatePreview();
             }
+            // @todo make gaining focus of current child more general
             if (currentLayout == "pages") {
-                if ($pageTreeContainer.children(".jstree-container").length > 0) {
-                    $pageTreeContainer.children(".jstree-container").jstree(true).gainFocus();
+                if (jstreePages) {
+                    jstreePages.gainFocus();
+                } else if (jstreeLibrary) {
+                    jstreeLibrary.gainFocus();
+                } else if (jstreeColors) {
+                    jstreeColors.gainFocus();
                 }
             } else if (currentLayout == "document") {
-                if ($pagedataTreeContainer.children(".jstree-container").length > 0) {
-                    $pagedataTreeContainer.children(".jstree-container").jstree(true).gainFocus();
+                if (jstreePagedata) {
+                    jstreePagedata.gainFocus();
                 }
             }
         },
@@ -2403,7 +2410,7 @@ var depageCMS = (function() {
         // }}}
         // {{{ updateLayoutButtons
         updateLayoutButtons: function() {
-            var layouts = [];
+            layouts = [];
 
             $toolbarLayout.empty();
 
