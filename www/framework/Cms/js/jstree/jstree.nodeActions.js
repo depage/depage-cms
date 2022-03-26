@@ -128,14 +128,16 @@
                     inst.element.find(".jstree-node.insert-after").removeClass("insert-after");
                 })
                 .on("dnd_move.vakata", function(e, data) {
-                    var $parent = $('.jstree-hovered');
+                    var $hovered = $('.jstree-hovered');
 
-                    if ($parent.length > 0) {
+                    if ($hovered.length > 0) {
                         var $marker = $('#jstree-marker');
-                        if ($parent.parent().hasClass("jstree-dnd-parent")) {
+                        var $pp = $hovered.parent();
+
+                        if ($pp.hasClass("jstree-dnd-parent")) {
                             $marker.width(0);
                         } else {
-                            $marker.width($parent.width() + 5);
+                            $marker.width($pp.width() - 26);
                         }
                     }
                 });
