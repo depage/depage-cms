@@ -2252,6 +2252,8 @@ var depageCMS = (function() {
 
         // {{{ onMobileSwitch
         onMobileSwitch: function(e) {
+            localJS.updateLayoutButtons();
+
             if (e.matches) {
                 // mobile
                 $window.triggerHandler("switchLayout", "pages");
@@ -2259,7 +2261,6 @@ var depageCMS = (function() {
                 // default
                 $window.triggerHandler("switchLayout", "split");
             }
-            localJS.updateLayoutButtons();
         },
         // }}}
         // {{{ switchLayout

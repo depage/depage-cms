@@ -7,7 +7,7 @@ $breakMobile: 3 * $treeWidth !global;
 $breakTablet: 1200px !global;
 
 $touchScale: 1.4 !global;
-$touchScaleTree: 1.5 !global;
+$touchScaleTree: 1.4 !global;
 $touchScaleFont: 1.2 !global;
 
 $baseColor: #ccc8c4 !global;
@@ -82,7 +82,7 @@ html {
     @media screen and (max-width: 1340px) {
         --edit-width: #{$editWidth - 0.5 * $treeWidth};
     }
-    @media screen and (max-width: 1030px) {
+    @media screen and (max-width: #{$breakMobile + 0.5 * $treeWidth}) {
         --edit-width: #{$editWidth - 1 * $treeWidth};
     }
 }
