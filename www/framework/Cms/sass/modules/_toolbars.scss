@@ -133,7 +133,9 @@
             &.icon-create,
             &.icon-duplicate,
             &.icon-delete {
-                @media screen and (max-width: $breakMobile) {
+                @media screen and (max-width: $breakMobile),
+                    screen and (max-width: $breakTablet) and (pointer:coarse)
+                {
                     width: calc(32px * var(--touch-scale));
 
                     &:before {
