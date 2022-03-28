@@ -45,7 +45,6 @@ var depageCMS = (function() {
         currentLibForceSize = "",
         currentTasksTimeout = null,
         currentTasks = {},
-        layouts = [],
         previewStarted = 0,
         previewLoading = false,
         previewLoadTime = 0,
@@ -57,8 +56,7 @@ var depageCMS = (function() {
         $helpFrame;
     var $toolbarLeft,
         $toolbarPreview,
-        $toolbarRight,
-        $toolbarLayout;
+        $toolbarRight;
 
     var mobileMediaQuery = window.matchMedia("(max-width: 765px)");
 
@@ -174,7 +172,7 @@ var depageCMS = (function() {
 
             // setup global events
             $window.on("statechangecomplete", localJS.setup);
-            $html.on("switchLayout", localJS.switchLayout);
+            $body.on("switchLayout", localJS.switchLayout);
 
             mobileMediaQuery.addEventListener('change', localJS.onMobileSwitch);
             localJS.onMobileSwitch(mobileMediaQuery);
@@ -322,12 +320,12 @@ var depageCMS = (function() {
             $toolbarLeft = $("#toolbarmain > .toolbar > menu.left");
             $toolbarPreview = $("#toolbarmain > .toolbar > menu.preview");
             $toolbarRight = $("#toolbarmain > .toolbar > menu.right");
-            $toolbarLayout = $("<menu class=\"toolbar layout-buttons\" data-live-help=\"" + locale.layoutSwitchHelp + "\"></menu>").insertAfter("#toolbarmain");
+            var $toolbarLayout = $("<menu class=\"toolbar layout-buttons\" data-live-help=\"" + locale.layoutSwitchHelp + "\"></menu>").insertAfter("#toolbarmain");
 
             // add tree actions
             $toolbarLeft.append("<li class=\"tree-actions\"></li>");
 
-            localJS.updateLayoutButtons();
+            localJS.updateLayoutButtons($body);
 
             // add button placeholder
             var $previewButtons = $("<li class=\"preview-buttons\"></li>").prependTo($toolbarPreview);
@@ -583,9 +581,9 @@ var depageCMS = (function() {
                 if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
 
                 if (mobileMediaQuery.matches) {
-                    $html.triggerHandler("switchLayout", "preview");
+                    $body.triggerHandler("switchLayout", "preview");
                 } else if (currentLayout != "split" && currentLayout != "tree-split" && currentLayout != "preview") {
-                    $html.triggerHandler("switchLayout", "split");
+                    $body.triggerHandler("switchLayout", "split");
                 }
                 localJS.preview(this.href);
 
@@ -781,7 +779,7 @@ var depageCMS = (function() {
                 if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
 
                 if (currentLayout != "split" && currentLayout != "tree-split") {
-                    $html.triggerHandler("switchLayout", "split");
+                    $body.triggerHandler("switchLayout", "split");
                 }
                 localJS.help(this.href);
 
@@ -2252,20 +2250,24 @@ var depageCMS = (function() {
 
         // {{{ onMobileSwitch
         onMobileSwitch: function(e) {
-            localJS.updateLayoutButtons();
+            localJS.updateLayoutButtons($body);
 
             if (e.matches) {
                 // mobile
-                $html.triggerHandler("switchLayout", "pages");
+                $body.triggerHandler("switchLayout", "pages");
             } else {
                 // default
-                $html.triggerHandler("switchLayout", "split");
+                $body.triggerHandler("switchLayout", "split");
             }
         },
         // }}}
         // {{{ switchLayout
         switchLayout: function(event, layout) {
+            var $layoutRoot = $(this);
+            var $toolbarLayout = $layoutRoot.children(".layout-buttons");
             var $layoutButtons = $toolbarLayout.find("a");
+            var layouts = $layoutRoot.data("layouts");
+
             currentLayout = layout;
 
             if (typeof event.data != "undefined" && typeof event.data.layout != "undefined") {
@@ -2281,7 +2283,7 @@ var depageCMS = (function() {
             } else {
                 $(".preview-buttons").css({display: "inline-block"});
             }
-            $body
+            $layoutRoot
                 .removeClass(function(i, className) {
                     var classes = className.split(" ");
                     classes = classes.filter(function(c) {
@@ -2410,55 +2412,65 @@ var depageCMS = (function() {
                     currentPreviewUrl = unescape(url);
                     $previewFrame[0].src = currentPreviewUrl;
 
-                    localJS.updateLayoutButtons();
+                    localJS.updateLayoutButtons($body);
 
                     if (mobileMediaQuery.matches) {
-                        $html.triggerHandler("switchLayout", "preview");
+                        $body.triggerHandler("switchLayout", "preview");
                     } else {
-                        $html.triggerHandler("switchLayout", "split");
+                        $body.triggerHandler("switchLayout", "split");
                     }
                 });
             }
         },
         // }}}
         // {{{ updateLayoutButtons
-        updateLayoutButtons: function() {
-            layouts = [];
+        updateLayoutButtons: function($layoutRoot) {
+            var layouts = [];
+
+            var $toolbarLayout = $layoutRoot.children(".layout-buttons");
+            if ($toolbarLayout.length == 0) {
+                $toolbarLayout = $("<menu class=\"toolbar layout-buttons\" data-live-help=\"" + locale.layoutSwitchHelp + "\"></menu>").prependTo($layoutRoot);
+            }
 
             $toolbarLayout.empty();
 
             if (mobileMediaQuery.matches) {
-                if ($(".layout-tree").length == 1) {
+                if ($layoutRoot.children(".layout-tree").length == 1) {
                     layouts.push("pages");
                 }
-                if ($(".layout-tree-top").length == 1) {
+                if ($layoutRoot.children(".layout-tree-top").length == 1) {
                     layouts.push("pages");
                 }
-                if ($(".layout-tree-bottom").length == 1) {
+                if ($layoutRoot.children(".layout-tree-bottom").length == 1) {
                     layouts.push("document");
                 }
                 layouts.push("properties");
             } else {
                 layouts.push("left-full");
-                if ($previewFrame.length == 1) {
+                if ($layoutRoot.children(".preview").length == 1) {
                     layouts.push("split");
                 }
             }
-            if ($previewFrame.length == 1) {
+            if ($layoutRoot.children(".preview").length == 1) {
                 layouts.push("preview");
             }
 
             // add layout button
             for (var i in layouts) {
-                var newLayout = layouts[i];
-                var tooltip = locale["layout-" + newLayout];
-                var activeClass = newLayout == currentLayout ? " active" : "";
-                $("<a class=\"toggle-button to-layout-" + newLayout + activeClass + "\" aria-label=\"" + tooltip + "\" data-tooltip=\"" + tooltip + "\"></a>")
-                    .appendTo($toolbarLayout)
-                    .on("click", {layout: newLayout}, localJS.switchLayout);
+                (function() {
+                    var newLayout = layouts[i];
+                    var tooltip = locale["layout-" + newLayout];
+                    var activeClass = newLayout == currentLayout ? " active" : "";
+                    $("<a class=\"toggle-button to-layout-" + newLayout + activeClass + "\" aria-label=\"" + tooltip + "\" data-tooltip=\"" + tooltip + "\"></a>")
+                        .appendTo($toolbarLayout)
+                        .on("click", function() {
+                            $body.triggerHandler("switchLayout", newLayout)
+                        });
+                })();
             }
 
             $toolbarLayout.toggleClass("visible", layouts.length > 1);
+            $layoutRoot.data("layouts", layouts);
         },
         // }}}
         // {{{ updatePreview
@@ -2536,14 +2548,14 @@ var depageCMS = (function() {
                         $helpFrame = null;
 
                         if ($previewFrame.length == 0) {
-                            $html.triggerHandler("switchLayout", "left");
+                            $body.triggerHandler("switchLayout", "left");
                         }
                     });
 
                     $helpFrame = $("#helpFrame");
                     $helpFrame[0].src = unescape(url);
 
-                    $html.triggerHandler("switchLayout", "split");
+                    $body.triggerHandler("switchLayout", "split");
                 });
             }
         },
@@ -2613,7 +2625,7 @@ var depageCMS = (function() {
                             jstreePages.get_node(node, true)[0].scrollIntoView();
                         }
 
-                        $html.triggerHandler("switchLayout", "split");
+                        $body.triggerHandler("switchLayout", "split");
                     }
                 });
             } else {
@@ -2628,7 +2640,7 @@ var depageCMS = (function() {
 
                     localJS.setupTrees();
 
-                    $html.triggerHandler("switchLayout", "split");
+                    $body.triggerHandler("switchLayout", "split");
                 });
             }
             if (typeof window.history != 'undefined') {
