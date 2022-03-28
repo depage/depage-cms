@@ -250,7 +250,8 @@
                 $target = $target.parent();
             }
 
-            if (window.matchMedia("(max-width: 765px)")) {
+            if (window.matchMedia("(max-width: 765px)").matches) {
+                console.log("bla");
                 $target.parent().children(".jstree-node-navigation").click();
             } else {
                 setTimeout(function() {

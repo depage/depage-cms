@@ -46,10 +46,10 @@
     &:active {
         text-decoration: none;
         color: inherit;
-        margin-left: calc(#{1 * $iconSize} * var(--touch-scale));
-        padding-left: calc(#{1 * $iconSize + 6px} * var(--touch-scale));
-        padding-right: calc(#{1 * $iconSize} * var(--touch-scale));
-        width: calc(100% - 29px);
+        margin-left: calc(#{$iconSize} * var(--touch-scale));
+        padding-left: calc(#{$iconSize + 6px} * var(--touch-scale));
+        padding-right: calc(#{$iconSize} * var(--touch-scale));
+        width: calc(100% - #{$iconSize});
         text-overflow: ellipsis;
         overflow: hidden;
     }
@@ -188,14 +188,24 @@
     }
     > .jstree-node-navigation {
         display: none;
-        width: calc(#{$treeLineHeight} * var(--touch-scale));
-        @include icon-base("mobile-next", $treeLineHeight)
 
         @media screen and (max-width: $breakMobile) {
             display: block;
+            width: calc(#{$treeLineHeight * 1.5} * var(--touch-scale));
+
+            &::after {
+                position: absolute;
+                width: calc(#{$treeLineHeight} * var(--touch-scale));
+                height: calc(#{$treeLineHeight} * var(--touch-scale));
+                content: " ";
+                display: block;
+                top: 0;
+                right: 0;
+                @include icon-base("mobile-next", $treeLineHeight)
+            }
         }
     }
-    .jstree-clicked ~ .jstree-node-navigation {
+    .jstree-clicked ~ .jstree-node-navigation::after {
         @include icon-base("mobile-next-white", $treeLineHeight)
     }
     &.insert-into,
@@ -351,8 +361,6 @@
 .jstree-anchor,
 .jstree-hovered,
 .jstree-context,
-.jstree-hovered,
-.jstree-context,
 .jstree-clicked {
     &::before {
         content: " ";
@@ -446,11 +454,12 @@
     position: absolute !important;
     display: block !important;
     left: calc(#{$iconSize} * var(--touch-scale)) !important;
+    right: 0;
     top: 0 !important;
     width: 100% !important;
     height: 100% !important;
     padding: 0 !important;
-    padding-left: 6px !important;
+    padding-left: 0 !important;
     background: #ffffff;
     border: 1px solid $selectionBackgroundColor !important;
     font-size: inherit;

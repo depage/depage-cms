@@ -1778,8 +1778,8 @@ var depageCMS = (function() {
             $(".toolbar-filelist").remove();
             if ((jstree = $(".tree.library .jstree-container").jstree(true))) {
                 jstree.destroy();
+                jstreeLibrary = false;
             }
-
 
             // focus document tree
             jstreePagedata.gainFocus();
