@@ -959,10 +959,15 @@ var depageCMS = (function() {
                         $ok.click();
                     }
                 });
+
             $(".open-search").on("click", function() {
                 localJS.loadLibraryFiles("");
                 currentLibPath = "";
                 jstreeLibrary.deselect_all();
+
+                if (mobileMediaQuery.matches) {
+                    $(this).trigger("switchLayout", "properties");
+                }
             });
 
             localJS.setupFileList();
