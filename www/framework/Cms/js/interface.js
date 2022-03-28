@@ -69,8 +69,6 @@ var depageCMS = (function() {
         jstreeLibrary,
         jstreeColors;
 
-    var currentLayout;
-
     // various helper functions
     // {{{ $.scrollParent
     jQuery.fn.scrollParent = function() {
@@ -580,6 +578,7 @@ var depageCMS = (function() {
             $("a.preview").on("click", function(e) {
                 if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
 
+                var currentLayout = $body.data("currentLayout");
                 if (mobileMediaQuery.matches) {
                     $body.triggerHandler("switchLayout", "preview");
                 } else if (currentLayout != "split" && currentLayout != "tree-split" && currentLayout != "preview") {
@@ -773,19 +772,6 @@ var depageCMS = (function() {
         // {{{ setupHelp
         setupHelp: function() {
             $("#help").depageLivehelp({});
-
-            /*
-            $body.on("click", "a.help", function(e) {
-                if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
-
-                if (currentLayout != "split" && currentLayout != "tree-split") {
-                    $body.triggerHandler("switchLayout", "split");
-                }
-                localJS.help(this.href);
-
-                return false;
-            });
-            */
         },
         // }}}
         // {{{ setupTooltips
@@ -872,7 +858,7 @@ var depageCMS = (function() {
                 .on("ready.jstree", function() {
                     $fileContainer.click();
 
-                    if (currentLayout == "pages") {
+                    if ($body.data("currentLayout") == "pages") {
                         jstreeLibrary.gainFocus();
                     }
                 })
@@ -1127,7 +1113,7 @@ var depageCMS = (function() {
                     jstreeColors.activate_node($colorTreeContainer.find("ul:first li:first")[0]);
                     $colorContainer.click();
 
-                    if (currentLayout == "pages") {
+                    if ($body.data("currentLayout") == "pages") {
                         jstreeColors.gainFocus();
                     }
                 })
@@ -1415,7 +1401,7 @@ var depageCMS = (function() {
 
                         jstreePages.activate_node($tree.find("ul:first li:first")[0]);
 
-                        if (currentLayout == "pages") {
+                        if ($body.data("currentLayout") == "pages") {
                             jstreePages.gainFocus();
                         }
                     })
@@ -1463,7 +1449,7 @@ var depageCMS = (function() {
                         });
                         jstreePagedata.activate_node($tree.find("ul:first li:first")[0]);
 
-                        if (currentLayout == "document") {
+                        if ($body.data("currentLayout") == "document") {
                             jstreePagedata.gainFocus();
                         }
                     })
@@ -2271,7 +2257,7 @@ var depageCMS = (function() {
             var $layoutButtons = $toolbarLayout.find("a");
             var layouts = $layoutRoot.data("layouts");
 
-            currentLayout = layout;
+            var currentLayout = layout;
 
             if (typeof event.data != "undefined" && typeof event.data.layout != "undefined") {
                 currentLayout = event.data.layout;
@@ -2306,7 +2292,7 @@ var depageCMS = (function() {
 
             var currentTree = false;
             if (currentLayout == "pages") {
-                currentTree = jstreePages || jstreeLibrary || jstreeColors || false;
+                currentTree = jstreeLibrary || jstreeColors || jstreePages || false;
             } else if (currentLayout == "document") {
                 currentTree = jstreePagedata || false;
             }
@@ -2318,6 +2304,8 @@ var depageCMS = (function() {
             } else {
                 $nonTreeLayouts.addClass("focus");
             }
+
+            $layoutRoot.data("currentLayout", currentLayout);
         },
         // }}}
         // {{{ preview
@@ -2340,7 +2328,7 @@ var depageCMS = (function() {
                 }
                 currentPreviewUrl = newUrl;
 
-                if (currentLayout == "left-full") {
+                if ($body.data("currentLayout") == "left-full") {
                     // @todo load preview when changing layout?
                     return;
                 }
@@ -2463,7 +2451,7 @@ var depageCMS = (function() {
                 (function() {
                     var newLayout = layouts[i];
                     var tooltip = locale["layout-" + newLayout];
-                    var activeClass = newLayout == currentLayout ? " active" : "";
+                    var activeClass = newLayout == $body.data("currentLayout") ? " active" : "";
                     $("<a class=\"toggle-button to-layout-" + newLayout + activeClass + "\" aria-label=\"" + tooltip + "\" data-tooltip=\"" + tooltip + "\"></a>")
                         .appendTo($toolbarLayout)
                         .on("click", function() {
@@ -2521,7 +2509,7 @@ var depageCMS = (function() {
                 } catch(error) {
                 }
 
-                if (currentLayout == "left-full") {
+                if ($body.data("currentLayout") == "left-full") {
                     // @todo load preview when changing layout?
                     return;
                 }
