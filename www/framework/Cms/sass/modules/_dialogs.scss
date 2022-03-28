@@ -73,6 +73,7 @@ body > .dialog-full {
         @include transform(translateY(-100%));
 
         @media screen and (min-width: $breakMobile) {
+            top: 0;
             bottom: calc(#{$toolbarHeight} * var(--touch-scale));
             left: 60px;
             right: 60px;
@@ -128,6 +129,12 @@ body > .dialog-full {
         .trees,
         .files {
             bottom: calc(#{$toolbarHeight * 1.5} * var(--touch-scale));
+        }
+    }
+    .layout-buttons ~ .library {
+        &.layout-tree,
+        .files {
+            top: calc(#{$toolbarHeight} * var(--touch-scale));
         }
     }
 

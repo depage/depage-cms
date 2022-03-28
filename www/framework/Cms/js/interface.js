@@ -1711,13 +1711,18 @@ var depageCMS = (function() {
 
             var $dialogContainer = $("<div class=\"dialog-full\"><div class=\"content\"></div></div>")
                 .appendTo($body);
+            var $dialogContent = $dialogContainer.children(".content");
+
+            if (mobileMediaQuery.matches) {
+                $dialogContent.addClass("layout-properties");
+            }
 
             setTimeout(function() {
                 $dialogContainer.addClass("visible");
                 $(".layout").addClass("no-live-help");
             }, 10);
 
-            $dialogContainer.children(".content").load(url + "?ajax=true", function() {
+            $dialogContent.load(url + "?ajax=true", function() {
                 $dialogContainer.on("click", function() {
                     localJS.removeFileChooser();
                 });
@@ -1750,7 +1755,7 @@ var depageCMS = (function() {
                     }
                 });
 
-                $dialogBar.prependTo($dialogContainer.children(".content"));
+                $dialogBar.prependTo($dialogContent);
 
                 // @todo select input current file if available and scroll into view
                 $("figure.thumb[data-libref='" + $input[0].value + "']").addClass("selected");
@@ -1758,14 +1763,12 @@ var depageCMS = (function() {
                 localJS.setupLibrary();
 
                 var $fileContainer = $(".files .file-list");
-                $fileContainer
-                    .on("selectionChange.depage", function() {
-                        if ($fileContainer.find(".selected:not(.invalid-selection)").length > 0) {
-                            $ok.removeClass("disabled");
-                        } else {
-                            $ok.addClass("disabled");
-                        }
-                    });
+                $fileContainer.on("selectionChange.depage", function() {
+                    $ok.toggleClass("disabled", $fileContainer.find(".selected:not(.invalid-selection)").length == 0);
+                });
+
+                $dialogContent.on("switchLayout", localJS.switchLayout);
+                localJS.updateLayoutButtons($dialogContent);
             });
         },
         // }}}
@@ -2464,7 +2467,7 @@ var depageCMS = (function() {
                     $("<a class=\"toggle-button to-layout-" + newLayout + activeClass + "\" aria-label=\"" + tooltip + "\" data-tooltip=\"" + tooltip + "\"></a>")
                         .appendTo($toolbarLayout)
                         .on("click", function() {
-                            $body.triggerHandler("switchLayout", newLayout)
+                            $layoutRoot.triggerHandler("switchLayout", newLayout)
                         });
                 })();
             }

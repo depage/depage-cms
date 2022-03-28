@@ -499,6 +499,10 @@
         }
     }
 }
+.dialog-full > .content > .layout-buttons {
+    position: absolute;
+    top: 0;
+}
 // }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

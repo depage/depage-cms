@@ -50,10 +50,15 @@
     .toolbar a {
         color: $textBaseColor;
 
-        &:hover,
         &.active {
             color: $textBrightColor;
             background-color: $selectionBackgroundColor;
+        }
+        @media (pointer:fine) {
+            &:hover {
+                color: $textBrightColor;
+                background-color: $selectionBackgroundColor;
+            }
         }
     }
     .projectlist a:hover {
