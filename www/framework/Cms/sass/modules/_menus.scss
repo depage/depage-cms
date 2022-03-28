@@ -16,6 +16,12 @@
 
     @include box-shadow($shadow);
 }
+.toolbar,
+.vakata-context {
+    li {
+        font-size: calc(#{$fSizeMenu} * var(--touch-scale-font));
+    }
+}
 .toolbar li menu,
 .vakata-context {
     li,

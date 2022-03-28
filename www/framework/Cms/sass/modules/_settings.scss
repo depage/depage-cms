@@ -69,9 +69,11 @@ html {
     --tree-width: #{$treeWidth};
     --edit-width: #{$editWidth};
     --touch-scale: 1;
+    --touch-scale-font: 1;
 
     @media (pointer:coarse) {
         --touch-scale: #{$touchScale};
+        --touch-scale-font: #{$touchScaleFont};
     }
     @media screen and (min-width: 1800px) {
         --edit-width: #{$editWidth + 0.5 * $treeWidth};

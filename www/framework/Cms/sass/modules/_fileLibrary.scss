@@ -38,10 +38,10 @@ figure.thumb {
         color: $textBrightColor;
         border: 1px solid none;
         padding: 5px 15px;
-        left: 100%;
         top: $thumbSize;
         left: 0;
         width: 230%;
+        max-width: calc(100vw - 64px);
         text-align: left;
         z-index: 5000;
         @include box-shadow($shadow);
@@ -70,8 +70,8 @@ figure.thumb {
             position: absolute;
             right: 0;
             bottom: 0;
-            width: $iconSize;
-            height: $iconSize;
+            width: calc(#{$iconSize} * var(--touch-scale));
+            height: calc(#{$iconSize} * var(--touch-scale));
         }
         p.publishing-status + p {
             margin-top: 15px;
@@ -172,6 +172,23 @@ figure.thumb {
                 figcaption {
                     color: $selectionBackgroundColor;
                 }
+            }
+            @media screen and (max-width: #{$breakMobile}) {
+                width: calc(50vw - 24px);
+
+                img {
+                    width: 100%;
+                    height: auto;
+                }
+                .fileinfo {
+                    top: calc(50vw - 24px);
+                }
+            }
+        }
+        @media screen and (max-width: #{$breakMobile}) {
+            &:nth-child(even) .fileinfo {
+                left: auto;
+                right: 0;
             }
         }
     }
