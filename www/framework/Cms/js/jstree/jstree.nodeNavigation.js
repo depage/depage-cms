@@ -63,9 +63,9 @@
 
                     var rootNodeType = inst._data.nodeTypes.rootNodeType;
                     if (rootNodeType == "proj:pages_struct") {
-                        $(window).triggerHandler("switchLayout", "document");
+                        $("html").triggerHandler("switchLayout", "document");
                     } else {
-                        $(window).triggerHandler("switchLayout", "properties");
+                        $("html").triggerHandler("switchLayout", "properties");
                     }
 
                     e.stopPropagation();

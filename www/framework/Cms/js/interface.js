@@ -174,7 +174,7 @@ var depageCMS = (function() {
 
             // setup global events
             $window.on("statechangecomplete", localJS.setup);
-            $window.on("switchLayout", localJS.switchLayout);
+            $html.on("switchLayout", localJS.switchLayout);
 
             mobileMediaQuery.addEventListener('change', localJS.onMobileSwitch);
             localJS.onMobileSwitch(mobileMediaQuery);
@@ -583,9 +583,9 @@ var depageCMS = (function() {
                 if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
 
                 if (mobileMediaQuery.matches) {
-                    $window.triggerHandler("switchLayout", "preview");
+                    $html.triggerHandler("switchLayout", "preview");
                 } else if (currentLayout != "split" && currentLayout != "tree-split" && currentLayout != "preview") {
-                    $window.triggerHandler("switchLayout", "split");
+                    $html.triggerHandler("switchLayout", "split");
                 }
                 localJS.preview(this.href);
 
@@ -781,7 +781,7 @@ var depageCMS = (function() {
                 if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) return;
 
                 if (currentLayout != "split" && currentLayout != "tree-split") {
-                    $window.triggerHandler("switchLayout", "split");
+                    $html.triggerHandler("switchLayout", "split");
                 }
                 localJS.help(this.href);
 
@@ -2256,10 +2256,10 @@ var depageCMS = (function() {
 
             if (e.matches) {
                 // mobile
-                $window.triggerHandler("switchLayout", "pages");
+                $html.triggerHandler("switchLayout", "pages");
             } else {
                 // default
-                $window.triggerHandler("switchLayout", "split");
+                $html.triggerHandler("switchLayout", "split");
             }
         },
         // }}}
@@ -2299,19 +2299,15 @@ var depageCMS = (function() {
                 localJS.updatePreview();
             }
 
-            // @todo make gaining focus of current child more general
+            var currentTree = false;
             if (currentLayout == "pages") {
-                if (jstreePages) {
-                    jstreePages.gainFocus();
-                } else if (jstreeLibrary) {
-                    jstreeLibrary.gainFocus();
-                } else if (jstreeColors) {
-                    jstreeColors.gainFocus();
-                }
+                currentTree = jstreePages || jstreeLibrary || jstreeColors || false;
             } else if (currentLayout == "document") {
-                if (jstreePagedata) {
-                    jstreePagedata.gainFocus();
-                }
+                currentTree = jstreePagedata || false;
+            }
+
+            if (currentTree && currentTree.element != null) {
+                currentTree.gainFocus();
             }
         },
         // }}}
@@ -2413,9 +2409,9 @@ var depageCMS = (function() {
                     localJS.updateLayoutButtons();
 
                     if (mobileMediaQuery.matches) {
-                        $window.triggerHandler("switchLayout", "preview");
+                        $html.triggerHandler("switchLayout", "preview");
                     } else {
-                        $window.triggerHandler("switchLayout", "split");
+                        $html.triggerHandler("switchLayout", "split");
                     }
                 });
             }
@@ -2536,14 +2532,14 @@ var depageCMS = (function() {
                         $helpFrame = null;
 
                         if ($previewFrame.length == 0) {
-                            $window.triggerHandler("switchLayout", "left");
+                            $html.triggerHandler("switchLayout", "left");
                         }
                     });
 
                     $helpFrame = $("#helpFrame");
                     $helpFrame[0].src = unescape(url);
 
-                    $window.triggerHandler("switchLayout", "split");
+                    $html.triggerHandler("switchLayout", "split");
                 });
             }
         },
@@ -2613,7 +2609,7 @@ var depageCMS = (function() {
                             jstreePages.get_node(node, true)[0].scrollIntoView();
                         }
 
-                        $window.triggerHandler("switchLayout", "split");
+                        $html.triggerHandler("switchLayout", "split");
                     }
                 });
             } else {
@@ -2628,7 +2624,7 @@ var depageCMS = (function() {
 
                     localJS.setupTrees();
 
-                    $window.triggerHandler("switchLayout", "split");
+                    $html.triggerHandler("switchLayout", "split");
                 });
             }
             if (typeof window.history != 'undefined') {
