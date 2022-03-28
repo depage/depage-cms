@@ -166,7 +166,7 @@ var depageCMS = (function() {
 
             $html = $("html");
             $html.addClass("javascript");
-            $body = $("body");
+            $body = $("body").addClass("layout-root");
             $previewFrame = $("#previewFrame");
             $helpFrame = $("#helpFrame");
 
@@ -2281,7 +2281,7 @@ var depageCMS = (function() {
             } else {
                 $(".preview-buttons").css({display: "inline-block"});
             }
-            $html
+            $body
                 .removeClass(function(i, className) {
                     var classes = className.split(" ");
                     classes = classes.filter(function(c) {

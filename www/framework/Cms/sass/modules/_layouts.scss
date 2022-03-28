@@ -259,12 +259,12 @@ html {
         }
     }
     #toolbarmain + .layout-buttons ~ .layout,
-    &.layout-document #toolbarmain + .layout-buttons ~ .layout-tree-bottom {
+    .layout-document #toolbarmain + .layout-buttons ~ .layout-tree-bottom {
         top: calc(#{$toolbarHeight} * var(--touch-scale));
 
     }
     #toolbarmain + .layout-buttons.visible ~ .layout,
-    &.layout-document #toolbarmain + .layout-buttons.visible ~ .layout-tree-bottom {
+    .layout-document #toolbarmain + .layout-buttons.visible ~ .layout-tree-bottom {
         @media screen and (max-width: $breakMobile) {
             top: calc(#{2 * $toolbarHeight } * var(--touch-scale) + 2px);
         }
@@ -283,7 +283,7 @@ html {
     .layout-tree-bottom,
     #toolbarmain ~ .layout-tree-bottom,
     #toolbarmain + .layout-buttons ~ .layout-tree-bottom,
-    &.layout-document #toolbarmain + .layout-buttons ~ .layout-tree-bottom {
+    .layout-document #toolbarmain + .layout-buttons ~ .layout-tree-bottom {
         top: 50%;
         bottom: 0;
     }
@@ -310,7 +310,7 @@ html {
     }
 
     // layout right full
-    &.layout-preview {
+    .layout-preview {
         .layout-tree {
             left: calc(-1 * var(--edit-width));
         }
@@ -326,7 +326,7 @@ html {
         }
     }
     // split layout
-    &.layout-split {
+    .layout-split {
         .layout-left {
             max-width: 100%;
             width: var(--edit-width);
@@ -348,7 +348,7 @@ html {
         }
     }
     // tree split layout
-    &.layout-tree-split {
+    .layout-tree-split {
         .layout-left {
             left: 0;
             width: calc(var(--edit-width) * 0.85);
@@ -362,7 +362,7 @@ html {
     }
     // layouts for media sizes
     @media screen and (max-width: $breakTablet) {
-        &.layout-split {
+        .layout-split {
             .toolbar menu.left {
                 width: auto;
             }
@@ -378,17 +378,17 @@ html {
     }
     @media screen and (max-width: $breakMobile) {
         // single view layouts
-        &.layout-pages,
-        &.layout-document,
-        &.layout-properties,
-        &.layout-full,
-        &.layout-preview {
-            body > .layout-tree,
-            body > .layout-tree-top,
-            body > .layout-tree-bottom,
-            body > .layout-left,
-            body > .layout-full,
-            body > .layout-right {
+        .layout-pages,
+        .layout-document,
+        .layout-properties,
+        .layout-full,
+        .layout-preview {
+            > .layout-tree,
+            > .layout-tree-top,
+            > .layout-tree-bottom,
+            > .layout-left,
+            > .layout-full,
+            > .layout-right {
                 left: 0;
                 right: 0;
                 top: 0;
@@ -400,22 +400,22 @@ html {
                 display: none;
             }
         }
-        &.layout-pages {
-            body > .layout-tree-top,
-            body > .layout-tree-full {
+        .layout-pages {
+            > .layout-tree-top,
+            > .layout-tree-full {
                 display: block;
                 z-index: 2;
             }
         }
-        &.layout-document {
-            body > .layout-tree-bottom {
+        .layout-document {
+            > .layout-tree-bottom {
                 display: block;
                 z-index: 2;
             }
         }
-        &.layout-properties {
-            body > .layout-left,
-            body > .layout-full {
+        .layout-properties {
+            > .layout-left,
+            > .layout-full {
                 display: block;
                 z-index: 2;
             }
@@ -423,8 +423,8 @@ html {
                 display: none;
             }
         }
-        &.layout-preview {
-            body > .layout-right {
+        .layout-preview {
+            > .layout-right {
                 display: block;
                 z-index: 2;
             }
