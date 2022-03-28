@@ -2306,8 +2306,12 @@ var depageCMS = (function() {
                 currentTree = jstreePagedata || false;
             }
 
+            var $nonTreeLayouts = $(".layout-properties .file-list, .layout-properties .color-list, .layout-properties .doc-properties");
             if (currentTree && currentTree.element != null) {
                 currentTree.gainFocus();
+                $nonTreeLayouts.removeClass("focus");
+            } else {
+                $nonTreeLayouts.addClass("focus");
             }
         },
         // }}}
