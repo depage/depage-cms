@@ -3,7 +3,7 @@ Changelog     {#changelog}
 
 [TOC]
 
-Version 2.2   {#v2-2}
+Version 2.3   {#v2-3}
 ===========
 
 **User Interface Highlights**
@@ -18,7 +18,21 @@ Version 2.2   {#v2-2}
 - New editor for [color schemes](@ref colors)
 - Enhanced [preview](@ref page-preview) to automatically show currently edited language
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
+- New mobile interface
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.3.0 / 29.03.2022      {#v2-3-0}
+-------------------
+
+**Backend**
+- enhanced newsletter sending
+- enhanced base xsl to simplify srcsets
+- various small bug fixes
+- updated some composer dependencies
+
+**Frontend**
+- added new mobile layout for small screens like mobile phones and touch screens
 
 
 v2.2.0 / 19.11.2021      {#v2-2-0}

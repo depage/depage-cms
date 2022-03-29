@@ -3,7 +3,7 @@ Versionshistorie     {#changelog}
 
 [TOC]
 
-Version 2.2   {#v2-2}
+Version 2.3   {#v2-3}
 ===========
 
 **User Interface Highlights**
@@ -18,7 +18,21 @@ Version 2.2   {#v2-2}
 - Neues Interface zur Bearbeitung der Farbschemata [color schemes](@ref colors)
 - Verbesserung der [Vorschau](@ref page-preview), so dass diese automatisch in der gerade bearbeiteten Sprache angezeigt wird
 - Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
+- Neues Interface für kleine Screens
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.3.0 / 29.03.2022      {#v2-3-0}
+-------------------
+
+**Backend**
+- Versand der Newsletter verbessert
+- Basis XSL-Templates erweitert, um srcsets zu vereinfachen
+- Verschiedene kleinere Bugs behoben
+- Composer Bibliotheken aktualisiert
+
+**Frontend**
+- Neues Interface für kleiner Bildschirme wie Mobiltelefone und Touch Screens hinzugefügt
 
 
 v2.2.0 / 19.11.2021      {#v2-2-0}
