@@ -226,6 +226,16 @@ var depageCMS = (function() {
             $("fieldset.detail").depageDetails({
                 head: "legend"
             });
+            $(document).on("context_show.vakata show.shydialogue", function(e) {
+                if (mobileMediaQuery.matches) {
+                    $("<div id=\"depage-live-help\"></div>").appendTo("body").addClass("visible");
+                }
+            });
+            $(document).on("context_hide.vakata hide.shydialogue", function(e) {
+                if (mobileMediaQuery.matches) {
+                    $("#depage-live-help").remove();
+                }
+            });
         },
         // }}}
         // {{{ setupLoginCheck

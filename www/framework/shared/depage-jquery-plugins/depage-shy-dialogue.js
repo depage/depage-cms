@@ -129,7 +129,7 @@
                     }
                     ignoreClickEvent = false;
                 });
-
+                $(document).triggerHandler("show.shydialogue");
             }, 10);
         };
         /// }}}
@@ -139,6 +139,7 @@
 
             $(document).off("click.shydialogue").off('keyup.shydialogue');
 
+            $(document).triggerHandler("hide.shydialogue");
         };
         // }}}
 

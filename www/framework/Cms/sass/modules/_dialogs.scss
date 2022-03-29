@@ -8,7 +8,7 @@
         $direction-size: 15px
     );
 
-    z-index: 9000 !important;
+    z-index: 30000 !important;
 
     .wrapper {
         max-width: 100%;
@@ -43,6 +43,37 @@
             &:focus,
             &:hover {
                 background: lighten($selectionBackgroundColor, 5%);
+            }
+        }
+    }
+    @media screen and (max-width: $breakMobile) {
+        position: fixed;
+        left: 0 !important;
+        top: auto !important;
+        right: 0 !important;
+        bottom: 0 !important;
+
+        .wrapper {
+            position: absolute;
+            left: 0 !important;
+            top: auto !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: auto !important;
+            border-radius-bottom-left: 0;
+            border-radius-bottom-right: 0;
+            padding-bottom: 40px;
+
+            .message > *,
+            .buttons > *{
+                text-align: center;
+                font-size: 1em * $touchScaleFont;
+            }
+            .buttons a {
+                display: block;
+                margin-bottom: 10px;
+                font-size: 1em * $touchScaleFont;
+                line-height: 1.5em * $touchScaleFont;
             }
         }
     }

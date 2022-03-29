@@ -6,6 +6,8 @@
 }
 
 #depage-live-help {
+    background: $overlayColor;
+
     .area {
         p:first-child {
             font-weight: bold;
@@ -15,6 +17,7 @@
         line-height: 1.3em;
     }
     .icon {
+        --touch-scale: 1;
         padding-left: $helpIconSize + 10px;
         min-height: $helpIconSize + 10px;
         min-width: $helpIconSize * 3;

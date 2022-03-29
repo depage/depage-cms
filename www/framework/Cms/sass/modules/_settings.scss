@@ -17,6 +17,8 @@ $backgroundLighterColor: lighten($backgroundColor, 10%) !global;
 $backgroundBrightColor: lighten($backgroundColor, 12%) !global;
 $backgroundDisabledColor: #cccccc !global;
 $backgroundMenu: $backgroundDarkColor !global;
+$backgroundMenuMobileSub: transparentize(#ffffff, 0.85) !global;
+$overlayColor: transparentize(#000000, 0.95) !global;
 $borderColor: darken($baseColor, 5%) !global;
 $borderLightColor: lighten($borderColor, 12%) !global;
 $borderDarkColor: darken($borderColor, 25%) !global;

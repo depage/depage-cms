@@ -37,6 +37,32 @@
         @include transform(translateY(0));
     }
 }
+@keyframes menu-top {
+    0% {
+        opacity: 0;
+        @include transform(translateY(-$transitionDistance));
+    }
+    80% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+        @include transform(translateY(0));
+    }
+}
+@keyframes menu-bottom {
+    0% {
+        opacity: 0;
+        @include transform(translateY(100%));
+    }
+    80% {
+        opacity: 0.5;
+    }
+    100% {
+        opacity: 1;
+        @include transform(translateY(0));
+    }
+}
 @keyframes tooltip {
     0% {
         opacity: 0;
@@ -67,6 +93,18 @@
 }
 figure.thumb img:hover + figcaption .fileinfo {
     animation: tooltip 1000ms linear;
+}
+.toolbar li menu,
+.vakata-context,
+.depage-tooltip .wrapper,
+.depage-shy-dialogue {
+    animation: menu-top $transitionTime linear;
+}
+@media screen and (max-width: $breakMobile) {
+    .vakata-context,
+    .depage-shy-dialogue .wrapper {
+        animation: menu-bottom $transitionTime linear;
+    }
 }
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

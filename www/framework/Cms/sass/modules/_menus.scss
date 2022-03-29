@@ -16,6 +16,9 @@
 
     @include box-shadow($shadow);
 }
+.vakata-context {
+    z-index: 30000;
+}
 .toolbar,
 .vakata-context {
     li {
@@ -52,8 +55,10 @@
             border: none;
             @include radius(0);
 
-            &:hover {
-                background: $selectionBackgroundColor;
+            @media (pointer:fine) {
+                &:hover {
+                    background: $selectionBackgroundColor;
+                }
             }
             &:focus {
                 outline: 0;
@@ -148,6 +153,31 @@
         max-height: 100vh;
         overflow-y: auto;
         border-radius: 0 !important;
+    }
+    .vakata-context {
+        bottom: 0 !important;
+        top: auto !important;
+        padding-bottom: 40px;
+        max-height: 100vh;
+        overflow-y: auto;
+        border-top-left-radius: 2 * $cornerRadius !important;
+        border-top-right-radius: 2 * $cornerRadius !important;
+
+        ul {
+            display: block !important;
+            max-height: 30vh;
+            overflow-y: auto;
+            position: static !important;
+            background-color: $backgroundMenuMobileSub !important;
+            @include box-shadow(none);
+        }
+        .vakata-contextmenu-disabled {
+            display: none;
+        }
+
+        a {
+            text-align: center;
+        }
     }
 }
 

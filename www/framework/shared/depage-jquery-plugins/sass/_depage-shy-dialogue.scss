@@ -49,6 +49,7 @@
         @include radius($corner-radius);
         //@include shadow();
 
+        display: none;
         position: absolute;
         border: $border;
         background: $background;
@@ -56,6 +57,10 @@
         width: $width;
         max-width: 80vw;
         height: $height;
+
+        &.visible {
+            display: block;
+        }
 
         .message,
         .inputs,
