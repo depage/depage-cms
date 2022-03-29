@@ -42,17 +42,15 @@
             list-style: none;
         }
 
-        &.right,
-        &.preview,
-        &.left {
-            //margin: auto;
-        }
-        &.left {
-        }
         &.preview {
             margin-right: auto;
             width: calc(175px * var(--touch-scale));
 
+            @media screen and (max-width: #{$breakTablet}) {
+                .zoom {
+                    display: none;
+                }
+            }
             @media screen and (max-width: $breakMobile) {
                 width: calc(#{$toolbarHeight - 6px} * var(--touch-scale));
                 overflow: hidden;
@@ -387,7 +385,7 @@
 // {{{ layout-buttons
 .layout-buttons {
     position: fixed;
-    right: 200px;
+    right: calc(200px * var(--touch-scale));
     top: 0;
     height: calc(#{$toolbarHeight} * var(--touch-scale));
     display: none;
@@ -401,7 +399,7 @@
     }
 
     @media screen and (min-width: $breakTablet) {
-        right: 300px;
+        right: calc(300px * var(--touch-scale));
     }
     @media screen and (max-width: $breakMobile) {
         position: fixed;

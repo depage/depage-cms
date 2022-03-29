@@ -361,17 +361,13 @@ html {
         }
     }
     // layouts for media sizes
-    @media screen and (max-width: $breakTablet) {
+    @media screen and (max-width: #{$breakTablet + 300px}) {
         .layout-split {
             .toolbar menu.left {
                 width: auto;
             }
-            .toolbar menu.preview {
-                margin-right: 0;
-                margin-left: auto;
-            }
             .toolbar menu.right {
-                width: calc(100% - var(--edit-width));
+                width: calc(100% - var(--edit-width) - 20px);
                 margin-left: 0;
             }
         }

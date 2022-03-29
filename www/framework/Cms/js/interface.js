@@ -366,7 +366,7 @@ var depageCMS = (function() {
 
             // add zoom select
             var zooms = [100, 75, 50];
-            var $zoomMenu = $("<li><a data-live-help=\"" + locale.zoomHelp + "\">" + zooms[0] + "%</a><menu class=\"popup\"></menu></li>").appendTo($toolbarPreview).find("menu");
+            var $zoomMenu = $("<li class=\"zoom\"><a data-live-help=\"" + locale.zoomHelp + "\">" + zooms[0] + "%</a><menu class=\"popup\"></menu></li>").appendTo($toolbarPreview).find("menu");
             var $zoomMenuLabel = $zoomMenu.siblings("a");
 
             $(zooms).each(function() {

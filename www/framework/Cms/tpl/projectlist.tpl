@@ -21,7 +21,7 @@
                             <a href="project/<?php self::t($project->name); ?>/edit/" class="button icon-edit" data-tooltip="<?php self::t(_("Edit this project")); ?>">
                                 <?php self::t(_('Edit')) ?>
                             </a>
-                            <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview" target="previewFrame" data-tooltip="<?php self::t(_("Preview your project")); ?>">
+                            <a href="project/<?php self::t($project->name); ?>/preview/" class="button preview icon-preview" target="previewFrame" data-tooltip="<?php self::t(_("Preview your project")); ?>">
                                 <?php self::t(_('Preview')) ?>
                             </a>
                             <?php if ($this->user->canPublishProject()) { ?>

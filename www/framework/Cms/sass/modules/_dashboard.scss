@@ -236,7 +236,7 @@
         height: calc(30px * var(--touch-scale));
 
         &.icon-edit,
-        &.preview,
+        &.icon-preview,
         &.icon-publish,
         &.icon-add,
         &.icon-library,
@@ -274,7 +274,7 @@
         &.icon-edit:before {
             @include icon("edit", 24px);
         }
-        &.preview:before {
+        &.icon-preview:before {
             @include icon("preview", 24px);
         }
         &.icon-publish:before {

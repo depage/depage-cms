@@ -162,7 +162,7 @@ body > .dialog-full {
             bottom: calc(#{$toolbarHeight * 1.5} * var(--touch-scale));
         }
     }
-    .layout-buttons ~ .library {
+    .layout-buttons.visible ~ .library {
         &.layout-tree,
         .files {
             top: calc(#{$toolbarHeight} * var(--touch-scale));
