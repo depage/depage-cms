@@ -236,6 +236,7 @@
         height: calc(30px * var(--touch-scale));
 
         &.icon-edit,
+        &.preview,
         &.icon-publish,
         &.icon-add,
         &.icon-library,
@@ -249,7 +250,7 @@
                 position: absolute;
                 top: 0;
                 left: calc(2px * var(--touch-scale));
-                width: calc(30px * var(--touch-scale));
+                width: calc(24px * var(--touch-scale));
                 height: calc(30px * var(--touch-scale));
                 @include icon-base();
             }
@@ -272,6 +273,9 @@
         }
         &.icon-edit:before {
             @include icon("edit", 24px);
+        }
+        &.preview:before {
+            @include icon("preview", 24px);
         }
         &.icon-publish:before {
             @include icon("publish", 24px);

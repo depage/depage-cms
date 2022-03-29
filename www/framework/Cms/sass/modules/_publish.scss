@@ -38,6 +38,34 @@ form.lastchanged_pages {
             background: $selectionBackgroundColor;
             color: $selectionTextColor;
         }
+
+        &.edit,
+        &.preview {
+            position: relative;
+            padding-left: calc(30px * var(--touch-scale));
+
+            &:before {
+                content: " ";
+                display: block;
+                position: absolute;
+                top: 0;
+                left: calc(2px * var(--touch-scale));
+                width: calc(24px * var(--touch-scale));
+                height: calc(30px * var(--touch-scale));
+                @include icon-base();
+            }
+            @media screen and (max-width: $breakMobile) {
+                width: calc(30px * var(--touch-scale));
+                text-indent: -1000em;
+                padding-left: 0;
+            }
+        }
+        &.edit:before {
+            @include icon("edit", 24px);
+        }
+        &.preview:before {
+            @include icon("preview", 24px);
+        }
     }
     p.small {
         margin-left: $checkboxSize * 1.25;
