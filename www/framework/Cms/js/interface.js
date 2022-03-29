@@ -52,8 +52,7 @@ var depageCMS = (function() {
     var $html;
     var $window;
     var $body;
-    var $previewFrame,
-        $helpFrame;
+    var $previewFrame;
     var $toolbarLeft,
         $toolbarPreview,
         $toolbarRight;
@@ -164,7 +163,6 @@ var depageCMS = (function() {
             $html.addClass("javascript");
             $body = $("body").addClass("layout-root");
             $previewFrame = $("#previewFrame");
-            $helpFrame = $("#helpFrame");
 
             localJS.setup();
 
@@ -2510,60 +2508,6 @@ var depageCMS = (function() {
             }
 
             localJS.preview(url);
-        },
-        // }}}
-        // {{{ help
-        help: function(url) {
-            if (typeof url == 'undefined' || url[0] == "/") return;
-
-            if ($helpFrame && $helpFrame.length == 1) {
-                var newUrl = unescape(url);
-                var oldUrl = "";
-                try {
-                    oldUrl = $helpFrame[0].contentWindow.location.href;
-                } catch(error) {
-                }
-
-                if ($body.data("currentLayout") == "left-full") {
-                    // @todo load preview when changing layout?
-                    return;
-                }
-
-                if (oldUrl == newUrl) {
-                    $helpFrame[0].contentWindow.location.reload();
-                } else {
-                    var $newFrame = $("<iframe />").insertAfter($helpFrame);
-                    $helpFrame.remove();
-                    $helpFrame = $newFrame.attr("id", "helpFrame");
-                    $helpFrame[0].src = newUrl;
-                }
-            } else {
-                // add help frame
-                $.get(baseUrl + "help/?ajax=true", function(data) {
-                    var $result = $("<div></div>")
-                        .html( data )
-                        .find("div.help")
-                        .removeClass("layout-full")
-                        .addClass("layout-right")
-                        .appendTo($body);
-
-                    $("<a class=\"close\" data-tooltip=\"" + locale.close + "\">" + locale.close + "</a>").appendTo(
-                        $result.find("header.info")
-                    ).on("click", function() {
-                        $("div.help").remove();
-                        $helpFrame = null;
-
-                        if ($previewFrame.length == 0) {
-                            $body.triggerHandler("switchLayout", "left");
-                        }
-                    });
-
-                    $helpFrame = $("#helpFrame");
-                    $helpFrame[0].src = unescape(url);
-
-                    $body.triggerHandler("switchLayout", "split");
-                });
-            }
         },
         // }}}
         // {{{ hightlighCurrentDocProperty
