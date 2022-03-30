@@ -300,11 +300,13 @@ class Html {
         }
         if ($useCached) {
             $cache = \Depage\Cache\Cache::factory("js");
-            echo("<script src=\"" . $cache->getUrl($identifier) . "\" $attr></script>\n");
+            $d = date ("YmdHis", $cache->age($identifier));
+            echo("<script src=\"" . $cache->getUrl($identifier) . "?$d\" $attr></script>\n");
         } else {
             // development environement
             foreach ($files as $file) {
-                echo("<script src=\"$file\" $attr></script>\n");
+                $d = date ("YmdHis", filemtime($file));
+                echo("<script src=\"$file?$d\" $attr></script>\n");
             }
         }
     }
@@ -368,7 +370,8 @@ class Html {
         // development environement
         if (!$inline) {
             foreach ($files as $file) {
-                echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"$file\">\n");
+                $d = date ("YmdHis", filemtime($file));
+                echo("<link rel=\"stylesheet\" type=\"text/css\" $media href=\"$file?$d\">\n");
             }
         } else {
             echo("<style type=\"text/css\" $media>\n");
