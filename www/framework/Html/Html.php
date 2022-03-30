@@ -530,12 +530,13 @@ class Html {
     // }}}
 
     // {{{ truncate()
-    static function truncate ($string, $max = 50, $rep = "") {
+    static function truncate($string, $max = 50, $rep = "") {
         if (strlen($string) <= $max) {
             $rep = "";
         }
-        $leave = $max - strlen ($rep);
-        return substr_replace($string, $rep, $leave);
+        $leave = $max - strlen($rep);
+
+        return trim(substr_replace($string, "", $leave)) . $rep;
     }
     // }}}
     // {{{ textContent()
@@ -547,7 +548,13 @@ class Html {
      **/
     public static function textContent($htmlString)
     {
-        return trim(html_entity_decode(strip_tags($htmlString)));
+        $t = $htmlString;
+
+        $t = preg_replace("/[\r\n\t ]+/", " ", $t);
+        $t = str_replace("</p>", "\n</p>", $t);
+        $t = strip_tags($t);
+
+        return trim(html_entity_decode($t));
     }
     // }}}
     // {{{ isEmpty()
