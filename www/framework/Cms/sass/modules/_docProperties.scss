@@ -326,19 +326,29 @@
     }
     i.icon {
         display: table-cell;
+        position: relative;
         margin-top: -2px;
         padding: 0;
         width: calc(#{$iconSize} * var(--touch-scale));
-        height: calc(#{$iconSize} * var(--touch-scale));
-        @include icon-base("", $iconSize);
+
+        &:after {
+            position: absolute;
+            content: " ";
+            display: block;
+            top: 0;
+            left: 0;
+            width: calc(#{$iconSize} * var(--touch-scale));
+            height: calc(#{$iconSize} * var(--touch-scale));
+            @include icon-base("", $iconSize);
+        }
     }
-    i.icon-published {
+    i.icon-published::after {
         @include icon("published", $iconSize);
     }
-    i.icon-unpublished {
+    i.icon-unpublished:after {
         @include icon("unpublished", $iconSize);
     }
-    i.icon-unreleased {
+    i.icon-unreleased:after {
         @include icon("unreleased", $iconSize);
     }
 
