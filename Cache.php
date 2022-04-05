@@ -55,10 +55,10 @@ abstract class Cache
         $options = array_merge($class_vars['defaults'], $options);
 
         if (empty($options['cachepath']) && defined('DEPAGE_CACHE_PATH')) {
-            $options['cachepath'] = DEPAGE_CACHE_PATH;
+            $options['cachepath'] = \DEPAGE_CACHE_PATH;
         }
         if (empty($options['baseurl']) && defined('DEPAGE_BASE')) {
-            $options['baseurl'] = DEPAGE_BASE;
+            $options['baseurl'] = \DEPAGE_BASE;
         }
 
         $this->prefix = $prefix;
@@ -176,9 +176,9 @@ abstract class Cache
             // do not serialize xml or json -> string expected
             // @todo trigger error when not a string
             return $data;
-        } else {
-            return serialize($data);
         }
+
+        return serialize($data);
     }
     // }}}
     // {{{ unserialize */
@@ -195,9 +195,9 @@ abstract class Cache
         if (in_array($ext, array(".xml", ".xsl", ".json"))) {
             // do not unserialize xml or json -> give back string
             return $value;
-        } else {
-            return unserialize($value);
         }
+
+        return unserialize($value);
     }
     // }}}
 

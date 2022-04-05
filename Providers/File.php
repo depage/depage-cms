@@ -10,8 +10,8 @@ class File extends \Depage\Cache\Cache
     protected $baseurl;
     protected $host;
     protected $defaults = [
-        'cachepath' => DEPAGE_CACHE_PATH,
-        'baseurl' => DEPAGE_BASE,
+        'cachepath' => '',
+        'baseurl' => '',
         'disposition' => "file",
     ];
     // }}}
