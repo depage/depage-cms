@@ -58,8 +58,9 @@ class Page extends Base
         list($doc, $node) = \Depage\Xml\Document::getDocAndNode($node);
 
         $xpath = new \DOMXPath($doc);
+        $xpath->registerNamespace("edit", "http://cms.depagecms.net/ns/edit");
 
-        $nodelist = $xpath->query("./edit:date[@value = '@now']", $node);
+        $nodelist = $xpath->query(".//edit:date[@value = '@now']", $node);
         if ($nodelist->length > 0) {
             // search for languages used in document
             for ($i = 0; $i < $nodelist->length; $i++) {
@@ -67,7 +68,7 @@ class Page extends Base
             }
         }
 
-        $nodelist = $xpath->query("./edit:text_singleline[@value = '@author']", $node);
+        $nodelist = $xpath->query(".//edit:text_singleline[@value = '@author']", $node);
         if ($nodelist->length > 0) {
             // search for languages used in document
             for ($i = 0; $i < $nodelist->length; $i++) {
