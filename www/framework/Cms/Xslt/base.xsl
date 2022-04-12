@@ -238,11 +238,11 @@
         <xsl:param name="redirect"/>
         <xsl:param name="pgmeta" select="dp:getPageMeta($href_id)" />
 
-        <xsl:variable name="linkdesc" select="dp:value(
+        <xsl:param name="linkdesc" select="dp:value(
             $pgmeta/pg:linkdesc[@lang = $lang]/@value,
             dp:getPageNode($href_id)/@name
         )" />
-        <xsl:variable name="title" select="$pgmeta/pg:title[@lang = $lang]/@value" />
+        <xsl:param name="title" select="$pgmeta/pg:title[@lang = $lang]/@value" />
 
         <xsl:attribute name="href">
             <xsl:choose>
