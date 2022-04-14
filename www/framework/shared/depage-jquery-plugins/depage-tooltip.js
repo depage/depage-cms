@@ -68,6 +68,10 @@
                     showTimeout = setTimeout(function() {
                         base.show();
                     }, base.options.fadeinTimeout);
+
+                    base.$el.attr("data-temp-title", base.$el.attr("title"));
+                    base.$el.removeAttr("title");
+
                     return false;
                 })
                 .bind('mouseleave.tooltip', function(e) {
@@ -77,6 +81,9 @@
                         // FF does not have toElement, and only relatedTarget on mouseleave - e.target is for mousemove
                         if ($(e.toElement || e.relatedTarget || e.target).parents('#depage-tooltip').length === 0) {
                             base.hide();
+
+                            base.$el.attr("title", base.$el.attr("data-temp-title"));
+
                             return true;
                         }
                         return false;
