@@ -33,6 +33,8 @@ class Publish extends Base
     public function addChildElements()
     {
         $nodeId = $this->dataNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+        $outputRegex = "/((file|ftps?|ssh(2.sftp)?|sftp):\/\/(.*))/";
+        $urlRegex = "/(https?:\/\/([^\/]*)\/(.*))/";
 
         $this->addText("name-$nodeId", [
             "label" => _("Name"),
@@ -49,16 +51,19 @@ class Publish extends Base
             "label" => _("Output folder"),
             "placeholder" => _("URL, where to publish project to"),
             "required" => true,
+            "validator" => $outputRegex,
             "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@output_folder",
         ]);
-        $this->addUrl("baseurl-$nodeId", [
+        $this->addText("baseurl-$nodeId", [
             "label" => _("Base Url"),
             "placeholder" => _("Base URL of publish target"),
+            "validator" => $urlRegex,
             "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@baseurl",
         ]);
-        $this->addUrl("baseurl-static-$nodeId", [
+        $this->addText("baseurl-static-$nodeId", [
             "label" => _("Static Base Url"),
             "placeholder" => _("Leave empty to use Base Url"),
+            "validator" => $urlRegex,
             "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@baseurlStatic",
         ]);
         $this->addText("output_user-$nodeId", [
