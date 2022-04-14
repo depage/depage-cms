@@ -320,7 +320,11 @@
                     message = message();
                 }
                 var $title = $('<h1 />').text(title);
-                var $message = $('<p />').text(message);
+                if (Object.getPrototypeOf(message).jquery) {
+                    var $message = message.clone();
+                } else {
+                    var $message = $('<p />').text(message);
+                }
 
                 this.$contentWrapper.empty()
                     .append($title)
