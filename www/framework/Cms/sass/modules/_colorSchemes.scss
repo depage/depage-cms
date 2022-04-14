@@ -80,6 +80,11 @@ figure.thumb.color {
 
         li {
             display: block;
+            @media screen and (max-width: #{$breakMobile}) {
+                figure.thumb {
+                    width: calc(100vw - 24px);
+                }
+            }
         }
     }
 }
