@@ -197,7 +197,9 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
             } else if ($node->nodeType == \XML_ATTRIBUTE_NODE) {
                 $node->parentNode->setAttribute($node->nodeName, $element->getValue());
             } else if ($node->nodeType == \XML_ELEMENT_NODE) {
-                $node->nodeValue = htmlspecialchars($element->getValue());
+                $text = $node->ownerDocument->createTextNode($element->getValue());
+                $node->nodeValue = "";
+                $node->appendChild($text);
             } else {
                 $node->nodeValue = $element->getValue();
             }
