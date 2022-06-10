@@ -126,10 +126,12 @@ var depageCMS = (function() {
     // }}}
     // {{{ copyToClipboard()
     function copyToClipboard(text) {
-        if (window.clipboardData && window.clipboardData.setData) {
+        if (typeof navigator.clipboard !== 'undefined') {
+            // Clipboard API
+            navigator.clipboard.writeText(text);
+        } else if (window.clipboardData && window.clipboardData.setData) {
             // IE specific code path to prevent textarea being shown while dialog is visible.
             return clipboardData.setData("Text", text);
-
         } else if (document.queryCommandSupported && document.queryCommandSupported("copy")) {
             var textarea = document.createElement("textarea");
             textarea.textContent = text;
