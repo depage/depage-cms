@@ -1519,8 +1519,11 @@ class Project extends \Depage\Entity\Entity
         $parameters = [
             "currentContentType" => "text/css",
             "currentEncoding" => "UTF-8",
+            "currentColorscheme" => "",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
+            "navigation" => false,
+            "currentPage" => false,
         ];
         $cssPath = $this->getProjectPath() . "lib/global/css/";
 

@@ -194,7 +194,7 @@ abstract class Transformer
             $xslt .= "<xsl:include href=\"xslt://functions.xsl\" />";
 
             // add basic paramaters and variables
-            $params = array(
+            $params = [
                 'currentLang' => null,
                 'currentPageId' => null,
                 'depageIsLive' => null,
@@ -203,21 +203,21 @@ abstract class Transformer
                 'baseUrlStatic' => null,
                 'projectName' => null,
                 'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
-            );
-            $variables = array(
                 'navigation' => "document('xmldb://pages')",
                 'settings' => "document('xmldb://settings')",
                 'colors' => "document('xmldb://colors')",
                 'languages' => "\$settings/proj:settings/proj:languages",
                 'currentPage' => "\$navigation//pg:*[@status = 'active']",
                 'libPath' => "'" . htmlspecialchars('file://' . str_replace(" ", "%20", realpath($this->libPath))) . "'",
+            ];
+            $variables = [
                 'var-ga-Account' => "''",
                 'var-ga-Domain' => "''",
                 'var-pa-siteId' => "''",
                 'var-pa-Domain' => "''",
                 'var-fb-Account' => "''",
                 'var-pinterest-tagId' => "''",
-            );
+            ];
 
             // add variables from settings
             $settings = $this->xmlGetter->getDocXml("settings");
@@ -238,7 +238,7 @@ abstract class Transformer
                 if (!empty($value)) {
                     $xslt .= "\n<xsl:param name=\"$key\" select=\"$value\" />";
                 } else {
-                    $xslt .= "\n<xsl:param name=\"$key\" />";
+                    $xslt .= "\n<xsl:param name=\"$key\" select=\"false()\" />";
                 }
             }
             foreach ($variables as $key => $value) {
