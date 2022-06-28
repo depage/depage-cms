@@ -179,8 +179,7 @@ class Schema
                 $this->history[] = $statement;
             } else {
                 try {
-                    $preparedStatement = $this->pdo->prepare($statement);
-                    $preparedStatement->execute();
+                    $this->pdo->exec($statement);
                 } catch (\PDOException $e) {
                     if (class_exists('\ReflectionClass', false)) {
                         $PDOExceptionReflection = new \ReflectionClass('PDOException');
