@@ -22,6 +22,16 @@ Version 2.3   {#v2-3}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.3.1 / 08.08.2022      {#v2-3-1}
+-------------------
+
+**Backend**
+- updated default user to be able to publish project but not to release pages directly
+
+**Frontend**
+- enhanced release pages workflow
+
+
 v2.3.0 / 29.03.2022      {#v2-3-0}
 -------------------
 
