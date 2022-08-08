@@ -387,7 +387,7 @@ class Project extends Base
 
             $form->clearSession();
 
-            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
+            \Depage\Depage\Runner::redirect(DEPAGE_BASE . "project/{$this->project->name}/publish/?publish-only=1");
         }
 
         $title = sprintf(_("Release Pages for Project '%s'"), $this->project->fullname);

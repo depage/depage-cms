@@ -22,14 +22,19 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
         $params['cancelUrl'] = DEPAGE_BASE;
         $params['cancelLabel'] = _("Cancel");
         $params['class'] = "lastchanged_pages";
+        $params['label'] = "";
+
+        if ($this->canPublish) {
+            $params['label'] = _("Release Pages Now");
+        } else {
+            $params['class'] .= " cannot-publish";
+        }
 
         $this->project = $params['project'];
         $this->users = $params['users'];
         $this->selectedDocId = !empty($params['selectedDocId']) ? $params['selectedDocId'] : "";
 
         parent::__construct($name, $params);
-
-        $this->label = $this->canPublish ? _("Release Pages Now") : "";
     }
     // }}}
     // {{{ addChildElements()
@@ -55,9 +60,13 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
         $fs->addHtml("</p>");
 
         if ($this->canPublish) {
+            $class = "select-all";
+            if ($_GET['publish-only'] == 1) {
+                $class .= " detail";
+            }
             $fs = $this->addFieldset("recentChanges", [
                 'label' => _("Unreleased Pages"),
-                'class' => "select-all",
+                'class' => $class,
             ]);
             $fs->addHtml("<p>" . _("Please select the pages you want to release:") . "</p>");
         } else {

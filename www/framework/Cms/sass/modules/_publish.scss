@@ -73,6 +73,29 @@ form.lastchanged_pages {
         color: #555555;
         font-size: 9px;
     }
+    &.cannot-publish {
+        .input-boolean input {
+            display: none !important;
+
+            & ~ .depage-label {
+                padding-left: 0;
+
+                &::before {
+                    display: none !important;
+                }
+            }
+        }
+        .input-boolean ~ p.small {
+            margin-left: 0;
+        }
+        .cancel {
+            margin-left: 0;
+
+            input {
+                padding-left: 0;
+            }
+        }
+    }
 }
 // }}}
 

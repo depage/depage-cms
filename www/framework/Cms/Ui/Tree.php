@@ -552,7 +552,7 @@ class Tree extends Base {
      */
     public function releaseDocument()
     {
-        if ($this->authUser->canPublishProject()) {
+        if ($this->authUser->canDirectlyReleasePages()) {
             $status = $this->project->releaseDocument($this->docName, $this->authUser->id);
         } else {
             $status = $this->project->requestDocumentRelease($this->docName, $this->authUser->id);

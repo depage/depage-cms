@@ -223,9 +223,6 @@ var depageCMS = (function() {
             $(".teaser").click( function() {
                 document.location = $("a", this)[0].href;
             });
-            $("fieldset.detail").depageDetails({
-                head: "legend"
-            });
             $(document).on("context_show.vakata show.shydialogue", function(e) {
                 if (mobileMediaQuery.matches) {
                     $("<div id=\"depage-live-help\"></div>").appendTo("body").addClass("visible");
@@ -738,6 +735,9 @@ var depageCMS = (function() {
 
                     localJS.preview(url);
                 });
+            });
+            $("fieldset.detail").depageDetails({
+                head: "legend"
             });
 
             if (typeof Squire !== 'undefined') {

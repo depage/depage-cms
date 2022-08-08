@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-23 18:12+0100\n"
+"POT-Creation-Date: 2022-08-08 17:40+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -140,9 +140,9 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:654
-#: Cms/Ui/DocProperties.php:698 Cms/Ui/DocProperties.php:736
-#: Cms/Ui/DocProperties.php:776
+#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:652
+#: Cms/Ui/DocProperties.php:696 Cms/Ui/DocProperties.php:734
+#: Cms/Ui/DocProperties.php:774
 msgid "Text"
 msgstr ""
 
@@ -151,7 +151,7 @@ msgid "Leave a message..."
 msgstr ""
 
 #: Comments/Forms/commentform.php:36 Cms/tpl/usertable.tpl:3
-#: Cms/Forms/Project/Publish.php:38 Cms/Forms/Project/Variable.php:37
+#: Cms/Forms/Project/Publish.php:40 Cms/Forms/Project/Variable.php:37
 #: Cms/Forms/Project/Tag.php:37 Cms/Forms/Project/Navigation.php:37
 #: Cms/Forms/Project/Language.php:37
 msgid "Name"
@@ -185,8 +185,8 @@ msgstr ""
 msgid "(public)"
 msgstr ""
 
-#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:948
-#: Cms/Ui/DocProperties.php:1046
+#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:946
+#: Cms/Ui/DocProperties.php:1044
 msgid "http://domain.com"
 msgstr ""
 
@@ -2045,7 +2045,7 @@ msgstr ""
 msgid "Project Settings"
 msgstr ""
 
-#: Cms/Ui/Project.php:72 Cms/Ui/Project.php:94 Cms/Ui/DocProperties.php:520
+#: Cms/Ui/Project.php:72 Cms/Ui/Project.php:94 Cms/Ui/DocProperties.php:518
 msgid "Tags"
 msgstr ""
 
@@ -2138,7 +2138,7 @@ msgstr ""
 
 #: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:39 Cms/tpl/projectlist.tpl:22
 #: Cms/tpl/newsletterList.tpl:47 Cms/tpl/toolbar_main.tpl:43
-#: Cms/Forms/ReleasePages.php:77
+#: Cms/Forms/ReleasePages.php:86
 msgid "Edit"
 msgstr ""
 
@@ -2229,7 +2229,7 @@ msgstr ""
 msgid "Changed"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:414 Cms/Forms/ReleasePages.php:73
+#: Cms/Ui/DocProperties.php:414 Cms/Forms/ReleasePages.php:82
 msgid "unknown user"
 msgstr ""
 
@@ -2245,159 +2245,159 @@ msgstr ""
 msgid "Current Version"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:451
+#: Cms/Ui/DocProperties.php:450
 msgid "Release Page"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:452
+#: Cms/Ui/DocProperties.php:451
 msgid "Mark this page to be published, when project gets published next time"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:454
+#: Cms/Ui/DocProperties.php:453
 msgid "Request Release"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:455
+#: Cms/Ui/DocProperties.php:454
 msgid "Ask for this page the be released"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:477 Cms/Ui/DocProperties.php:903
-#: Cms/Ui/DocProperties.php:937
+#: Cms/Ui/DocProperties.php:475 Cms/Ui/DocProperties.php:901
+#: Cms/Ui/DocProperties.php:935
 msgid "Default"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:479 Cms/Ui/DocProperties.php:904
+#: Cms/Ui/DocProperties.php:477 Cms/Ui/DocProperties.php:902
 #: Cms/XmlDocTypes/Colors.php:15
 msgid "Colorscheme"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:498
+#: Cms/Ui/DocProperties.php:496
 msgid "Navigation"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:536 Cms/Ui/DocProperties.php:553
+#: Cms/Ui/DocProperties.php:534 Cms/Ui/DocProperties.php:551
 msgid "Protection"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:545
+#: Cms/Ui/DocProperties.php:543
 msgid "Page protected"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:556
+#: Cms/Ui/DocProperties.php:554
 msgid "Page is protected and cannot be changed."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:560
+#: Cms/Ui/DocProperties.php:558
 msgid "Pagetype"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:568
+#: Cms/Ui/DocProperties.php:566
 msgid "html"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:569
+#: Cms/Ui/DocProperties.php:567
 msgid "text"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:570
+#: Cms/Ui/DocProperties.php:568
 msgid "php"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:591 Cms/Ui/DocProperties.php:928
+#: Cms/Ui/DocProperties.php:589 Cms/Ui/DocProperties.php:926
 #: Cms/Forms/Newsletter.php:54 Cms/Forms/Project/Language.php:68
 msgid "Title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:610
+#: Cms/Ui/DocProperties.php:608
 msgid "Linkinfo"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:629 Cms/Forms/Newsletter.php:80
+#: Cms/Ui/DocProperties.php:627 Cms/Forms/Newsletter.php:80
 msgid "Description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:673
+#: Cms/Ui/DocProperties.php:671
 msgid "Headline"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:816 Cms/tpl/usertable.tpl:4
+#: Cms/Ui/DocProperties.php:814 Cms/tpl/usertable.tpl:4
 msgid "Type"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:837
+#: Cms/Ui/DocProperties.php:835
 msgid "Date"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:859
+#: Cms/Ui/DocProperties.php:857
 msgid "Time"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:881
+#: Cms/Ui/DocProperties.php:879
 msgid "Color"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:925
+#: Cms/Ui/DocProperties.php:923
 msgid "Link"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:929
+#: Cms/Ui/DocProperties.php:927
 msgid "Link title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:935
+#: Cms/Ui/DocProperties.php:933
 msgid "Target"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:938
+#: Cms/Ui/DocProperties.php:936
 msgid "New Window"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:946 Cms/Ui/DocProperties.php:1044
+#: Cms/Ui/DocProperties.php:944 Cms/Ui/DocProperties.php:1042
 msgid "href"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:966 Cms/Forms/Project/FileSearch.php:48
+#: Cms/Ui/DocProperties.php:964 Cms/Forms/Project/FileSearch.php:48
 msgid "Audio"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:970 Cms/Ui/DocProperties.php:995
-#: Cms/Ui/DocProperties.php:1022
+#: Cms/Ui/DocProperties.php:968 Cms/Ui/DocProperties.php:993
+#: Cms/Ui/DocProperties.php:1020
 msgid "src"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:991 Cms/Forms/Project/FileSearch.php:47
+#: Cms/Ui/DocProperties.php:989 Cms/Forms/Project/FileSearch.php:47
 msgid "Video"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1015 Cms/Forms/Project/FileSearch.php:46
+#: Cms/Ui/DocProperties.php:1013 Cms/Forms/Project/FileSearch.php:46
 msgid "Image"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1032
+#: Cms/Ui/DocProperties.php:1030
 msgid "title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1033
+#: Cms/Ui/DocProperties.php:1031
 msgid "Image title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1038
+#: Cms/Ui/DocProperties.php:1036
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1039
+#: Cms/Ui/DocProperties.php:1037
 msgid "Image description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1063
+#: Cms/Ui/DocProperties.php:1061
 msgid "Table"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1102
+#: Cms/Ui/DocProperties.php:1100
 msgid "Source"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1121
+#: Cms/Ui/DocProperties.php:1119
 msgid "Not allowed to edit this element."
 msgstr ""
 
@@ -2645,8 +2645,8 @@ msgstr ""
 
 #: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:18
 #: Cms/tpl/colorschemes.tpl:48 Cms/tpl/projectmain.tpl:48
-#: Cms/tpl/publish.tpl:18 Cms/Forms/ReleasePages.php:54
-#: Cms/Forms/ReleasePages.php:76 Cms/Forms/NewsletterPublish.php:64
+#: Cms/tpl/publish.tpl:18 Cms/Forms/ReleasePages.php:59
+#: Cms/Forms/ReleasePages.php:85 Cms/Forms/NewsletterPublish.php:64
 msgid "Preview"
 msgstr ""
 
@@ -2843,8 +2843,8 @@ msgstr ""
 msgid "Inline help"
 msgstr ""
 
-#: Cms/tpl/changelist.tpl:13 Cms/Forms/ReleasePages.php:59
-#: Cms/Forms/ReleasePages.php:65
+#: Cms/tpl/changelist.tpl:13 Cms/Forms/ReleasePages.php:68
+#: Cms/Forms/ReleasePages.php:74
 msgid "Unreleased Pages"
 msgstr ""
 
@@ -2896,8 +2896,8 @@ msgstr ""
 msgid "Basics"
 msgstr ""
 
-#: Cms/Forms/User.php:36 Cms/Forms/Project/Publish.php:65
-#: Cms/Forms/Project/Publish.php:66
+#: Cms/Forms/User.php:36 Cms/Forms/Project/Publish.php:70
+#: Cms/Forms/Project/Publish.php:71
 msgid "Username"
 msgstr ""
 
@@ -2909,8 +2909,8 @@ msgstr ""
 msgid "Change Password"
 msgstr ""
 
-#: Cms/Forms/User.php:55 Cms/Forms/Project/Publish.php:71
-#: Cms/Forms/Project/Publish.php:72
+#: Cms/Forms/User.php:55 Cms/Forms/Project/Publish.php:76
+#: Cms/Forms/Project/Publish.php:77
 msgid "Password"
 msgstr ""
 
@@ -2995,24 +2995,24 @@ msgstr ""
 msgid "Clear transform cache before publishing"
 msgstr ""
 
-#: Cms/Forms/ReleasePages.php:32
+#: Cms/Forms/ReleasePages.php:28
 msgid "Release Pages Now"
 msgstr ""
 
-#: Cms/Forms/ReleasePages.php:50
+#: Cms/Forms/ReleasePages.php:55
 msgid "Preview of Changes"
 msgstr ""
 
-#: Cms/Forms/ReleasePages.php:62
+#: Cms/Forms/ReleasePages.php:71
 msgid "Please select the pages you want to release:"
 msgstr ""
 
-#: Cms/Forms/ReleasePages.php:82
+#: Cms/Forms/ReleasePages.php:91
 #, php-format
 msgid "Changed by %s, %s"
 msgstr ""
 
-#: Cms/Forms/ReleasePages.php:88
+#: Cms/Forms/ReleasePages.php:97
 msgid "All pages are already released."
 msgstr ""
 
@@ -3071,47 +3071,47 @@ msgstr ""
 msgid "Save Publish Settings"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:39
+#: Cms/Forms/Project/Publish.php:41
 msgid "Name of publishing target"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:49
+#: Cms/Forms/Project/Publish.php:51
 msgid "Output folder"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:50
+#: Cms/Forms/Project/Publish.php:52
 msgid "URL, where to publish project to"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:55
+#: Cms/Forms/Project/Publish.php:58
 msgid "Base Url"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:56
+#: Cms/Forms/Project/Publish.php:59
 msgid "Base URL of publish target"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:60
+#: Cms/Forms/Project/Publish.php:64
 msgid "Static Base Url"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:61
+#: Cms/Forms/Project/Publish.php:65
 msgid "Leave empty to use Base Url"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:77
+#: Cms/Forms/Project/Publish.php:82
 msgid "Template Set"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:85
+#: Cms/Forms/Project/Publish.php:90
 msgid "Server supports mod rewrite"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:89
+#: Cms/Forms/Project/Publish.php:94
 msgid "Index this target for search"
 msgstr ""
 
-#: Cms/Forms/Project/Publish.php:110
+#: Cms/Forms/Project/Publish.php:115
 msgid "Add new publishing target"
 msgstr ""
 

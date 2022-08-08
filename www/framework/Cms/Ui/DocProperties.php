@@ -446,17 +446,15 @@ class DocProperties extends Base
             $fs->addHtml("</div>");
 
             // {{{ add release button
-            if (true || !$pageInfo->released) {
-                if ($this->authUser->canPublishProject()) {
-                    $releaseTitle = _("Release Page");
-                    $releaseHover = _("Mark this page to be published, when project gets published next time");
-                } else {
-                    $releaseTitle = _("Request Release");
-                    $releaseHover = _("Ask for this page the be released");
-                }
-                $class = $pageInfo->released ? "disabled" : "";
-                $fs->addHtml("<p class=\"release\"><a class=\"button $class\" data-tooltip=\"$releaseHover\">{$releaseTitle}</a></p>");
+            if ($this->authUser->canDirectlyReleasePages()) {
+                $releaseTitle = _("Release Page");
+                $releaseHover = _("Mark this page to be published, when project gets published next time");
+            } else {
+                $releaseTitle = _("Request Release");
+                $releaseHover = _("Ask for this page the be released");
             }
+            $class = $pageInfo->released ? "disabled" : "";
+            $fs->addHtml("<p class=\"release\"><a class=\"button $class\" data-tooltip=\"$releaseHover\">{$releaseTitle}</a></p>");
             // }}}
         }
     }

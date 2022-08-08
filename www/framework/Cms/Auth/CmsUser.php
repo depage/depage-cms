@@ -105,6 +105,18 @@ class CmsUser extends \Depage\Auth\User
         return $this->level <= 2;
     }
     // }}}
+    // {{{ canDirectlyReleasePages()
+    /**
+     * @brief canDirectlyReleasePages
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function canDirectlyReleasePages()
+    {
+        return $this->level <= 3;
+    }
+    // }}}
     // {{{ canPublishProject()
     /**
      * @brief canPublishProject
@@ -138,7 +150,7 @@ class CmsUser extends \Depage\Auth\User
      **/
     public function canSendNewsletter()
     {
-        return $this->level <= 3;
+        return $this->level <= 4;
     }
     // }}}
 }
