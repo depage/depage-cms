@@ -79,7 +79,7 @@
         <xsl:param name="lang" select="$currentLang" />
 
         <xsl:choose>
-            <xsl:when test="normalize-space(string($node)) != '' and (($currentPage/@multilang = 'true' or not($currentPage)) and ./@lang = $lang) or $currentPage/@multilang != 'true'">
+            <xsl:when test="normalize-space(string($node)) != '' and (($currentPage/@multilang = 'true' or not($currentPage)) and $node/@lang = $lang) or $currentPage/@multilang != 'true'">
                 <func:result select="true()" />
             </xsl:when>
             <xsl:otherwise>
