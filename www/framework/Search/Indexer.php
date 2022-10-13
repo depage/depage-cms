@@ -45,7 +45,12 @@ class Indexer
     /**
      * @brief xpathImgAlt
      **/
-    protected $xpathImgAlt = ".//img/@alt";
+    protected $xpathImgAlt = ".//img/@alt | .//img/@title";
+
+    /**
+     * @brief xpathHeaderImages
+     **/
+    protected $xpathHeaderImages = "/html/head/meta[@property = 'og:image']/@content";
 
     /**
      * @brief xpathImages
@@ -96,6 +101,11 @@ class Indexer
      * @brief links
      **/
     protected $links = null;
+
+    /**
+     * @brief doc
+     **/
+    protected $doc = null;
 
     /**
      * @brief xpath
@@ -192,6 +202,8 @@ class Indexer
             $oldErrorHandler = set_error_handler(function() {});
             $useInternalErrors = libxml_use_internal_errors(false);
 
+            // strip php tags from content
+            $content = preg_replace("/<\?php(.*?)\?>/s", "", $content);
             $this->doc = new \Depage\Xml\Document();
             if (!$this->doc->loadHtml($content)) {
                 throw new \Exception('Unable to parse content into XML: ' . libxml_get_last_error());
@@ -378,6 +390,12 @@ class Indexer
     public function getImages()
     {
         $images = [];
+
+        // extract header images
+        $nodes = $this->xpath->query($this->xpathHeaderImages);
+        foreach ($nodes as $node) {
+            $images[] = $node->value;
+        }
 
         foreach ($this->contentNodes as $contentNode) {
             // extract images
