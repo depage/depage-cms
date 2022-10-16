@@ -1219,6 +1219,11 @@ class Project extends \Depage\Entity\Entity
             }
         }
 
+        // reindex css path
+        $fl = new \Depage\Cms\FileLibrary($this->pdo, $this);
+        $fl->syncFiles("global/css/");
+        $fl->syncFiles("global/js/");
+
         return true;
     }
     // }}}
@@ -1538,6 +1543,10 @@ class Project extends \Depage\Entity\Entity
             $css = $transformer->transform($xml, $parameters);
             file_put_contents($cssPath . "color_" . $colorscheme . ".css", $css);
         }
+
+        // reindex css path
+        $fl = new \Depage\Cms\FileLibrary($this->pdo, $this);
+        $fl->syncFiles("global/css/");
 
         return true;
     }
