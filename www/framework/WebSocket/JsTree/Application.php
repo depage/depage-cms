@@ -58,7 +58,10 @@ class Application implements \Wrench\Application\DataHandlerInterface,
     // {{{ onUpdate
     public function onUpdate() {
         foreach ($this->clients as $cid => $clients) {
-            $data = $this->deltaUpdates[$cid]->encodedDeltaUpdate();
+            $data = null;
+            if (isset($this->deltaUpdates[$cid]) && $this->deltaUpdates[$cid] instanceof DeltaUpdates) {
+                $data = $this->deltaUpdates[$cid]->encodedDeltaUpdate();
+            }
 
             if (!empty($data)) {
                 // send to clients
