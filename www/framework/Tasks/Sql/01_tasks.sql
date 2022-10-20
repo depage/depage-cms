@@ -19,3 +19,9 @@ CREATE TABLE `_tasks` (
     @version 2.1.1
 */
 ALTER TABLE `_tasks` ADD KEY `scondary` (`name`, `status`);
+
+/*
+    @version 2.3.2
+*/
+ALTER TABLE `_tasks`
+    CHANGE COLUMN `status` `status` enum('generating', 'done', 'failed') DEFAULT 'generating';

@@ -27,3 +27,11 @@ ALTER TABLE `_subtasks` ADD KEY `status` (`status`);
     @version 2.1.10
 */
 ALTER TABLE `_subtasks` ADD `retries` int(11) NOT NULL DEFAULT 0 AFTER `status`;
+
+/*
+    @version 2.3.2
+*/
+ALTER TABLE `_subtasks`
+  CHANGE COLUMN `status` `status` enum('done', 'failed') DEFAULT NULL,
+  ADD `errorMessage` text NOT NULL DEFAULT '' AFTER `status`
+  ;

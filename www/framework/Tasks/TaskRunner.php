@@ -133,7 +133,7 @@ class TaskRunner extends \Depage\Depage\Ui\Base
                 if ($this->task->retrySubtask($subtask)) {
                     $this->log("RETRYING AFTER ERROR: " . $e->getMessage());
                 } else {
-                    $this->task->setSubtaskStatus($subtask, $e->getMessage());
+                    $this->task->setSubtaskError($subtask, $e->getMessage());
                     $this->task->setTaskStatus("failed");
                     $this->log("ERROR: " . $e->getMessage());
 

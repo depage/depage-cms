@@ -30,6 +30,11 @@ class Task {
     public $taskId = null;
 
     /**
+     * @brief pdo instance
+     **/
+    protected $pdo = null;
+
+    /**
      * @brief string name of task
      **/
     public $taskName = "";
@@ -57,7 +62,8 @@ class Task {
     /**
      * @brief numberOfSubtasks number of subtasks to load at the same time
      **/
-    protected $numberOfSubtasks = 100;
+    //protected $numberOfSubtasks = 100;
+    protected $numberOfSubtasks = 10;
 
     /**
      * @brief timeToCheckSubtasks seconds after which task runner will check for new subtask
@@ -68,6 +74,11 @@ class Task {
      * @brief lastCheck time of last check for new subtasks
      **/
     protected $lastCheck = null;
+
+    /**
+     * @brief subtasks array that holds subtasks loaded from database
+     **/
+    protected $subtasks = array();
 
     /**
      * @brief subTasksRun array of subtask ids that where already run
@@ -268,6 +279,21 @@ class Task {
         );
         $query->execute(array(
             "status" => $status,
+            "id" => $subtask->id,
+        ));
+    }
+    // }}}
+    // {{{ setSubtaskError()
+    public function setSubtaskError($subtask, $errorMsg) {
+        $query = $this->pdo->prepare(
+            "UPDATE {$this->tableSubtasks}
+            SET status = :status,
+                errorMessage = :errorMessage
+            WHERE id = :id"
+        );
+        $query->execute(array(
+            "status" => "failed",
+            "errorMessage" => $errorMsg,
             "id" => $subtask->id,
         ));
     }
