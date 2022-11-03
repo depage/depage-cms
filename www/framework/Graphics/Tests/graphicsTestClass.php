@@ -1,10 +1,12 @@
 <?php
 
+namespace Depage\Graphics\Tests;
+
 /**
  * Override graphics class to access protected methods/attributes in
  * tests
  **/
-class graphicsTestClass extends \Depage\Graphics\Graphics
+class GraphicsTestClass extends \Depage\Graphics\Graphics
 {
     protected $testQueueString = '';
     // imaginary test image size

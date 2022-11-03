@@ -1,5 +1,7 @@
 <?php
 
+namespace Depage\Graphics\Tests;
+
 use PHPUnit\Framework\TestCase;
 use Depage\Graphics\Graphics;
 
@@ -8,13 +10,15 @@ use Depage\Graphics\Graphics;
  **/
 class graphicsTest extends TestCase
 {
+    protected $graphics = null;
+
     // {{{ setUp()
     /**
      * Creates fresh graphics objects for tests
      **/
     public function setUp():void
     {
-        $this->graphics = new graphicsTestClass();
+        $this->graphics = new GraphicsTestClass();
     }
     // }}}
 
@@ -26,26 +30,26 @@ class graphicsTest extends TestCase
      **/
     public function testFactory()
     {
-        $graphics = graphics::factory();
+        $graphics = Graphics::factory();
 
         $this->assertInstanceOf('Depage\\Graphics\\Providers\\Gd', $graphics, 'Expected Depage\Graphics\Providers\Gd object.');
 
-        $graphics = graphics::factory(array('extension'=>'gd'));
+        $graphics = Graphics::factory(array('extension'=>'gd'));
         $this->assertInstanceOf('Depage\\Graphics\\Providers\\Gd', $graphics, 'Expected Depage\Graphics\Providers\Gd object.');
 
-        $graphics = graphics::factory(array('extension'=>'foobar'));
+        $graphics = Graphics::factory(array('extension'=>'foobar'));
         $this->assertInstanceOf('Depage\\Graphics\\Providers\\Gd', $graphics, 'Expected Depage\Graphics\Providers\Gd object.');
 
-        $graphics = graphics::factory(array('extension'=>'imagemagick', 'executable'=>'bin'));
+        $graphics = Graphics::factory(array('extension'=>'imagemagick', 'executable'=>'bin'));
         $this->assertInstanceOf('Depage\\Graphics\\Providers\\Imagemagick', $graphics, 'Expected Depage\Graphics\Providers\Imagemagick object.');
 
-        $graphics = graphics::factory(array('extension'=>'im', 'executable'=>'bin'));
+        $graphics = Graphics::factory(array('extension'=>'im', 'executable'=>'bin'));
         $this->assertInstanceOf('Depage\\Graphics\\Providers\\Imagemagick', $graphics, 'Expected Depage\Graphics\Providers\Imagemagick object.');
 
-        $graphics = graphics::factory(array('extension'=>'graphicsmagick', 'executable'=>'bin'));
+        $graphics = Graphics::factory(array('extension'=>'graphicsmagick', 'executable'=>'bin'));
         $this->assertInstanceOf('Depage\\Graphics\\Providers\\Graphicsmagick', $graphics, 'Expected Depage\Graphics\Providers\Graphicsmagick object.');
 
-        $graphics = graphics::factory(array('extension'=>'gm', 'executable'=>'bin'));
+        $graphics = Graphics::factory(array('extension'=>'gm', 'executable'=>'bin'));
         $this->assertInstanceOf('Depage\\Graphics\\Providers\\Graphicsmagick', $graphics, 'Expected Depage\Graphics\Providers\Graphicsmagick object.');
     }
     // }}}

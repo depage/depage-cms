@@ -69,7 +69,7 @@ class Imgurl
             $info = parse_url(DEPAGE_BASE);
             $baseUrl = rtrim($info['path'], '/');
             $relativePath = "";
-            $this->cachePath = DEPAGE_CACHE_PATH . "graphics/";
+            $this->cachePath = \DEPAGE_CACHE_PATH . "graphics/";
         } else {
             // we using the library plainly -> get path through url
             $scriptParts = explode("/", $_SERVER["SCRIPT_NAME"]);
