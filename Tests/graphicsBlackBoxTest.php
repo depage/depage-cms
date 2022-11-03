@@ -1,5 +1,7 @@
 <?php
 
+namespace Depage\Graphics\Tests;
+
 use PHPUnit\Framework\TestCase;
 use Depage\Graphics\Graphics;
 
@@ -11,11 +13,11 @@ class graphicsBlackBoxTest extends TestCase
     protected $extensions   = [
         'gd',
         'imagick',
-        //'im',
-        //'gm',
+        'im',
+        'gm',
     ];
     protected $formats      = [
-        //[\IMG_GIF, 'gif', 'image/gif'],
+        [\IMG_GIF, 'gif', 'image/gif'],
         [\IMG_JPG, 'jpg', 'image/jpeg'],
         [\IMG_PNG, 'png', 'image/png'],
         [\IMG_WEBP, 'webp', 'image/webp'],
