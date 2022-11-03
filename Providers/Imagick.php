@@ -70,6 +70,8 @@ class Imagick extends \Depage\Graphics\Graphics
      **/
     protected function thumb($width, $height)
     {
+        list($width, $height) = $this->dimensions($width, $height);
+
         if (!$this->bypassTest($width, $height)) {
             $newSize = $this->dimensions($width, null);
             $xOffset = 0;
@@ -98,6 +100,8 @@ class Imagick extends \Depage\Graphics\Graphics
      **/
     protected function thumbfill($width, $height, $centerX = 50, $centerY = 50)
     {
+        list($width, $height) = $this->dimensions($width, $height);
+
         if (!$this->bypassTest($width, $height, $centerX - 50, $centerY - 50)) {
             $newSize = $this->dimensions($width, null);
             $centerX /= 100;
