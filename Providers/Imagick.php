@@ -4,7 +4,7 @@
  *
  * description
  *
- * copyright (c) 2021 Frank Hellenkamp [jonas@depage.net]
+ * copyright (c) 2021-2022 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
@@ -17,6 +17,11 @@ namespace Depage\Graphics\Providers;
  */
 class Imagick extends \Depage\Graphics\Graphics
 {
+    /**
+     * @brief image
+     **/
+    protected $image = null;
+
     // {{{ crop()
     /**
      * @brief crop
@@ -27,9 +32,10 @@ class Imagick extends \Depage\Graphics\Graphics
     protected function crop($width, $height, $x = 0, $y = 0)
     {
         if (!$this->bypassTest($width, $height, $x, $y)) {
-            $this->image->setGravity(\Imagick::GRAVITY_NORTHWEST);
+            $this->image->setImageGravity(\Imagick::GRAVITY_NORTHWEST);
             $this->image->cropImage($width, $height, $x, $y);
-            $this->image->setImagePage($width, $height, 0, 0);
+            $this->image->extentImage($width, $height, 0, 0);
+            $this->image->setImagePage(0, 0, 0, 0);
             $this->size = array($width, $height);
         }
     }
@@ -46,7 +52,11 @@ class Imagick extends \Depage\Graphics\Graphics
         $newSize = $this->dimensions($width, $height);
 
         if (!$this->bypassTest($newSize[0], $newSize[1])) {
-            $this->image->resizeImage($newSize[0], $newSize[1], \Imagick::FILTER_LANCZOS, 1);
+            $filter = $this->getResizeFilter($newSize[0], $newSize[1]);
+
+            $this->image->setImageGravity(\Imagick::GRAVITY_CENTER);
+            $this->image->resizeImage($newSize[0], $newSize[1], $filter, 1);
+            $this->image->setImageExtent($newSize[0], $newSize[1]);
             $this->size = $newSize;
         }
     }
@@ -61,11 +71,21 @@ class Imagick extends \Depage\Graphics\Graphics
     protected function thumb($width, $height)
     {
         if (!$this->bypassTest($width, $height)) {
-            $this->image->setGravity(\Imagick::GRAVITY_CENTER);
-            $this->image->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, true);
-            $this->image->setGravity(\Imagick::GRAVITY_CENTER);
-            $this->image->setImageExtent($width, $height);
-            $this->size = array($width, $height);
+            $newSize = $this->dimensions($width, null);
+            $xOffset = 0;
+            $yOffset = 0;
+
+            if ($newSize[1] > $height) {
+                $newSize = $this->dimensions(null, $height);
+                $xOffset = -1 * round(($width - $newSize[0]) / 2);
+            } else {
+                $yOffset = -1 * round(($height - $newSize[1]) / 2);
+            }
+            $filter = $this->getResizeFilter($newSize[0], $newSize[1]);
+
+            $this->image->resizeImage($newSize[0], $newSize[1], $filter, 1, true);
+            $this->image->extentImage($width, $height, $xOffset, $yOffset);
+            $this->size = array($newSize[0], $newSize[1]);
         }
     }
     // }}}
@@ -76,11 +96,25 @@ class Imagick extends \Depage\Graphics\Graphics
      * @param mixed $width, $height
      * @return void
      **/
-    protected function thumbfill($width, $height)
+    protected function thumbfill($width, $height, $centerX = 50, $centerY = 50)
     {
-        if (!$this->bypassTest($width, $height)) {
-            $this->image->setGravity(\Imagick::GRAVITY_CENTER);
-            $this->image->resizeImage($width, $height, \Imagick::FILTER_LANCZOS, 1, true);
+        if (!$this->bypassTest($width, $height, $centerX - 50, $centerY - 50)) {
+            $newSize = $this->dimensions($width, null);
+            $centerX /= 100;
+            $centerY /= 100;
+
+            if ($newSize[1] < $height) {
+                $newSize = $this->dimensions(null, $height);
+                $xOffset = -1 * round(($width - $newSize[0]) * $centerX);
+                $yOffset = 0;
+            } else {
+                $xOffset = 0;
+                $yOffset = -1 * round(($height - $newSize[1]) * $centerY);
+            }
+            $filter = $this->getResizeFilter($newSize[0], $newSize[1]);
+
+            $this->image->resizeImage($newSize[0], $newSize[1], $filter, 1, true);
+            $this->image->extentImage($width, $height, $xOffset, $yOffset);
             $this->size = array($width, $height);
         }
     }
@@ -96,7 +130,8 @@ class Imagick extends \Depage\Graphics\Graphics
     protected function load()
     {
         $this->image = new \Imagick(realpath($this->input));
-        $this->image->transformimagecolorspace(\Imagick::COLORSPACE_SRGB);
+        $this->image->transformImageColorspace(\Imagick::COLORSPACE_SRGB);
+        $this->setBackground();
     }
     // }}}
     // {{{ save()
@@ -109,13 +144,9 @@ class Imagick extends \Depage\Graphics\Graphics
     protected function save()
     {
 
-        if ($this->outputFormat == 'jpg') {
-            //$this->image->setImageFormat('jpeg');
-        } else {
-            //$this->image->setImageFormat($this->outputFormat);
-        }
         $result = $this->image->writeImage($this->output);
-        //file_put_contents($this->output, $this->image);
+
+        $this->image->clear();
 
         if (!$result) {
             throw new \Depage\Graphics\Exceptions\Exception('Could not save output image.');
@@ -123,6 +154,44 @@ class Imagick extends \Depage\Graphics\Graphics
     }
     // }}}
 
+    // {{{ setBackground()
+    /**
+     * @brief Generates background command
+     *
+     * @return string $background background part of the command string
+     **/
+    protected function setBackground()
+    {
+        if ($this->background[0] === '#') {
+            $this->image->setImageBackgroundColor($this->background);
+        } elseif ($this->background == 'checkerboard') {
+        } else {
+            if ($this->outputFormat == 'jpg') {
+                $this->image->setImageBackgroundColor('#fff');
+            } else {
+                $this->image->setImageBackgroundColor('transparent');
+            }
+        }
+    }
+    // }}}
+    // {{{ getResizeFilter()
+    /**
+     * @brief Gets the resize filter depending on target size
+     *
+     * this assumes that all images below 160px width or height will be thumbnails
+     * everything bigger gets resized slowly in better quality
+     *
+     * @return int of the one of the filter constants
+     **/
+    protected function getResizeFilter($width, $height)
+    {
+        if ($width <= 160 && $height <= 160) {
+            return \Imagick::FILTER_TRIANGLE;
+        } else {
+            return \Imagick::FILTER_LANCZOS;
+        }
+    }
+    // }}}
     // {{{ getImageSize()
     /**
      * @brief   Determine size of input image
