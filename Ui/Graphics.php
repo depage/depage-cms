@@ -58,7 +58,7 @@ class Graphics extends \Depage\Depage\Ui\Base
             $height = "X";
         }
 
-        $cachedFile = (DEPAGE_CACHE_PATH . "graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
+        $cachedFile = (\DEPAGE_CACHE_PATH . "graphics/{$file}.{$action}-{$width}x{$height}.{$extension}");
 
         $img = \Depage\Graphics\Graphics::factory(
             array(
@@ -138,7 +138,7 @@ class Graphics extends \Depage\Depage\Ui\Base
      **/
     protected function mkPathToFile($file)
     {
-        $cachePath = DEPAGE_CACHE_PATH."graphics/".dirname($file);
+        $cachePath = \DEPAGE_CACHE_PATH . "graphics/" . dirname($file);
         if (!is_dir($cachePath)) {
             return mkdir($cachePath, 0755, true);
         }

@@ -69,7 +69,7 @@ class Imgurl
             $info = parse_url(DEPAGE_BASE);
             $baseUrl = rtrim($info['path'], '/');
             $relativePath = "";
-            $this->cachePath = DEPAGE_CACHE_PATH . "graphics/";
+            $this->cachePath = \DEPAGE_CACHE_PATH . "graphics/";
         } else {
             // we using the library plainly -> get path through url
             $scriptParts = explode("/", $_SERVER["SCRIPT_NAME"]);
@@ -98,9 +98,18 @@ class Imgurl
             }
             $this->cachePath = $relativePath . "lib/cache/graphics/";
         }
+        $baseUrlStatic = $baseUrl;
+        if (isset($this->options['baseUrlStatic'])) {
+            $baseUrlStatic = rtrim($this->options['baseUrlStatic'], '/');
+        }
 
         // get image name
-        $imgUrl = substr($url, strlen($baseUrl) + 1);
+        $imgUrl = $url;
+        if (strpos($url, $baseUrlStatic) === 0) {
+            $imgUrl = substr($url, strlen($baseUrlStatic) + 1);
+        } else if (strpos($url, $baseUrl) === 0) {
+            $imgUrl = substr($url, strlen($baseUrl) + 1);
+        }
 
         // get action parameters
         $success = preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);
@@ -145,9 +154,9 @@ class Imgurl
                         $params[0] = "#{$params[0]}";
                     }
                 } else {
-                    foreach ($params as &$p) {
+                    foreach ($params as $i => &$p) {
                         $p = intval($p);
-                        if ($p == 0) {
+                        if ($p == 0 && $i < 2) {
                             $p = null;
                         }
                     }
@@ -288,9 +297,14 @@ class Imgurl
     }
     // }}}
     // {{{ addThumbfill()
-    public function addThumbfill($width, $height)
+    public function addThumbfill($width, $height, $centerX = 50, $centerY = 50)
     {
-        $this->actions[] = "tf{$width}x{$height}";
+        $action = "tf{$width}x{$height}";
+        if ($centerX != 50 || $centerY != 50) {
+            $action .= "-{$centerX}x{$centerY}";
+        }
+
+        $this->actions[] = $action;
 
         return $this;
     }
