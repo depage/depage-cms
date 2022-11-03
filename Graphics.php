@@ -113,7 +113,9 @@ class Graphics
     {
         $extension = (isset($options['extension'])) ? $options['extension'] : 'gd';
 
-        if ($extension == 'im' || $extension == 'imagemagick') {
+        if ($extension == 'imagick' && extension_loaded('imagick')) {
+            return new Providers\Imagick($options);
+        } elseif ($extension == 'im' || $extension == 'imagemagick') {
             if (isset($options['executable'])) {
                 return new Providers\Imagemagick($options);
             } else {
