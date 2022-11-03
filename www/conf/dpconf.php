@@ -19,7 +19,7 @@ $conf = array(
             //'method' => 'http_digest',
             //'digestCompat' => true,
         ),
-        'timezone' => 'Europe/Berlin',
+        'timezone' => 'UTC',
         //'env' => 'production',
         'phpcli' => "/usr/bin/php",
     ),
