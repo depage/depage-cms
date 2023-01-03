@@ -22,7 +22,7 @@ class graphicsBlackBoxTest extends TestCase
         [\IMG_PNG, 'png', 'image/png'],
         [\IMG_WEBP, 'webp', 'image/webp'],
     ];
-    protected $maxDifference = 0.5;
+    protected $maxDifference = 0.48;
 
     // {{{ clean()
     /**

@@ -51,6 +51,10 @@ class Graphics
      **/
     protected $output;
     /**
+     * @brief Output format
+     **/
+    protected $format;
+    /**
      * @brief
      **/
     protected $outputLockFp = null;
@@ -82,6 +86,10 @@ class Graphics
      * @brief List of optimizer binaries
      **/
     protected $optimizers;
+    /**
+     * @brief limits (mainly for imagemagick and graphicsmagick)
+     **/
+    protected $limits = [];
     /**
      * @brief Input image format
      **/
@@ -154,11 +162,23 @@ class Graphics
      **/
     public function __construct($options = array())
     {
-        $this->background   = (isset($options['background']))   ? $options['background']        : 'transparent';
-        $this->quality      = (isset($options['quality']))      ? intval($options['quality'])   : null;
-        $this->format       = (isset($options['format']))       ? $options['format']            : null;
-        $this->optimize     = (isset($options['optimize']))     ? $options['optimize']          : false;
-        $this->optimizers   = (isset($options['optimizers']))   ? $options['optimizers']        : array();
+        $this->background = (isset($options['background'])) ? $options['background']      : 'transparent';
+        $this->quality    = (isset($options['quality']))    ? intval($options['quality']) : null;
+        $this->format     = (isset($options['format']))     ? $options['format']          : null;
+        $this->optimize   = (isset($options['optimize']))   ? $options['optimize']        : false;
+        $this->optimizers = (isset($options['optimizers'])) ? $options['optimizers']      : [];
+        $this->limits     = (isset($options['limits']))     ? $options['limits']          : [
+            'memory' => "64MiB",
+            'map' => "128MiB",
+        ];
+        if (isset($this->limits['memory'])) {
+            putenv("MAGICK_MEMORY_LIMIT=" . $this->limits['memory']);
+            putenv("MAGICK_LIMIT_MEMORY=" . $this->limits['memory']);
+        }
+        if (isset($this->limits['map'])) {
+            putenv("MAGICK_MAP_LIMIT=" . $this->limits['map']);
+            putenv("MAGICK_LIMIT_MAP=" . $this->limits['map']);
+        }
     }
     // }}}
 
