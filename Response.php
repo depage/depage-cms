@@ -178,7 +178,7 @@ class Response {
      **/
     public function getStatus()
     {
-        preg_match('|HTTP/\d\.\d\s+(\d+)\s+(.*)|', $this->headers[0] ?? '', $matches);
+        preg_match('|HTTP/[\d\.]+\s+(\d+)(\s+.*)?|', $this->headers[0] ?? '', $matches);
         return (object) [
             'code' => $matches[1] ?? '',
             'message' => $matches[2] ?? ''
