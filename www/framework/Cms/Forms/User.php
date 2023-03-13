@@ -26,6 +26,8 @@ class User extends \Depage\HtmlForm\HtmlForm
         $params['cancelLabel'] = _("Cancel");
         $params['class'] = _("edit-user");
 
+        $projects = $params['projects'];
+
         parent::__construct($name, $params);
 
         if ($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null) {
@@ -62,7 +64,7 @@ class User extends \Depage\HtmlForm\HtmlForm
             ]);
         }
 
-        if ($this->authUser->canEditAllUsers()) {
+        if ($this->authUser->canEditAllUsers() && !$this->user->canEditAllUsers()) {
             $f = $this->addFieldset("Permission", [
                 'label' => _("Permissions"),
             ]);
@@ -77,6 +79,20 @@ class User extends \Depage\HtmlForm\HtmlForm
                     'Depage\Cms\Auth\DefaultUser' => _('Depage\Cms\Auth\DefaultUser'),
                     'Depage\Cms\Auth\Editor' => _('Depage\Cms\Auth\Editor'),
                 ],
+            ]);
+            $projectList = [];
+            $projectSelected = [];
+            foreach ($projects as $p) {
+                $projectList[$p->id] = $p->fullname;
+                if ($this->user->canEditProject($p->name)) {
+                    $projectSelected[] = $p->id;
+                }
+            }
+            $f->addMultiple("projects", [
+                'label' => _("Projects"),
+                'skin' => "checkbox",
+                'list' => $projectList,
+                'defaultValue' => $projectSelected,
             ]);
         }
 

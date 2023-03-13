@@ -56,9 +56,11 @@ class User extends Base
         if (!($this->authUser->canEditAllUsers() || $this->authUser->id == $this->user->id || $this->user->id == null)) {
             throw new \Exception("you are not allowed to to this!");
         }
+        $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->xmldbCache);
         $form = new \Depage\Cms\Forms\User("edit-user-" . $this->user->id, [
             "user" => $this->user,
             "authUser" => $this->authUser,
+            "projects" => $projects,
         ]);
         $form->process();
 
@@ -74,6 +76,7 @@ class User extends Base
             };
 
             $this->user->save();
+            $this->user->saveProjectRights($values['projects']);
             $form->clearSession();
 
             \Depage\Depage\Runner::redirect(DEPAGE_BASE);

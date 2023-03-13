@@ -153,6 +153,34 @@ class CmsUser extends \Depage\Auth\User
         return $this->level <= 4;
     }
     // }}}
+
+    // {{{ saveProjectRights()
+    /**
+     * @brief saveProjectRights
+     *
+     * @param mixed $projects
+     * @return void
+     **/
+    public function saveProjectRights($projects)
+    {
+        $this->pdo->beginTransaction();
+
+        $query = $this->pdo->prepare("DELETE FROM {$this->pdo->prefix}_project_auth WHERE userId = ?");
+        $query->execute([
+            $this->id,
+        ]);
+
+        $query = $this->pdo->prepare("INSERT INTO {$this->pdo->prefix}_project_auth (userId, projectId) VALUES (?, ?)");
+        foreach ($projects as $project) {
+            $query->execute([
+                $this->id,
+                $project,
+            ]);
+        }
+
+        $this->pdo->commit();
+    }
+    // }}}
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
