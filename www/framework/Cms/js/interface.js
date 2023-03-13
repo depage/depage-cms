@@ -192,6 +192,7 @@ var depageCMS = (function() {
             localJS.setupPreviewLinks();
             localJS.setupTooltips();
             localJS.setupProjectList();
+            localJS.setupUserList();
             localJS.setupNewsletterList();
             localJS.setupNewsletterPublish();
             localJS.setupSortables();
@@ -512,6 +513,14 @@ var depageCMS = (function() {
             $projects.on("depage.filter-hidden", function(e, $item) {
                 // close details for hidden items
                 $projects.data("depage.details").hideDetail($item);
+            });
+        },
+        // }}}
+        // {{{ setupUserList
+        setupUserList: function() {
+            $("table.users").depageLiveFilter("tbody tr", "td", {
+                placeholder: locale.userFilter,
+                autofocus: true
             });
         },
         // }}}

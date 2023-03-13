@@ -35,5 +35,41 @@ div.datatable {
     }
 }
 // }}}
+// {{{ table.users
+table.users {
+    margin-bottom: 40px;
+    width: 100%;
+
+    th,
+    td {
+        text-align: left;
+        vertical-align: top;
+        padding: 7px 10px 7px 0;
+    }
+    th {
+        font-weight: bold;
+        border-bottom: 1px solid $borderColor;
+    }
+    td.user-name,
+    td.user-type {
+        white-space: nowrap;
+    }
+    td.user-projects  {
+        width: 50%;
+
+        p {
+            display: inline;
+            font-size: $fSizeXS;
+
+            &:after {
+                content: ", ";
+            }
+            &:last-child:after {
+                content: "";
+            }
+        }
+    }
+}
+// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

@@ -1,9 +1,11 @@
 <table class="users">
-    <tr>
-        <th class="user-name"><?php self::t(_("Name")); ?></th>
-        <th class="user-type"><?php self::t(_("Type")); ?></th>
-        <th class="user-projects"><?php self::t(_("Projects")); ?></th>
-    </tr>
+    <thead>
+        <tr>
+            <th class="user-name"><?php self::t(_("Name")); ?></th>
+            <th class="user-type"><?php self::t(_("Type")); ?></th>
+            <th class="user-projects"><?php self::t(_("Projects")); ?></th>
+        </tr>
+    </thead>
     <?php foreach($this->users as $user) { ?>
         <?php
             $userAgent = $user->getUseragent();

@@ -24,7 +24,7 @@ class User extends \Depage\HtmlForm\HtmlForm
 
         $params['cancelUrl'] = DEPAGE_BASE;
         $params['cancelLabel'] = _("Cancel");
-        $params['class'] = _("edit-user");
+        $params['class'] = "edit-user";
 
         $projects = $params['projects'];
 
@@ -90,7 +90,9 @@ class User extends \Depage\HtmlForm\HtmlForm
             }
             $f->addMultiple("projects", [
                 'label' => _("Projects"),
-                'skin' => "checkbox",
+                'class' => "projects",
+                //'skin' => "checkbox",
+                'skin' => "select",
                 'list' => $projectList,
                 'defaultValue' => $projectSelected,
             ]);
