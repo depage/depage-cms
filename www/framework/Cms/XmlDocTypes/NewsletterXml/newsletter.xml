@@ -5,4 +5,5 @@
         <pg:linkdesc lang="" value="Betreff des Newsletters" />
         <pg:desc lang="" />
     </pg:meta>
+    <sec:autoNewsList db:name="tree_name_autonews" />
 </pg:newsletter>

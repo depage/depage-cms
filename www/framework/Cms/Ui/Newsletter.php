@@ -116,6 +116,8 @@ class Newsletter extends Base
                 $form,
             ],
             'previewUrl' => $this->newsletter->getPreviewUrl("pre"),
+            'projectName' => $this->projectName,
+            'newsletterName' => $this->newsletter->name,
         ], $this->htmlOptions);
 
         return $h;

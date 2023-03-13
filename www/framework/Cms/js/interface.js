@@ -817,6 +817,7 @@ var depageCMS = (function() {
             $docPropertiesContainer = $(".doc-properties");
 
             localJS.loadPageTree();
+            localJS.loadNewsletterTree();
         },
         // }}}
         // {{{ setupDropTargets
@@ -1488,6 +1489,19 @@ var depageCMS = (function() {
             });
         },
         // }}}
+        // {{{ loadNewsletterTree
+        loadNewsletterTree: function() {
+            var $newsletterTree = $(".tree.pagedata.newsletter");
+            if ($newsletterTree.length === 0) return false;
+
+            var newsletterId = $newsletterTree.data("docref");
+            var url = baseUrl + "project/" + projectName + "/preview/newsletter/pre/" + currentPreviewLang + "/" + newsletterId + ".html";
+
+            localJS.loadPagedataTree(newsletterId, true);
+
+            localJS.preview(url);
+        },
+        // }}}
         // {{{ loadDocProperties
         loadDocProperties: function(docref, nodeId) {
             if (currentDocPropertyId == nodeId) return false;
@@ -1536,7 +1550,7 @@ var depageCMS = (function() {
 
                     currentPreviewLang = lang;
                     // @todo replace language more intelligently
-                    currentPreviewUrl = currentPreviewUrl.replace(/\/pre\/..\//, "/pre/" + lang + "/");
+                    currentPreviewUrl = currentPreviewUrl.replace(/\/(pre|dev)\/..\//, "/$1/" + lang + "/");
                 });
                 $form.find(".page-navigations input").on("change", function() {
                     var pageId = $(this).parents("p").data("pageid");
@@ -1716,8 +1730,8 @@ var depageCMS = (function() {
             currentLibForceSize = $inputParent.attr("data-forceSize") || "";
             currentLibPath = path;
 
-            jstreePages.looseFocus();
-            jstreePagedata.looseFocus();
+            jstreePages && jstreePages.looseFocus();
+            jstreePagedata && jstreePagedata.looseFocus();
 
             var $dialogContainer = $("<div class=\"dialog-full\"><div class=\"content\"></div></div>")
                 .appendTo($body);

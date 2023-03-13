@@ -137,19 +137,22 @@ class DocProperties extends Base
             $this->addPgRelease($node);
         }
 
+        $hasInputs = false;
         if ($callback = $this->getCallbackForNode($node)) {
             $this->$callback($node);
+            $hasInputs = true;
         }
         foreach($node->childNodes as $n) {
             if ($callback = $this->getCallbackForNode($n)) {
                 $this->$callback($n);
+                $hasInputs = true;
             }
         }
         $this->form->setDefaultValuesXml();
 
         $this->form->process();
 
-        if ($this->form->validateAutosave()) {
+        if ($hasInputs && $this->form->validateAutosave()) {
             // @todo check if content has changed
             $released = $doc->isReleased();
             $node = $this->form->getValuesXml();
@@ -183,7 +186,7 @@ class DocProperties extends Base
         // @todo clean unsed session?
 
         $h .= $this->form;
-        //$h .= htmlentities($xml->saveXML($node));
+        $h .= htmlentities($xml->saveXML($node));
 
         $output = new Html([
             'title' => "edit",

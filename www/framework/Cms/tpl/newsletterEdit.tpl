@@ -1,11 +1,25 @@
 <div <?php self::attr([
+        "class" => "edit layout layout-tree layout-tree-full",
+    ]); ?>>
+        <header class="info info-tree-pagedata">
+            <h1><?php self::e(_("Newsletter")); ?></h1>
+        </header>
+        <div <?php self::attr([
+            'class' => "tree pagedata newsletter",
+            'data-docref' => $this->newsletterName,
+            'data-live-help' => _("Page tree:\\nHere you can add, rename and delete pages. Select a page to edit it in the content tree below ↓."),
+            'data-live-help-class' => "icon icon-tree",
+        ]); ?>>
+        </div>
+</div>
+<div <?php self::attr([
         'class' => "edit layout layout-left",
         'data-live-help' => _("Edit your newsletter and choose which items to include"),
     ]); ?>>
     <header class="info">
         <h1><?php self::e(_("Newsletter")); ?></h1>
     </header>
-    <div class="dialog-full scrollable-content">
+    <div class="doc-properties scrollable-content">
         <?php self::e($this->content); ?>
     </div>
 </div>

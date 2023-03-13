@@ -40,6 +40,20 @@
         </xsl:apply-templates>
     </xsl:template>
 
+    <xsl:template match="pg:newsletter/pg:meta">
+        <xsl:apply-templates select="." mode="treeNodeWithoutChildren">
+            <xsl:with-param name="name" select="'Newsletter Meta'" />
+        </xsl:apply-templates>
+    </xsl:template>
+
+
+    <xsl:template match="sec:autoNewsList">
+        <xsl:apply-templates select="." mode="treeNodeWithoutChildren">
+            <xsl:with-param name="name" select="'News'" />
+        </xsl:apply-templates>
+    </xsl:template>
+
+
     <xsl:template match="proj:colorscheme">
         <xsl:apply-templates select="." mode="treeNodeWithoutChildren">
             <xsl:with-param name="name" select="@name" />

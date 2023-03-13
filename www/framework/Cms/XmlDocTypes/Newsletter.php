@@ -5,6 +5,15 @@ namespace Depage\Cms\XmlDocTypes;
 class Newsletter extends Base
 {
     use Traits\MultipleLanguages;
+    use Traits\XmlTemplates;
+
+    // {{{ constructor
+    public function __construct($xmlDb, $document) {
+        parent::__construct($xmlDb, $document);
+
+        $this->initAvailableNodes();
+    }
+    // }}}
 
     // {{{ onDocumentChange()
     /**
@@ -25,6 +34,7 @@ class Newsletter extends Base
     // {{{ testDocument
     public function testDocument($node) {
         $changed = $this->testNodeLanguages($node);
+        $changed = $this->testForAutoNewsNode($node) || $changed;
 
         $this->addReleaseStatusAttributes($node->firstChild);
 
@@ -36,6 +46,42 @@ class Newsletter extends Base
         parent::testDocumentForHistory($xml);
 
         $xml->firstChild->setAttributeNS("http://cms.depagecms.net/ns/database", "db:released", "true");
+    }
+    // }}}
+    // {{{ testForAutoNewsNode()
+    /**
+     * @brief testForAutoNewsNode
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function testForAutoNewsNode($node)
+    {
+        $changed = false;
+
+        list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
+
+        if ($node->nodeName != "pg:newsletter") {
+            return false;
+        }
+
+        $xpath = new \DOMXPath($xml);
+        $nodelist = $xpath->query("/pg:newsletter/sec:autoNewsList");
+
+        if ($nodelist->length == 0) {
+            $parentNode = $xml->createElementNS("http://cms.depagecms.net/ns/section", "sec:autoNewsList");
+            $parentNode->setAttributeNS("http://cms.depagecms.net/ns/database", "db:name", "tree_name_autonews");
+            $node->appendChild($parentNode);
+
+            $nodelist = $xpath->query("/pg:newsletter/sec:news", $node);
+            foreach ($nodelist as $newsNode) {
+                $parentNode->appendChild($newsNode);
+            }
+
+            $changed = true;
+        }
+
+        return $changed;
     }
     // }}}
     // {{{ addReleaseStatusAttributes()

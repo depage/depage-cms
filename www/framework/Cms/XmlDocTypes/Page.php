@@ -5,40 +5,15 @@ namespace Depage\Cms\XmlDocTypes;
 class Page extends Base
 {
     use Traits\MultipleLanguages;
+    use Traits\XmlTemplates;
 
-    private $table_nodetypes;
     private $pathXMLtemplate = "";
 
     // {{{ constructor
     public function __construct($xmlDb, $document) {
         parent::__construct($xmlDb, $document);
 
-        $this->pathXMLtemplate = $this->xmlDb->options['pathXMLtemplate'];
-        $this->table_nodetypes = $xmlDb->table_nodetypes;
-
-        $types = $this->getNodeTypes();
-        $this->availableNodes = [];
-        $this->validParents = [];
-
-        foreach ($this->getNodeTypes() as $id => $t) {
-            $doc = new \DOMDocument();
-            $success = $doc->load("{$this->pathXMLtemplate}/{$t->xmlTemplate}");
-
-            if (!$success) continue;
-
-            $contentElement = $doc->documentElement->firstChild;
-            while ($contentElement && $contentElement->nodeType != \XML_ELEMENT_NODE) {
-                $contentElement = $contentElement->nextSibling;
-            }
-            if ($contentElement) {
-                $nodeName = $contentElement->nodeName;
-
-                $this->validParents[$nodeName] = explode(",", $t->validParents);
-
-                $t->validParents = $this->validParents[$nodeName];
-                $this->availableNodes[$t->xmlTemplate] = $t;
-            }
-        }
+        $this->initAvailableNodes();
     }
     // }}}
 
