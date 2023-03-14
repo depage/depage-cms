@@ -9,6 +9,7 @@
             'data-docref' => $this->newsletterName,
             'data-live-help' => _("Page tree:\\nHere you can add, rename and delete pages. Select a page to edit it in the content tree below ↓."),
             'data-live-help-class' => "icon icon-tree",
+            'data-previewlang' => $this->previewLang,
         ]); ?>>
         </div>
 </div>
@@ -17,10 +18,10 @@
         'data-live-help' => _("Edit your newsletter and choose which items to include"),
     ]); ?>>
     <header class="info">
-        <h1><?php self::e(_("Newsletter")); ?></h1>
+        <h1><?php self::e(_("Newsletter Properties")); ?></h1>
     </header>
+    <?php self::e($this->tabs); ?>
     <div class="doc-properties scrollable-content">
-        <?php self::e($this->content); ?>
     </div>
 </div>
 <div <?php self::attr([

@@ -10,7 +10,7 @@
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
 
-namespace Depage\Cms\UI;
+namespace Depage\Cms\Ui;
 
 use \Depage\Html\Html;
 
@@ -137,13 +137,9 @@ class DocProperties extends Base
             $this->addPgRelease($node);
         }
 
-        $hasInputs = false;
-        if ($callback = $this->getCallbackForNode($node)) {
-            $this->$callback($node);
-            $hasInputs = true;
-        }
-        foreach($node->childNodes as $n) {
-            if ($callback = $this->getCallbackForNode($n)) {
+        $nodes = array_merge([$node], iterator_to_array($node->childNodes));
+        foreach($nodes as $n) {
+            if ($callback = $this->getCallbackForNode($n, "add")) {
                 $this->$callback($n);
                 $hasInputs = true;
             }
@@ -158,10 +154,19 @@ class DocProperties extends Base
             $node = $this->form->getValuesXml();
             $hashNew = $doc->hashDomNode($node);
             $changed = $hashOld !== $hashNew;
+            $savedAlready = false;
 
-            if ($changed) {
+            foreach($nodes as $n) {
+                if ($callback = $this->getCallbackForNode($n, "save")) {
+                    $changed = $this->$callback($n) || $changed;
+                    $savedAlready = true;
+                }
+            }
+
+            if ($changed && !$savedAlready) {
                 $doc->saveNode($node);
-
+            }
+            if ($changed) {
                 $prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
                 $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->project, 0);
                 $parentId = $doc->getParentIdById($this->nodeId);
@@ -183,10 +188,8 @@ class DocProperties extends Base
             return new \Depage\Json\Json(["success" => true, "changed" => $changed]);
         }
 
-        // @todo clean unsed session?
-
         $h .= $this->form;
-        $h .= htmlentities($xml->saveXML($node));
+        //$h .= htmlentities($xml->saveXML($node));
 
         $output = new Html([
             'title' => "edit",
@@ -225,7 +228,7 @@ class DocProperties extends Base
      * @param mixed $node
      * @return void
      **/
-    protected function getCallbackForNode($node)
+    protected function getCallbackForNode($node, $prefix)
     {
         $f = str_replace(":", "_", $node->nodeName);
         $parts = explode("_", $f);
@@ -233,7 +236,7 @@ class DocProperties extends Base
         for ($i = 0; $i < count($parts); $i++) {
             $parts[$i] = ucfirst($parts[$i]);
         }
-        $callback = "add" . implode($parts);
+        $callback = $prefix . implode($parts);
 
         if ($callback == "addEditPlainSource" && $this->nodeId != $node->getAttribute("db:id")) {
             return false;
@@ -472,6 +475,9 @@ class DocProperties extends Base
     protected function addPgMeta($node)
     {
         $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docRef);
+        if (!$pageInfo) {
+            return;
+        }
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
         if ($pageInfo->type == "Depage\\Cms\\XmlDocTypes\\Page") {
@@ -1123,7 +1129,6 @@ class DocProperties extends Base
         $this->form->addHtml("</p>");
     }
     // }}}
-
     // {{{ addColor()
     /**
      * @brief addColor
@@ -1139,6 +1144,84 @@ class DocProperties extends Base
             'label' => $node->getAttribute("name"),
             'dataPath' => "//*[@db:id = '$nodeId']/@value",
         ]);
+    }
+    // }}}
+    // {{{ addSecAutoNewsList()
+    /**
+     * @brief addSecAutoNewsList
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    protected function addSecAutoNewsList($node)
+    {
+        $this->newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $this->project, $this->docRef);
+        $this->newsletterCandidates = $this->newsletter->getCandidates();
+
+        $pages = $this->newsletter->getNewsletterPages();
+        //var_dump($pages);
+
+        $count = 0;
+        $this->form->addHtml("<div class=\"info\"><p>" . _("Please choose the news items you want to include in the newsletter:") . "</p></div>");
+        $fs = $this->form->addFieldset("unsentItems", [
+            'label' => _("Unsent news items"),
+        ]);
+        $fs->addHtml("<div class=\"scrollable-content\">");
+        foreach ($this->newsletterCandidates as $c) {
+            if (!$c->alreadyUsed) {
+                $count++;
+                $nodes = $this->form->dataNodeXpath->query("//sec:news[@db:docref='{$c->name}']");
+                $fs->addBoolean("{$c->name}", [
+                    'label' => $c->url,
+                    'defaultValue' => in_array($c->name, $pages),
+                ]);
+            }
+        }
+        if ($count == 0) {
+            $fs->addHtml("<p>" . _("No news items available.") . "</p>");
+        }
+        $fs->addHtml("</div>");
+
+        $count = 0;
+        $fs = $this->form->addFieldset("sentItems", [
+            'label' => _("News items included in other newsletters"),
+            'class' => "detail",
+        ]);
+        $fs->addHtml("<div class=\"scrollable-content\">");
+        foreach ($this->newsletterCandidates as $c) {
+            if ($c->alreadyUsed) {
+                $count++;
+                $fs->addBoolean("{$c->name}", [
+                    'label' => $c->url,
+                    'defaultValue' => in_array($c->name, $pages),
+                ]);
+            }
+        }
+        $fs->addHtml("</div>");
+        if ($count == 0) {
+            $fs->addHtml("<p>" . _("No news items available.") . "</p>");
+        }
+    }
+    // }}}
+    // {{{ saveSecAutoNewsList()
+    /**
+     * @brief saveSecAutoNewsList
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    protected function saveSecAutoNewsList($node)
+    {
+        $values = $this->form->getValues();
+        $pages = [];
+        foreach ($this->newsletterCandidates as $c) {
+            if ($values[$c->name]) {
+                $pages[] = $c;
+            }
+        }
+        $this->newsletter->setNewsletterPages($pages, $xml);
+
+        return true;
     }
     // }}}
 

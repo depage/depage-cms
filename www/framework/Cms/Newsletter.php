@@ -186,6 +186,15 @@ class Newsletter
         $pages = $this->project->getXmlNav()->getPages();
         $usedPages = [];
 
+        $ids = $xmldb->getNodeIdsByXpath("//sec:autoNewsList/sec:news");
+        foreach ($ids as $id) {
+            $doc = $xmldb->getDocByNodeId($id);
+            if ($doc->getDocId() != $this->id) {
+                $docref = $doc->getAttribute($id, "db:docref");
+                $usedPages[$docref] = true;
+            }
+        }
+        /*
         $allNewsletters = self::loadAll($this->pdo, $this->project);
         foreach ($allNewsletters as $n) {
             if ($n->name != $this->name) {
@@ -195,6 +204,7 @@ class Newsletter
                 }
             }
         }
+        */
 
         foreach ($pages as $page) {
             if ($page->released || $page->published) {
@@ -225,20 +235,50 @@ class Newsletter
             $xml = $xml->ownerDocument;
         }
         $xpath = new \DOMXPath($xml);
-        $xpResult = $xpath->query("//sec:news");
+        $newsNodes = $xpath->query("//sec:news");
 
-        foreach ($xpResult as $node) {
+        foreach ($newsNodes as $node) {
             $node->parentNode->removeChild($node);
+        }
+
+        $autoListNode = $xpath->query("//sec:autoNewsList");
+        if ($autoListNode->length > 0) {
+            $autoListNode = $autoListNode->item(0);
+        } else {
+            $autoListNode = $xml->createElement("sec:autoNewsList");
+            $autoListNode->setAttribute("db:name", "tree_name_autonews");
+            $xml->documentElement->appendChild($autoListNode);
         }
 
         foreach ($pages as $page) {
             $newNode = $xml->createElement("sec:news");
             $newNode->setAttribute("db:docref", $page->name);
 
-            $xml->documentElement->appendChild($newNode);
+            $autoListNode->appendChild($newNode);
         }
 
         $this->document->save($xml);
+    }
+    // }}}
+    // {{{ getNewsletterPages()
+    /**
+     * @brief getNewsletterPages
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getNewsletterPages()
+    {
+        $pages = [];
+        $xml = $this->getXml();
+        $xpath = new \DOMXPath($xml);
+        $newsNodes = $xpath->query("//sec:news");
+
+        foreach ($newsNodes as $node) {
+            $pages[] = $node->getAttribute("db:docref");
+        }
+
+        return $pages;
     }
     // }}}
 

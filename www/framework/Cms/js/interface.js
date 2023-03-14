@@ -723,28 +723,6 @@ var depageCMS = (function() {
                 });
             });
 
-            // add autosaved event to newsletter form
-            $("form.newsletter.edit").each(function() {
-                var $form = $(this);
-
-                if (!currentPreviewLang) {
-                    currentPreviewLang = $form.find("p[lang]").first().attr("lang");
-                    console.log(currentPreviewLang);
-                }
-
-                $form.find("input").on("focus", function() {
-                    var lang = $(this).parents("p[lang]").attr("lang");
-                    if (typeof lang == "undefined" || lang == "") return;
-
-                    currentPreviewLang = lang;
-                });
-                $form.on("depageForm.autosaved", function() {
-                    var matches = window.location.href.match(/project\/([^\/]*)\/newsletter\/([^\/]*)\//);
-                    var url = baseUrl + "project/" + matches[1] + "/preview/newsletter/pre/" + currentPreviewLang + "/" + matches[2] + ".html";
-
-                    localJS.preview(url);
-                });
-            });
             $("fieldset.detail").depageDetails({
                 head: "legend"
             });
@@ -1494,6 +1472,9 @@ var depageCMS = (function() {
             var $newsletterTree = $(".tree.pagedata.newsletter");
             if ($newsletterTree.length === 0) return false;
 
+            if (!currentPreviewLang) {
+                currentPreviewLang = $newsletterTree.data("previewlang");
+            }
             var newsletterId = $newsletterTree.data("docref");
             var url = baseUrl + "project/" + projectName + "/preview/newsletter/pre/" + currentPreviewLang + "/" + newsletterId + ".html";
 
@@ -1698,6 +1679,11 @@ var depageCMS = (function() {
                 $form.on("depageForm.autosaved", function() {
                     $form.find(".doc-property-meta p.release a").removeClass("disabled");
                 });
+
+                $form.find("fieldset.detail").depageDetails({
+                    head: "legend"
+                });
+
 
                 localJS.setFormState($form, $form.find(".doc-property-meta").data("protected") == 1);
 

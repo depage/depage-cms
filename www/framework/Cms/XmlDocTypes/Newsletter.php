@@ -69,11 +69,15 @@ class Newsletter extends Base
         $nodelist = $xpath->query("/pg:newsletter/sec:autoNewsList");
 
         if ($nodelist->length == 0) {
-            $parentNode = $xml->createElementNS("http://cms.depagecms.net/ns/section", "sec:autoNewsList");
-            $parentNode->setAttributeNS("http://cms.depagecms.net/ns/database", "db:name", "tree_name_autonews");
+            $parentNode = $xml->createElement("sec:autoNewsList");
+            $parentNode->setAttribute("db:name", "tree_name_autonews");
             $node->appendChild($parentNode);
 
-            $nodelist = $xpath->query("/pg:newsletter/sec:news", $node);
+            $changed = true;
+        }
+
+        $nodelist = $xpath->query("/pg:newsletter/sec:news", $node);
+        if ($nodelist->length > 0) {
             foreach ($nodelist as $newsNode) {
                 $parentNode->appendChild($newsNode);
             }

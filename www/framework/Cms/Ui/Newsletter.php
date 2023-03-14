@@ -80,42 +80,15 @@ class Newsletter extends Base
 
     // {{{ edit()
     function edit() {
-        $candidates = $this->newsletter->getCandidates();
-        $form = new \Depage\Cms\Forms\Newsletter("newsletter{$this->newsletter->name}", [
-            'dataNode' => $this->newsletter->getXml(),
-            'newsletter' => $this->newsletter,
-            'candidates' => $candidates,
-        ]);
-
-        $form->process();
-        if ($form->validateAutosave()) {
-            $xml = $form->getValuesXml();
-            $values = $form->getValues();
-            $pages = [];
-            foreach ($candidates as $c) {
-                if ($values[$c->name]) {
-                    $pages[] = $c;
-                }
-            }
-            $this->newsletter->setNewsletterPages($pages, $xml);
-
-            $form->clearSession(false);
-        }
-
+        $lang = array_keys($this->project->getLanguages())[0];
         $h = new Html("newsletterEdit.tpl", [
-            'content' => [
-                new Html("tabs.tpl", [
-                    'baseUrl' => $this->newsletter->getBaseUrl(),
-                    'tabs' => $this->tabs,
-                    'activeTab' => "edit",
-                ]),
-                new Html("info.tpl", [
-                    'title' => _("Edit Newsletter"),
-                    'content' => _("Please choose the news items you want to include in the newsletter:"),
-                ]),
-                $form,
-            ],
+            'tabs' => new Html("tabs.tpl", [
+                'baseUrl' => $this->newsletter->getBaseUrl(),
+                'tabs' => $this->tabs,
+                'activeTab' => "edit",
+            ]),
             'previewUrl' => $this->newsletter->getPreviewUrl("pre"),
+            'previewLang' => $lang,
             'projectName' => $this->projectName,
             'newsletterName' => $this->newsletter->name,
         ], $this->htmlOptions);
@@ -139,8 +112,10 @@ class Newsletter extends Base
             $values = $form->getValues();
 
             if ($values['to'] == "__custom") {
-                $this->newsletter->sendTo($values['emails'], "de");
-                $this->newsletter->sendTo($values['emails'], "en");
+                $languages = $this->project->getLanguages();
+                foreach ($languages as $lang => $name) {
+                    $this->newsletter->sendTo($values['emails'], $lang);
+                }
             } else {
                 $publishId = array_keys($this->project->getPublishingTargets())[0];
 
@@ -162,13 +137,13 @@ class Newsletter extends Base
             'content' => $form,
         ], $this->htmlOptions);
 
-        $h = new Html("newsletterEdit.tpl", [
+        $h = new Html("newsletterPublish.tpl", [
+            'tabs' => new Html("tabs.tpl", [
+                'baseUrl' => $this->newsletter->getBaseUrl(),
+                'tabs' => $this->tabs,
+                'activeTab' => "publish",
+            ]),
             'content' => [
-                new Html("tabs.tpl", [
-                    'baseUrl' => $this->newsletter->getBaseUrl(),
-                    'tabs' => $this->tabs,
-                    'activeTab' => "publish",
-                ]),
                 new Html("info.tpl", [
                     'title' => _("Publish Newsletter"),
                     'content' => _("You can send the newsletter to a group of your subscribers (e.g. 'Default') or to a comma separated list of custom emails for testing."),

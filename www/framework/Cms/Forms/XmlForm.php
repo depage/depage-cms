@@ -16,7 +16,7 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
     /**
      * @brief dataNodeXpath
      **/
-    protected $dataNodeXpath = null;
+    public $dataNodeXpath = null;
 
     protected $fl = null;
 

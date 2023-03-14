@@ -6,15 +6,13 @@
     @include clearfix();
     width: 100%;
     margin-top: $height;
-    margin-left: -12px;
+    padding: 0;
+    padding-left: $infoHeight;
     height: $height;
     max-height: $height;
 
-    &,
     .tab {
         padding: 0;
-    }
-    .tab {
         display: inline-block;
         list-style: none;
         height: $height;
@@ -40,10 +38,13 @@
         border: none;
         border-top: 1px solid $borderLightColor;
     }
+    .content > & {
+        margin-left: -12px;
+        padding-left: 0;
+    }
     .dialog-full & {
         top: $infoHeight;
         //padding-top: $infoHeight;
-        padding-left: $infoHeight;
         margin-top: 0;
         height: $height + $infoHeight;
         max-height: $height + $infoHeight;
