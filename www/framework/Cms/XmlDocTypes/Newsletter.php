@@ -74,6 +74,8 @@ class Newsletter extends Base
             $node->appendChild($parentNode);
 
             $changed = true;
+        } else {
+            $parentNode = $nodelist->item(0);
         }
 
         $nodelist = $xpath->query("/pg:newsletter/sec:news", $node);

@@ -4,6 +4,7 @@
         <header class="info info-tree-pagedata">
             <h1><?php self::e(_("Newsletter")); ?></h1>
         </header>
+        <?php self::e($this->tabs); ?>
         <div <?php self::attr([
             'class' => "tree pagedata newsletter",
             'data-docref' => $this->newsletterName,

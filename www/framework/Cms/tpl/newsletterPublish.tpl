@@ -5,8 +5,8 @@
     <header class="info">
         <h1><?php self::e(_("Publish Newsletter")); ?></h1>
     </header>
+    <?php self::e($this->tabs); ?>
     <div class="dialog-full scrollable-content">
-        <?php self::e($this->tabs); ?>
         <?php self::e($this->content); ?>
     </div>
 </div>
