@@ -16,12 +16,38 @@
 
     <xsl:decimal-format decimal-separator="." />
 
+    <!-- default is no output -->
+    <xsl:template match="* | @* | text()" />
+    <xsl:template match="* | @* | text()" mode="custom" />
+
+    <xsl:template match="proj:settings">
+        <sitemapindex>
+            <xsl:apply-templates select="proj:languages/proj:language" />
+            <xsl:text disable-output-escaping="yes">
+</xsl:text>
+
+            <xsl:apply-templates select="." mode="custom" />
+        </sitemapindex>
+    </xsl:template>
+
     <xsl:template match="proj:pages_struct">
         <urlset>
             <xsl:text disable-output-escaping="yes">
 </xsl:text>
             <xsl:apply-templates select="pg:*[dp:pageVisible(.)]" />
+
+            <xsl:apply-templates select="." mode="custom" />
         </urlset>
+    </xsl:template>
+
+    <xsl:template match="proj:language">
+        <xsl:variable name="lang" select="@shortname" />
+        <xsl:text disable-output-escaping="yes">
+</xsl:text>
+        <sitemap>
+            <loc><xsl:value-of select="concat($baseUrl, $lang, '/sitemap.xml')" /></loc>
+            <lastmod><xsl:apply-templates select="." mode="lastmod-now" /></lastmod>
+        </sitemap>
     </xsl:template>
 
     <xsl:template match="pg:folder">
@@ -61,51 +87,39 @@
             </xsl:choose>
         </xsl:variable>
 
-        <xsl:for-each select="$languages/*">
-            <xsl:variable name="lang" select="@shortname" />
-            <xsl:if test="dp:pageVisible($page, $lang)">
-                <xsl:variable name="loc" select="dp:getPageRef($pageId, $lang, true())" />
-                <url>
-                    <loc><xsl:value-of select="$loc" /></loc>
-                    <lastmod><xsl:value-of select="$lastmod" /></lastmod>
-                    <priority><xsl:value-of select="$priority" /></priority>
-                </url>
-                <xsl:text disable-output-escaping="yes">
+        <xsl:variable name="lang" select="@shortname" />
+        <xsl:if test="dp:pageVisible($page, $currentLang)">
+            <xsl:variable name="loc" select="dp:getPageRef($pageId, $currentLang, true())" />
+            <url>
+                <loc><xsl:value-of select="$loc" /></loc>
+                <lastmod><xsl:value-of select="$lastmod" /></lastmod>
+                <priority><xsl:value-of select="$priority" /></priority>
+            </url>
+            <xsl:text disable-output-escaping="yes">
 </xsl:text>
-            </xsl:if>
-        </xsl:for-each>
+        </xsl:if>
 
         <xsl:apply-templates select="pg:*[dp:pageVisible(.)]" />
     </xsl:template>
 
     <xsl:template match="pg:page" mode="lastmod">
-        <xsl:param name="page" select="." />
-        <xsl:param name="pageId" select="$page/@db:id" />
-        <xsl:param name="pageContent" />
-
         <xsl:apply-templates select="." mode="lastmod-lastchange" />
     </xsl:template>
 
     <xsl:template match="pg:page" mode="lastmod-lastchange">
         <xsl:param name="page" select="." />
         <xsl:param name="pageId" select="$page/@db:id" />
-        <xsl:param name="pageContent" />
 
         <xsl:value-of select="concat(translate(dp:getpage($pageId)/pg:page_data/@db:lastchange, ' ', 'T'), 'Z')"/>
     </xsl:template>
 
-    <xsl:template match="pg:page" mode="lastmod-now">
-        <xsl:param name="page" select="." />
-        <xsl:param name="pageId" select="$page/@db:id" />
-        <xsl:param name="pageContent" />
-
+    <xsl:template match="pg:page | proj:language" mode="lastmod-now">
         <xsl:value-of select="dp:formatDate('now', 'Y-m-d\TH:i:s\Z')"/>
     </xsl:template>
 
     <xsl:template match="pg:page" mode="priority">
         <xsl:param name="page" select="." />
         <xsl:param name="pageId" select="$page/@db:id" />
-        <xsl:param name="pageContent" />
 
         <xsl:variable name="extra" select="dp:choose($page/@nav_featured = 'true', 5, 0)" />
 
@@ -115,7 +129,6 @@
     <xsl:template match="proj:pages_struct/pg:page[1]" mode="priority">
         <xsl:param name="page" select="." />
         <xsl:param name="pageId" select="$page/@db:id" />
-        <xsl:param name="pageContent" />
 
         1
     </xsl:template>
@@ -123,7 +136,6 @@
     <xsl:template match="proj:pages_struct/pg:*[@nav_blog='true' or @nav_news='true']//pg:page" mode="priority">
         <xsl:param name="page" select="." />
         <xsl:param name="pageId" select="$page/@db:id" />
-        <xsl:param name="pageContent" />
 
         <xsl:variable name="currentYear" select="dp:formatDate('now', 'Y')" />
         <xsl:variable name="year" select="../../@name" />

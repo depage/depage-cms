@@ -458,7 +458,22 @@ class PublishGenerator
      **/
     protected function queuePublishSitemap()
     {
-        $this->task->addSubtask("publishing sitemap", "
+        $languages = $this->project->getLanguages();
+
+        foreach ($languages as $lang => $name) {
+            $this->task->addSubtask("publishing sitemap ($lang)", "
+                \$project = \$generator->getProject();
+                \$publisher->publishString(
+                    \$project->generateSitemap(%s, %s),
+                    %s
+                );", [
+                    $this->publishId,
+                    $lang,
+                    "$lang/sitemap.xml",
+            ], $this->initId);
+        }
+
+        $this->task->addSubtask("publishing sitemap list", "
             \$project = \$generator->getProject();
             \$publisher->publishString(
                 \$project->generateSitemap(%s),
@@ -466,7 +481,6 @@ class PublishGenerator
             );", [
                 $this->publishId,
         ], $this->initId);
-
     }
     // }}}
     // {{{ queuePublishAtom()
