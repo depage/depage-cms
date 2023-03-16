@@ -25,25 +25,17 @@ figure.thumb.color {
     .trees,
     .colorscheme,
     .colorprops {
-        position: absolute;
-        top: 0;
-        bottom: 0;
         @extend %scrollY;
-
-        header.info {
-            right: 0;
-            left: 0;
-        }
     }
     .trees {
-        left: 0;
         width: $treeWidth;
         max-width: 100%;
     }
     .colorscheme,
     .colorprops {
-        left: 0;
-        right: 0;
+        display: flex;
+        flex-direction: column;
+        flex: 1 1 auto;
     }
     .colorscheme.color-selected {
         bottom: 50%;
@@ -58,16 +50,6 @@ figure.thumb.color {
         bottom: 0;
         border-top: 1px solid $borderColor;
         background: $backgroundLighterColor;
-    }
-
-    .tree,
-    .color-list,
-    .color-property {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
     }
 }
 // }}}

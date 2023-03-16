@@ -5,11 +5,13 @@
     position: relative;
     @include clearfix();
     width: 100%;
-    margin-top: $height;
+    margin-top: $infoHeight;
+    margin-bottom: $infoHeight;
     padding: 0;
     padding-left: $infoHeight;
     height: $height;
     max-height: $height;
+    flex: 0 0 auto;
 
     .tab {
         padding: 0;
@@ -30,9 +32,6 @@
             line-height: $height;
             padding: 0 12px;
         }
-    }
-    & ~ * {
-        margin-top: 2.5 * $height;
     }
     & ~ hr {
         border: none;

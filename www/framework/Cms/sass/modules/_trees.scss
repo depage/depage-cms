@@ -597,16 +597,13 @@
     border-right: 1px solid $borderColor;
 
     .tree {
-        position: absolute;
+        position: relative;
+        flex: 1 1 auto;
         background: $backgroundLighterColor;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
 
         .jstree-container {
             position: absolute;
-            top: $infoHeight;
+            top: 0;
             bottom: 0;
             left: 0;
             right: 0;
@@ -635,9 +632,6 @@
         }
     }
     div.search {
-        position: absolute;
-        top: $infoHeight;
-        left: 0;
         width: 100%;
         height: $searchHeight;
         background-color: $backgroundBrightColor;
@@ -674,9 +668,6 @@
                 }
             }
         }
-    }
-    div.search ~ .tree {
-        top: $searchHeight;
     }
 }
 // }}}
