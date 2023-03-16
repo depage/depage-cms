@@ -115,13 +115,20 @@ class Preview extends \Depage\Depage\Ui\Base
         $project->setPreviewType($this->previewType);
 
         if ($lang == "api" && $project->isApiAvailable()) {
-            $redirector = new \Depage\Redirector\Redirector($project->getBaseUrl() . '/');
+            $redirector = new \Depage\Redirector\Redirector($project->getBaseUrl());
             require($project->getProjectPath() . 'lib/global/api.php');
             die();
         } else if ($lang == "sitemap.xml") {
             $sitemap = new \Depage\Http\Response();
             $sitemap
                 ->setBody($project->generateSitemap())
+                ->addHeader("Content-Type: text/xml; charset=UTF-8");
+
+            return $sitemap;
+        } else if ($urlPath == "/sitemap.xml") {
+            $sitemap = new \Depage\Http\Response();
+            $sitemap
+                ->setBody($project->generateSitemap(null, $lang))
                 ->addHeader("Content-Type: text/xml; charset=UTF-8");
 
             return $sitemap;

@@ -525,7 +525,7 @@ class Project extends \Depage\Entity\Entity
     {
         $languages = array_keys($this->getLanguages());
 
-        return $this->getBaseUrl() . "/" . $languages[0];
+        return $this->getBaseUrl() . $languages[0];
     }
     // }}}
     // {{{ getXslTemplates()
@@ -834,7 +834,7 @@ class Project extends \Depage\Entity\Entity
 
         $nodelist = $xml->getElementsByTagNameNS("http://cms.depagecms.net/ns/page", "page");
 
-        return $this->getBaseUrl($publishId) . "/" . $languages[0] . $nodelist->item(0)->getAttribute("url");
+        return $this->getBaseUrl($publishId) . $languages[0] . $nodelist->item(0)->getAttribute("url");
     }
     // }}}
     // {{{ getBaseUrl()
@@ -848,7 +848,7 @@ class Project extends \Depage\Entity\Entity
     {
         if (is_null($publishId)) {
             // @todo check template path
-            return DEPAGE_BASE . "project/{$this->name}/preview/html/{$this->previewType}";
+            return DEPAGE_BASE . "project/{$this->name}/preview/html/{$this->previewType}/";
         } else {
             $targets = $this->getPublishingTargets();
             $conf = $targets[$publishId];
@@ -877,7 +877,7 @@ class Project extends \Depage\Entity\Entity
     {
         if (is_null($publishId)) {
             // @todo check template path
-            return DEPAGE_BASE . "project/{$this->name}/preview/html/{$this->previewType}";
+            return DEPAGE_BASE . "project/{$this->name}/preview/html/{$this->previewType}/";
         } else {
             $targets = $this->getPublishingTargets();
             $conf = $targets[$publishId];
@@ -1294,18 +1294,23 @@ class Project extends \Depage\Entity\Entity
      * @param mixed
      * @return void
      **/
-    public function generateSitemap($publishId = null)
+    public function generateSitemap($publishId = null, $lang = null)
     {
         $xmlgetter = $this->getXmlGetter();
         $baseUrl = $this->getBaseUrl($publishId);
 
         $transformer = \Depage\Transformer\Transformer::factory($this->previewType, $xmlgetter, $this, "sitemap");
         $transformer->setBaseUrl($baseUrl);
-        $xml = $xmlgetter->getDocXml("pages");
+        if (!is_null($lang)) {
+            $xml = $xmlgetter->getDocXml("pages");
+        } else {
+            $xml = $xmlgetter->getDocXml("settings");
+        }
 
         $parameters = [
             "currentContentType" => "text/xml",
             "currentEncoding" => "UTF-8",
+            "currentLang" => $lang,
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
             "baseUrl" => $baseUrl,
@@ -1336,7 +1341,7 @@ class Project extends \Depage\Entity\Entity
             "currentEncoding" => "UTF-8",
             "depageVersion" => \Depage\Depage\Runner::getVersion(),
             "depageIsLive" => true,
-            "baseUrl" => $this->getBaseUrl($publishId) . "/",
+            "baseUrl" => $this->getBaseUrl($publishId),
         ];
 
         $atom = $transformer->transform($xml, $parameters);
