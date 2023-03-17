@@ -22,9 +22,23 @@ class Vimeo extends \Depage\Media\UrlInfo
         $this->platform = "vimeo";
         $this->isVideo = true;
 
-        $this->videoId = explode('/', $this->path)[1] ?? null;
+        $parts = explode("/", $this->path);
+        $this->videoId = $parts[1] ?? null;
     }
     // }}}
+
+    // {{{ getEmbedUrl()
+    /**
+     * @brief getEmbedUrl
+     *
+     * @return string
+     **/
+    public function getEmbedUrl()
+    {
+        return "https://player.vimeo.com/video/" . $this->videoId;
+    }
+    // }}}
+
     // {{{ toXml()
     /**
      * @brief toXml

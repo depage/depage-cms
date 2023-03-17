@@ -23,11 +23,32 @@ class Youtube extends \Depage\Media\UrlInfo
         $this->isVideo = true;
 
         parse_str($this->query, $params);
+        $parts = explode("/", $this->path);
+
         if (isset($params["v"])) {
             $this->videoId = $params["v"];
+        } else if ($this->host == "youtu.be") {
+            $this->videoId = $parts[1];
+        } else if ($parts[1] == "shorts") {
+            $this->videoId = $parts[2];
+        } else if ($parts[1] == "embed") {
+            $this->videoId = $parts[2];
         }
     }
     // }}}
+
+    // {{{ getEmbedUrl()
+    /**
+     * @brief getEmbedUrl
+     *
+     * @return string
+     **/
+    public function getEmbedUrl()
+    {
+        return "https://www.youtube-nocookie.com/embed/" . $this->videoId;
+    }
+    // }}}
+
     // {{{ toXml()
     /**
      * @brief toXml

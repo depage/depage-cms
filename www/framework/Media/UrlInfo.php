@@ -66,13 +66,25 @@ class UrlInfo
 
         if (preg_match("/^soundcloud\.com$/", $host)) {
             return new UrlInfo\Soundcloud($url);
-        } else if (preg_match("/^(www\.)?youtube\.com$/", $host)) {
+        } else if (preg_match("/^(www\.)?youtube\.com|youtu.be$/", $host)) {
             return new UrlInfo\Youtube($url);
         } else if (preg_match("/^(www.)?vimeo\.com$/", $host)) {
             return new UrlInfo\Vimeo($url);
         }
 
         return new static($url);
+    }
+    // }}}
+
+    // {{{ getEmbedUrl()
+    /**
+     * @brief getEmbedUrl
+     *
+     * @return string
+     **/
+    public function getEmbedUrl()
+    {
+        return $this->url;
     }
     // }}}
 
@@ -108,6 +120,7 @@ class UrlInfo
         foreach ($fields as $key) {
             $node->setAttribute($key, $this->$key);
         }
+        $node->setAttribute('embedUrl', $this->getEmbedUrl());
 
         $doc->appendChild($node);
 
