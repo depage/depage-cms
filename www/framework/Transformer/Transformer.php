@@ -539,23 +539,13 @@ abstract class Transformer
      */
     protected function registerFunctions($proc)
     {
-        /*
-         * @done
-         * call:changesrc
-         * call:urlencode
-         * call:replaceEmailChars
-         * call:atomizetext
-         * call:phpescape
-         * call:formatdate
-         * call:fileinfo
-         */
-
         \Depage\Cms\Xslt\FuncDelegate::registerFunctions($proc, [
             "atomizeText" => [$this, "xsltAtomizeText"],
             "autokeywords" => [$this, "xsltAutokeywords"],
             "changesrc" => [$this, "xsltChangeSrc"],
             "cssEscape" => [$this, "xsltCssEscape"],
             "fileinfo" => [$this, "xsltFileinfo"],
+            "urlinfo" => [$this, "xsltUrlinfo"],
             "filesInFolder" => [$this, "xsltFilesInFolder"],
             "formatDate" => [$this, "xsltFormatDate"],
             "getLibRef" => [$this, "xsltGetLibRef"],
@@ -698,6 +688,23 @@ abstract class Transformer
 
             return $doc;
         }
+
+        return $info->toXml();
+    }
+    // }}}
+    // {{{ xsltUrlinfo
+    /**
+     * gets urlinfo for url
+     *
+     * @public
+     *
+     * @param    $path (string) url to get info about
+     *
+     * @return    $xml (xml) url info as xml string
+     */
+    public function xsltUrlinfo($url) {
+        $analyzer = new \Depage\Media\UrlAnalyzer();
+        $info = $analyzer->analyze($url);
 
         return $info->toXml();
     }
