@@ -6,6 +6,8 @@ class Soundcloud extends \Depage\Media\UrlInfo
 {
     // {{{ variables
     public $audioId = null;
+
+    public static $hostRegex = "/^soundcloud\.com$/";
     // }}}
 
     // {{{ construct()
@@ -21,6 +23,18 @@ class Soundcloud extends \Depage\Media\UrlInfo
 
         $this->platform = "soundcloud";
         $this->isAudio = true;
+    }
+    // }}}
+
+    // {{{ getEmbedUrl()
+    /**
+     * @brief getEmbedUrl
+     *
+     * @return string
+     **/
+    public function getEmbedUrl()
+    {
+        return "https://w.soundcloud.com/player/?url=" . rawurlencode($this->url);
     }
     // }}}
 

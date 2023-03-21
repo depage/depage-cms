@@ -52,6 +52,7 @@ class UrlInfo
         }
     }
     // }}}
+
     // {{{ factory()
     /**
      * @brief factory
@@ -64,11 +65,11 @@ class UrlInfo
         $u = filter_var($url, \FILTER_VALIDATE_URL);
         $host = parse_url($u, \PHP_URL_HOST);
 
-        if (preg_match("/^soundcloud\.com$/", $host)) {
+        if (preg_match(UrlInfo\Soundcloud::$hostRegex, $host)) {
             return new UrlInfo\Soundcloud($url);
-        } else if (preg_match("/^(www\.)?youtube\.com|youtu.be$/", $host)) {
+        } else if (preg_match(UrlInfo\Youtube::$hostRegex, $host)) {
             return new UrlInfo\Youtube($url);
-        } else if (preg_match("/^(www.)?vimeo\.com$/", $host)) {
+        } else if (preg_match(UrlInfo\Vimeo::$hostRegex, $host)) {
             return new UrlInfo\Vimeo($url);
         }
 

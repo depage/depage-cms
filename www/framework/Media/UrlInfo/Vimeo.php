@@ -6,6 +6,8 @@ class Vimeo extends \Depage\Media\UrlInfo
 {
     // {{{ variables
     public $videoId = null;
+
+    public static $hostRegex = "/^vimeo\.com$/";
     // }}}
 
     // {{{ construct()

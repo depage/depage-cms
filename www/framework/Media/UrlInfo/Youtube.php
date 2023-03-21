@@ -6,6 +6,8 @@ class Youtube extends \Depage\Media\UrlInfo
 {
     // {{{ variables
     public $videoId = null;
+
+    public static $hostRegex = "/^youtu\.be$|^(www\.)?youtube\.com$/";
     // }}}
 
     // {{{ construct()
