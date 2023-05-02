@@ -393,16 +393,31 @@ class Newsletter
      * @param mixed $category
      * @return void
      **/
-    public function getSubscribers($category)
+    public function getSubscribers($category, $rand = false)
     {
-        $query = $this->pdo->prepare(
-            "SELECT lang, email
-            FROM
-                {$this->tableSubscribers} AS subscribers
-            WHERE
-                category = :category
-            "
-        );
+        if (!$rand) {
+            $query = $this->pdo->prepare(
+                "SELECT
+                    lang,
+                    email
+                FROM
+                    {$this->tableSubscribers} AS subscribers
+                WHERE
+                    category = :category AND
+                    validation IS NULL"
+            );
+        } else {
+            $query = $this->pdo->prepare(
+                "SELECT
+                    lang,
+                    email
+                FROM {$this->tableSubscribers} AS subscribers
+                WHERE
+                    category = :category AND
+                    validation IS NULL
+                ORDER BY RAND()"
+            );
+        }
 
         $query->execute([
             'category' => $category,

@@ -54,7 +54,7 @@ class NewsletterSenderGenerator extends PublishGenerator
     public function queueSendNewsletter($newsletter, $category)
     {
         $this->task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->taskName, $this->project->name);
-        $subscribers = $newsletter->getSubscribers($category);
+        $subscribers = $newsletter->getSubscribers($category, true);
 
         $this->task->beginTaskTransaction();
 
