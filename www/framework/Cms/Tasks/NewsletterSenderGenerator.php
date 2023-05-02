@@ -57,6 +57,7 @@ class NewsletterSenderGenerator extends PublishGenerator
         $subscribers = $newsletter->getSubscribers($category, true);
 
         $this->task->beginTaskTransaction();
+        $i = 0;
 
         foreach ($subscribers as $lang => $emails) {
             $mail = new \Depage\Mail\Mail($newsletter->conf->from);
@@ -75,7 +76,14 @@ class NewsletterSenderGenerator extends PublishGenerator
             ]);
 
             foreach ($emails as $to) {
-                $newsletter->queueSend($this->task, $initId, $to, $lang);
+                // sleep for random time between 5 and 25 seconds for every 10 mails
+                // to avoid spam detection
+                $i++;
+                $sleep = 0;
+                if ($i % 10 == 0) {
+                    $sleep = rand(5, 25);
+                }
+                $newsletter->queueSend($this->task, $initId, $to, $lang, $sleep);
             }
         }
 

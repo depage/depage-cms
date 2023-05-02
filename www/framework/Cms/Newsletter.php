@@ -554,11 +554,12 @@ class Newsletter
      * @param mixed $
      * @return void
      **/
-    public function queueSend($task, $initId, $to, $lang)
+    public function queueSend($task, $initId, $to, $lang, $sleep = 0)
     {
-        $task->addSubtask("sending mail", "\$newsletter->send(\$mail, %s, %s);", [
+        $task->addSubtask("sending mail", "\$newsletter->send(\$mail, %s, %s); sleep(%s);", [
             $to,
             $lang,
+            $sleep
         ], $initId);
     }
     // }}}
