@@ -21,7 +21,6 @@
     <header class="info">
         <h1><?php self::e(_("Newsletter Properties")); ?></h1>
     </header>
-    <?php self::e($this->tabs); ?>
     <div class="doc-properties scrollable-content">
     </div>
 </div>
