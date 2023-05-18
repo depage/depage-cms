@@ -1165,6 +1165,7 @@ class DocProperties extends Base
         $this->form->addHtml("<div class=\"info\"><p>" . _("Please choose the news items you want to include in the newsletter:") . "</p></div>");
         $fs = $this->form->addFieldset("unsentItems", [
             'label' => _("Unsent news items"),
+            'class' => "doc-property-fieldset",
         ]);
         $fs->addHtml("<div class=\"scrollable-content\">");
         foreach ($this->newsletterCandidates as $c) {
@@ -1185,7 +1186,7 @@ class DocProperties extends Base
         $count = 0;
         $fs = $this->form->addFieldset("sentItems", [
             'label' => _("News items included in other newsletters"),
-            'class' => "detail",
+            'class' => "detail doc-property-fieldset",
         ]);
         $fs->addHtml("<div class=\"scrollable-content\">");
         foreach ($this->newsletterCandidates as $c) {
