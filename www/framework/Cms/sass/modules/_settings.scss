@@ -1,70 +1,70 @@
-$toolbarHeight: 30px !global;
-$infoHeight: 15px !global;
-$treeWidth: 255px !global;
-$editWidth: 3 * $treeWidth !global;
+$toolbarHeight: 30px;
+$infoHeight: 15px;
+$treeWidth: 255px;
+$editWidth: 3 * $treeWidth;
 
-$breakMobile: 3 * $treeWidth !global;
-$breakTablet: 1200px !global;
+$breakMobile: 3 * $treeWidth;
+$breakTablet: 1200px;
 
-$touchScale: 1.4 !global;
-$touchScaleTree: 1.4 !global;
-$touchScaleFont: 1.2 !global;
+$touchScale: 1.4;
+$touchScaleTree: 1.4;
+$touchScaleFont: 1.2;
 
-$baseColor: #ccc8c4 !global;
-$backgroundColor: lighten($baseColor, 5%) !global;
-$backgroundDarkColor: transparentize(darken($baseColor, 65%), 0.12) !global;
-$backgroundLighterColor: lighten($backgroundColor, 10%) !global;
-$backgroundBrightColor: lighten($backgroundColor, 12%) !global;
-$backgroundDisabledColor: #cccccc !global;
-$backgroundMenu: $backgroundDarkColor !global;
-$backgroundMenuMobileSub: transparentize(#ffffff, 0.85) !global;
-$overlayColor: transparentize(#000000, 0.95) !global;
-$borderColor: darken($baseColor, 5%) !global;
-$borderLightColor: lighten($borderColor, 12%) !global;
-$borderDarkColor: darken($borderColor, 25%) !global;
+$baseColor: #ccc8c4;
+$backgroundColor: lighten($baseColor, 5%);
+$backgroundDarkColor: transparentize(darken($baseColor, 65%), 0.12);
+$backgroundLighterColor: lighten($backgroundColor, 10%);
+$backgroundBrightColor: lighten($backgroundColor, 12%);
+$backgroundDisabledColor: #cccccc;
+$backgroundMenu: $backgroundDarkColor;
+$backgroundMenuMobileSub: transparentize(#ffffff, 0.85);
+$overlayColor: transparentize(#000000, 0.95);
+$borderColor: darken($baseColor, 5%);
+$borderLightColor: lighten($borderColor, 12%);
+$borderDarkColor: darken($borderColor, 25%);
 $errorColor: #882200;
-$linkColor: darken(#047CBF, 7%) !global;
-$linkHoverColor: #047CBF !global;
+$linkColor: darken(#047CBF, 7%);
+$linkHoverColor: #047CBF;
 $helpColor: #047CBF;
-$textBaseColor: #000000 !global;
-$textLighterColor: #555555 !global;
-$textDisabledColor: #999999 !global;
-$textBrightColor: #ffffff !global;
-$selectionBackgroundColor: #047CBF !global;
-$selectionTextColor: #ffffff !global;
-$insertMarkerBackground: lighten($selectionBackgroundColor, 10%) !global;
-$cornerRadius: 0.4em !global;
+$textBaseColor: #000000;
+$textLighterColor: #555555;
+$textDisabledColor: #999999;
+$textBrightColor: #ffffff;
+$selectionBackgroundColor: #047CBF;
+$selectionTextColor: #ffffff;
+$insertMarkerBackground: lighten($selectionBackgroundColor, 10%);
+$cornerRadius: 0.4em;
 
-$depageFormSelectionColor: $selectionTextColor !global;
-$depageFormSelectionBackground: $selectionBackgroundColor !global;
-$depageFormBorderRadius: $cornerRadius !global;
-$depageFormErrorColor: $errorColor !global;
-$depageFormBorderColor: $backgroundLighterColor !global;
-$depageFormBorderColorFocus: $selectionBackgroundColor !global;
+$depageFormSelectionColor: $selectionTextColor;
+$depageFormSelectionBackground: $selectionBackgroundColor;
+$depageFormBorderRadius: $cornerRadius;
+$depageFormErrorColor: $errorColor;
+$depageFormBorderColor: $backgroundLighterColor;
+$depageFormBorderColorFocus: $selectionBackgroundColor;
 
 
-$shadow: 0 3px 0.5em 0 #000000 !global;
-$lightShadow: 0 1px 0.3em 0 rgba(0, 0, 0, 0.5) !global;
-$darkShadow: 0 3px 1.5em 0 #000000 !global;
+$shadow: 0 3px 0.5em 0 #000000;
+$lightShadow: 0 1px 0.3em 0 rgba(0, 0, 0, 0.5);
+$darkShadow: 0 3px 1.5em 0 #000000;
 
-$fSizeXL: 26px !global;
-$fSizeL: 22px !global;
-$fSizeM: 13px !global;
-$fSizeS: 11px !global;
-$fSizeXS: 10px !global;
-$fSizeMenu: 12px !global;
+$fSizeXL: 26px;
+$fSizeL: 22px;
+$fSizeM: 13px;
+$fSizeS: 11px;
+$fSizeXS: 10px;
+$fSizeMenu: 12px;
 
-$transitionTime: 150ms !global;
-$transitionDistance: 10px !global;
+$transitionTime: 150ms;
+$transitionDistance: 10px;
 
-$treeLineHeight: 28px !global;
-$menuLineHeight: 30px !global;
-$searchHeight: 2 * $treeLineHeight !global;
-$iconSize: 24px !global;
-$helpIconSize: 32px !global;
-$thumbSize: round($treeWidth * 0.75 - 1.5 * 16px + 1px) !global;
-$thumbSizeSmall: round($treeWidth * 0.5 - 1.5 * 16px - 0px) !global;
-$actionIconHeight: $treeLineHeight * 0.5 + 4px !global;
+$treeLineHeight: 28px;
+$menuLineHeight: 30px;
+$searchHeight: 2 * $treeLineHeight;
+$iconSize: 24px;
+$helpIconSize: 32px;
+$thumbSize: round($treeWidth * 0.75 - 1.5 * 16px + 1px);
+$thumbSizeSmall: round($treeWidth * 0.5 - 1.5 * 16px - 0px);
+$actionIconHeight: $treeLineHeight * 0.5 + 4px;
 $checkboxSize: 36px;
 
 html {

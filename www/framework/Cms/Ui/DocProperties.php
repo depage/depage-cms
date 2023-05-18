@@ -612,9 +612,13 @@ class DocProperties extends Base
      **/
     protected function addPgLinkdesc($node)
     {
+        $title = _("Linkinfo");
+        if ($this->doc->getDocInfo()->type == "Depage\\Cms\\XmlDocTypes\\Newsletter") {
+            $title = _("Subject");
+        }
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Linkinfo")));
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, $title));
         $fs->addText("xmledit-$nodeId", [
             'label' => $node->getAttribute("lang"),
             'lang' => $node->getAttribute("lang"),
@@ -1198,10 +1202,10 @@ class DocProperties extends Base
                 ]);
             }
         }
-        $fs->addHtml("</div>");
         if ($count == 0) {
             $fs->addHtml("<p>" . _("No news items available.") . "</p>");
         }
+        $fs->addHtml("</div>");
     }
     // }}}
     // {{{ saveSecAutoNewsList()

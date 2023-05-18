@@ -360,6 +360,12 @@
     }
 }
 // }}}
+// {{{ .doc-properties .scrollable-content
+.doc-properties .scrollable-content {
+    padding: 15px;
+    background-color: $depageFormInputBackground;
+}
+// }}}
 // {{{ .doc-properties .info
 .doc-properties .info {
     padding: 15px;

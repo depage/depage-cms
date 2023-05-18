@@ -1,4 +1,4 @@
-/* {{{ tabs */
+// {{{ tabs
 .tabs {
     $height: 32px;
 
@@ -32,11 +32,20 @@
         }
     }
     & ~ * {
-        margin-top: 2.5 * $height;
+        margin-top: 2 * $height;
     }
     & ~ hr {
-        border: none;
+        border: nonet;
         border-top: 1px solid $borderLightColor;
+    }
+    .info-tree-pagedata ~ & {
+        background: $backgroundLighterColor;
+        background: $backgroundBrightColor;
+        background: #ffffff;
+        margin-top: 0;
+        padding-top: $height;
+        padding-bottom: 1.5 * $height - 1px;
+        z-index: 10;
     }
     .content > & {
         margin-left: -12px;
@@ -59,6 +68,6 @@
         }
     }
 }
-/* }}} */
+// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

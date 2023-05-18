@@ -53,11 +53,12 @@ class NewsletterPublish extends \Depage\HtmlForm\HtmlForm
 
         $this->addSingle("to", array(
             'label' => _("Recipients"),
-            'class' => "recipients",
+            'class' => "recipients labels-on-top",
             'list' => $list,
         ));
         $this->addTextarea("emails", [
             'label' => _("Emails"),
+            'class' => "labels-on-top",
         ]);
 
         $h = "";
