@@ -30,6 +30,8 @@
         <xsl:param name="id" select="@id"/>
         <xsl:param name="target" select="@target"/>
         <xsl:param name="lang" select="$currentLang"/>
+        <xsl:param name="role" />
+        <xsl:param name="tabindex" />
 
         <xsl:if test="@lang = $lang or not(@lang)">
             <!-- get name from meta-information if link is ref to page_id -->
@@ -50,6 +52,8 @@
                     <xsl:with-param name="id" select="$id" />
                     <xsl:with-param name="target" select="$target" />
                     <xsl:with-param name="lang" select="$lang" />
+                    <xsl:with-param name="role" select="$role" />
+                    <xsl:with-param name="tabindex" select="$tabindex" />
                     <xsl:with-param name="redirect" select="$redirect" />
                     <xsl:with-param name="pgmeta" select="$pgmeta" />
                 </xsl:call-template>
@@ -105,6 +109,7 @@
         <xsl:param name="style" select="@style"/>
         <xsl:param name="alt" select="@alt"/>
         <xsl:param name="title" select="@title"/>
+        <xsl:param name="tabindex"/>
         <xsl:param name="img_name" select="@img_name"/>
         <xsl:param name="loading" select="@loading"/>
 
@@ -120,7 +125,8 @@
                         <xsl:with-param name="class" select="$class" />
                         <xsl:with-param name="id" select="$id" />
                         <xsl:with-param name="target" select="$target" />
-                        <xsl:with-param name="ang" select="$lang" />
+                        <xsl:with-param name="tabindex" select="$tabindex" />
+                        <xsl:with-param name="lang" select="$lang" />
                     </xsl:call-template>
                     <xsl:call-template name="edit:img">
                         <xsl:with-param name="href" select="''"/>
@@ -235,6 +241,8 @@
         <xsl:param name="id" select="@id"/>
         <xsl:param name="target" select="@target"/>
         <xsl:param name="lang" select="$currentLang"/>
+        <xsl:param name="role"/>
+        <xsl:param name="tabindex"/>
         <xsl:param name="redirect"/>
         <xsl:param name="pgmeta" select="dp:getPageMeta($href_id)" />
 
@@ -271,6 +279,8 @@
         <xsl:if test="$type != ''"><xsl:attribute name="type"><xsl:value-of select="$type"/></xsl:attribute></xsl:if>
         <xsl:if test="$rel != ''"><xsl:attribute name="rel"><xsl:value-of select="$rel"/></xsl:attribute></xsl:if>
         <xsl:if test="$title != ''"><xsl:attribute name="title"><xsl:value-of select="$title"/></xsl:attribute></xsl:if>
+        <xsl:if test="$role != ''"><xsl:attribute name="role"><xsl:value-of select="$role"/></xsl:attribute></xsl:if>
+        <xsl:if test="$tabindex != ''"><xsl:attribute name="tabindex"><xsl:value-of select="$tabindex"/></xsl:attribute></xsl:if>
     </xsl:template>
     <!-- }}} -->
 
