@@ -1,8 +1,7 @@
 /* {{{ header.info */
 header.info {
-    position: absolute;
-    left: 0;
     height: $infoHeight;
+    flex: 0 0 auto;
     width: 100%;
     border-bottom: 1px solid $borderColor;
     background: $backgroundColor;

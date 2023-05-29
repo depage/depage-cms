@@ -5,11 +5,13 @@
     position: relative;
     @include clearfix();
     width: 100%;
-    margin-top: $height;
+    margin-top: $infoHeight;
+    margin-bottom: $infoHeight;
     padding: 0;
     padding-left: $infoHeight;
     height: $height;
     max-height: $height;
+    flex: 0 0 auto;
 
     .tab {
         padding: 0;
@@ -31,21 +33,9 @@
             padding: 0 12px;
         }
     }
-    & ~ * {
-        margin-top: 2 * $height;
-    }
     & ~ hr {
-        border: nonet;
+        border: none;
         border-top: 1px solid $borderLightColor;
-    }
-    .info-tree-pagedata ~ & {
-        background: $backgroundLighterColor;
-        background: $backgroundBrightColor;
-        background: #ffffff;
-        margin-top: 0;
-        padding-top: $height;
-        padding-bottom: 1.5 * $height - 1px;
-        z-index: 10;
     }
     .content > & {
         margin-left: -12px;
@@ -53,7 +43,6 @@
     }
     .dialog-full & {
         top: $infoHeight;
-        //padding-top: $infoHeight;
         padding-left: 0;
         margin-top: 0;
         height: $height + $infoHeight;

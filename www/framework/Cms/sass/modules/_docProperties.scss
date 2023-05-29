@@ -1,6 +1,7 @@
 // {{{ .doc-properties
 .doc-properties {
-    position: absolute;
+    position: relative;
+    flex: 1 1 auto;
     background: $backgroundLighterColor;
     overflow-y: auto !important;
 
@@ -18,12 +19,6 @@
         margin-right: 10px;
         margin-bottom: 10px;
     }
-}
-.layout-left .doc-properties {
-    left: 0;
-    right: 0;
-    bottom: 0;
-    top: $infoHeight;
 }
 // }}}
 // {{{ .doc-properties .input-multiple.skin-checkbox

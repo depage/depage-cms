@@ -411,6 +411,17 @@
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::fileinfo', string($path), string($extended))" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:urlinfo() -->
+    <!--
+        dp:urlinfo(url)
+
+    -->
+    <func:function name="dp:urlinfo">
+        <xsl:param name="url" />
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::urlinfo', string($url))" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:filesInFolder() -->
     <!--
         dp:filesInFolder(libref)

@@ -234,29 +234,19 @@ html {
         @include transition(200ms, "left, right, width");
     }
     .scrollable-content {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
+        flex: 1 1 auto;
         @extend %scrollY;
 
         &.top {
             padding-top: calc(#{$toolbarHeight * 1.5} * var(--touch-scale));
         }
     }
-    header.info ~ .scrollable-content {
-        top: $infoHeight;
-    }
     .layout {
         position: absolute;
+        display: flex;
+        flex-direction: column;
         top: 0;
         bottom: 0;
-
-        header.info {
-            //top: 0;
-            right: 0;
-        }
     }
     #toolbarmain + .layout-buttons ~ .layout,
     .layout-document #toolbarmain + .layout-buttons ~ .layout-tree-bottom {
@@ -372,6 +362,11 @@ html {
             }
         }
     }
+    @media screen and (min-width: $breakMobile) {
+        .layout-tree + .layout-left > .tabs {
+            display: none;
+        }
+    }
     @media screen and (max-width: $breakMobile) {
         // single view layouts
         .layout-pages,
@@ -385,11 +380,11 @@ html {
             > .layout-left,
             > .layout-full,
             > .layout-right {
-                left: 0;
-                right: 0;
+                width: 100%;
                 top: 0;
                 bottom: 0;
-                width: auto;
+                left: 0;
+                right: 0;
                 border-left: none;
                 border-right: none;
                 z-index: 1;
@@ -399,20 +394,20 @@ html {
         .layout-pages {
             > .layout-tree-top,
             > .layout-tree-full {
-                display: block;
+                display: flex;
                 z-index: 2;
             }
         }
         .layout-document {
             > .layout-tree-bottom {
-                display: block;
+                display: flex;
                 z-index: 2;
             }
         }
         .layout-properties {
             > .layout-left,
             > .layout-full {
-                display: block;
+                display: flex;
                 z-index: 2;
             }
             .toolbar menu.left .tree-actions {
@@ -421,7 +416,7 @@ html {
         }
         .layout-preview {
             > .layout-right {
-                display: block;
+                display: flex;
                 z-index: 2;
             }
             .toolbar menu.left .tree-actions {
