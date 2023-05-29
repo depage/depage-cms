@@ -3,7 +3,7 @@ Versionshistorie     {#changelog}
 
 [TOC]
 
-Version 2.3   {#v2-3}
+Version 2.4   {#v2-4}
 ===========
 
 **User Interface Highlights**
@@ -20,6 +20,22 @@ Version 2.3   {#v2-3}
 - Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
 - Neues Interface für kleine Screens
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.4.0 / 29.05.2023      {#v2-4-0}
+-------------------
+
+**Backend**
+- Newsletter-Versand verbessert
+- Sitemap Generator aktualisiert, um angepasste Sitemaps und Aufteilung verschiedener Sitemaps zu unterstützen
+- Neuer URL-Analyzer hinzugefügt, der aus XSL Templates heraus benutzt werden kann
+- Basis XSL Template verbessert
+- Neuer Imagick Provider zur Bild-Generierung hinzugefügt
+- Verschiedene Bug-Fixes
+
+**Frontend**
+- Neue Funktion zur Erstellung von Newslettern mit zusätzlichen Inhalt hinzugefügt
+- Neue Funktion zur Bearbeitung der Benutzerrechte von Projekten hinzugefügt
 
 
 v2.3.1 / 08.08.2022      {#v2-3-1}

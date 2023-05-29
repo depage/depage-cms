@@ -3,7 +3,7 @@ Changelog     {#changelog}
 
 [TOC]
 
-Version 2.3   {#v2-3}
+Version 2.4   {#v2-4}
 ===========
 
 **User Interface Highlights**
@@ -20,6 +20,22 @@ Version 2.3   {#v2-3}
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New mobile interface
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.4.0 / 29.05.2023      {#v2-4-0}
+-------------------
+
+**Backend**
+- enhanced newsletter sending
+- updated sitemap generator to support custom sitemaps and splitting between multiple sitemaps
+- added new urlanalyzer to be used from templates
+- enhanced base xsl templates
+- added Imagick Provider for image generator
+- various bug fixes
+
+**Frontend**
+- added option to add additional manual content to newsletters
+- updated options to edit user permissions for projects
 
 
 v2.3.1 / 08.08.2022      {#v2-3-1}
