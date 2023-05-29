@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-08 17:40+0200\n"
+"POT-Creation-Date: 2023-05-29 16:15+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -140,9 +140,9 @@ msgstr "Kommentare"
 msgid "Send"
 msgstr "Senden"
 
-#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:652
-#: Cms/Ui/DocProperties.php:696 Cms/Ui/DocProperties.php:734
-#: Cms/Ui/DocProperties.php:774
+#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:665
+#: Cms/Ui/DocProperties.php:709 Cms/Ui/DocProperties.php:747
+#: Cms/Ui/DocProperties.php:787
 msgid "Text"
 msgstr ""
 
@@ -150,7 +150,7 @@ msgstr ""
 msgid "Leave a message..."
 msgstr "Nachricht hinterlassen..."
 
-#: Comments/Forms/commentform.php:36 Cms/tpl/usertable.tpl:3
+#: Comments/Forms/commentform.php:36 Cms/tpl/usertable.tpl:4
 #: Cms/Forms/Project/Publish.php:40 Cms/Forms/Project/Variable.php:37
 #: Cms/Forms/Project/Tag.php:37 Cms/Forms/Project/Navigation.php:37
 #: Cms/Forms/Project/Language.php:37
@@ -165,7 +165,7 @@ msgstr "Dein Name"
 msgid "Please fill in your name."
 msgstr ""
 
-#: Comments/Forms/commentform.php:44 Cms/Forms/User.php:46
+#: Comments/Forms/commentform.php:44 Cms/Forms/User.php:48
 msgid "Email"
 msgstr "E-Mail"
 
@@ -185,8 +185,8 @@ msgstr "Website"
 msgid "(public)"
 msgstr "(öffentlich)"
 
-#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:946
-#: Cms/Ui/DocProperties.php:1044
+#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:959
+#: Cms/Ui/DocProperties.php:1057
 msgid "http://domain.com"
 msgstr "http://domain.de"
 
@@ -1990,12 +1990,12 @@ msgstr "JJJJ-MM-TT"
 msgid "Please enter a valid email address"
 msgstr "Bitte geben Sie eine gültige E-Mail Adresse an"
 
-#: Cms/Ui/User.php:83
+#: Cms/Ui/User.php:86
 #, php-format
 msgid "Edit user '%s'"
 msgstr "Benutzer '%s' bearbeiten"
 
-#: Cms/Ui/User.php:85
+#: Cms/Ui/User.php:88
 msgid "Add new User"
 msgstr "Neuen Benutzer hinzufügen"
 
@@ -2008,7 +2008,8 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
-#: Cms/Ui/Main.php:173 Cms/tpl/usertable.tpl:5 Cms/tpl/toolbar_main.tpl:29
+#: Cms/Ui/Main.php:173 Cms/tpl/usertable.tpl:6 Cms/tpl/toolbar_main.tpl:29
+#: Cms/Forms/User.php:92
 msgid "Projects"
 msgstr "Projekte"
 
@@ -2048,7 +2049,7 @@ msgstr "News und Versionsinfo anzeigen"
 msgid "Project Settings"
 msgstr "Projekt"
 
-#: Cms/Ui/Project.php:72 Cms/Ui/Project.php:94 Cms/Ui/DocProperties.php:518
+#: Cms/Ui/Project.php:72 Cms/Ui/Project.php:94 Cms/Ui/DocProperties.php:527
 msgid "Tags"
 msgstr ""
 
@@ -2160,25 +2161,15 @@ msgstr "%d Seiten gelöscht."
 msgid "Edit"
 msgstr "Editieren"
 
-#: Cms/Ui/Newsletter.php:113
-msgid "Edit Newsletter"
-msgstr "Newsletter bearbeiten"
-
-#: Cms/Ui/Newsletter.php:114
-msgid "Please choose the news items you want to include in the newsletter:"
-msgstr ""
-"Bitte wählen Sie die News aus, die in den Newsletter aufgenommen werden "
-"sollen:"
-
-#: Cms/Ui/Newsletter.php:128
+#: Cms/Ui/Newsletter.php:103
 msgid "User is not allowed to send newsletters"
 msgstr "Dieser Benutzer darf keine Newsletter versenden"
 
-#: Cms/Ui/Newsletter.php:171
+#: Cms/Ui/Newsletter.php:148 Cms/tpl/newsletterPublish.tpl:6
 msgid "Publish Newsletter"
 msgstr "Newsletter veröffentlichen"
 
-#: Cms/Ui/Newsletter.php:172
+#: Cms/Ui/Newsletter.php:149
 msgid ""
 "You can send the newsletter to a group of your subscribers (e.g. 'Default') "
 "or to a comma separated list of custom emails for testing."
@@ -2187,244 +2178,267 @@ msgstr ""
 "'Default') schicken oder alternativ an eine komma-getrennte Liste von E-Mail-"
 "Adressen."
 
-#: Cms/Ui/DocProperties.php:260
+#: Cms/Ui/DocProperties.php:266
 msgid "prop_name_edit_img_caption"
 msgstr "Bildunterschrift"
 
-#: Cms/Ui/DocProperties.php:261
+#: Cms/Ui/DocProperties.php:267
 msgid "prop_name_edit_img_copyright"
 msgstr "Copyright"
 
-#: Cms/Ui/DocProperties.php:262
+#: Cms/Ui/DocProperties.php:268
 msgid "prop_name_edit_img_thumb"
 msgstr "Thumbnail"
 
-#: Cms/Ui/DocProperties.php:357
+#: Cms/Ui/DocProperties.php:363
 msgid "Page Status"
 msgstr "Seitenstatus"
 
-#: Cms/Ui/DocProperties.php:374
+#: Cms/Ui/DocProperties.php:380
 msgid "Page is published"
 msgstr "Seite ist veröffentlicht"
 
-#: Cms/Ui/DocProperties.php:377
+#: Cms/Ui/DocProperties.php:383
 msgid "Page is waiting to be published"
 msgstr "Seite wartet auf die Veröffentlichung"
 
-#: Cms/Ui/DocProperties.php:380
+#: Cms/Ui/DocProperties.php:386
 msgid "Page has unreleased changes"
 msgstr "Seite hat nicht freigegebene Änderungen"
 
-#: Cms/Ui/DocProperties.php:383
+#: Cms/Ui/DocProperties.php:389
 msgid "Page is published but has unreleased changes."
 msgstr "Seite ist veröffentlicht, wurde aber geändert."
 
-#: Cms/Ui/DocProperties.php:385
+#: Cms/Ui/DocProperties.php:391
 msgid "Page is waiting to be published."
 msgstr "Seite wartet auf die Veröffentlichung."
 
-#: Cms/Ui/DocProperties.php:387
+#: Cms/Ui/DocProperties.php:393
 msgid "Page is published."
 msgstr "Seite ist veröffentlicht."
 
-#: Cms/Ui/DocProperties.php:389
+#: Cms/Ui/DocProperties.php:395
 msgid "Page has not been published yet."
 msgstr "Seite wurde noch nicht veröffentlicht."
 
-#: Cms/Ui/DocProperties.php:394
+#: Cms/Ui/DocProperties.php:400
 #, php-format
 msgid ""
 "<p class=\"status\">%s<span><a href=\"%s\" target=\"_blank\">%s</a></span></"
 "p>"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:401
+#: Cms/Ui/DocProperties.php:407
 #, php-format
 msgid "<p class=\"status\">%s<span>%s</span></p>"
 msgstr "<p class=\"status\">%s<span>%s</span></p>"
 
-#: Cms/Ui/DocProperties.php:411
+#: Cms/Ui/DocProperties.php:417
 #, php-format
 msgid "<p class=\"date\">%s %s by %s</p>"
 msgstr "<p class=\"date\">%s %s von %s</p>"
 
-#: Cms/Ui/DocProperties.php:412
+#: Cms/Ui/DocProperties.php:418
 msgid "Changed"
 msgstr "Geändert"
 
-#: Cms/Ui/DocProperties.php:414 Cms/Forms/ReleasePages.php:82
+#: Cms/Ui/DocProperties.php:420 Cms/Forms/ReleasePages.php:82
 msgid "unknown user"
 msgstr "unbekannter Benutzer"
 
-#: Cms/Ui/DocProperties.php:419
+#: Cms/Ui/DocProperties.php:425
 msgid "url"
 msgstr "url"
 
-#: Cms/Ui/DocProperties.php:428 Cms/Ui/DocProperties.php:438
+#: Cms/Ui/DocProperties.php:434 Cms/Ui/DocProperties.php:444
 msgid "Earlier page versions"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:429
+#: Cms/Ui/DocProperties.php:435
 msgid "Current Version"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:450
+#: Cms/Ui/DocProperties.php:456
 msgid "Release Page"
 msgstr "Seite freigeben"
 
-#: Cms/Ui/DocProperties.php:451
+#: Cms/Ui/DocProperties.php:457
 msgid "Mark this page to be published, when project gets published next time"
 msgstr ""
 "Diese Seite zur Veröffentlichung freigeben, wenn das Projekt das nächste mal "
 "veröffentlicht wird"
 
-#: Cms/Ui/DocProperties.php:453
+#: Cms/Ui/DocProperties.php:459
 msgid "Request Release"
 msgstr "Freigabe anfragen"
 
-#: Cms/Ui/DocProperties.php:454
+#: Cms/Ui/DocProperties.php:460
 msgid "Ask for this page the be released"
 msgstr "Anfragen, diese Seite zu Veröffentlichen"
 
-#: Cms/Ui/DocProperties.php:475 Cms/Ui/DocProperties.php:901
-#: Cms/Ui/DocProperties.php:935
+#: Cms/Ui/DocProperties.php:484 Cms/Ui/DocProperties.php:914
+#: Cms/Ui/DocProperties.php:948
 msgid "Default"
 msgstr "Standard"
 
-#: Cms/Ui/DocProperties.php:477 Cms/Ui/DocProperties.php:902
+#: Cms/Ui/DocProperties.php:486 Cms/Ui/DocProperties.php:915
 #: Cms/XmlDocTypes/Colors.php:15
 msgid "Colorscheme"
 msgstr "Farbschema"
 
-#: Cms/Ui/DocProperties.php:496
+#: Cms/Ui/DocProperties.php:505
 msgid "Navigation"
 msgstr "Navigation"
 
-#: Cms/Ui/DocProperties.php:534 Cms/Ui/DocProperties.php:551
+#: Cms/Ui/DocProperties.php:543 Cms/Ui/DocProperties.php:560
 msgid "Protection"
 msgstr "Schutz"
 
-#: Cms/Ui/DocProperties.php:543
+#: Cms/Ui/DocProperties.php:552
 msgid "Page protected"
 msgstr "Seite geschützt"
 
-#: Cms/Ui/DocProperties.php:554
+#: Cms/Ui/DocProperties.php:563
 msgid "Page is protected and cannot be changed."
 msgstr "Seite ist geschützt und kann nicht verändert werden."
 
-#: Cms/Ui/DocProperties.php:558
+#: Cms/Ui/DocProperties.php:567
 msgid "Pagetype"
 msgstr "Seitentyp"
 
-#: Cms/Ui/DocProperties.php:566
+#: Cms/Ui/DocProperties.php:575
 msgid "html"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:567
+#: Cms/Ui/DocProperties.php:576
 msgid "text"
 msgstr "text"
 
-#: Cms/Ui/DocProperties.php:568
+#: Cms/Ui/DocProperties.php:577
 msgid "php"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:589 Cms/Ui/DocProperties.php:926
+#: Cms/Ui/DocProperties.php:598 Cms/Ui/DocProperties.php:939
 #: Cms/Forms/Newsletter.php:54 Cms/Forms/Project/Language.php:68
 msgid "Title"
 msgstr "Titel"
 
-#: Cms/Ui/DocProperties.php:608
+#: Cms/Ui/DocProperties.php:615
 msgid "Linkinfo"
 msgstr "Linkinfo"
 
-#: Cms/Ui/DocProperties.php:627 Cms/Forms/Newsletter.php:80
+#: Cms/Ui/DocProperties.php:617 Cms/Forms/Newsletter.php:67
+msgid "Subject"
+msgstr "Betreff"
+
+#: Cms/Ui/DocProperties.php:640 Cms/Forms/Newsletter.php:80
 msgid "Description"
 msgstr "Beschreibung"
 
-#: Cms/Ui/DocProperties.php:671
+#: Cms/Ui/DocProperties.php:684
 msgid "Headline"
 msgstr "Überschrift"
 
-#: Cms/Ui/DocProperties.php:814 Cms/tpl/usertable.tpl:4
+#: Cms/Ui/DocProperties.php:827 Cms/tpl/usertable.tpl:5
 msgid "Type"
 msgstr "Typ"
 
-#: Cms/Ui/DocProperties.php:835
+#: Cms/Ui/DocProperties.php:848
 msgid "Date"
 msgstr "Datum"
 
-#: Cms/Ui/DocProperties.php:857
+#: Cms/Ui/DocProperties.php:870
 msgid "Time"
 msgstr "Zeit"
 
-#: Cms/Ui/DocProperties.php:879
+#: Cms/Ui/DocProperties.php:892
 msgid "Color"
 msgstr "Farbe"
 
-#: Cms/Ui/DocProperties.php:923
+#: Cms/Ui/DocProperties.php:936
 msgid "Link"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:927
+#: Cms/Ui/DocProperties.php:940
 msgid "Link title"
 msgstr "Linktitel"
 
-#: Cms/Ui/DocProperties.php:933
+#: Cms/Ui/DocProperties.php:946
 msgid "Target"
 msgstr "Ziel"
 
-#: Cms/Ui/DocProperties.php:936
+#: Cms/Ui/DocProperties.php:949
 msgid "New Window"
 msgstr "Neues Fenster"
 
-#: Cms/Ui/DocProperties.php:944 Cms/Ui/DocProperties.php:1042
+#: Cms/Ui/DocProperties.php:957 Cms/Ui/DocProperties.php:1055
 msgid "href"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:964 Cms/Forms/Project/FileSearch.php:48
+#: Cms/Ui/DocProperties.php:977 Cms/Forms/Project/FileSearch.php:48
 msgid "Audio"
 msgstr "Audio"
 
-#: Cms/Ui/DocProperties.php:968 Cms/Ui/DocProperties.php:993
-#: Cms/Ui/DocProperties.php:1020
+#: Cms/Ui/DocProperties.php:981 Cms/Ui/DocProperties.php:1006
+#: Cms/Ui/DocProperties.php:1033
 msgid "src"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:989 Cms/Forms/Project/FileSearch.php:47
+#: Cms/Ui/DocProperties.php:1002 Cms/Forms/Project/FileSearch.php:47
 msgid "Video"
 msgstr "Video"
 
-#: Cms/Ui/DocProperties.php:1013 Cms/Forms/Project/FileSearch.php:46
+#: Cms/Ui/DocProperties.php:1026 Cms/Forms/Project/FileSearch.php:46
 msgid "Image"
 msgstr "Bild"
 
-#: Cms/Ui/DocProperties.php:1030
+#: Cms/Ui/DocProperties.php:1043
 msgid "title"
 msgstr "Titel"
 
-#: Cms/Ui/DocProperties.php:1031
+#: Cms/Ui/DocProperties.php:1044
 msgid "Image title"
 msgstr "Bildtitel"
 
-#: Cms/Ui/DocProperties.php:1036
+#: Cms/Ui/DocProperties.php:1049
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1037
+#: Cms/Ui/DocProperties.php:1050
 msgid "Image description"
 msgstr "Bildbeschreibung"
 
-#: Cms/Ui/DocProperties.php:1061
+#: Cms/Ui/DocProperties.php:1074
 msgid "Table"
 msgstr "Tabelle"
 
-#: Cms/Ui/DocProperties.php:1100
+#: Cms/Ui/DocProperties.php:1113
 msgid "Source"
 msgstr "Quelltext"
 
-#: Cms/Ui/DocProperties.php:1119
+#: Cms/Ui/DocProperties.php:1132
 msgid "Not allowed to edit this element."
 msgstr "Sie haben keine Authentifizierung, dieses Element zu bearbeiten."
+
+#: Cms/Ui/DocProperties.php:1169
+msgid "Please choose the news items you want to include in the newsletter:"
+msgstr ""
+"Bitte wählen Sie die News aus, die in den Newsletter aufgenommen werden "
+"sollen:"
+
+#: Cms/Ui/DocProperties.php:1171 Cms/Forms/Newsletter.php:88
+msgid "Unsent news items"
+msgstr "Ungesendete News"
+
+#: Cms/Ui/DocProperties.php:1186 Cms/Ui/DocProperties.php:1206
+#: Cms/Forms/Newsletter.php:102 Cms/Forms/Newsletter.php:124
+msgid "No news items available."
+msgstr "Keine News verfügbar."
+
+#: Cms/Ui/DocProperties.php:1192 Cms/Forms/Newsletter.php:108
+msgid "News items included in other newsletters"
+msgstr "News, die in anderen Newslettern enthalten sind"
 
 #: Cms/Ui/Base.php:192
 msgid "You are not allowed here."
@@ -2443,12 +2457,12 @@ msgstr "Sie haben eine neue Benachrichtigung von %s erhalten:"
 msgid "Your faithful servant on"
 msgstr "Ihr treuer Helfer auf"
 
-#: Cms/Tasks/PublishGenerator.php:698
+#: Cms/Tasks/PublishGenerator.php:712
 #, php-format
 msgid "%s published"
 msgstr "%s veröffentlicht"
 
-#: Cms/Tasks/PublishGenerator.php:700
+#: Cms/Tasks/PublishGenerator.php:714
 msgid ""
 "The following pages got published:\n"
 "\n"
@@ -2673,10 +2687,11 @@ msgstr "Dieses Projekt bearbeiten"
 msgid "Preview your project"
 msgstr "Vorschau des Projektes"
 
-#: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:18
+#: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:33
 #: Cms/tpl/colorschemes.tpl:48 Cms/tpl/projectmain.tpl:48
-#: Cms/tpl/publish.tpl:18 Cms/Forms/ReleasePages.php:59
-#: Cms/Forms/ReleasePages.php:85 Cms/Forms/NewsletterPublish.php:64
+#: Cms/tpl/newsletterPublish.tpl:19 Cms/tpl/publish.tpl:18
+#: Cms/Forms/ReleasePages.php:59 Cms/Forms/ReleasePages.php:85
+#: Cms/Forms/NewsletterPublish.php:65
 msgid "Preview"
 msgstr "Vorschau"
 
@@ -2722,7 +2737,7 @@ msgstr ""
 msgid "add new project"
 msgstr "Neues Projekt hinzufügen"
 
-#: Cms/tpl/usertable.tpl:35
+#: Cms/tpl/usertable.tpl:37
 msgid "Add New User"
 msgstr "Neuen Benutzer hinzufügen"
 
@@ -2746,17 +2761,30 @@ msgstr "Keine passenden Dateien gefunden."
 msgid "All Users"
 msgstr "Alle Benutzer"
 
-#: Cms/tpl/newsletterEdit.tpl:3
+#: Cms/tpl/newsletterEdit.tpl:5
+msgid "Newsletter"
+msgstr "Newsletter"
+
+#: Cms/tpl/newsletterEdit.tpl:11 Cms/tpl/projectmain.tpl:11
+msgid ""
+"Page tree:\\nHere you can add, rename and delete pages. Select a page to "
+"edit it in the content tree below ↓."
+msgstr ""
+"Seitenstruktur:\\nHier können Sie Seiten hinzufügen, umbenennen und löschen. "
+"Wählen Sie eine Seite aus, um sie in der Dokumentenstruktur unten anzuzeigen "
+"↓."
+
+#: Cms/tpl/newsletterEdit.tpl:19 Cms/tpl/newsletterPublish.tpl:3
 msgid "Edit your newsletter and choose which items to include"
 msgstr ""
 "Bearbeiten Sie Ihren Newsletter und wählen Sie, welche News eingebunden "
 "werden sollen"
 
-#: Cms/tpl/newsletterEdit.tpl:6
-msgid "Newsletter"
-msgstr "Newsletter"
+#: Cms/tpl/newsletterEdit.tpl:22
+msgid "Newsletter Properties"
+msgstr "Newsletter Eigenschaften"
 
-#: Cms/tpl/newsletterEdit.tpl:14
+#: Cms/tpl/newsletterEdit.tpl:29 Cms/tpl/newsletterPublish.tpl:15
 msgid "The preview of the current newsletter."
 msgstr "Vorschau des aktuellen Newsletters."
 
@@ -2792,15 +2820,6 @@ msgstr "Dashboard"
 #: Cms/tpl/projectmain.tpl:5
 msgid "Pages"
 msgstr "Seiten"
-
-#: Cms/tpl/projectmain.tpl:11
-msgid ""
-"Page tree:\\nHere you can add, rename and delete pages. Select a page to "
-"edit it in the content tree below ↓."
-msgstr ""
-"Seitenstruktur:\\nHier können Sie Seiten hinzufügen, umbenennen und löschen. "
-"Wählen Sie eine Seite aus, um sie in der Dokumentenstruktur unten anzuzeigen "
-"↓."
 
 #: Cms/tpl/projectmain.tpl:20
 msgid "Document"
@@ -2933,65 +2952,61 @@ msgstr "Online Dokumentation öffnen"
 msgid "Save User"
 msgstr "Benutzer speichern"
 
-#: Cms/Forms/User.php:27
-msgid "edit-user"
-msgstr "Benutzer bearbeiten"
-
-#: Cms/Forms/User.php:33
+#: Cms/Forms/User.php:35
 msgid "Basics"
 msgstr "Grundeinstellungen"
 
-#: Cms/Forms/User.php:36 Cms/Forms/Project/Publish.php:70
+#: Cms/Forms/User.php:38 Cms/Forms/Project/Publish.php:70
 #: Cms/Forms/Project/Publish.php:71
 msgid "Username"
 msgstr "Benutzername"
 
-#: Cms/Forms/User.php:42 Cms/Forms/Project/Basic.php:62
+#: Cms/Forms/User.php:44 Cms/Forms/Project/Basic.php:62
 msgid "Display Name"
 msgstr "Anzeigename"
 
-#: Cms/Forms/User.php:52
+#: Cms/Forms/User.php:54
 msgid "Change Password"
 msgstr "Passwort ändern"
 
-#: Cms/Forms/User.php:55 Cms/Forms/Project/Publish.php:76
+#: Cms/Forms/User.php:57 Cms/Forms/Project/Publish.php:76
 #: Cms/Forms/Project/Publish.php:77
 msgid "Password"
 msgstr "Passwort"
 
-#: Cms/Forms/User.php:59
+#: Cms/Forms/User.php:61
 msgid "Repeat Password"
 msgstr "Passwort wiederholen"
 
-#: Cms/Forms/User.php:61
+#: Cms/Forms/User.php:63
 msgid "Both passwords have to be equal"
 msgstr "Beide Passwörter müssen übereinstimmen"
 
-#: Cms/Forms/User.php:67
+#: Cms/Forms/User.php:69
 msgid "Permissions"
 msgstr "Zugriffsrechte"
 
-#: Cms/Forms/User.php:70
+#: Cms/Forms/User.php:72
 msgid "User type"
 msgstr "Benutzertyp"
 
-#: Cms/Forms/User.php:74
+#: Cms/Forms/User.php:76
 msgid "Depage\\Cms\\Auth\\Admin"
 msgstr "Administrator"
 
-#: Cms/Forms/User.php:75
+#: Cms/Forms/User.php:77
 msgid "Depage\\Cms\\Auth\\Developer"
 msgstr "Entwickler"
 
-#: Cms/Forms/User.php:76
+#: Cms/Forms/User.php:78
 msgid "Depage\\Cms\\Auth\\MainUser"
 msgstr "Hauptbenutzer"
 
-#: Cms/Forms/User.php:77
+#: Cms/Forms/User.php:79
 msgid "Depage\\Cms\\Auth\\DefaultUser"
 msgstr "Standardbenutzer"
 
-#: Cms/Forms/User.php:78
+#: Cms/Forms/User.php:80
 msgid "Depage\\Cms\\Auth\\Editor"
 msgstr "Editor"
 
@@ -3086,22 +3101,6 @@ msgstr "E-Mails"
 #: Cms/Forms/Newsletter.php:30
 msgid "Save"
 msgstr "Speichern"
-
-#: Cms/Forms/Newsletter.php:67
-msgid "Subject"
-msgstr "Betreff"
-
-#: Cms/Forms/Newsletter.php:88
-msgid "Unsent news items"
-msgstr "Ungesendete News"
-
-#: Cms/Forms/Newsletter.php:102 Cms/Forms/Newsletter.php:124
-msgid "No news items available."
-msgstr "Keine News verfügbar."
-
-#: Cms/Forms/Newsletter.php:108
-msgid "News items included in other newsletters"
-msgstr "News, die in anderen Newslettern enthalten sind"
 
 #: Cms/Forms/Project/Basic.php:32
 msgid "Save Project"
@@ -3360,6 +3359,12 @@ msgstr "Neues-Farbschema"
 msgid "Untitled"
 msgstr "Unbenannt"
 
+#~ msgid "Edit Newsletter"
+#~ msgstr "Newsletter bearbeiten"
+
+#~ msgid "edit-user"
+#~ msgstr "Benutzer bearbeiten"
+
 #~ msgid "(Untitled Colorscheme)"
 #~ msgstr "(Unbenanntes Farbschema)"
 
@@ -3590,9 +3595,9 @@ msgstr "Unbenannt"
 #~ msgstr "Verbindung unterbrochen"
 
 #~ msgid ""
-#~ "Please choose the files, you want to upload to the file-library to '%path"
-#~ "%'. You can upload %maxsize% max.<br/><br/><b>Attention: Existing file "
-#~ "will be overwritten without confimation!</b>"
+#~ "Please choose the files, you want to upload to the file-library to "
+#~ "'%path%'. You can upload %maxsize% max.<br/><br/><b>Attention: Existing "
+#~ "file will be overwritten without confimation!</b>"
 #~ msgstr ""
 #~ "Bitte wählen Sie die Dateien aus, die sie zu '%path%' hochladen möchten. "
 #~ "Sie können maximal %maxsize% hochladen.<br/><br/><b>Achtung: Bestehende "
