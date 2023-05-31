@@ -83,6 +83,7 @@
             <xsl:choose>
                 <xsl:when test="$prio &gt; 1">1</xsl:when>
                 <xsl:when test="$prio &lt; 0.1">0.1</xsl:when>
+                <xsl:when test="format-number($prio, '0.0') = 'NaN'">0.1</xsl:when>
                 <xsl:otherwise><xsl:value-of select="format-number($prio, '0.0')" /></xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
