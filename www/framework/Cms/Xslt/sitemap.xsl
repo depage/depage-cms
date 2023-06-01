@@ -141,9 +141,16 @@
         <xsl:variable name="currentYear" select="dp:formatDate('now', 'Y')" />
         <xsl:variable name="year" select="../../@name" />
 
-        <xsl:variable name="extra" select="dp:choose($page/@nav_featured = 'true', 1, 0)" />
+        <xsl:variable name="extra" select="dp:choose($page/@nav_featured = 'true', 2, 0)" />
 
-        <xsl:value-of select="format-number((10 - $currentYear + $year + $extra) div 10, '0.0')" />
+        <xsl:choose>
+            <xsl:when test="$year &gt;= $currentYear - 1">
+                <xsl:value-of select="format-number((9 - $currentYear + $year + $extra) div 10, '0.0')" />
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="format-number((7 - $currentYear + $year + $extra) div 10, '0.0')" />
+            </xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
     <!-- vim:set ft=xslt sw=4 sts=4 fdm=marker : -->
