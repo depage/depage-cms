@@ -17,6 +17,7 @@ abstract class Transformer
     protected $profiling = false;
     protected $usedDocuments = [];
     protected $aliases = [];
+    protected $addons = [];
     public $baseUrl = "";
     public $baseUrlStatic = "";
     public $useAbsolutePaths = false;
@@ -68,9 +69,10 @@ abstract class Transformer
         //$this->prefix = $this->pdo->prefix . "_proj_" . $this->project->name;
         $this->fl = new \Depage\Cms\FileLibrary($this->project->getPdo(), $this->project);
 
-        $this->xsltPath = "projects/" . $this->project->name . "/xslt/";
-        $this->xmlPath = "projects/" . $this->project->name . "/xml/";
-        $this->libPath = "projects/" . $this->project->name . "/lib/";
+        $this->xsltPath = "projects/{$this->project->name}/xslt/";
+        $this->xmlPath = "projects/{$this->project->name}/xml/";
+        $this->libPath = "projects/{$this->project->name}/lib/";
+        $this->addonsPath = "projects/{$this->project->name}/addons/";
 
         // get cache instance for templates
         $this->xsltCache = \Depage\Cache\Cache::factory("xslt");
@@ -133,6 +135,8 @@ abstract class Transformer
         $this->registerStreams($this->xsltProc);
         $this->registerFunctions($this->xsltProc);
 
+        $this->loadAddons();
+
         $xslDOM = $this->getXsltTemplate($this->template);
 
         if ($this->profiling) {
@@ -140,6 +144,28 @@ abstract class Transformer
         }
         $this->xsltProc->importStylesheet($xslDOM);
 
+    }
+    // }}}
+    // {{{ loadAddons()
+    public function loadAddons()
+    {
+        $this->addons = [];
+
+        $files = glob($this->addonsPath . "*/Transformer.php");
+        foreach ($files as $file) {
+            $addon = basename(dirname($file));
+            $class = ucfirst($this->project->name) . "\\" . $addon . "\\Transformer";
+
+            include($file);
+            $this->addons[$addon] = new $class($this->project);
+
+            if (method_exists($this->addons[$addon], "registerStreams")) {
+                $this->addons[$addon]->registerStreams($this->xsltProc);
+            }
+            if (method_exists($this->addons[$addon], "registerFunctions")) {
+                $this->addons[$addon]->registerFunctions($this->xsltProc);
+            }
+        }
     }
     // }}}
     // {{{ getXsltTemplate()
@@ -179,6 +205,7 @@ abstract class Transformer
             $xslt .= "<xsl:stylesheet
                 version=\"1.0\"
                 xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"
+                xmlns:php=\"http://php.net/xsl\"
                 xmlns:dp=\"http://cms.depagecms.net/ns/depage\"
                 xmlns:db=\"http://cms.depagecms.net/ns/database\"
                 xmlns:proj=\"http://cms.depagecms.net/ns/project\"

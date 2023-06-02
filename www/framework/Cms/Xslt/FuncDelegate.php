@@ -13,7 +13,7 @@ class FuncDelegate {
     public static function registerFunctions($proc, Array $functions = array())
     {
         $class = get_called_class();
-        static::$functions = $functions;
+        static::$functions += $functions;
 
         $names = [];
         foreach ($functions as $name => $func) {
