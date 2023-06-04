@@ -1012,6 +1012,36 @@ class DocProperties extends Base
         ]);
     }
     // }}}
+    // {{{ addEditFile()
+    /**
+     * @brief addEditFile
+     *
+     * @param mixed $node
+     * @return void
+     **/
+    protected function addEditFile($node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("File")), "edit-file");
+        $accept = $node->getAttribute("accept") ?? "";
+
+        if (preg_match("/\.(png|jpe?g|webp|gif|svg|pdf)/", $accept)) {
+            $fs->addHtml("<span class=\"clear\"></span>");
+            $fs->addHtml($this->thumbnail($node->getAttribute("src")));
+        }
+
+        $lang = $node->getAttribute("lang");
+        $fs->addText("xmledit-$nodeId-src", [
+            'label' => !empty($lang) ? $lang : _("src"),
+            'class' => "edit-src",
+            'dataAttr' => [
+                'accept' => $accept,
+            ],
+            'dataPath' => "//*[@db:id = '$nodeId']/@src",
+        ]);
+    }
+    // }}}
     // {{{ addEditImg()
     /**
      * @brief addEditImg
@@ -1025,6 +1055,7 @@ class DocProperties extends Base
 
         $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Image")), "edit-img");
 
+        $fs->addHtml("<span class=\"clear\"></span>");
         $fs->addHtml($this->thumbnail($node->getAttribute("src")));
 
 
@@ -1033,7 +1064,7 @@ class DocProperties extends Base
             'label' => !empty($lang) ? $lang : _("src"),
             'class' => "edit-src",
             'dataAttr' => [
-                'accept' => ".jpg,.jpeg,.png,.gif,.svg,.pdf",
+                'accept' => ".jpg,.jpeg,.png,.gif,.webp,.svg,.pdf",
                 'forceSize' => $this->getForceSize($node),
             ],
             'dataPath' => "//*[@db:id = '$nodeId']/@src",

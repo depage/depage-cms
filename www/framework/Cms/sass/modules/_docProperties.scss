@@ -372,12 +372,21 @@
 }
 // }}}
 // {{{ doc-properties edit-img
+.doc-properties .edit-file,
 .doc-properties .edit-img {
-    figure.thumb {
-        margin-bottom: 20px;
+    legend,
+    p {
+        width: 100%;
     }
-    figure.thumb + p {
-        margin-top: 20px;
+
+    span.clear {
+        display: block;
+        width: 100%;
+        clear: both;
+        height: 0;
+    }
+    figure.thumb {
+        margin-bottom: 40px;
     }
     figure.thumb .choose-image-center-button {
         --touch-scale: 1;
@@ -406,11 +415,12 @@
             background-color: $backgroundColor;
         }
     }
-    p {
+    figure.thumb ~ p {
+        width: calc(100% - #{$thumbSize + 11px});
+        margin-left: auto;
         clear: none;
-        margin-left: $thumbSize + 15px;
         @media screen and (max-width: 1030px) {
-            margin-left: $thumbSizeSmall + 15px;
+            width: calc(100% - #{$thumbSizeSmall + 11px});
         }
     }
 }
