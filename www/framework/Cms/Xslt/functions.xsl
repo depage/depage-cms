@@ -182,6 +182,7 @@
         <xsl:param name="url" />
         <xsl:param name="lang" select="$currentLang" />
         <xsl:param name="absolute" select="false()" />
+        <xsl:param name="hash" select="substring-after($url, '#')" />
 
         <xsl:choose>
             <xsl:when test="substring($url, 1, 8) = 'libid://' and substring-after($url, '.') != ''">
@@ -196,8 +197,11 @@
             <xsl:when test="substring($url, 1, 9) = 'libref://'">
                 <func:result select="dp:getLibRef($url, $absolute)"/>
             </xsl:when>
-            <xsl:when test="substring($url, 1, 10) = 'pageref://'">
+            <xsl:when test="substring($url, 1, 10) = 'pageref://' and $hash = ''">
                 <func:result select="dp:getPageRef(substring-after($url, 'pageref://'), $lang, $absolute)"/>
+            </xsl:when>
+            <xsl:when test="substring($url, 1, 10) = 'pageref://'">
+                <func:result select="concat(dp:getPageRef(substring-before(substring-after($url, 'pageref://'), '#'), $lang, $absolute), '#', $hash)"/>
             </xsl:when>
             <xsl:when test="substring($url, 1, 7) = 'mailto:'">
                 <func:result select="dp:replaceEmailChars($url)"/>
