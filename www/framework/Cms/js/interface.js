@@ -1611,18 +1611,21 @@ var depageCMS = (function() {
                 });
                 $form.find(".edit-src").each(function() {
                     var $input = $(this).find("input");
+                    var $thumb = $input.parent().parent().prev("figure.thumb");
                     var $button = $("<a class=\"button choose-file\">…</a>").insertAfter($input.parent());
 
                     $input.on("change", function() {
-                        if ($input[0].value == "") {
+                        if ($input[0].value == "" || $thumb.length == 0) {
                             return;
                         }
                         // image changed -> update thumbnail
                         var thumbUrl = url + "thumbnail/" + encodeURIComponent($input[0].value) + "/?ajax=true";
 
                         $.get(thumbUrl, function(data) {
-                            var $thumb = $(data).insertBefore($input.parent().parent());
-                            $thumb.prev("figure.thumb").eq(0).remove();
+                            var $thumbNew = $(data).insertAfter($thumb.eq(0));
+                            $thumb.remove();
+
+                            $thumb = $thumbNew;
                         });
                     });
                     $button.on("click", function() {
