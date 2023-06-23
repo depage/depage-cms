@@ -55,6 +55,7 @@
     </xsl:template>
 
     <xsl:template match="pg:redirect">
+        <xsl:apply-templates select="pg:*[dp:pageVisible(.)]" />
     </xsl:template>
 
     <xsl:template match="sec:separator">
