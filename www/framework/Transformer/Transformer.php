@@ -156,7 +156,7 @@ abstract class Transformer
             $addon = basename(dirname($file));
             $class = ucfirst($this->project->name) . "\\" . $addon . "\\Transformer";
 
-            include($file);
+            require_once($file);
             $this->addons[$addon] = new $class($this->project);
 
             if (method_exists($this->addons[$addon], "registerStreams")) {
