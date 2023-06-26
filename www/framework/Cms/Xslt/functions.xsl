@@ -457,7 +457,19 @@
         <xsl:param name="pageNode" />
         <xsl:param name="lang" select="$currentLang" />
 
-        <func:result select="not($pageNode/@nav_hidden = 'true' or $pageNode/@*[local-name() = concat('nav_no_', $lang)] = 'true')" />
+        <func:result select="not($pageNode/@nav_hidden = 'true') and dp:pageHasLang($pageNode, $lang)" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:pageHasLang() -->
+    <!--
+        dp:pageHasLang(node, lang)
+
+    -->
+    <func:function name="dp:pageHasLang">
+        <xsl:param name="pageNode" />
+        <xsl:param name="lang" select="$currentLang" />
+
+        <func:result select="not($pageNode/@*[local-name() = concat('nav_no_', $lang)] = 'true')" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:autokeywords() -->
