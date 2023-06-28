@@ -19,6 +19,9 @@
         <xsl:param name="url" select="'https://analytics.depage.net/'" />
 
         <xsl:if test="$var-pa-siteId != ''">
+            <xsl:if test="not($depageIsLive)">
+                <xsl:comment>Matomo is disabled in preview mode.</xsl:comment>
+            </xsl:if>
             <script type="text/javascript">
                 var _paq = _paq || [];
                 <xsl:if test="$var-pa-Domain != ''">_gaq.push(['_setDomainName', '<xsl:value-of select="$var-pa-Domain" />']);</xsl:if>

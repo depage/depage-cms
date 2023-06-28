@@ -23,6 +23,9 @@
     <xsl:if test="$version = '2'">
         <xsl:call-template name="googleanalytics-v02" />
     </xsl:if>
+    <xsl:if test="$version = '3'">
+        <xsl:call-template name="googleanalytics-v03" />
+    </xsl:if>
 </xsl:template>
 <!-- }}} -->
 <!-- {{{ Google Analytics v01 -->
@@ -57,6 +60,32 @@
                 ga('set', 'anonymizeIp', true);
                 ga('send', 'pageview');
             </xsl:if>
+        </script>
+    </xsl:if>
+</xsl:template>
+<!-- }}} -->
+<!-- {{{ Google Analytics v03 -->
+<xsl:template name="googleanalytics-v03">
+    <xsl:if test="$var-ga-Account != ''">
+        <xsl:choose>
+            <xsl:when test="$depageIsLive">
+                <script>
+                    <xsl:attribute name="async"></xsl:attribute>
+                    <xsl:attribute name="src">https://www.googletagmanager.com/gtag/js?id=<xsl:value-of select="$var-ga-Account" /></xsl:attribute>
+                </script>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:if test="not($depageIsLive)">
+                    <xsl:comment>Google Analytics is disabled in preview mode.</xsl:comment>
+                </xsl:if>
+            </xsl:otherwise>
+        </xsl:choose>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '<xsl:value-of select="$var-ga-Account" />');
         </script>
     </xsl:if>
 </xsl:template>
