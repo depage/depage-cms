@@ -223,7 +223,7 @@ class Schema
     protected function currentTableVersion($tableName)
     {
         try {
-            $query = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
+            $query = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '"  AND TABLE_SCHEMA=database() LIMIT 1';
             $statement = $this->pdo->query($query);
             $statement->execute();
             $row = $statement->fetch();
