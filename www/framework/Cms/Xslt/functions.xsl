@@ -294,6 +294,16 @@
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::urlencode', string($url))" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:tolower() -->
+    <!--
+        dp:tolower(string)
+    -->
+    <func:function name="dp:tolower">
+        <xsl:param name="string" />
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::tolower', string($string))" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:replaceEmailChars() -->
     <!--
         dp:urlencode(url)

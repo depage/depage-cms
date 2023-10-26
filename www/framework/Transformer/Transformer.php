@@ -584,6 +584,7 @@ abstract class Transformer
             "phpEscape" => [$this, "xsltPhpEscape"],
             "replaceEmailChars" => [$this, "xsltReplaceEmailChars"],
             "urlencode" => "rawurlencode",
+            "tolower" => "mb_strtolower",
             "useAbsolutePaths" => [$this, "xsltUseAbsolutePaths"],
             "useBaseUrl" => [$this, "xsltUseBaseUrl"],
         ]);
