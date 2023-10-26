@@ -566,6 +566,7 @@ abstract class Transformer
      */
     protected function registerFunctions($proc)
     {
+        \Depage\Cms\Xslt\FuncDelegate::resetFunctions();
         \Depage\Cms\Xslt\FuncDelegate::registerFunctions($proc, [
             "atomizeText" => [$this, "xsltAtomizeText"],
             "autokeywords" => [$this, "xsltAutokeywords"],

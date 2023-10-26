@@ -9,6 +9,19 @@ namespace Depage\Cms\Xslt;
 class FuncDelegate {
     protected static $functions = [];
 
+    // {{{ resetFunctions
+    /**
+     * reset
+     *
+     * resets all registered functions
+     *
+     * @access public
+     * @return void
+     */
+    public static function resetFunctions() {
+        self::$functions = [];
+    }
+    // }}}
     // {{{ registerFunctions()
     public static function registerFunctions($proc, Array $functions = array())
     {
