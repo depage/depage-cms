@@ -12,6 +12,7 @@
     xmlns:sec="http://cms.depagecms.net/ns/section"
     xmlns:edit="http://cms.depagecms.net/ns/edit"
     extension-element-prefixes="xsl db proj pg sec edit ">
+
 <!-- {{{ opengraph -->
 <xsl:template name="opengraph">
     <xsl:param name="title"></xsl:param>
@@ -21,6 +22,8 @@
     <xsl:param name="url"><xsl:value-of select="dp:getPageRef($currentPageId, $currentLang, true())" /></xsl:param>
     <xsl:param name="description"><xsl:value-of select="//pg:meta/pg:desc[@lang = $currentLang]/@value"/></xsl:param>
     <xsl:param name="image"></xsl:param>
+    <xsl:param name="lastModified"><xsl:value-of select="//pg:page_data/@db:lastchange"/></xsl:param>
+    <xsl:param name="lastPublished"></xsl:param>
 
     <xsl:variable name="ogtitle">
         <xsl:choose>
@@ -67,6 +70,10 @@
     </xsl:if>
     <xsl:if test="$image != ''">
         <meta property="og:image"><xsl:attribute name="content"><xsl:value-of select="$imageurl" /></xsl:attribute></meta>
+    </xsl:if>
+    <meta property="article:modified_time"><xsl:attribute name="content"><xsl:value-of select="dp:formatDate($lastModified, 'Y-m-d\TH:i:s\Z')" /></xsl:attribute></meta>
+    <xsl:if test="$lastPublished != ''">
+        <meta property="article:published_time"><xsl:attribute name="content"><xsl:value-of select="dp:formatDate($lastPublished, 'Y-m-d\TH:i:s\Z')" /></xsl:attribute></meta>
     </xsl:if>
 </xsl:template>
 <!-- }}} -->
