@@ -133,6 +133,7 @@ class FileLibrary
         array_walk($dirs, function(&$dir) {
             $dir = pathinfo($dir, \PATHINFO_FILENAME);
 
+            // @todo take care of folder names with spaces
         });
         $dirsById = [];
         $nodesById = [];
@@ -187,6 +188,8 @@ class FileLibrary
         $oldFiles = $this->getFilesInFolder($folderId);
 
         $files = $this->fs->lsFiles(trim($path . "/*", '/'));
+
+        // @todo take care of file names with spaces
 
         $this->pdo->beginTransaction();
 
