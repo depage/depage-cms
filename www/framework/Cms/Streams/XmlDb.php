@@ -17,9 +17,9 @@ class XmlDb extends Base {
 
         if (!empty($docName) && $docId = $this->xmldb->docExists($docName)) {
             if (!empty($xpath)) {
-                $this->data = $this->xmldb->getDocXmlXpath($docName, $xpath);
+                $data = $this->xmldb->getDocXmlXpath($docName, $xpath);
             } else {
-                $this->data = $this->xmldb->getDocXml($docName);
+                $data = $this->xmldb->getDocXml($docName);
             }
 
             if (isset($this->transformer)) {
@@ -27,12 +27,13 @@ class XmlDb extends Base {
             }
 
             // proj:pages_struct
-            if ($this->data->documentElement->nodeName == "proj:pages_struct" && isset($this->transformer)) {
+            if ($data->documentElement->nodeName == "proj:pages_struct" && isset($this->transformer)) {
                 // add status attributes for page tree
                 $xmlnav = new \Depage\Cms\XmlNav();
-                $xmlnav->setPageXml($this->data);
+                $xmlnav->setPageXml($data);
                 $xmlnav->addStatusAttributes($xmlnav->getPageXml(), $this->transformer->currentPath);
             }
+            $this->data = $data->saveXML();
 
             return true;
         } else {
