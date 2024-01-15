@@ -12,7 +12,7 @@
  */
 namespace Depage\Entity;
 
-abstract class Entity
+abstract class Entity implements \JsonSerializable
 {
     // {{{ variables
     /**
@@ -100,7 +100,7 @@ abstract class Entity
         if (method_exists($this, $getter)) {
             return $this->$getter();
         }
-        if (isset($this->data[$key])) {
+        if (array_key_exists($key, $this->data)) {
             return $this->data[$key];
         }
 
@@ -142,7 +142,7 @@ abstract class Entity
                 $this->data[$key] = $val;
             }
 
-            return true;
+            return $this;
         }
 
         $trace = debug_backtrace();
@@ -152,7 +152,7 @@ abstract class Entity
             ' on line ' . $trace[0]['line'],
             E_USER_NOTICE);
 
-        return false;
+        return $this;
     }
     // }}}
 
@@ -207,6 +207,10 @@ abstract class Entity
      */
     public function __isset($key)
     {
+        $getter = "get" . ucfirst($key);
+        if (method_exists($this, $getter)) {
+            return true;
+        }
         return (isset($this->data[$key]));
     }
     // }}}
@@ -263,6 +267,19 @@ abstract class Entity
             'types',
             'dirty',
         );
+    }
+    // }}}
+
+    // {{{ jsonSerialize()
+    /**
+     * @brief jsonSerialize
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function jsonSerialize()
+    {
+        return $this->data;
     }
     // }}}
 }
