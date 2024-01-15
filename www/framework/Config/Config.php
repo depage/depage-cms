@@ -275,33 +275,39 @@ class Config implements \Iterator, \ArrayAccess
     // }}}
 
     // {{{ rewind()
-    public function rewind() {
+    public function rewind():void
+    {
         reset($this->data);
     }
     // }}}
     // {{{ current()
-    public function current() {
+    public function current():mixed
+    {
         return current($this->data);
     }
     // }}}
     // {{{ key()
-    public function key() {
+    public function key():int|string|null
+    {
         return key($this->data);
     }
     // }}}
     // {{{ next()
-    public function next() {
-        return next($this->data);
+    public function next():void
+    {
+        next($this->data);
     }
     // }}}
     // {{{ valid()
-    public function valid() {
+    public function valid():bool
+    {
         return $this->current() !== false;
     }
     // }}}
 
     // {{{ offsetSet()
-    public function offsetSet($offset, $value) {
+    public function offsetSet($offset, $value):void
+    {
         // make readonly
         if (php_sapi_name() != 'cli') {
             error_log("cannot set '$offset': config objects are read only");
@@ -309,12 +315,14 @@ class Config implements \Iterator, \ArrayAccess
     }
     // }}}
     // {{{ offsetExists()
-    public function offsetExists($offset) {
+    public function offsetExists($offset):bool
+    {
         return isset($this->data[$offset]);
     }
     // }}}
     // {{{ offsetUnset()
-    public function offsetUnset($offset) {
+    public function offsetUnset($offset):void
+    {
         // make readonly
         if (php_sapi_name() != 'cli') {
             error_log("cannot unset '$offset': config objects are read only");
@@ -322,7 +330,8 @@ class Config implements \Iterator, \ArrayAccess
     }
     // }}}
     // {{{ offsetGet()
-    public function offsetGet($offset) {
+    public function offsetGet($offset):mixed
+    {
         return isset($this->data[$offset]) ? $this->data[$offset] : null;
     }
     // }}}
