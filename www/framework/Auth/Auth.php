@@ -29,7 +29,7 @@ abstract class Auth
     public $digestCompat = false;
     public $sid, $uid;
     public $valid = false;
-    public $sessionLifetime = 10800; // in seconds
+    public $sessionLifetime = 172801; // in seconds
     public $privateKey = "private Key";
     protected $user = null;
     public $justLoggedOut = false;
@@ -96,7 +96,7 @@ abstract class Auth
      * @param       string  $method     method to use for authentication. Can be http
      * @return      void
      */
-    abstract public function enforce();
+    abstract public function enforce($testUserFunction = null);
     // }}}
     // {{{ enforceLazy()
     /**
@@ -130,13 +130,11 @@ abstract class Auth
             FROM
                 {$this->pdo->prefix}_auth_sessions
             WHERE
-                sid = :sid AND
-                ip = :ip
+                sid = :sid
             LIMIT 1"
         );
         $session_query->execute(array(
             ':sid' => $sid,
-            ':ip' => \Depage\Http\Request::getRequestIp(),
         ));
         $result = $session_query->fetchAll();
 
@@ -320,34 +318,7 @@ abstract class Auth
 
     // {{{ getActiveUsers()
     function getActiveUsers() {
-        $users = array();
-
-        // get logged in users
-        $user_query = $this->pdo->prepare(
-            "SELECT
-                user.id AS id,
-                user.name as name,
-                user.name_full as fullname,
-                user.pass as passwordhash,
-                user.email as email,
-                user.settings as settings,
-                user.level as level,
-                sessions.project AS project,
-                sessions.ip AS ip,
-                sessions.dateLastUpdate AS dateLastUpdate,
-                sessions.useragent AS useragent
-            FROM
-                {$this->pdo->prefix}_auth_user AS user,
-                {$this->pdo->prefix}_auth_sessions AS sessions
-            WHERE
-                user.id=sessions.userid"
-        );
-
-        $user_query->execute();
-        while ($user = $user_query->fetchObject("auth_user", array($this->pdo))) {
-            $users[] = $user;
-        }
-        return $users;
+        return User::loadActive($this->pdo);
     }
     // }}}
 

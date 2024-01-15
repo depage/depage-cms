@@ -14,7 +14,7 @@ namespace Depage\Auth;
  * contains functions for handling user authentication
  * and session handling.
  */
-class User extends \Depage\Entity\Entity
+class User extends \Depage\Entity\PdoEntity
 {
     // {{{ variables
     /**
@@ -29,6 +29,7 @@ class User extends \Depage\Entity\Entity
         "passwordhash" => "",
         "email" => "",
         "settings" => "",
+        "lang" => "",
         "dateRegistered" => null,
         "dateLastlogin" => null,
         "dateUpdated" => null,
@@ -91,23 +92,9 @@ class User extends \Depage\Entity\Entity
      * @return      User
      */
     static public function loadByUsername($pdo, $username) {
-        $fields = "type, " . implode(", ", self::getFields());
-
-        $uid_query = $pdo->prepare(
-            "SELECT $fields
-            FROM
-                {$pdo->prefix}_auth_user AS user
-            WHERE
-                name = :name"
-        );
-
-        $uid_query->execute(array(
-            ':name' => $username,
-        ));
-
-        // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+        $user = current(self::loadBy($pdo, [
+            'name' => $username,
+        ]));
 
         if (!$user) {
             throw new Exceptions\User("user '$username' does not exist.");
@@ -129,23 +116,9 @@ class User extends \Depage\Entity\Entity
      * @return      User
      */
     static public function loadByEmail($pdo, $email) {
-        $fields = "type, " . implode(", ", self::getFields());
-
-        $uid_query = $pdo->prepare(
-            "SELECT $fields
-            FROM
-                {$pdo->prefix}_auth_user AS user
-            WHERE
-                email = :email"
-        );
-
-        $uid_query->execute(array(
-            ':email' => $email,
-        ));
-
-        // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+        $user = current(self::loadBy($pdo, [
+            'email' => $email,
+        ]));
 
         if (!$user) {
             throw new Exceptions\User("user with email '$email' does not exist.");
@@ -167,24 +140,9 @@ class User extends \Depage\Entity\Entity
      * @return      auth_user
      */
     static public function loadBySid($pdo, $sid) {
-        $fields = "type, " . implode(", ", self::getFields());
-
-        $uid_query = $pdo->prepare(
-            "SELECT $fields, sessions.sid as sid
-            FROM
-                {$pdo->prefix}_auth_user AS user,
-                {$pdo->prefix}_auth_sessions AS sessions
-            WHERE
-                sessions.sid = :sid AND
-                sessions.userid = user.id"
-        );
-        $uid_query->execute(array(
-            ':sid' => $sid,
-        ));
-
-        // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+        $user = current(self::loadBy($pdo, [
+            'sid' => $sid,
+        ]));
 
         if ($user) {
             $user->onLoad();
@@ -205,22 +163,13 @@ class User extends \Depage\Entity\Entity
      * @return      auth_user
      */
     static public function loadById($pdo, $id) {
-        $fields = "type, " . implode(", ", self::getFields());
+        $user = current(self::loadBy($pdo, [
+            'id' => $id,
+        ]));
 
-        $uid_query = $pdo->prepare(
-            "SELECT $fields
-            FROM
-                {$pdo->prefix}_auth_user AS user
-            WHERE
-                id = :id"
-        );
-        $uid_query->execute(array(
-            ':id' => $id,
-        ));
-
-        // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
+        if (!$user) {
+            throw new Exceptions\User("user with id '$id' does not exist.");
+        }
 
         if ($user) {
             $user->onLoad();
@@ -241,26 +190,9 @@ class User extends \Depage\Entity\Entity
      * @return      auth_user
      */
     static public function loadByConfirmId($pdo, $confirmId) {
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
-
-        $uid_query = $pdo->prepare(
-            "SELECT $fields
-            FROM
-                {$pdo->prefix}_auth_user AS user
-            WHERE
-                confirmId = :confirmId"
-        );
-        $uid_query->execute(array(
-            ':confirmId' => $confirmId,
-        ));
-
-        // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
-
-        if ($user) {
-            $user->onLoad();
-        }
+        $user = current(self::loadBy($pdo, [
+            'confirmId' => $confirmId,
+        ]));
 
         return $user;
     }
@@ -277,28 +209,52 @@ class User extends \Depage\Entity\Entity
      * @return      auth_user
      */
     static public function loadByResetPasswordId($pdo, $resetPasswordId) {
-        $fields = "type, " . implode(", ", array_keys(self::$fields));
-
-        $uid_query = $pdo->prepare(
-            "SELECT $fields
-            FROM
-                {$pdo->prefix}_auth_user AS user
-            WHERE
-                resetPasswordId = :resetPasswordId"
-        );
-        $uid_query->execute(array(
-            ':resetPasswordId' => $resetPasswordId,
-        ));
-
-        // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
-        $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
-
-        if ($user) {
-            $user->onLoad();
-        }
+        $user = current(self::loadBy($pdo, [
+            'resetPasswordId' => $resetPasswordId,
+        ]));
 
         return $user;
+    }
+    // }}}
+    // {{{ loadByFuzzyName()
+    /**
+     * gets a user-object by username directly from database
+     *
+     * @public
+     *
+     * @param       \Depage\Db\Pdo     $pdo        pdo object for database access
+     * @param       string  $username   username of the user
+     *
+     * @return      User
+     */
+    static public function loadByFuzzyName($pdo, $query) {
+        $users = self::loadBy($pdo, [
+            'fuzzyName' => $query,
+        ], [
+            "user.sortname"
+        ]);
+
+        // if search is only one term -> sort by word beginnings of query
+        if (strpos($query, " ") === false) {
+            $q = " " . $query;
+            uasort($users, function($a, $b) use ($q) {
+                $nA = " " . str_replace(["-", "_"], " ", $a->name . " " . $a->fullname);
+                $nB = " " . str_replace(["-", "_"], " ", $b->name . " " . $b->fullname);
+
+                $foundInA = stripos($nA, $q) !== false;
+                $foundInB = stripos($nB, $q) !== false;
+
+                if (!$foundInA && $foundInB) {
+                    return 1;
+                } else if ($foundInA && !$foundInB) {
+                    return -1;
+                }
+
+                return strcasecmp($a->sortname, $b->sortname);
+            });
+        }
+
+        return $users;
     }
     // }}}
     // {{{ loadActive()
@@ -313,35 +269,11 @@ class User extends \Depage\Entity\Entity
      * @return      auth_user
      */
     static public function loadActive($pdo) {
-        $users = array();
-        $fields = "type, " . implode(", ", self::getFields());
-
-        $uid_query = $pdo->prepare(
-            "SELECT $fields,
-                sessions.project AS project,
-                sessions.ip AS ip,
-                sessions.sid AS sid,
-                sessions.dateLastUpdate AS dateLastUpdate,
-                sessions.useragent AS useragent
-            FROM
-                {$pdo->prefix}_auth_user AS user,
-                {$pdo->prefix}_auth_sessions AS sessions
-            WHERE
-                user.id=sessions.userid and
-                sessions.dateLastUpdate > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
-            ORDER BY user.sortname"
-        );
-        $uid_query->execute();
-
-        // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
-        do {
-            $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
-            if ($user) {
-                $user->onLoad();
-                $users[] = $user;
-            }
-        } while ($user);
+        $users = self::loadBy($pdo, [
+            'active' => true,
+        ], [
+            "user.sortname"
+        ]);
 
         return $users;
     }
@@ -358,28 +290,169 @@ class User extends \Depage\Entity\Entity
      * @return      auth_user
      */
     static public function loadAll($pdo) {
-        $users = array();
-        $fields = "type, " . implode(", ", self::getFields());
+        $users = self::loadBy($pdo, [], [
+            "user.sortname"
+        ]);
 
-        $uid_query = $pdo->prepare(
+        return $users;
+    }
+    // }}}
+
+    // {{{ loadBy()
+    /**
+     * @brief loadBy
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    static public function loadBy($pdo, Array $search, Array $order = [])
+    {
+        $users = [];
+        $fields = "user." . implode(", user.", self::getFields());
+        $where = [];
+        $params = [];
+        $groupBy = "";
+        $orderBy = "";
+        $limit = "";
+        $join = [];
+
+        // {{{ extract where part of query
+        if (isset($search['id'])) {
+            $where[] = self::sqlConditionFor('user.id', $search['id'], $params);
+        }
+        if (isset($search['name'])) {
+            $where[] = self::sqlConditionFor('user.name', $search['name'], $params);
+        }
+        if (isset($search['email'])) {
+            $where[] = self::sqlConditionFor('user.email', $search['email'], $params);
+        }
+        if (isset($search['confirmId'])) {
+            $where[] = self::sqlConditionFor('user.confirmId', $search['confirmId'], $params);
+        }
+        if (isset($search['validated'])) {
+            $condition = $search['validated'] ? "IS NULL" : "IS NOT NULL";
+            $where[] = "user.confirmId {$condition}";
+        }
+        if (isset($search['resetPasswordId'])) {
+            $where[] = self::sqlConditionFor('user.resetPasswordId', $search['resetPasswordId'], $params);
+        }
+        if (isset($search['sid']) || (isset($search['active']) && $search['active'] == true)) {
+            $fields .= ", session.sid";
+            $join[] = "JOIN {$pdo->prefix}_auth_sessions AS session ON session.userid = user.id";
+        }
+        if (isset($search['sid'])) {
+            $where[] = self::sqlConditionFor('session.sid', $search['sid'], $params);
+        }
+        if (isset($search['active']) && $search['active'] == true) {
+            $fields .= ", session.ip, session.project, session.dateLastUpdate, session.useragent";
+            $where[] = "session.dateLastUpdate > DATE_SUB(NOW(), INTERVAL 3 MINUTE)";
+        }
+        if (isset($search['dateUpdated'])) {
+            if (is_array($search['dateUpdated'])) {
+                $where[] = "user.dateUpdated >= :dateUpdatedFrom";
+                $where[] = "user.dateUpdated < :dateUpdatedTo";
+                $params['dateUpdatedFrom'] = $search['dateUpdated']['from'];
+                $params['dateUpdatedTo'] = $search['dateUpdated']['to'];
+            } else {
+                $where[] = self::sqlConditionFor('session.dateUpdated', $search['dateUpdated'], $params);
+            }
+        }
+        if (isset($search['dateRegistered'])) {
+            if (is_array($search['dateRegistered'])) {
+                $where[] = "user.dateRegistered >= :dateRegisteredFrom";
+                $where[] = "user.dateRegistered < :dateRegisteredTo";
+                $params['dateRegisteredFrom'] = $search['dateRegistered']['from'];
+                $params['dateRegisteredTo'] = $search['dateRegistered']['to'];
+            } else {
+                $where[] = self::sqlConditionFor('session.dateRegistered', $search['dateRegistered'], $params);
+            }
+        }
+        if (isset($search['fuzzyName'])) {
+            $queries = explode(" ", trim($search['fuzzyName']));
+            $limit = "LIMIT 0, 1000";
+
+            foreach ($queries as $i => $q) {
+                $q = self::escapeLike($q, '|');
+
+                if ($q[0] == "@") {
+                    $where[] = "user.name LIKE :name{$i} ESCAPE '|'";
+                    $params["name{$i}"] = substr($q, 1) . "%";
+                } else {
+                    $where[] = "(user.fullname LIKE :fullname{$i} ESCAPE '|' OR user.name LIKE :name{$i} ESCAPE '|')";
+                    $params["fullname{$i}"] = "%$q%";
+                    $params["name{$i}"] = "%$q%";
+                }
+            }
+        }
+        if (isset($search['type'])) {
+            $where[] = self::sqlConditionFor('user.type', $search['type'], $params);
+        } else if (get_called_class() != get_class()) {
+            // automatically filter by user type of called class
+            $where[] = self::sqlConditionFor('user.type', get_called_class(), $params);
+        }
+        // }}}
+
+        if (!empty($where)) {
+            $where = "WHERE " . implode(" AND ", $where);
+        } else {
+            $where = "";
+        };
+
+        // extract order part of query
+        if (!empty($order)) {
+            $orderBy = "ORDER BY " . implode(", ", $order);
+        }
+        $join = implode(" ", $join);
+
+        $sql =
             "SELECT $fields
             FROM
                 {$pdo->prefix}_auth_user AS user
-            ORDER BY user.sortname"
-        );
-        $uid_query->execute();
+                $join
+            $where
+            $groupBy
+            $orderBy
+            $limit";
+
+        $query = $pdo->prepare($sql);
+        $query->execute($params);
 
         // pass pdo-instance to constructor
-        $uid_query->setFetchMode(\PDO::FETCH_CLASS, "Depage\\Auth\\User", array($pdo));
+        $query->setFetchMode(\PDO::FETCH_ASSOC);
+
         do {
-            $user = $uid_query->fetch(\PDO::FETCH_CLASS | \PDO::FETCH_CLASSTYPE);
-            if ($user) {
+            $data = $query->fetch();
+            if ($data) {
+                $user = new $data['type']($pdo);
+
+                foreach (static::$fields as $key => $value) {
+                    $user->data[$key] = $data[$key];
+                    $user->dirty[$key] = false;
+                }
+
                 $user->onLoad();
                 $users[$user->id] = $user;
             }
-        } while ($user);
+        } while ($data);
 
         return $users;
+    }
+    // }}}
+
+    // {{{ jsonSerialize()
+    /**
+     * @brief jsonSerialize
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function jsonSerialize()
+    {
+        return [
+            'name' => $this->data['name'],
+            'fullname' => $this->data['fullname'],
+            'sortname' => $this->data['sortname'],
+        ];
     }
     // }}}
 
@@ -427,6 +500,72 @@ class User extends \Depage\Entity\Entity
         $this->passwordhash = $pass->hash($this->name, $newPassword);
 
         return $this;
+    }
+    // }}}
+    // {{{ setSettings()
+    /**
+     * @brief setSettings
+     *
+     * @param mixed $param
+     * @return void
+     **/
+    public function setSettings($param)
+    {
+        if (!$this->initialized) {
+            $this->data['settings'] = $param;
+        } else {
+            $this->data['settings'] = serialize($param);
+            $this->dirty['settings'] = true;
+        }
+    }
+    // }}}
+    // {{{ getSettings()
+    /**
+     * @brief getSettings
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getSettings()
+    {
+        $settings = [];
+        if (!empty($this->data['settings'])) {
+            $settings = unserialize($this->data['settings']);
+        }
+        return $settings;
+    }
+    // }}}
+
+    // {{{ getDisabled()
+    /**
+     * @brief getDisabled
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getDisabled()
+    {
+        return false;
+    }
+    // }}}
+
+    // {{{ hasRecentlyRegistered()
+    /**
+     * @brief hasRecentlyRegistered
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function hasRecentlyRegistered()
+    {
+        if (empty($this->profileImg)) {
+            return true;
+        }
+
+        $date = new \DateTime($this->dateRegistered);
+        $new = new \DateTime("-1 month");
+
+        return $date > $new;
     }
     // }}}
 
@@ -517,6 +656,21 @@ class User extends \Depage\Entity\Entity
     public function onLogout($sid) {
     }
     // }}}
+    // {{{ onLogin
+    /**
+     * Login
+     *
+     * Called when the user logs in.
+     *
+     * Override in inheriting classes to provide session end functionality.
+     *
+     * @param $session_id
+     *
+     * @return void
+     */
+    public function onLogin($sid) {
+    }
+    // }}}
     // {{{ onLoad()
     /**
      * @brief onLoad
@@ -529,7 +683,6 @@ class User extends \Depage\Entity\Entity
         // can be overridden by child class
     }
     // }}}
-
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker : */
