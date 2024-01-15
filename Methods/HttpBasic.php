@@ -27,13 +27,17 @@ class HttpBasic extends HttpCookie
      * @param       string  $method     method to use for authentication. Can be http
      * @return      void
      */
-    public function enforce() {
+    public function enforce($testUserFunction = null) {
         // only enforce authentication of not authenticated before
         if (!$this->user) {
             if (isset($_ENV["HTTP_AUTHORIZATION"])) {
                 list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':' , base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));
             }
             $this->user = $this->authBasic();
+
+            if ($this->user && !is_null($testUserFunction)) {
+                $this->user = $testUserFunction($this->user);
+            }
         }
 
         return $this->user;

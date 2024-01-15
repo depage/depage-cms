@@ -51,17 +51,17 @@ class HttpCookie extends Auth
 
         // increase lifetime of cookies in order to allow detection of timedout users
         $url = parse_url($this->domain);
-        $this->cookiePath = $url['path'];
+        $this->cookiePath = !empty($url['path']) ? $url['path'] : '';
 
-        if ($url['scheme'] == "https") {
+        $cookiePrefix = $this->realm . "-" . $url['host'];
+        $cookiePrefix = preg_replace("/[^-_a-zA-Z0-9]/", "", $cookiePrefix);
+        $cookiePrefix = trim($cookiePrefix, "-");
+        if (!empty($cookiePrefix)) {
+            $this->cookieName = "$cookiePrefix-sid";
+        }
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
             $this->cookieSecure = true;
         }
-
-        $realm = preg_replace("/[^a-zA-Z0-9]/", "", $this->realm);
-        if (!empty($realm)) {
-            $this->cookieName = "$realm-session-id";
-        }
-
         session_name($this->cookieName);
         session_set_cookie_params(
             $this->sessionLifetime,
@@ -74,30 +74,36 @@ class HttpCookie extends Auth
     /* }}} */
 
     /* {{{ enforce */
-    public function enforce() {
+    public function enforce($testUserFunction = null) {
         // only enforce authentication if not authenticated before
         if (!$this->user) {
             $this->user = $this->authCookie();
+        }
 
-            if (!$this->user) {
-                // remove trailing slashes when comparing urls, disregard query string
-                $loginUrl = Html::link($this->loginUrl, "auto");
+        // test user with custom user function
+        if ($this->user && !is_null($testUserFunction)) {
+            $this->user = $testUserFunction($this->user);
+        }
 
-                // set protocol
-                if (($_SERVER['HTTPS'] ?? "off") != "off") {
-                    $protocol = "https://";
-                } elseif (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? "") == "https") {
-                    $protocol = "https://";
-                } else {
-                    $protocol = "http://";
-                }
+        // redirect to login page
+        if (!$this->user) {
+            // remove trailing slashes when comparing urls, disregard query string
+            $loginUrl = Html::link($this->loginUrl, "auto");
 
-                $requestUrl = strstr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
-                if (rtrim($loginUrl, '/') != rtrim($requestUrl, '/')) {
-                    $redirectTo = urlencode($protocol . $_SERVER["HTTP_HOST"]  . $_SERVER['REQUEST_URI']);
+            // set protocol
+            if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
+                $protocol = "https://";
+            } elseif (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? "") == "https") {
+                $protocol = "https://";
+            } else {
+                $protocol = "http://";
+            }
 
-                    \Depage\Depage\Runner::redirect("$loginUrl?redirectTo=$redirectTo");
-                }
+            $requestUrl = strstr($protocol . $_SERVER["HTTP_HOST"] . $_SERVER["REQUEST_URI"] . '?', '?', true);
+            if (rtrim($loginUrl, '/') != rtrim($requestUrl, '/')) {
+                $redirectTo = urlencode($_SERVER['REQUEST_URI']);
+
+                \Depage\Router\Router::redirect("$loginUrl?redirectTo=$redirectTo");
             }
         }
 
@@ -134,8 +140,8 @@ class HttpCookie extends Auth
         }
     }
     /* }}} */
-    /* {{{ login() */
-    public function login($username, $password) {
+    /* {{{ check() */
+    public function check($username, $password) {
         try {
             if (strpos($username, "@") !== false) {
                 // email login
@@ -144,20 +150,43 @@ class HttpCookie extends Auth
                 // username login
                 $user = User::loadByUsername($this->pdo, $username);
             }
+
+            if ($user->disabled) {
+                return false;
+            }
+
             $pass = new \Depage\Auth\Password($this->realm, $this->digestCompat);
 
             if ($pass->verify($user->name, $password, $user->passwordhash)) {
                 $this->updatePasswordHash($user, $password);
 
-                $this->destroySession();
-                $this->registerSession($user->id);
-                $this->startSession();
+                if (defined("DEPAGE_LANG")) {
+                    $user->lang = DEPAGE_LANG;
+                    $user->save();
+                }
 
-                return true;
+                return $user;
             } else {
                 $this->prolongLogin($user);
             }
         } catch (\Depage\Auth\Exceptions\User $e) {
+        }
+
+        return false;
+    }
+    /* }}} */
+    /* {{{ login() */
+    public function login($username, $password) {
+        $user = $this->check($username, $password);
+
+        if ($user) {
+            $this->destroySession();
+            $this->registerSession($user->id);
+            $sid = $this->startSession();
+
+            $user->onLogin($sid);
+
+            return true;
         }
 
         return false;
@@ -173,10 +202,16 @@ class HttpCookie extends Auth
 
                 $user = User::loadBySid($this->pdo, $this->getSid());
 
+                if ($user->disabled) {
+                    return false;
+                }
+
                 return $user;
             } else {
                 $this->justLoggedOut = true;
-                $this->log->log("http_auth_cookie: invalid session ID");
+                if (!empty($this->log)) {
+                    $this->log->log("http_auth_cookie: invalid session ID");
+                }
             }
         }
 
@@ -211,6 +246,8 @@ class HttpCookie extends Auth
                 $params['httponly']
             );
         }
+
+        return $sid;
     }
     // }}}
     // {{{ hasSession()
@@ -229,6 +266,15 @@ class HttpCookie extends Auth
         if (!is_callable("session_status") || session_status() == \PHP_SESSION_ACTIVE) {
             // delete cookie
             $params = session_get_cookie_params();
+            setcookie(
+                $this->cookieName,
+                '',
+                time() - 42000,
+                "",
+                $params['domain'],
+                $params['secure'],
+                $params['httponly']
+            );
             setcookie(
                 $this->cookieName,
                 '',
