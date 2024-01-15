@@ -80,7 +80,7 @@ class CachedUser
             self::cacheUser(User::loadByUsername($pdo, $username));
         }
 
-        return self::$usersByUsername[strtolower($username)];
+        return self::$usersByUsername[strtolower($username)] ?? false;
     }
     // }}}
     // {{{ loadByEmail()
@@ -99,7 +99,7 @@ class CachedUser
             self::cacheUser(User::loadByEmail($pdo, $email));
         }
 
-        return self::$usersByEmail[strtolower($email)];
+        return self::$usersByEmail[strtolower($email)] ?? false;
     }
     // }}}
     // {{{ loadById()
@@ -118,7 +118,7 @@ class CachedUser
             self::cacheUser(User::loadById($pdo, $id));
         }
 
-        return self::$usersById[$id];
+        return self::$usersById[$id] ?? false;
     }
     // }}}
 }
