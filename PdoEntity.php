@@ -10,6 +10,11 @@ namespace Depage\Entity;
 
 abstract class PdoEntity extends Entity
 {
+    /**
+     * @brief pdo object for database access
+     **/
+    protected $pdo = null;
+
     // {{{ __construct()
     /**
      * @brief __construct
