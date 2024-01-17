@@ -85,6 +85,11 @@ class Task {
      **/
     protected $subTasksRun = array();
 
+    /**
+     * @brief lockName name of lock file
+     **/
+    protected $lockName = "";
+
     // {{{ constructor
     private function __construct($pdo) {
         $this->pdo = $pdo;

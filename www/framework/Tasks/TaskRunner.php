@@ -61,6 +61,13 @@ class TaskRunner extends \Depage\Depage\Ui\Base
     );
     protected $options = array();
     protected $lowPriority = true;
+    protected $force_login = false;
+    protected $task = null;
+    protected $abnormal_exit = false;
+    protected $pdo = null;
+    protected $auth = null;
+    public $conf = null;
+    public $log = null;
     // }}}
 
     // {{{ constructor
