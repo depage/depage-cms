@@ -181,7 +181,7 @@ class Url
     public function setPart($offset, $val)
     {
         $this->parts[$offset] = $val;
-        $this->path = "/" . implode("/", $this->parts) . "/";
+        $this->path = "/" . trim(implode("/", $this->parts), "/") . "/";
 
         return $this;
     }
