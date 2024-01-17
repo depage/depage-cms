@@ -15,6 +15,8 @@ class Application implements \Wrench\Application\DataHandlerInterface,
         'env' => "development",
         'timezone' => "UST",
     );
+    protected $options = null;
+    protected $pdo = null;
     // }}}
 
     // {{{ __construct
