@@ -7,44 +7,45 @@ use Wrench\Exception\PayloadException;
 use Wrench\Exception\SocketException;
 use Wrench\Frame\Frame;
 use Wrench\Protocol\Protocol;
-use Wrench\Socket\Socket;
+use Wrench\Socket\AbstractSocket;
 
 /**
- * Payload class
  * Represents a WebSocket protocol payload, which may be made up of multiple
  * frames.
  */
 abstract class Payload
 {
     /**
-     * A payload may consist of one or more frames
+     * A payload may consist of one or more frames.
      *
      * @var Frame[]
      */
     protected $frames = [];
 
     /**
-     * String representation of the payload contents
+     * String representation of the payload contents.
      *
      * @var string Binary
      */
     protected $buffer;
 
     /**
-     * Encodes a payload
+     * Encodes a payload.
      *
-     * @param string  $data
-     * @param int     $type
-     * @param boolean $masked
-     * @return Payload
+     * @param string $data
+     * @param int    $type
+     * @param bool   $masked
+     *
+     * @return $this
+     *
      * @todo No splitting into multiple frames just yet
      */
-    public function encode(string $data, int $type = Protocol::TYPE_TEXT, bool $masked = false)
+    public function encode(string $data, int $type = Protocol::TYPE_TEXT, bool $masked = false): self
     {
         $this->frames = [];
 
         $frame = $this->getFrame();
-        array_push($this->frames, $frame);
+        $this->frames[] = $frame;
 
         $frame->encode($data, $type, $masked);
 
@@ -52,16 +53,12 @@ abstract class Payload
     }
 
     /**
-     * Get a frame object
-     *
-     * @return Frame
+     * Get a frame object.
      */
-    abstract protected function getFrame();
+    abstract protected function getFrame(): Frame;
 
     /**
-     * Whether this payload is waiting for more data
-     *
-     * @return bool
+     * Whether this payload is waiting for more data.
      */
     public function isWaitingForData(): bool
     {
@@ -70,11 +67,10 @@ abstract class Payload
 
     /**
      * Gets the number of remaining bytes before this payload will be
-     * complete
+     * complete.
+     *
      * May return 0 (no more bytes required) or null (unknown number of bytes
      * required).
-     *
-     * @return int|null
      */
     public function getRemainingData(): ?int
     {
@@ -94,52 +90,47 @@ abstract class Payload
     }
 
     /**
-     * Whether the payload is complete
-     *
-     * @return bool
+     * Whether the payload is complete.
      */
-    public function isComplete()
+    public function isComplete(): bool
     {
         return $this->getCurrentFrame()->isComplete() && $this->getCurrentFrame()->isFinal();
     }
 
     /**
-     * Gets the current frame for the payload
+     * Gets the current frame for the payload.
      *
      * @return mixed
      */
     protected function getCurrentFrame()
     {
         if (empty($this->frames)) {
-            array_push($this->frames, $this->getFrame());
+            $this->frames[] = $this->getFrame();
         }
-        return end($this->frames);
+
+        return \end($this->frames);
     }
 
     /**
-     * @param Socket $socket
-     * @return bool
      * @throws FrameException
      * @throws SocketException
      */
-    public function sendToSocket(Socket $socket): bool
+    public function sendToSocket(AbstractSocket $socket): bool
     {
         $success = true;
 
         foreach ($this->frames as $frame) {
             $success = $success && (
-                    $socket->send($frame->getFrameBuffer()) !== null
-                );
+                null !== $socket->send($frame->getFrameBuffer())
+            );
         }
 
         return $success;
     }
 
     /**
-     * Receive raw data into the payload
+     * Receive raw data into the payload.
      *
-     * @param string $data
-     * @return void
      * @throws PayloadException
      */
     public function receiveData(string $data): void
@@ -151,25 +142,24 @@ abstract class Payload
 
             $remaining = $frame->getRemainingData();
 
-            if ($remaining === null) {
+            if (null === $remaining) {
                 $chunkSize = 2;
             } elseif ($remaining > 0) {
                 $chunkSize = $remaining;
             }
 
-            $chunkSize = min(strlen($data), $chunkSize);
-            $chunk = substr($data, 0, $chunkSize);
-            $data = substr($data, $chunkSize);
+            $chunkSize = \min(\strlen($data), $chunkSize);
+            $chunk = \substr($data, 0, $chunkSize);
+            $data = \substr($data, $chunkSize);
 
             $frame->receiveData($chunk);
         }
     }
 
     /**
-     * Gets the frame into which data should be receieved
+     * Gets the frame into which data should be receieved.
      *
      * @throws PayloadException
-     * @return Frame
      */
     protected function getReceivingFrame(): Frame
     {
@@ -186,10 +176,7 @@ abstract class Payload
         return $current;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         try {
             return $this->getPayload();
@@ -200,7 +187,6 @@ abstract class Payload
     }
 
     /**
-     * @return string
      * @throws FrameException
      */
     public function getPayload(): string
@@ -215,17 +201,18 @@ abstract class Payload
     }
 
     /**
-     * Gets the type of the payload
-     * The type of a payload is taken from its first frame
+     * Gets the type of the payload.
+     *
+     * The type of a payload is taken from its first frame.
      *
      * @throws PayloadException
-     * @return int
      */
     public function getType(): int
     {
         if (!isset($this->frames[0])) {
             throw new PayloadException('Cannot tell payload type yet');
         }
+
         return $this->frames[0]->getType();
     }
 }

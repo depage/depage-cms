@@ -3,11 +3,10 @@
 namespace Wrench\Listener;
 
 use Wrench\Connection;
-use Wrench\Exception\InvalidOriginException;
 use Wrench\Protocol\Protocol;
 use Wrench\Server;
 
-class OriginPolicy implements Listener, HandshakeRequestListener
+class OriginPolicy implements ListenerInterface, HandshakeRequestListenerInterface
 {
     protected $allowed = [];
 
@@ -17,14 +16,7 @@ class OriginPolicy implements Listener, HandshakeRequestListener
     }
 
     /**
-     * Handshake request listener
-     * Closes the connection on handshake from an origin that isn't allowed
-     *
-     * @param Connection $connection
-     * @param string     $path
-     * @param string     $origin
-     * @param string     $key
-     * @param array      $extensions
+     * Closes the connection on handshake from an origin that isn't allowed.
      */
     public function onHandshakeRequest(
         Connection $connection,
@@ -39,24 +31,21 @@ class OriginPolicy implements Listener, HandshakeRequestListener
     }
 
     /**
-     * Whether the specified origin is allowed under this policy
-     *
-     * @param string $origin
-     * @return bool
+     * Whether the specified origin is allowed under this policy.
      */
     public function isAllowed(string $origin): bool
     {
-        $scheme = parse_url($origin, PHP_URL_SCHEME);
-        $host = parse_url($origin, PHP_URL_HOST) ?: $origin;
+        $scheme = \parse_url($origin, \PHP_URL_SCHEME);
+        $host = \parse_url($origin, \PHP_URL_HOST) ?: $origin;
 
         foreach ($this->allowed as $allowed) {
-            $allowed_scheme = parse_url($allowed, PHP_URL_SCHEME);
+            $allowed_scheme = \parse_url($allowed, \PHP_URL_SCHEME);
 
             if ($allowed_scheme && $scheme != $allowed_scheme) {
                 continue;
             }
 
-            $allowed_host = parse_url($allowed, PHP_URL_HOST) ?: $allowed;
+            $allowed_host = \parse_url($allowed, \PHP_URL_HOST) ?: $allowed;
 
             if ($host != $allowed_host) {
                 continue;
@@ -68,9 +57,6 @@ class OriginPolicy implements Listener, HandshakeRequestListener
         return false;
     }
 
-    /**
-     * @param Server $server
-     */
     public function listen(Server $server): void
     {
         $server->addListener(

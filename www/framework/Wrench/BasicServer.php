@@ -10,13 +10,7 @@ class BasicServer extends Server
     protected $rateLimiter;
     protected $originPolicy;
 
-    /**
-     * Constructor
-     *
-     * @param string $uri
-     * @param array  $options
-     */
-    public function __construct($uri, array $options = [])
+    public function __construct(string $uri, array $options = [])
     {
         parent::__construct($uri, $options);
 
@@ -32,7 +26,7 @@ class BasicServer extends Server
     }
 
     /**
-     * Configures the origin policy
+     * Configures the origin policy.
      */
     protected function configureOriginPolicy(): void
     {
@@ -45,21 +39,11 @@ class BasicServer extends Server
     }
 
     /**
-     * Adds an allowed origin
-     *
-     * @param array $origin
-     */
-    public function addAllowedOrigin(string $origin): void
-    {
-        $this->originPolicy->addAllowedOrigin($origin);
-    }
-
-    /**
      * @see Wrench.Server::configure()
      */
     protected function configure(array $options): void
     {
-        $options = array_merge([
+        $options = \array_merge([
             'check_origin' => true,
             'allowed_origins' => [],
             'origin_policy_class' => OriginPolicy::class,
@@ -67,7 +51,7 @@ class BasicServer extends Server
             'rate_limiter_options' => [
                 'connections' => 200, // Total
                 'connections_per_ip' => 5,   // At once
-                'requests_per_minute' => 200  // Per connection
+                'requests_per_minute' => 200,  // Per connection
             ],
         ], $options);
 

@@ -7,11 +7,7 @@ use Wrench\Connection;
 interface DataHandlerInterface
 {
     /**
-     * Handle data received from a client
-     *
-     * @param string     $data
-     * @param Connection $connection
-     * @return void
+     * Handle data received from a client.
      */
     public function onData(string $data, Connection $connection): void;
 }

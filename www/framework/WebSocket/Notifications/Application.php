@@ -75,7 +75,8 @@ class Application implements \Wrench\Application\DataHandlerInterface,
     }
     // }}}
     // {{{ onUpdate
-    public function onUpdate() {
+    public function onUpdate():void
+    {
         $this->sendNotifications();
 
         // send tasks only once per second

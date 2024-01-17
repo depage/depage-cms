@@ -5,7 +5,9 @@ namespace Wrench;
 use InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Wrench\Application\BinaryDataHandlerInterface;
 use Wrench\Application\ConnectionHandlerInterface;
 use Wrench\Application\DataHandlerInterface;
 use Wrench\Application\UpdateHandlerInterface;
@@ -24,29 +26,30 @@ use Wrench\Util\NullLoop;
  */
 class Server extends Configurable implements LoggerAwareInterface
 {
-    use LoggerAwareTrait;
+    use LoggerAwareTrait {
+        setLogger as private traitSetLogger;
+    }
 
-    /**#@+
-     * Events
+    /**
+     * Events.
      *
      * @var string
      */
-    const EVENT_SOCKET_CONNECT = 'socket_connect';
-    const EVENT_SOCKET_DISCONNECT = 'socket_disconnect';
-    const EVENT_HANDSHAKE_REQUEST = 'handshake_request';
-    const EVENT_HANDSHAKE_SUCCESSFUL = 'handshake_successful';
-    const EVENT_CLIENT_DATA = 'client_data';
-    /**#@-*/
+    public const EVENT_SOCKET_CONNECT = 'socket_connect';
+    public const EVENT_SOCKET_DISCONNECT = 'socket_disconnect';
+    public const EVENT_HANDSHAKE_REQUEST = 'handshake_request';
+    public const EVENT_HANDSHAKE_SUCCESSFUL = 'handshake_successful';
+    public const EVENT_CLIENT_DATA = 'client_data';
 
     /**
-     * The URI of the server
+     * The URI of the server.
      *
      * @var string
      */
     protected $uri;
 
     /**
-     * Options
+     * Options.
      *
      * @var array
      */
@@ -56,12 +59,12 @@ class Server extends Configurable implements LoggerAwareInterface
      * Event listeners
      * Add listeners using the addListener() method.
      *
-     * @var array<string => array<Closure>>
+     * @var array<string, array<callable>>
      */
     protected $listeners = [];
 
     /**
-     * Connection manager
+     * Connection manager.
      *
      * @var ConnectionManager
      */
@@ -73,20 +76,11 @@ class Server extends Configurable implements LoggerAwareInterface
     protected $loop;
 
     /**
-     * Applications
-     *
-     * @var array<string => Application>
+     * @var array<string, BinaryDataHandlerInterface|ConnectionHandlerInterface|DataHandlerInterface|UpdateHandlerInterface>
      */
     protected $applications = [];
 
-    /**
-     * Constructor
-     *
-     * @param string $uri     Websocket URI, e.g. ws://localhost:8000/, path will
-     *                        be ignored
-     * @param array  $options (optional) See configure
-     */
-    public function __construct($uri, array $options = [])
+    public function __construct(string $uri, array $options = [])
     {
         $this->uri = $uri;
         $this->logger = new NullLogger();
@@ -96,7 +90,7 @@ class Server extends Configurable implements LoggerAwareInterface
     }
 
     /**
-     * Gets the connection manager
+     * Gets the connection manager.
      *
      * @return ConnectionManager
      */
@@ -119,7 +113,7 @@ class Server extends Configurable implements LoggerAwareInterface
     }
 
     /**
-     * Main server loop
+     * Main server loop.
      *
      * @return void This method does not return!
      */
@@ -141,7 +135,7 @@ class Server extends Configurable implements LoggerAwareInterface
              * be implemented in the 'onUpdate' method.
              */
             foreach ($this->applications as $application) {
-                if (method_exists($application, 'onUpdate')) {
+                if ($application instanceof UpdateHandlerInterface) {
                     $application->onUpdate();
                 }
             }
@@ -149,10 +143,11 @@ class Server extends Configurable implements LoggerAwareInterface
     }
 
     /**
-     * Notifies listeners of an event
+     * Notifies listeners of an event.
      *
      * @param string $event
      * @param array  $arguments Event arguments
+     *
      * @return void
      */
     public function notify($event, array $arguments = []): void
@@ -162,7 +157,7 @@ class Server extends Configurable implements LoggerAwareInterface
         }
 
         foreach ($this->listeners[$event] as $listener) {
-            call_user_func_array($listener, $arguments);
+            \call_user_func_array($listener, $arguments);
         }
     }
 
@@ -174,8 +169,10 @@ class Server extends Configurable implements LoggerAwareInterface
      *
      * @param string   $event
      * @param callable $callback
-     * @return void
+     *
      * @throws InvalidArgumentException
+     *
+     * @return void
      */
     public function addListener($event, callable $callback): void
     {
@@ -183,7 +180,7 @@ class Server extends Configurable implements LoggerAwareInterface
             $this->listeners[$event] = [];
         }
 
-        if (!is_callable($callback)) {
+        if (!\is_callable($callback)) {
             throw new InvalidArgumentException('Invalid listener');
         }
 
@@ -193,49 +190,42 @@ class Server extends Configurable implements LoggerAwareInterface
     /**
      * Returns a server application.
      *
-     * @param string $key Name of application.
-     * @return null|DataHandlerInterface|ConnectionHandlerInterface|UpdateHandlerInterface The application object
+     * @return BinaryDataHandlerInterface|ConnectionHandlerInterface|DataHandlerInterface|UpdateHandlerInterface|null
      */
-    public function getApplication($key)
+    public function getApplication(string $key)
     {
         if (empty($key)) {
             return null;
         }
 
-        if (array_key_exists($key, $this->applications)) {
-            return $this->applications[$key];
-        }
-
-        return null;
+        return $this->applications[$key] ?? null;
     }
 
     /**
      * Adds a new application object to the application storage.
      *
-     * @param string                                                                 $key         Name of application.
-     * @param DataHandlerInterface|ConnectionHandlerInterface|UpdateHandlerInterface $application The application object
-     * @return void
+     * @param BinaryDataHandlerInterface|ConnectionHandlerInterface|DataHandlerInterface|UpdateHandlerInterface $application
      */
-    public function registerApplication($key, $application)
+    public function registerApplication(string $key, object $application): void
     {
         $this->applications[$key] = $application;
     }
 
     /**
-     * Configure options
+     * Configure options.
      *
      * Options include
      *   - socket_class      => The socket class to use, defaults to ServerSocket
      *   - socket_options    => An array of socket options
-     *   - logger            => Closure($message, $priority = 'info'), used
-     *                                 for logging
+     *   - logger            => LoggerInterface, used for logging
      *
      * @param array $options
+     *
      * @return void
      */
     protected function configure(array $options): void
     {
-        $options = array_merge([
+        $options = \array_merge([
             'connection_manager' => null,
             'connection_manager_class' => ConnectionManager::class,
             'connection_manager_options' => [],
@@ -244,10 +234,27 @@ class Server extends Configurable implements LoggerAwareInterface
         parent::configure($options);
 
         $this->configureConnectionManager();
+
+        if (isset($options['logger'])) {
+            $this->setLogger($options['logger']);
+        }
     }
 
     /**
-     * Configures the connection manager
+     * Sets a logger.
+     *
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger): void
+    {
+        // calling "parent" setLogger
+        $this->traitSetLogger($logger);
+
+        $this->connectionManager->setLogger($logger);
+    }
+
+    /**
+     * Configures the connection manager.
      *
      * @return void
      */
