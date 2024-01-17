@@ -386,7 +386,7 @@ class User extends \Depage\Entity\PdoEntity
         }
         if (isset($search['type'])) {
             $where[] = self::sqlConditionFor('user.type', $search['type'], $params);
-        } else if (get_called_class() != get_class()) {
+        } else if (get_called_class() != self::class) {
             // automatically filter by user type of called class
             $where[] = self::sqlConditionFor('user.type', get_called_class(), $params);
         }
@@ -446,7 +446,7 @@ class User extends \Depage\Entity\PdoEntity
      * @param mixed
      * @return void
      **/
-    public function jsonSerialize()
+    public function jsonSerialize():mixed
     {
         return [
             'name' => $this->data['name'],
