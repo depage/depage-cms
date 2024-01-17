@@ -173,7 +173,7 @@
                 this.send({
                     action: "unsubscribe",
                     projectName: projectName,
-                    docId: projectName
+                    docId: docId
                 });
             },
             // }}}
@@ -218,9 +218,6 @@
 
             this._data.deltaUpdates.ws.subscribe($tree.attr("data-projectname"), $tree.attr("data-doc-id"), $tree.attr("data-seq-nr"));
             this._data.deltaUpdates.ws.onmessage( this.onmessage );
-
-            // @todo reconnect after disconnect or fallback
-            // @todo add fallback when websocket is not available or cannot connect
         };
         // }}}
         // {{{ onmessage
