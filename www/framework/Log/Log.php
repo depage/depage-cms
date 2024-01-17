@@ -20,6 +20,7 @@ class Log
         'mail' => "",
     );
     protected $conf;
+    protected $options;
     // }}}
 
     // {{{ constructor
