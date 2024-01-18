@@ -242,7 +242,7 @@ class Notification extends \Depage\Entity\Entity implements \JsonSerializable
      *
      * @return void
      **/
-    public function  jsonSerialize()
+    public function  jsonSerialize():mixed
     {
         return [
             'type' => "notification",
