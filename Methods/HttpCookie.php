@@ -93,6 +93,8 @@ class HttpCookie extends Auth
             // set protocol
             if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
                 $protocol = "https://";
+            } elseif (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? "") == "https") {
+                $protocol = "https://";
             } else {
                 $protocol = "http://";
             }
