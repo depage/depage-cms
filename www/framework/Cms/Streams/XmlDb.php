@@ -22,6 +22,10 @@ class XmlDb extends Base {
                 $data = $this->xmldb->getDocXml($docName);
             }
 
+            if (!$data) {
+                return false;
+            }
+
             if (isset($this->transformer)) {
                 $this->transformer->addToUsedDocuments($docId);
             }
