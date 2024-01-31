@@ -17,6 +17,9 @@ class Base implements DoctypeInterface
 
     // list of names of nodes not to be affected by whitespace stripping
     protected $preserveWhitespace = [];
+
+    protected $xmlDb;
+    protected $document;
     // }}}
 
     // {{{ constructor

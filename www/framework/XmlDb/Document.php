@@ -31,6 +31,12 @@ class Document
     protected $free_element_ids = [];
     protected $doctypeHandlers = [];
 
+    protected $entities = '';
+    protected $namespace_string = '';
+    protected $namespaces = [];
+    protected $lastchange = '';
+    protected $lastchangeUid = '';
+
     private $childNodeQuery = null;
     private $insertNodeQuery = null;
     // }}}
