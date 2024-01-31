@@ -7,7 +7,17 @@ class DeltaUpdates {
     // if we estimate 10 updates per second, then retain at least 30 updates. some buffer on top and we should be good.
     const MAX_UPDATES_BEFORE_RELOAD = 50;
 
-    function __construct($table_prefix, $pdo, $xmldb, $doc_id, $project, $seq_nr = -1) {
+    // {{{ variables
+    protected $table_name;
+    protected $pdo;
+    protected $xmldb;
+    protected $doc_id;
+    protected $project;
+    protected $seq_nr;
+    // }}}
+
+    public function __construct($table_prefix, $pdo, $xmldb, $doc_id, $project, $seq_nr = -1)
+    {
         $this->table_name = $table_prefix . "_xmldeltaupdates";
         $this->pdo = $pdo;
         $this->xmldb = $xmldb;
@@ -19,7 +29,8 @@ class DeltaUpdates {
             $this->seq_nr = $this->currentChangeNumber();
     }
 
-    public function currentChangeNumber() {
+    public function currentChangeNumber()
+    {
         $query = $this->pdo->prepare("SELECT MAX(id) AS id FROM " . $this->table_name . " WHERE doc_id = ?");
         if ($query->execute(array($this->doc_id)))
             if ($row = $query->fetch())
@@ -28,12 +39,14 @@ class DeltaUpdates {
         return -1;
     }
 
-    public function recordChange($parent_id) {
+    public function recordChange($parent_id)
+    {
         $query = $this->pdo->prepare("INSERT INTO " . $this->table_name . " (node_id, doc_id) VALUES (?, ?)");
         $query->execute(array((int)$parent_id, $this->doc_id));
     }
 
-    public function discardOldChanges() {
+    public function discardOldChanges()
+    {
         $min_id_query = $this->pdo->prepare("SELECT id FROM " . $this->table_name . " WHERE doc_id = ? ORDER BY id DESC LIMIT " . (self::MAX_UPDATES_BEFORE_RELOAD - 1) . ", 1");
         $min_id_query->execute(array($this->doc_id));
         $row = $min_id_query->fetch();
@@ -44,7 +57,8 @@ class DeltaUpdates {
         }
     }
 
-    private function changedParentIds() {
+    private function changedParentIds()
+    {
         $parent_ids = array();
 
         $query = $this->pdo->prepare("SELECT id, node_id FROM " . $this->table_name . " WHERE id > ? AND doc_id = ? ORDER BY id ASC");
@@ -63,7 +77,8 @@ class DeltaUpdates {
     }
 
     // returns an associative array of parent node id keys and children node values, that where involved in a recent change
-    public function changedNodes() {
+    public function changedNodes()
+    {
         $changed_nodes = array();
 
         if ($doc = $this->xmldb->getDoc($this->doc_id)) {
@@ -92,7 +107,8 @@ class DeltaUpdates {
         return $changed_nodes;
     }
 
-    public function encodedDeltaUpdate() {
+    public function encodedDeltaUpdate()
+    {
         $changed_nodes = $this->changedNodes();
         if (empty($changed_nodes))
             return "";
@@ -107,5 +123,3 @@ class DeltaUpdates {
         return new \Depage\Json\Json($result);
     }
 }
-
-?>
