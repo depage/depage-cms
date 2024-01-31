@@ -4,6 +4,14 @@ namespace Depage\Transformer;
 
 class TransformCache
 {
+    // {{{ variables
+    protected $pdo;
+    protected $projectName;
+    protected $templateName;
+    protected $cache;
+    protected $tableName;
+    // }}}
+
     // {{{ __construct()
     /**
      * @brief __construct
