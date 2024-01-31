@@ -55,6 +55,16 @@ class FileLibrary
         '\/.git\/',
     ];
 
+    /**
+     * @brief fs
+     **/
+    protected $fs = null;
+
+    /**
+     * @brief mediainfo
+     **/
+    protected $mediainfo = null;
+
     // {{{ __construct()
     /**
      * @brief__construct

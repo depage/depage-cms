@@ -4,6 +4,10 @@ namespace Depage\Cms\XmlDocTypes\Traits;
 
 trait UniqueNames
 {
+    // {{{ variables
+    protected $nodes;
+    // }}}
+
     // {{{ testUniqueNames
     public function testUniqueNames($node, $xpathQuery = "//*") {
         $changed = false;
