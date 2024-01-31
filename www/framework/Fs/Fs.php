@@ -11,6 +11,7 @@ class Fs
     protected $hidden;
     protected $streamContextOptions = array();
     protected $streamContext;
+    protected $path;
     // }}}
     // {{{ constructor
     public function __construct($params = array())
