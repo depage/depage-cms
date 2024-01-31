@@ -10,6 +10,7 @@ class Redis extends \Depage\Cache\Cache
         'host' => 'localhost:6379',
     );
     private $redis;
+    private $host;
     // }}}
 
     // {{{ constructor
