@@ -29,6 +29,7 @@ class MediaInfo
     protected $cache;
     protected $filename = "";
     protected $info = array();
+    protected $identify;
     protected $iptcHeaders = array(
         '2#005' => 'DocumentTitle',
         '2#010' => 'Urgency',
