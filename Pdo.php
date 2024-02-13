@@ -36,7 +36,10 @@ class Pdo
      */
     public function __construct($dsn, $username = '', $password = '', $driver_options = array())
     {
-        $this->dsn = $dsn . ";charset=utf8mb4";
+        $this->dsn = $dsn;
+        if (strpos($dsn, "mysql:") === 0) {
+            $this->dsn .= ";charset=utf8mb4";
+        }
         $this->username = $username;
         $this->password = $password;
 
