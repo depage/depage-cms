@@ -21,6 +21,7 @@ class Schema
     protected $replaceFunction = array();
     protected $updateData = array();
     protected $dryRun;
+    protected $pdo = null;
     // }}}
 
     // {{{ constructor
