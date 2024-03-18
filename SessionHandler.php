@@ -1,6 +1,6 @@
 <?php
 
-namespace depage\Session;
+namespace Depage\Session;
 
 class SessionHandler implements \SessionHandlerInterface
 {
@@ -14,12 +14,27 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     protected $sessionLock = null;
 
+    /**
+     * @brief sessionData
+     **/
+    protected $sessionData = "";
+
+    /**
+     * @brief pdo
+     **/
+    protected $pdo;
+
+    /**
+     * @brief lockWaitTime
+     **/
+    protected $lockWaitTime = 10;
+
     // {{{ register()
-    public static function register($pdo)
+    public static function register($pdo, $localWaitTime = 10)
     {
         $class = __CLASS__;
 
-        $handler = new $class($pdo);
+        $handler = new $class($pdo, $localWaitTime);
 
         session_set_save_handler($handler, true);
     }
@@ -31,9 +46,10 @@ class SessionHandler implements \SessionHandlerInterface
      * @param mixed $pdo
      * @return void
      **/
-    protected function __construct($pdo)
+    protected function __construct($pdo, $localWaitTime = 10)
     {
         $this->pdo = $pdo;
+        $this->lockWaitTime = $localWaitTime;
 
         if (isset($pdo->prefix)) {
             $this->tableName = $pdo->prefix . "_" . $this->tableName;
@@ -62,8 +78,10 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     public function close()
     {
-        // release session lock
-        $result = $this->pdo->query("SELECT RELEASE_LOCK(\"$this->sessionLock\")");
+        if ($this->lockWaitTime > 0) {
+            // release session lock
+            $result = $this->pdo->query("SELECT RELEASE_LOCK(\"$this->sessionLock\")");
+        }
 
         return true;
     }
@@ -77,12 +95,14 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     public function read($sessionId)
     {
-        // aquire session lock
-        $this->sessionLock = $this->pdo->quote("session_$sessionId");
-        $result = $this->pdo->query("SELECT GET_LOCK(\"$this->sessionLock\", 60)");
+        if ($this->lockWaitTime > 0) {
+            // aquire session lock
+            $this->sessionLock = $this->pdo->quote("session_$sessionId");
+            $result = $this->pdo->query("SELECT GET_LOCK(\"$this->sessionLock\", $this->lockWaitTime)");
 
-        if (!$result || $result->fetchColumn() != 1) {
-            die("could not obtain session lock!");
+            if (!$result || $result->fetchColumn() != 1) {
+                die("could not obtain session lock!");
+            }
         }
 
         // get session data
@@ -101,7 +121,9 @@ class SessionHandler implements \SessionHandlerInterface
         $result = $query->fetchObject();
 
         if ($result) {
-            return $result->sessionData;
+            $this->sessionData = $result->sessionData;
+
+            return $this->sessionData;
         } else {
             return "";
         }
@@ -117,6 +139,11 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     public function write($sessionId, $sessionData)
     {
+        if ($this->sessionData === $sessionData) {
+            // only write if session data has changed
+            return true;
+        }
+
         $query = $this->pdo->prepare(
             "INSERT INTO
                 {$this->tableName}
