@@ -29,6 +29,11 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     protected $lockWaitTime = 10;
 
+    /**
+     * @brief seqno
+     **/
+    protected $seqno = 0;
+
     // {{{ register()
     public static function register($pdo, $localWaitTime = 10)
     {
@@ -108,7 +113,7 @@ class SessionHandler implements \SessionHandlerInterface
         // get session data
         $query = $this->pdo->prepare(
             "SELECT
-                sid, sessionData
+                sid, seqno, sessionData
             FROM
                 {$this->tableName}
             WHERE
@@ -122,6 +127,7 @@ class SessionHandler implements \SessionHandlerInterface
 
         if ($result) {
             $this->sessionData = $result->sessionData;
+            $this->seqno = $result->seqno;
 
             return $this->sessionData;
         } else {
@@ -139,23 +145,38 @@ class SessionHandler implements \SessionHandlerInterface
      **/
     public function write($sessionId, $sessionData)
     {
+        // only update timestamp when session data has not changed
         if ($this->sessionData === $sessionData) {
-            // only write if session data has changed
+            $query = $this->pdo->prepare(
+                "UPDATE
+                    {$this->tableName}
+                SET
+                    dateLastUpdate = NOW()
+                WHERE
+                    sid = :sid
+                    "
+            )->execute([
+                ':sid' => $sessionId,
+            ]);
+
             return true;
         }
 
+        // only update session data if seqno has not changed
         $query = $this->pdo->prepare(
             "INSERT INTO
                 {$this->tableName}
             SET
                 sid = :sid,
                 ip = :ip,
+                seqno = :seqno1 + 1,
                 sessionData = :data1,
                 dateLastUpdate = NOW(),
                 useragent = :useragent
             ON DUPLICATE KEY UPDATE
-                sessionData = :data2,
-                dateLastUpdate = NOW()
+                sessionData = IF(seqno = :seqno2, :data2, VALUES(sessionData)),
+                dateLastUpdate = NOW(),
+                seqno = IF(seqno = :seqno3, seqno + 1, VALUES(seqno))
                 "
         );
         $query->execute(array(
@@ -164,6 +185,9 @@ class SessionHandler implements \SessionHandlerInterface
             ':useragent' => $_SERVER['HTTP_USER_AGENT'],
             ':data1' => $sessionData,
             ':data2' => $sessionData,
+            ':seqno1' => $this->seqno,
+            ':seqno2' => $this->seqno,
+            ':seqno3' => $this->seqno,
         ));
 
         return true;
