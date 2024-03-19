@@ -28,3 +28,8 @@ CREATE TABLE `_auth_sessions` (
     @version 1.5.4
 */
 ALTER TABLE `_auth_sessions` MODIFY `ip` varchar(45) DEFAULT NULL;
+
+/*
+    @version 2.5.0
+*/
+ALTER TABLE `_auth_sessions` ADD `seqno` int(11) unsigned NOT NULL DEFAULT 0 AFTER `ip`;
