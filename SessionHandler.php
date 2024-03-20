@@ -182,7 +182,7 @@ class SessionHandler implements \SessionHandlerInterface
         $query->execute(array(
             ':sid' => $sessionId,
             ':ip' => \Depage\Http\Request::getRequestIp(),
-            ':useragent' => $_SERVER['HTTP_USER_AGENT'],
+            ':useragent' => $_SERVER['HTTP_USER_AGENT'] ?? "",
             ':data1' => $sessionData,
             ':data2' => $sessionData,
             ':seqno1' => $this->seqno,
