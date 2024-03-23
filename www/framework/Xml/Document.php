@@ -98,6 +98,47 @@ class Document extends \DOMDocument implements \Serializable
         return $xml;
     }
     // }}}
+    // {{{ replaceAttributeNames()
+    /**
+     * @brief replaceAttributeNames
+     *
+     * @param mixed $node
+     * @param mixed $search
+     * @param mixed $replace
+     * @return void
+     **/
+    public static function replaceAttributeNames($node, $search, $replace):void
+    {
+        $xpath = new \DOMXPath($node->ownerDocument);
+        if (is_string($search)) {
+            $attrName = $search;
+
+            $query = ".//@$attrName";
+        } else if (is_array($search)) {
+            $attrNS = $search[0];
+            $attrName = $search[1];
+
+            $prefix = explode(":", $attrName)[0];
+
+            $xpath->registerNamespace($prefix, $attrNS);
+
+            $query = ".//@$attrName";
+        }
+        $nodes = $xpath->query($query, $node);
+
+        for ($i = $nodes->length - 1; $i >= 0; $i--) {
+            $n = $nodes->item($i);
+            $parent = $n->parentNode;
+
+            if (is_string($replace)) {
+                $parent->setAttribute($replace, $n->nodeValue);
+            } else if (is_array($replace)) {
+                $parent->setAttributeNS($replace[0], $replace[1], $n->nodeValue);
+            }
+            $parent->removeAttributeNode($n);
+        }
+    }
+    // }}}
 
     // {{{ __toString()
     /**
