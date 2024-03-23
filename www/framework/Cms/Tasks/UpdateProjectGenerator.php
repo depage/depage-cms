@@ -66,8 +66,6 @@ class UpdateProjectGenerator
             $xslSrc,
         ]);
 
-        $task->beginTaskTransaction();
-
         $task->addSubtask("updating project schema of {$this->project->name}", "\$generator->updateProjectSchema();", [], $this->initId);
         $task->addSubtask("syncing file library of {$this->project->name}", "\$generator->syncFileLibrary();", [], $this->initId);
 
@@ -80,8 +78,6 @@ class UpdateProjectGenerator
 
         $this->queueDocumentRelease();
         $task->addSubtask("clearing transform cache of {$this->project->name}", "\$project->clearTransformCache();", [], $this->initId);
-
-        $task->commitTaskTransaction();
 
         return $task;
     }

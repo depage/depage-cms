@@ -84,6 +84,11 @@ class NewsletterSenderGenerator extends PublishGenerator
                     $sleep = rand(5, 25);
                 }
                 $newsletter->queueSend($this->task, $initId, $to, $lang, $sleep);
+
+                if ($i % 50 == 0) {
+                    $this->task->commitTaskTransaction();
+                    $this->task->beginTaskTransaction();
+                }
             }
         }
 

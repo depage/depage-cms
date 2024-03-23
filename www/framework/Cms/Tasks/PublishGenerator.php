@@ -275,8 +275,6 @@ class PublishGenerator
             $this->getTransformCache()->clearAll();
         }
 
-        $this->task->beginTaskTransaction();
-
         $this->queueInit();
         $this->queuePublishFiles();
         $this->queuePublishIndex();
@@ -292,8 +290,6 @@ class PublishGenerator
             $this->queuePublishNewsletter();
         }
         $this->queueCleanup();
-
-        $this->task->commitTaskTransaction();
     }
     // }}}
 
@@ -339,6 +335,8 @@ class PublishGenerator
         $folders = $fl->getAllFolderIds();
 
         foreach ($folders as $folderId) {
+            $this->task->beginTaskTransaction();
+
             // adding tasks for all files
             $files = $fl->getFilesInFolder($folderId);
             foreach ($files as $file) {
@@ -348,6 +346,8 @@ class PublishGenerator
                     $file->hash,
                 ], $this->initId);
             }
+
+            $this->task->commitTaskTransaction();
         }
     }
     // }}}
@@ -389,6 +389,8 @@ class PublishGenerator
         $pages = $this->project->getXmlNav()->getPublicPages($this->project->getLastPublishDate());
 
         $i = 0;
+        $this->task->beginTaskTransaction();
+
         foreach ($pages as $page) {
             foreach ($languages as $lang => $name) {
                 $target = $lang . $page->url;
@@ -447,7 +449,13 @@ class PublishGenerator
                 $pubId
             );
             $i++;
+
+            if ($i % 50 == 0) {
+                $this->task->commitTaskTransaction();
+                $this->task->beginTaskTransaction();
+            }
         }
+        $this->task->commitTaskTransaction();
     }
     // }}}
     // {{{ queuePublishSitemap()
@@ -619,6 +627,8 @@ class PublishGenerator
         // @todo check for number of connections
         $newsletters = \Depage\Cms\Newsletter::loadReleased($this->pdo, $this->project);
 
+        $this->task->beginTaskTransaction();
+
         foreach ($newsletters as $newsletter) {
             // @todo check if newsletter has been published
             foreach ($languages as $lang => $name) {
@@ -633,6 +643,8 @@ class PublishGenerator
                 ], $this->initId);
             }
         }
+
+        $this->task->commitTaskTransaction();
     }
     // }}}
     // {{{ queueCleanup()
