@@ -104,7 +104,7 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
                     $parent->removeAttribute("href_id");
                 }
                 foreach ($node->childNodes as $n) {
-                    \Depage\XmlDb\Document::removeNodeAttr($n, new \Depage\XmlDb\XmlNs('db', 'http://cms.depagecms.net/ns/database'), "id");
+                    \Depage\Xml\Document::replaceAttributeNames($n, ["http://cms.depagecms.net/ns/database", "db:id"], "data-dbid");
 
                     $value .= $node->ownerDocument->saveHTML($n) . "\n";
                 }
@@ -174,6 +174,8 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
                 }
                 foreach ($root->childNodes as $n) {
                     $copy = $this->dataDocument->importNode($n, true);
+                    \Depage\Xml\Document::replaceAttributeNames($copy, "data-dbid", ["http://cms.depagecms.net/ns/database", "db:id"]);
+
                     $node->appendChild($copy);
                 }
             } else if (in_array($node->nodeName, ['href_id', 'href']) && $node->nodeType == \XML_ATTRIBUTE_NODE) {
