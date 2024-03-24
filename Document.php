@@ -31,6 +31,12 @@ class Document
     protected $free_element_ids = [];
     protected $doctypeHandlers = [];
 
+    protected $entities = '';
+    protected $namespace_string = '';
+    protected $namespaces = [];
+    protected $lastchange = '';
+    protected $lastchangeUid = '';
+
     private $childNodeQuery = null;
     private $insertNodeQuery = null;
     // }}}
@@ -1335,54 +1341,6 @@ class Document
             $free = array_flip(array_diff($preference, $results));
         } else {
             $free = [];
-        }
-
-        // @todo for some reason preparing before the loop does not work with native prepared statements
-        $query = $this->pdo->prepare(
-            "SELECT row AS id FROM
-                (SELECT
-                    @row := @row + 1 as row, xml.id
-                FROM
-                    {$this->table_xml} as xml,
-                    (SELECT @row := :start) r
-                WHERE @row <> id
-                ORDER BY xml.id) AS seq
-            WHERE NOT EXISTS (
-                SELECT 1
-                FROM {$this->table_xml} as xml
-                WHERE xml.id = row
-            ) LIMIT :maxCount;",
-            [\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => false]);
-
-        do {
-            $query->execute([
-                'start' => $lastMax,
-                'maxCount' => $needed,
-            ]);
-
-            $found = false;
-            while ($row = $query->fetchColumn()) {
-                $id = (int) $row;
-                $found = true;
-                $lastMax = $id;
-                $free[$id] = null;
-            }
-        } while (count($free) < $needed && $found);
-
-        $num = count($free);
-
-        if ($num < $needed) {
-            $query = $this->pdo->prepare(
-                "SELECT IFNULL(MAX(xml.id), 0) + 1 AS id_max
-                FROM {$this->table_xml} AS xml"
-            );
-            $query->execute();
-            $result = $query->fetchObject();
-
-            $until = $needed - $num;
-            for ($i = 0; $i < $until; $i++) {
-                $free[$result->id_max + $i] = null;
-            }
         }
 
         $this->free_element_ids = array_keys($free);

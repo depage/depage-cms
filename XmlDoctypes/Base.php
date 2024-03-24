@@ -17,6 +17,9 @@ class Base implements DoctypeInterface
 
     // list of names of nodes not to be affected by whitespace stripping
     protected $preserveWhitespace = [];
+
+    protected $xmlDb;
+    protected $document;
     // }}}
 
     // {{{ constructor
@@ -72,7 +75,7 @@ class Base implements DoctypeInterface
                 $xml .= '/>';
             }
             $doc = new \DOMDocument;
-            $doc->loadXML("<root>$xml</root>");
+            $doc->loadXML("<root xmlns:pg=\"http://cms.depagecms.net/ns/page\" xmlns:sec=\"http://cms.depagecms.net/ns/section\" xmlns:edit=\"http://cms.depagecms.net/ns/edit\">$xml</root>");
 
             $result = $doc->documentElement->childNodes;
         }
