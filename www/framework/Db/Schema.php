@@ -21,6 +21,7 @@ class Schema
     protected $replaceFunction = array();
     protected $updateData = array();
     protected $dryRun;
+    protected $pdo = null;
     // }}}
 
     // {{{ constructor
@@ -179,8 +180,7 @@ class Schema
                 $this->history[] = $statement;
             } else {
                 try {
-                    $preparedStatement = $this->pdo->prepare($statement);
-                    $preparedStatement->execute();
+                    $this->pdo->exec($statement);
                 } catch (\PDOException $e) {
                     if (class_exists('\ReflectionClass', false)) {
                         $PDOExceptionReflection = new \ReflectionClass('PDOException');
@@ -209,10 +209,10 @@ class Schema
         try {
             $this->pdo->query('SELECT 1 FROM ' . $tableName);
             $exists = true;
-        } catch (\PDOException $expected) {
+        } catch (\PDOException $e) {
             // only catch "table doesn't exist" exception
-            if ($expected->getCode() != '42S02') {
-                throw $expected;
+            if (!preg_match("/SQLSTATE\\[42S02\\]/", $e->getMessage())) {
+                throw $e;
             }
         }
 
@@ -223,7 +223,7 @@ class Schema
     protected function currentTableVersion($tableName)
     {
         try {
-            $query = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '" LIMIT 1';
+            $query = 'SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = "' . $tableName . '"  AND TABLE_SCHEMA=database() LIMIT 1';
             $statement = $this->pdo->query($query);
             $statement->execute();
             $row = $statement->fetch();

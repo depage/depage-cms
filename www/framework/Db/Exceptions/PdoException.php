@@ -1,7 +1,7 @@
 <?php
 namespace Depage\Db\Exceptions;
 
-class SchemaException extends \Exception
+class PdoException extends \PDOException
 {
 }
 

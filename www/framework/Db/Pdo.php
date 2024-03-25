@@ -158,7 +158,15 @@ class Pdo
             $this->lateInitialize();
         }
 
-        return call_user_func_array(array($this->pdo, $name), $arguments);
+        try {
+            return call_user_func_array(array($this->pdo, $name), $arguments);
+        } catch (\PDOException $e) {
+            $message = "";
+            if (in_array($name, ["prepare", "exec", "query"])) {
+                $message = "\non the following query: \n" . $arguments[0];
+            }
+            throw new \Depage\Db\Exceptions\PdoException($e->getMessage() . $message, (int) $e->getCode(), $e);
+        }
     }
     // }}}
     // {{{ __callStatic
@@ -166,7 +174,11 @@ class Pdo
      */
     public static function __callStatic($name, $arguments)
     {
-        return call_user_func_array("pdo::$name", $arguments);
+        try {
+            return call_user_func_array("pdo::$name", $arguments);
+        } catch (\PDOException $e) {
+            throw new \Depage\Db\Exceptions\PdoException($e->getMessage(), (int) $e->getCode(), $e);
+        }
     }
     // }}}
 
