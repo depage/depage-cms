@@ -9,7 +9,7 @@ class File extends \Depage\Cache\Cache
     protected $cachepath;
     protected $baseurl;
     protected $host;
-    protected $defaults = array(
+    protected $defaults = [
         'cachepath' => "",
         'baseurl' => "",
         'disposition' => "file",
