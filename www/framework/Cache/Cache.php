@@ -60,6 +60,8 @@ abstract class Cache
         if (empty($options['baseurl']) && defined('DEPAGE_BASE')) {
             $options['baseurl'] = \DEPAGE_BASE;
         }
+        $options['cachepath'] = rtrim($options['cachepath'], "/");
+        $options['baseurl'] = rtrim($options['baseurl'], "/") . "/";
 
         $this->prefix = $prefix;
         $this->cachepath = "{$options['cachepath']}/{$this->prefix}/";
