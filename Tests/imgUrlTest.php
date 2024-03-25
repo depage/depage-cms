@@ -8,6 +8,9 @@ use Depage\Graphics\Imgurl;
  **/
 class imgUrlTest extends TestCase
 {
+    protected $baseUrl;
+    protected $imgurl;
+
     // {{{ setUp()
     /**
      * Creates fresh imgurl objects for tests

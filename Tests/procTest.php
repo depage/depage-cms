@@ -7,6 +7,8 @@ use PHPUnit\Framework\TestCase;
  **/
 class procTest extends TestCase
 {
+    protected $graphics;
+
     // {{{ setUp()
     /**
      * Prepares fresh test objects
