@@ -4,6 +4,7 @@ namespace Depage\Cms\Streams;
 
 class Pageref extends Base {
     protected static $parameters;
+    protected $transformer = null;
 
     // {{{ stream_open()
     public function stream_open($path, $mode, $options, &$opened_path)

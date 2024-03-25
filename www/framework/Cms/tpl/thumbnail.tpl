@@ -2,14 +2,14 @@
     $fallbackThumb = "framework/Cms/images/icon-page.svg";
     $class = $this->class;
     $imgSrc = "projects/{$this->project->name}/lib/{$this->file->fullname}";
+    $thumbSrc = $fallbackThumb;
+    $thumbSrc2 = null;
+
     if (in_array($this->file->ext, ['png', 'jpg', 'jpeg', 'gif', 'pdf'])) {
         $thumbSrc = $imgSrc . ".t320x320.png";
         $thumbSrc2 = $imgSrc . ".t320x320.webp";
     } else if (in_array($this->file->ext, ['svg'])) {
         $thumbSrc = $imgSrc;
-    } else {
-        // @todo add icons for other file types?
-        $thumbSrc = $fallbackThumb;
     }
     $sizeFormatter = new \Depage\Formatters\FileSize();
     $timeFormatter = new \Depage\Formatters\TimeAbsolute();

@@ -18,6 +18,15 @@ class Newsletter
      * @brief document
      **/
     public $document = null;
+    public $name;
+
+    protected $project;
+    protected $pdo;
+    protected $tableSubscribers;
+    protected $tableSent;
+    protected $conf;
+    protected $id;
+    protected $lastchange;
 
     // {{{ __construct()
     /**

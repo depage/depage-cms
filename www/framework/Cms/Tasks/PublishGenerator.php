@@ -47,6 +47,11 @@ class PublishGenerator
      **/
     protected $project = null;
 
+    /**
+     * @brief initId
+     */
+    protected $initId = null;
+
     // {{{ __construct()
     /**
      * @brief __construct

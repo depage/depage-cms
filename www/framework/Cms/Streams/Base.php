@@ -3,6 +3,7 @@
 namespace Depage\Cms\Streams;
 
 abstract class Base {
+    public $context;
     protected $position = 0;
     protected $data = null;
 
