@@ -22,6 +22,25 @@ Version 2.4   {#v2-4}
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
 
+v2.5.0 / 25.03.2024      {#v2-5-0}
+-------------------
+
+**Backend**
+- enhanced performance of xmldb
+- enhanced session handling
+- enhanced user authentication
+- updated used submodules
+- updated websocket server
+- updated graphics generator
+- added changes for better php 8 support
+- enhanced base xsl templates
+- various changes for better galera support
+- fixed various small bugs
+
+**Frontend**
+- enhanced text handling and autosaving
+- enhanced doc-properties for files
+
 v2.4.0 / 29.05.2023      {#v2-4-0}
 -------------------
 
