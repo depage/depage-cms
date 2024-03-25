@@ -8,6 +8,28 @@ namespace Depage\Publisher;
  */
 class Publisher
 {
+    // {{{ variables
+    /**
+     * @brief pdo
+     **/
+    protected $pdo;
+
+    /**
+     * @brief tableFiles
+     **/
+    protected $tableFiles;
+
+    /**
+     * @brief fs
+     **/
+    protected $fs;
+
+    /**
+     * @brief publishId
+     **/
+    protected $publishId;
+    // }}}
+
     // {{{ __construct()
     /**
      * @brief __construct

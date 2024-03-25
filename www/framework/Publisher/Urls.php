@@ -17,6 +17,11 @@ namespace Depage\Publisher;
  */
 class Urls
 {
+    // {{{ variables
+    protected $pdo;
+    protected $tableUrls;
+    protected $publishId;
+    // }}}
     // {{{ __construct()
     /**
      * @brief __construct
