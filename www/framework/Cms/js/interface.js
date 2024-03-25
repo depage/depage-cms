@@ -1523,8 +1523,8 @@ var depageCMS = (function() {
 
                 localJS.setupTooltips();
 
-                $form.depageForm();
                 $form.find("p.submit").remove();
+                $form.depageForm();
                 $form.find("input, textarea, .textarea-content").on("focus", function() {
                     var lang = $(this).parents("p[lang]").attr("lang");
                     if (typeof lang == "undefined" || lang == "") return;
