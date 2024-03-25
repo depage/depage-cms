@@ -90,6 +90,11 @@ class Task {
      **/
     protected $lockName = "";
 
+    /**
+     * @brief retries number of retries for subtask
+     **/
+    protected $retries = 0;
+
     // {{{ constructor
     private function __construct($pdo) {
         $this->pdo = $pdo;

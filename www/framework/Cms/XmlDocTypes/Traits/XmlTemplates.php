@@ -4,6 +4,8 @@ namespace Depage\Cms\XmlDocTypes\Traits;
 
 trait XmlTemplates
 {
+    protected $pathXMLtemplate;
+
     // {{{ initAvailableNodes()
     public function initAvailableNodes()
     {

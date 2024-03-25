@@ -19,12 +19,12 @@ class Newsletter
      **/
     public $document = null;
     public $name;
+    public $conf;
+    public $project;
 
-    protected $project;
     protected $pdo;
     protected $tableSubscribers;
     protected $tableSent;
-    protected $conf;
     protected $id;
     protected $lastchange;
 

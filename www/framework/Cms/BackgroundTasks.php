@@ -48,8 +48,6 @@ class BackgroundTasks
      **/
     public function schedule()
     {
-        echo("scheduling");
-
         $this->scheduleNotifications();
     }
     // }}}

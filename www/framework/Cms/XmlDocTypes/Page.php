@@ -7,8 +7,6 @@ class Page extends Base
     use Traits\MultipleLanguages;
     use Traits\XmlTemplates;
 
-    private $pathXMLtemplate = "";
-
     // {{{ constructor
     public function __construct($xmlDb, $document) {
         parent::__construct($xmlDb, $document);
