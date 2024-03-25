@@ -38,7 +38,7 @@ class ClosureApi extends \Depage\JsMin\JsMin {
             return $xml->compiledCode;
         } else {
             foreach ($xml->serverErrors as $error) {
-                throw new Exceptions\JsMinException($error->error);
+                throw new \Depage\JsMin\Exceptions\JsMinException($error->error);
             }
 
             return false;
