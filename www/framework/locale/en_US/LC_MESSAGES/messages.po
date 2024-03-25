@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-29 16:15+0200\n"
+"POT-Creation-Date: 2024-03-25 16:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,17 +17,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: WebSocket/Notifications/Application.php:105
+#: WebSocket/Notifications/Application.php:110
 #, php-format
 msgid "starting '%s'"
 msgstr ""
 
-#: WebSocket/Notifications/Application.php:107
+#: WebSocket/Notifications/Application.php:112
 #, php-format
 msgid "'%s' will finish in %s"
 msgstr ""
 
-#: WebSocket/Notifications/Application.php:111
+#: WebSocket/Notifications/Application.php:116
 msgid "Failed"
 msgstr ""
 
@@ -115,6 +115,10 @@ msgstr ""
 msgid "%d weeks ago"
 msgstr ""
 
+#: Auth/DeletedUser.php:67
+msgid "Deleted User"
+msgstr ""
+
 #: Comments/Ui/Comments.php:132
 #, php-format
 msgid "depage comments"
@@ -186,7 +190,7 @@ msgid "(public)"
 msgstr ""
 
 #: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:959
-#: Cms/Ui/DocProperties.php:1057
+#: Cms/Ui/DocProperties.php:1088
 msgid "http://domain.com"
 msgstr ""
 
@@ -212,7 +216,7 @@ msgstr ""
 msgid "Please use a MIME-compliant e-mail program to open it."
 msgstr ""
 
-#: HtmlForm/Abstracts/Input.php:266
+#: HtmlForm/Abstracts/Input.php:299
 msgid "Please enter valid data"
 msgstr ""
 
@@ -1944,31 +1948,31 @@ msgstr ""
 msgid "Zimbabwe"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:103
+#: HtmlForm/Elements/Address.php:105
 msgid "Address 1"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:104
+#: HtmlForm/Elements/Address.php:106
 msgid "Address 2"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:105
+#: HtmlForm/Elements/Address.php:107
 msgid "City"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:106
+#: HtmlForm/Elements/Address.php:108
 msgid "State"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:107
+#: HtmlForm/Elements/Address.php:109
 msgid "Zip"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:108
+#: HtmlForm/Elements/Address.php:110
 msgid "Country"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:188
+#: HtmlForm/Elements/Address.php:169
 msgid "State and Country do not match"
 msgstr ""
 
@@ -2349,7 +2353,7 @@ msgstr ""
 msgid "New Window"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:957 Cms/Ui/DocProperties.php:1055
+#: Cms/Ui/DocProperties.php:957 Cms/Ui/DocProperties.php:1086
 msgid "href"
 msgstr ""
 
@@ -2358,7 +2362,7 @@ msgid "Audio"
 msgstr ""
 
 #: Cms/Ui/DocProperties.php:981 Cms/Ui/DocProperties.php:1006
-#: Cms/Ui/DocProperties.php:1033
+#: Cms/Ui/DocProperties.php:1036 Cms/Ui/DocProperties.php:1064
 msgid "src"
 msgstr ""
 
@@ -2366,52 +2370,56 @@ msgstr ""
 msgid "Video"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1026 Cms/Forms/Project/FileSearch.php:46
+#: Cms/Ui/DocProperties.php:1026
+msgid "File"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:1056 Cms/Forms/Project/FileSearch.php:46
 msgid "Image"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1043
+#: Cms/Ui/DocProperties.php:1074
 msgid "title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1044
+#: Cms/Ui/DocProperties.php:1075
 msgid "Image title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1049
+#: Cms/Ui/DocProperties.php:1080
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1050
+#: Cms/Ui/DocProperties.php:1081
 msgid "Image description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1074
+#: Cms/Ui/DocProperties.php:1105
 msgid "Table"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1113
+#: Cms/Ui/DocProperties.php:1144
 msgid "Source"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1132
+#: Cms/Ui/DocProperties.php:1163
 msgid "Not allowed to edit this element."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1169
+#: Cms/Ui/DocProperties.php:1200
 msgid "Please choose the news items you want to include in the newsletter:"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1171 Cms/Forms/Newsletter.php:88
+#: Cms/Ui/DocProperties.php:1202 Cms/Forms/Newsletter.php:88
 msgid "Unsent news items"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1186 Cms/Ui/DocProperties.php:1206
+#: Cms/Ui/DocProperties.php:1217 Cms/Ui/DocProperties.php:1237
 #: Cms/Forms/Newsletter.php:102 Cms/Forms/Newsletter.php:124
 msgid "No news items available."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1192 Cms/Forms/Newsletter.php:108
+#: Cms/Ui/DocProperties.php:1223 Cms/Forms/Newsletter.php:108
 msgid "News items included in other newsletters"
 msgstr ""
 
@@ -2423,21 +2431,21 @@ msgstr ""
 msgid "unnamed_color"
 msgstr ""
 
-#: Cms/BackgroundTasks.php:74
+#: Cms/BackgroundTasks.php:72
 #, php-format
 msgid "You received a new notification from %s:"
 msgstr ""
 
-#: Cms/BackgroundTasks.php:82
+#: Cms/BackgroundTasks.php:80
 msgid "Your faithful servant on"
 msgstr ""
 
-#: Cms/Tasks/PublishGenerator.php:712
+#: Cms/Tasks/PublishGenerator.php:729
 #, php-format
 msgid "%s published"
 msgstr ""
 
-#: Cms/Tasks/PublishGenerator.php:714
+#: Cms/Tasks/PublishGenerator.php:731
 msgid ""
 "The following pages got published:\n"
 "\n"
