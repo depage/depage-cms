@@ -47,10 +47,12 @@ class Response {
         "httpMessage",
         "isRedirect",
         "redirectUrl",
+        "lastModified",
     );
 
     // {{{ __construct()
     public function __construct($body = "", $headers = [], $info = []) {
+        $this->lastModified = new \DateTimeImmutable("now");
         $this->setBody($body);
         $this->info = $info;
 
@@ -135,11 +137,13 @@ class Response {
 
         list($key, $value) = array_replace(array("", ""), explode(": ", $headerLine));
 
-        if (substr($key, 0, 4) == "HTTP") {
+        $key = strtolower($key);
+
+        if (substr($key, 0, 4) == "http") {
             $data = explode(' ', $headerLine, 3);
             $this->httpCode = $data[1];
             $this->httpMessage = $data[2];
-        } else if ($key == "Content-Type") {
+        } else if ($key == "content-type") {
             preg_match('/([\w\/+]+)(;\s+charset=(\S+))?/i', $value, $matches );
             if (isset($matches[1])) {
                 $this->contentType = $matches[1];
@@ -147,9 +151,11 @@ class Response {
             if (isset($matches[3])) {
                 $this->charset = $matches[3];
             }
-        } else if ($key == "Location") {
+        } else if ($key == "location") {
             $this->isRedirect = true;
             $this->redirectUrl = $value;
+        } else if ($key == "last-modified") {
+            $this->lastModified = new \DateTimeImmutable($value);
         }
 
         return $this;
@@ -178,7 +184,7 @@ class Response {
      **/
     public function getStatus()
     {
-        preg_match('|HTTP/\d\.\d\s+(\d+)\s+(.*)|', $this->headers[0] ?? '', $matches);
+        preg_match('|HTTP/[\d\.]+\s+(\d+)(\s+.*)?|', $this->headers[0] ?? '', $matches);
         return (object) [
             'code' => $matches[1] ?? '',
             'message' => $matches[2] ?? ''
