@@ -17,6 +17,13 @@ namespace Depage\Graphics\Providers;
  **/
 class Gd extends \Depage\Graphics\Graphics
 {
+    // {{{ variables
+    /**
+     * @brief   Image resource identifier
+     **/
+    protected $image;
+    // }}}
+
     // {{{ crop()
     /**
      * @brief   Crop action

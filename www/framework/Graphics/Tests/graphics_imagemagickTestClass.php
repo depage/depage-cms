@@ -21,6 +21,11 @@ class graphics_imagemagickTestClass extends \Depage\Graphics\Providers\Imagemagi
         return $this->size;
     }
 
+    public function getLimit($limit)
+    {
+        return $this->limits[$limit];
+    }
+
     public function crop($width, $height, $x = 0, $y = 0)
     {
         parent::crop($width, $height, $x, $y);

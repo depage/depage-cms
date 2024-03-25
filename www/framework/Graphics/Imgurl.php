@@ -108,7 +108,7 @@ class Imgurl
 
         // get image name
         $imgUrl = $url;
-        if ($baseUrl == "") {
+        if ($baseUrl == "" && $baseUrlStatic == "") {
             $imgUrl = substr($url, 1);
         } else if (strpos($url, $baseUrlStatic) === 0) {
             $imgUrl = substr($url, strlen($baseUrlStatic) + 1);
@@ -117,6 +117,7 @@ class Imgurl
         }
 
         // get action parameters
+        $matches = [];
         $success = preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $imgUrl, $matches);
 
         if (!$success) {
@@ -126,7 +127,7 @@ class Imgurl
         }
 
         $this->id = rawurldecode($matches[0]);
-        $this->srcImg = $relativePath . rawurldecode($matches[2]);
+        $this->srcImg = $relativePath . rawurldecode($matches[1]);
         $this->outImg = $this->cachePath . rawurldecode($matches[0]);
         $this->actions = $this->analyzeActions($matches[3]);
     }
@@ -152,7 +153,7 @@ class Imgurl
             }
 
             if (!empty($func)) {
-                $params = preg_split("/[-x,]+/", $params, null, PREG_SPLIT_NO_EMPTY);
+                $params = preg_split("/[-x,]+/", $params, -1, PREG_SPLIT_NO_EMPTY);
 
                 if ($func == "addBackground") {
                     if (!in_array($params[0], array("transparent", "checkerboard"))) {

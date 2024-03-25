@@ -40,6 +40,9 @@ class graphicsTest extends TestCase
         $graphics = Graphics::factory(array('extension'=>'foobar'));
         $this->assertInstanceOf('Depage\\Graphics\\Providers\\Gd', $graphics, 'Expected Depage\Graphics\Providers\Gd object.');
 
+        $graphics = Graphics::factory(array('extension'=>'imagick'));
+        $this->assertInstanceOf('Depage\\Graphics\\Providers\\Imagick', $graphics, 'Expected Depage\Graphics\Providers\Imagick object.');
+
         $graphics = Graphics::factory(array('extension'=>'imagemagick', 'executable'=>'bin'));
         $this->assertInstanceOf('Depage\\Graphics\\Providers\\Imagemagick', $graphics, 'Expected Depage\Graphics\Providers\Imagemagick object.');
 
