@@ -9,24 +9,8 @@ class File extends \Depage\Cache\Cache
     protected $cachepath;
     protected $baseurl;
     protected $host;
-    protected $defaults = [
-        'cachepath' => "",
-        'baseurl' => "",
-        'disposition' => "file",
-    ];
     // }}}
 
-    // {{{ constructor
-    protected function __construct($prefix, $options = array())
-    {
-        $class_vars = get_class_vars('\Depage\Cache\Cache');
-        $options = array_merge($class_vars['defaults'], $options);
-
-        $this->prefix = $prefix;
-        $this->cachepath = "{$options['cachepath']}/{$this->prefix}/";
-        $this->baseurl = "{$options['baseurl']}cache/{$this->prefix}/";
-    }
-    // }}}
     // {{{ init()
     /**
      * @brief empty init function (called on wakeup)
