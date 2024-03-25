@@ -122,7 +122,7 @@ abstract class PdoEntity extends Entity
      * @param mixed $s, $e
      * @return void
      **/
-    static protected function escapeLike($s, $e)
+    static public function escapeLike($s, $e)
     {
         return str_replace([$e, '_', '%'], ["{$e}{$e}", "{$e}_", "{$e}%"], $s);
     }

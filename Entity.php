@@ -277,7 +277,7 @@ abstract class Entity implements \JsonSerializable
      * @param mixed
      * @return void
      **/
-    public function jsonSerialize()
+    public function jsonSerialize():mixed
     {
         return $this->data;
     }
