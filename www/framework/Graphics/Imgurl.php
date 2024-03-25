@@ -10,13 +10,16 @@ namespace Depage\Graphics;
 
 class Imgurl
 {
-    protected $options = array();
-    protected $actions = array();
+    protected $options = [];
+    protected $actions = [];
+    protected $srcImg = '';
+    protected $outImg = '';
     protected $notFound = false;
     public $id = "";
     public $rendered = false;
     protected $invalidAction = false;
     protected $cachePath = '';
+
     /*
      * action aliases
      *
@@ -123,7 +126,7 @@ class Imgurl
         }
 
         $this->id = rawurldecode($matches[0]);
-        $this->srcImg = $relativePath . rawurldecode($matches[1]);
+        $this->srcImg = $relativePath . rawurldecode($matches[2]);
         $this->outImg = $this->cachePath . rawurldecode($matches[0]);
         $this->actions = $this->analyzeActions($matches[3]);
     }
