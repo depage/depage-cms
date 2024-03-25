@@ -61,20 +61,22 @@ push: pushlive
 pushlive: all
 	rsync \
 	    -k -r -v -c \
+		-e "ssh -p 22" \
 	    --delete \
 	    --exclude '.DS_Store' \
 	    --exclude '.git' \
 	    --exclude 'cache/' \
-	    www/framework www/conf www/index.php jonas@depage.net:/var/www/depagecms/net.depage.edit/
+	    www/framework www/conf www/index.php depagecms@aaf.servers.depage.net:/home/depagecms/www/net.depage.edit/
 
 pushdev: all
 	rsync \
 	    -k -r -v -c \
+		-e "ssh -p 22" \
 	    --delete \
 	    --exclude '.DS_Store' \
 	    --exclude '.git' \
 	    --exclude 'cache/' \
-	    www/framework www/conf www/index.php jonas@depage.net:/var/www/depagecms/net.depage.editbeta/
+	    www/framework www/conf www/index.php depagecms@aaf.servers.depage.net:/home/depagecms/www/net.depage.editbeta/
 
 pushminime: all
 	rsync \
