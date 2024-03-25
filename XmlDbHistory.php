@@ -15,6 +15,7 @@ class XmlDbHistory implements XmlGetter
 {
     // {{{ variables
     protected $pdo;
+    protected $xmlDb;
     protected $db_ns;
     protected $table_history;
 
