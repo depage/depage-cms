@@ -22,6 +22,14 @@ class Pdo
     private $password;
     private $driver_options;
     private $transactionDepth = 0;
+    private $maxConnectionRetries = 10;
+    private $retryDelay = 0.5;
+    private $retries = 0;
+    private $variables = [];
+    private $retryCodes = [
+        "HY000",
+        "2002",
+    ];
     // }}}
 
     // {{{ constructor
@@ -67,14 +75,31 @@ class Pdo
      */
     private function lateInitialize()
     {
-        $this->pdo = new \PDO($this->dsn, $this->username, $this->password, $this->driver_options);
+        try {
+            $this->pdo = new \PDO($this->dsn, $this->username, $this->password, $this->driver_options);
+        } catch (\PDOException $e) {
+            if (in_array($e->getCode(), $this->retryCodes) && $this->retries < $this->maxConnectionRetries) {
+                $this->retries++;
+                usleep($this->retryDelay * 1000000);
+                $this->pdo = null;
+
+                return $this->lateInitialize();
+            }
+
+            throw new Exceptions\PdoException($e->getMessage(), (int) $e->getCode(), $e);
+        }
 
         // set error mode to exception by default
-        $this->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         // disable emulated prepares
-        // @todo check why this does not work with some queries
-        $this->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+        $this->pdo->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+
+        $this->retries = 0;
+
+        foreach ($this->variables as $name => $value) {
+            $this->pdo->$name = $value;
+        }
     }
     // }}}
 
@@ -131,10 +156,11 @@ class Pdo
      */
     public function __set($name, $value)
     {
-        if (is_null($this->pdo)) {
-            $this->lateInitialize();
+        $this->variables[$name] = $value;
+
+        if (!is_null($this->pdo)) {
+            $this->pdo->$name = $value;
         }
-        $this->$name = $value;
     }
     // }}}
     // {{{ __get
@@ -159,13 +185,21 @@ class Pdo
         }
 
         try {
-            return call_user_func_array(array($this->pdo, $name), $arguments);
+            return call_user_func_array([$this->pdo, $name], $arguments);
         } catch (\PDOException $e) {
+            if (in_array($e->getCode(), $this->retryCodes) && $this->retries < $this->maxConnectionRetries) {
+                $this->retries++;
+                usleep($this->retryDelay * 1000000);
+                $this->pdo = null;
+
+                return call_user_func_array([$this, $name], $arguments);
+            }
+
             $message = "";
             if (in_array($name, ["prepare", "exec", "query"])) {
                 $message = "\non the following query: \n" . $arguments[0];
             }
-            throw new \Depage\Db\Exceptions\PdoException($e->getMessage() . $message, (int) $e->getCode(), $e);
+            throw new Exceptions\PdoException($e->getMessage() . $message, (int) $e->getCode(), $e);
         }
     }
     // }}}
