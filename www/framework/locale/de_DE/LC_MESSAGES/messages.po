@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-25 16:23+0100\n"
+"POT-Creation-Date: 2024-03-27 10:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,17 +17,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: WebSocket/Notifications/Application.php:110
+#: WebSocket/Notifications/Application.php:111
 #, php-format
 msgid "starting '%s'"
 msgstr "starte '%s'"
 
-#: WebSocket/Notifications/Application.php:112
+#: WebSocket/Notifications/Application.php:113
 #, php-format
 msgid "'%s' will finish in %s"
 msgstr "'%s' wird in %s abgeschlossen sein"
 
-#: WebSocket/Notifications/Application.php:116
+#: WebSocket/Notifications/Application.php:117
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
