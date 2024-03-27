@@ -322,6 +322,22 @@ abstract class Auth
     }
     // }}}
 
+    // {{{ getSessionName()
+    public static function getSessionName($realm, $domain): string
+    {
+        $url = parse_url($domain);
+
+        $cookiePrefix = $realm . "-" . $url['host'];
+        $cookiePrefix = preg_replace("/[^-_a-zA-Z0-9]/", "", $cookiePrefix);
+        $cookiePrefix = trim($cookiePrefix, "-");
+        if (!empty($cookiePrefix)) {
+            $sessionName = "$cookiePrefix-sid";
+        }
+
+        return $sessionName;
+    }
+    // }}}
+
     // {{{ logout()
     /**
      * logs user out

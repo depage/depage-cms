@@ -50,15 +50,10 @@ class HttpCookie extends Auth
         parent::__construct($pdo, $realm, $domain, $digestCompat);
 
         // increase lifetime of cookies in order to allow detection of timedout users
-        $url = parse_url($this->domain);
+        $url = parse_url($domain);
         $this->cookiePath = !empty($url['path']) ? $url['path'] : '';
+        $this->cookieName = \Depage\Auth\Auth::getSessionName($this->realm, $this->domain);
 
-        $cookiePrefix = $this->realm . "-" . $url['host'];
-        $cookiePrefix = preg_replace("/[^-_a-zA-Z0-9]/", "", $cookiePrefix);
-        $cookiePrefix = trim($cookiePrefix, "-");
-        if (!empty($cookiePrefix)) {
-            $this->cookieName = "$cookiePrefix-sid";
-        }
         if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != "off") {
             $this->cookieSecure = true;
         }
