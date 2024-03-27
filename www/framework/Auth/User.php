@@ -1,6 +1,6 @@
 <?php
 /**
- * @file    auth_user.php
+ * @file    User.php
  *
  *
  * copyright (c) 2002-2010 Frank Hellenkamp [jonas@depage.net]

@@ -351,7 +351,7 @@ abstract class Auth
             $sid = $this->sid;
 
             //remove session
-            $this->destroy_session();
+            $this->destroySession();
         }
 
         // get user object for info
