@@ -51,6 +51,7 @@ class Application implements \Wrench\Application\DataHandlerInterface,
             $this->clients[$id] = $client;
             $this->projects[$id] = [];
 
+
             $sid = $this->getClientSid($client);
             $user = \Depage\Auth\User::loadBySid($this->pdo, $sid);
 
@@ -175,8 +176,10 @@ class Application implements \Wrench\Application\DataHandlerInterface,
 
         preg_match_all("/([^=;]*)=([^=;]*)/", $headers['cookie'], $m, \PREG_SET_ORDER);
 
+        $sessionName = \Depage\Auth\Auth::getSessionName($this->options->auth->realm, \DEPAGE_BASE);
+
         foreach ($m as $c) {
-            if (trim($c[1]) == "depagecms-session-id") {
+            if (trim($c[1]) == $sessionName) {
                 return trim($c[2]);
             }
         }
