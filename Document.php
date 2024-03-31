@@ -1325,10 +1325,8 @@ class Document
     // {{{ getFreeNodeIds
     /**
      * gets unused db-node-ids for saving nodes
-     *
-     * @param $needed (int) minimum number of ids, that are requested
      */
-    protected function getFreeNodeIds($needed = 1, $preference = [])
+    protected function getFreeNodeIds($preference = [])
     {
         $lastMax = 0;
 
@@ -1338,12 +1336,12 @@ class Document
             $query->execute($preference);
             $results = $query->fetchAll(\PDO::FETCH_COLUMN);
 
-            $free = array_flip(array_diff($preference, $results));
+            $free = array_keys(array_flip(array_diff($preference, $results)));
         } else {
             $free = [];
         }
 
-        $this->free_element_ids = array_keys($free);
+        $this->free_element_ids = $free;
     }
     // }}}
     // {{{ addChildnodesByQuery
@@ -1526,8 +1524,6 @@ class Document
     // {{{ saveNodeIn
     protected function saveNodeIn($node, $target_id, $target_pos, $inc_children)
     {
-        $this->removeIdAttr($node);
-
         $parent_id = $this->getParentIdById($target_id);
 
         // delete child nodes, if target is document
@@ -1572,7 +1568,7 @@ class Document
             }
         }
 
-        $this->getFreeNodeIds(count($node_array), $ids);
+        $this->getFreeNodeIds($ids);
 
         foreach ($node_array as $i => $node) {
             if (!is_null($node['id'])) {
