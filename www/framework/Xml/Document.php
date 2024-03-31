@@ -13,7 +13,7 @@ namespace Depage\Xml;
  * Serializable subclass of DOMDocument with helper methods especially
  * for html-content, and for removing up unwanted tags from html.
  */
-class Document extends \DOMDocument implements \Serializable
+class Document extends \DOMDocument
 {
     public $contentType = "text/xml";
     public $charset = "UTF-8";
@@ -35,28 +35,6 @@ class Document extends \DOMDocument implements \Serializable
             $encoding = "UTF-8";
         }
         parent::__construct($version, $encoding);
-    }
-    // }}}
-    // {{{ serialize()
-    /**
-     * @brief   serializes htmldom into string
-     *
-     * @return  (string) xml-content saved by saveXML()
-     **/
-    public function serialize(){
-        return $this->saveXML();
-    }
-    // }}}
-    // {{{ unserialize()
-    /**
-     * @brief   unserializes htmldom-objects
-     *
-     * @param   $serialized (string)
-     *
-     * @return  (void)
-     **/
-    public function unserialize($serialized) {
-        $this->loadXML($serialized);
     }
     // }}}
 
@@ -150,6 +128,20 @@ class Document extends \DOMDocument implements \Serializable
      **/
     public function __toString() {
         return $this->saveXML();
+    }
+    // }}}
+    // {{{ __serialize()
+    public function __serialize():array
+    {
+        return [
+            'xml' => $this->saveXML(),
+        ];
+    }
+    // }}}
+    // {{{ __unserialize()
+    public function __unserialize(array $data):void
+    {
+        $this->loadXML($data['xml']);
     }
     // }}}
 }
