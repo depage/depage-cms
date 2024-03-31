@@ -335,10 +335,11 @@ class XmlDb implements XmlGetter
                 // fetch by name and position: "... ns:name[n] ..."
                 extract($positionArray); // $operator, $position
 
+                $op = $this->getConditionOperator($ns, $name);
                 $tableSql[] = "(
                     SELECT *, @tpos := IF(@parent = sub$level.id_parent, @tpos + 1, 1) AS tpos, @parent := sub$level.id_parent
                     FROM {$this->table_xml} AS sub$level
-                    WHERE sub$level.name LIKE ?
+                    WHERE sub$level.name $op ?
                     ORDER BY sub$level.id_parent, sub$level.pos
                 ) l$level";
 
@@ -347,7 +348,8 @@ class XmlDb implements XmlGetter
                 $condParams[] = $position;
             } else {
                 $tableSql[] = "{$this->table_xml} AS l$level";
-                $condSql[] = "l$level.name LIKE ?";
+                $op = $this->getConditionOperator($ns, $name);
+                $condSql[] = "l$level.name $op ?";
                 $condParams[] = $this->translateName($ns, $name);
 
                 if ($condition != '') {
@@ -492,6 +494,16 @@ class XmlDb implements XmlGetter
         $colon = (strlen($ns) && strlen($name)) ? ':' : '';
 
         return str_replace('*', '%', "$ns$colon$name");
+    }
+    // }}}
+    // {{{ getConditionOperator
+    protected function getConditionOperator($ns, $name)
+    {
+        if (strpos("*", $ns) !== false || strpos("*", $name) !== false) {
+            return 'LIKE';
+        } else {
+            return '=';
+        }
     }
     // }}}
     // {{{ getConditionAttributes
