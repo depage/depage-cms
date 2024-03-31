@@ -96,10 +96,10 @@ class XmlDbTestCase extends \PHPUnit\Framework\TestCase
         try {
             $this->pdo->query('SELECT 1 FROM ' . $tableName);
             $exists = true;
-        } catch (\PDOException $expected) {
+        } catch (\PDOException $e) {
             // only catch "table doesn't exist" exception
-            if ($expected->getCode() != '42S02') {
-                throw $expected;
+            if (!preg_match("/SQLSTATE\\[42S02\\]/", $e->getMessage())) {
+                throw $e;
             }
         }
 
@@ -210,6 +210,22 @@ class XmlDbTestCase extends \PHPUnit\Framework\TestCase
             [
                 'db:lastchange',
                 'db:lastchangeUid',
+            ],
+            $message
+        );
+    }
+    // }}}
+    // {{{ assertXmlStringEqualsXmlStringIgnoreAllDbAttributes
+    protected function assertXmlStringEqualsXmlStringIgnoreAllDbAttributes($expected, $actual, $message = '')
+    {
+        return $this->assertXmlStringEqualsXmlStringIgnoreAttributes(
+            $expected,
+            $actual,
+            [
+                'db:lastchange',
+                'db:lastchangeUid',
+                'db:docid',
+                'db:id',
             ],
             $message
         );

@@ -1,26 +1,24 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<phpunit bootstrap="Bootstrap.php">
-    <php>
-        <var name="DB_DSN" value="mysql:host=localhost;dbname=test_db" />
-        <var name="DB_USER" value="test_db_user" />
-        <var name="DB_PASSWD" value="test_db_password" />
-        <var name="DB_DBNAME" value="test_db" />
-    </php>
-
-    <filter>
-        <whitelist>
-            <directory>../</directory>
-            <exclude>
-                <directory>../Tests</directory>
-                <directory>../vendor</directory>
-            </exclude>
-        </whitelist>
-    </filter>
-
-    <logging>
-        <log
-            type="coverage-html"
-            target="Report"
-        />
-    </logging>
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="Bootstrap.php" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.0/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <coverage>
+    <report>
+      <html outputDirectory="Report"/>
+    </report>
+  </coverage>
+  <php>
+    <var name="DB_DSN" value="mysql:host=localhost;dbname=test_db"/>
+    <var name="DB_USER" value="test_db_user"/>
+    <var name="DB_PASSWD" value="test_db_password"/>
+    <var name="DB_DBNAME" value="test_db"/>
+  </php>
+  <logging/>
+  <source>
+    <include>
+      <directory>../</directory>
+    </include>
+    <exclude>
+      <directory>../Tests</directory>
+      <directory>../vendor</directory>
+    </exclude>
+  </source>
 </phpunit>

@@ -9,7 +9,12 @@ class DoctypeHandlerBaseTest extends XmlDbTestCase
     // {{{ variables
     protected $xmlDb;
     protected $doc;
+    protected $cache;
+    protected $dth;
+    protected $validParents;
+    protected $availableNodes;
     // }}}
+
     // {{{ setUp
     protected function setUp():void
     {
