@@ -4,6 +4,12 @@ namespace Depage\XmlDb\Tests;
 
 class DoctypeHandlerTest extends DoctypeHandlerBaseTest
 {
+    // {{{ variables
+    protected $dth;
+    protected $validParents;
+    protected $availableNodes;
+    // }}}
+
     // {{{ setUpHandler
     protected function setUpHandler()
     {

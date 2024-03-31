@@ -8,6 +8,7 @@ class DocumentHistoryTest extends XmlDbTestCase
     protected $xmlDb;
     protected $doc;
     protected $history;
+    protected $cache;
     protected $ver1;
     protected $ver2;
     protected $ver3;
@@ -134,7 +135,7 @@ class DocumentHistoryTest extends XmlDbTestCase
         $this->assertEquals($this->ver2, $this->history->getLatestVersion());
 
         $newXml = '<root/>';
-        $expected = '<root xmlns:db="http://cms.depagecms.net/ns/database" db:docid="3" db:id="4"/>';
+        $expected = '<root xmlns:db="http://cms.depagecms.net/ns/database" db:docid="3" db:id="37"/>';
         $this->addTestDoc($newXml);
 
         $this->setForeignKeyChecks(false);
@@ -143,7 +144,7 @@ class DocumentHistoryTest extends XmlDbTestCase
 
         $latestVersion = $this->history->getLatestVersion();
         $newTimestamp = $latestVersion->lastsaved->getTimestamp();
-        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->history->getXml($newTimestamp));
+        $this->assertXmlStringEqualsXmlStringIgnoreAllDbAttributes($expected, $this->history->getXml($newTimestamp));
     }
     // }}}
 

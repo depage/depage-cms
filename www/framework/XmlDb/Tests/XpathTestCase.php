@@ -87,70 +87,70 @@ abstract class XpathTestCase extends XmlDbTestCase
     // {{{ testNameChildAndPositionShort
     public function testNameChildAndPositionShort()
     {
-        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/pg:page[2]');
+        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/pg:page[2]', true, true);
     }
     // }}}
     // {{{ testNameChildAndPositionShortNoResult
     public function testNameChildAndPositionShortNoResult()
     {
-        $this->assertCorrectXpathIds([], '/dpg:pages/pg:page[2]');
+        $this->assertCorrectXpathIds([], '/dpg:pages/pg:page[2]', true, true);
     }
     // }}}
     // {{{ testNameChildAndPositionShortMultiple
     public function testNameChildAndPositionShortMultiple()
     {
-        $this->assertCorrectXpathIds([28], '/dpg:pages/pg:page[1]/pg:folder[2]');
+        $this->assertCorrectXpathIds([28], '/dpg:pages/pg:page[1]/pg:folder[2]', true, true);
     }
     // }}}
     // {{{ testNameChildAndPositionParsing
     public function testNameChildAndPositionParsing()
     {
-        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[position() = 2]');
-        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[position()= 2]');
-        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[position() =2]');
-        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[position()=2]');
-        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[position()   =   2]');
-        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[  position()   =   2  ]');
+        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[position() = 2]', true, true);
+        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[position()= 2]', true, true);
+        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[position() =2]', true, true);
+        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[position()=2]', true, true);
+        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[position()   =   2]', true, true);
+        $this->assertCorrectXpathIds([19], '/dpg:pages/pg:page/pg:folder/*[  position()   =   2  ]', true, true);
     }
     // }}}
     // {{{ testNameChildAndPosition
     public function testNameChildAndPosition()
     {
-        $this->assertCorrectXpathIds([], '/dpg:pages/pg:page/pg:folder/*[position() = 13]');
-        $this->assertCorrectXpathIds([23], '/dpg:pages/pg:page/pg:folder/*[position() = 4]');
+        $this->assertCorrectXpathIds([], '/dpg:pages/pg:page/pg:folder/*[position() = 13]', true, true);
+        $this->assertCorrectXpathIds([23], '/dpg:pages/pg:page/pg:folder/*[position() = 4]', true, true);
     }
     // }}}
     // {{{ testNameChildAndPositionNot
     public function testNameChildAndPositionNot()
     {
-        $this->assertCorrectXpathIds([18, 19, 22, 23, 24, 25, 26], '/dpg:pages/pg:page/pg:folder/*[position() != 13]');
-        $this->assertCorrectXpathIds([18, 19, 23, 24, 25, 26], '/dpg:pages/pg:page/pg:folder/*[position() != 3]');
+        $this->assertCorrectXpathIds([18, 19, 22, 23, 24, 25, 26], '/dpg:pages/pg:page/pg:folder/*[position() != 13]', true, true);
+        $this->assertCorrectXpathIds([18, 19, 23, 24, 25, 26], '/dpg:pages/pg:page/pg:folder/*[position() != 3]', true, true);
     }
     // }}}
     // {{{ testNameChildAndPositionLessThan
     public function testNameChildAndPositionLessThan()
     {
-        $this->assertCorrectXpathIds([], '/dpg:pages/pg:page/pg:folder/*[position() < 1]');
-        $this->assertCorrectXpathIds([18, 19, 22], '/dpg:pages/pg:page/pg:folder/*[position() < 4]');
+        $this->assertCorrectXpathIds([], '/dpg:pages/pg:page/pg:folder/*[position() < 1]', true, true);
+        $this->assertCorrectXpathIds([18, 19, 22], '/dpg:pages/pg:page/pg:folder/*[position() < 4]', true, true);
     }
     // }}}
     // {{{ testNameChildAndPositionGreaterThan
     public function testNameChildAndPositionGreaterThan()
     {
-        $this->assertCorrectXpathIds([], '/dpg:pages/pg:page/pg:folder/*[position() > 7]');
-        $this->assertCorrectXpathIds([24, 25, 26], '/dpg:pages/pg:page/pg:folder/*[position() > 4]');
+        $this->assertCorrectXpathIds([], '/dpg:pages/pg:page/pg:folder/*[position() > 7]', true, true);
+        $this->assertCorrectXpathIds([24, 25, 26], '/dpg:pages/pg:page/pg:folder/*[position() > 4]', true, true);
     }
     // }}}
     // {{{ testNameChildAndPositionLessThanOrEqualTo
     public function testNameChildAndPositionLessThanOrEqualTo()
     {
-        $this->assertCorrectXpathIds([18, 19, 22, 23], '/dpg:pages/pg:page/pg:folder/*[position() <= 4]', false);
+        $this->assertCorrectXpathIds([18, 19, 22, 23], '/dpg:pages/pg:page/pg:folder/*[position() <= 4]', false, true);
     }
     // }}}
     // {{{ testNameChildAndPositionGreaterThanOrEqualTo
     public function testNameChildAndPositionGreaterThanOrEqualTo()
     {
-        $this->assertCorrectXpathIds([23, 24, 25, 26], '/dpg:pages/pg:page/pg:folder/*[position() >= 4]', false);
+        $this->assertCorrectXpathIds([23, 24, 25, 26], '/dpg:pages/pg:page/pg:folder/*[position() >= 4]', false, true);
     }
     // }}}
 
@@ -240,13 +240,13 @@ abstract class XpathTestCase extends XmlDbTestCase
     // {{{ testAllNameAndPosition
     public function testAllNameAndPosition()
     {
-        $this->assertCorrectXpathIds([29], '//pg:folder[3]');
+        $this->assertCorrectXpathIds([29], '//pg:folder[3]', true, true);
     }
     // }}}
     // {{{ testAllNameAndPositionMultiple
     public function testAllNameAndPositionMultiple()
     {
-        $this->assertCorrectXpathIds([17, 20, 25], '//pg:folder[1]');
+        $this->assertCorrectXpathIds([17, 20, 25], '//pg:folder[1]', true, true);
     }
     // }}}
 

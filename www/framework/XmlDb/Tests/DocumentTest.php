@@ -7,6 +7,9 @@ class DocumentTest extends XmlDbTestCase
     // {{{ variables
     protected $xmlDb;
     protected $doc;
+    protected $cache;
+    protected $dbPrefix;
+    protected $xmlTree;
     // }}}
     // {{{ setUp
     protected function setUp():void
@@ -424,7 +427,7 @@ class DocumentTest extends XmlDbTestCase
             '</root>' .
         '</dpg:pages>';
 
-        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml());
+        $this->assertXmlStringEqualsXmlStringIgnoreAllDbAttributes($expected, $this->doc->getXml());
     }
     // }}}
 
@@ -671,13 +674,13 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testSaveNodeInRoot
     public function testSaveNodeInRoot()
     {
-        $doc = $this->generateDomDocument('<node/>');
+        $doc = $this->generateDomDocument('<node ' . $this->namespaces . ' db:id="4" />');
 
         $this->assertEquals(4, $this->doc->saveNodeIn($doc, null, -1, true));
 
         $expected = '<node ' . $this->namespaces . ' />';
 
-        $this->assertXmlStringEqualsXmlStringIgnoreLastchange($expected, $this->doc->getXml(false));
+        $this->assertXmlStringEqualsXmlStringIgnoreAllDbAttributes($expected, $this->doc->getXml());
 
         $expectedNode = [
             'id' => '4',
@@ -813,7 +816,7 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testSaveNodeInRootChild
     public function testSaveNodeInRootChild()
     {
-        $doc = $this->generateDomDocument('<node><subnode/></node>');
+        $doc = $this->generateDomDocument('<node ' . $this->namespaces . ' db:id="4"><subnode db:id="5"/></node>');
 
         $this->assertEquals(4, $this->doc->saveNodeIn($doc, null, -1, true));
 
@@ -1419,27 +1422,9 @@ class DocumentTest extends XmlDbTestCase
     // {{{ testGetFreeNodeIdsDefault
     public function testGetFreeNodeIdsDefault()
     {
-        $this->doc->getFreeNodeIds();
+        $this->doc->getFreeNodeIds([]);
 
-        $this->assertSame([37], $this->doc->free_element_ids);
-    }
-    // }}}
-    // {{{ testGetFreeNodeIds
-    public function testGetFreeNodeIds()
-    {
-        $this->doc->getFreeNodeIds(10);
-
-        $this->assertSame([37, 38, 39, 40, 41, 42, 43, 44, 45, 46], $this->doc->free_element_ids);
-    }
-    // }}}
-    // {{{ testGetFreeNodeIdsAfterDelete
-    public function testGetFreeNodeIdsAfterDelete()
-    {
-        $this->doc->deleteNode(4);
-
-        $this->doc->getFreeNodeIds(10);
-
-        $this->assertEquals([4, 5, 6, 7, 8, 30, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46], $this->doc->free_element_ids);
+        $this->assertSame([], $this->doc->free_element_ids);
     }
     // }}}
     // {{{ testGetFreeNodeIdsAfterDeletePreference
@@ -1447,27 +1432,17 @@ class DocumentTest extends XmlDbTestCase
     {
         $this->doc->deleteNode(4);
 
-        $this->doc->getFreeNodeIds(3, [4, 5, 6]);
+        $this->doc->getFreeNodeIds([4, 5, 6]);
 
         $this->assertEquals([4, 5, 6], $this->doc->free_element_ids);
-    }
-    // }}}
-    // {{{ testGetFreeNodeIdsAfterDeletePreferenceMore
-    public function testGetFreeNodeIdsAfterDeletePreferenceMore()
-    {
-        $this->doc->deleteNode(4);
-
-        $this->doc->getFreeNodeIds(8, [4, 5, 6, 7, 8, 9, 10, 11]);
-
-        $this->assertEquals([4, 5, 6, 7, 8, 30, 37, 38, 39, 40, 41, 42, 43, 44], $this->doc->free_element_ids);
     }
     // }}}
     // {{{ testGetFreeNodeIdsPreference
     public function testGetFreeNodeIdsPreference()
     {
-        $this->doc->getFreeNodeIds(3, [4, 5, 6]);
+        $this->doc->getFreeNodeIds([4, 5, 6]);
 
-        $this->assertEquals([37, 38, 39], $this->doc->free_element_ids);
+        $this->assertEquals([], $this->doc->free_element_ids);
     }
     // }}}
 }

@@ -7,6 +7,9 @@ class DocumentTransactionTest extends XmlDbTestCase
     // {{{ variables
     protected $xmlDb;
     protected $doc;
+    protected $cache;
+    protected $dth;
+    protected $namespaces;
     // }}}
     // {{{ setUp
     protected function setUp():void

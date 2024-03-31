@@ -12,7 +12,7 @@
         "preferred-install": "dist"
     },
     "require": {
-        "php": " >= 7.3",
+        "php": " >= 8.0",
         "depage/cache": "*@dev",
         "depage/db": "*@dev",
         "depage/xml": "*@dev"
