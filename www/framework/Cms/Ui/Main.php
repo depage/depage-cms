@@ -86,7 +86,7 @@ class Main extends Base {
         if ($this->auth->enforce()) {
             // logged in
             $redirectTo = DEPAGE_BASE;
-            if (!empty($_GET['redirectTo']) && substr($_GET['redirectTo'], 0, strlen(DEPAGE_BASE)) == DEPAGE_BASE) {
+            if (!empty($_GET['redirectTo'])) {
                 $redirectTo = $_GET['redirectTo'];
             }
             \Depage\Depage\Runner::redirect($redirectTo);
