@@ -343,7 +343,11 @@ class DocProperties extends Base
         if (!$pageInfo) {
             return;
         }
-        $lastchangeUser = \Depage\Auth\User::loadById($this->pdo, $pageInfo->lastchangeUid);
+        try {
+            $lastchangeUser = \Depage\Auth\User::loadById($this->pdo, $pageInfo->lastchangeUid);
+        } catch (\Depage\Auth\Exceptions\User $e) {
+            $lastchangeUser = null;
+        }
         $dateFormatter = new \Depage\Formatters\DateNatural();
 
         list($lang) = array_keys($this->project->getLanguages());
