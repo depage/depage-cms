@@ -1,5 +1,5 @@
-$toolbarHeight: 30px;
-$infoHeight: 15px;
+$toolbarHeight: 36px;
+$infoHeight: 18px;
 $treeWidth: 255px;
 $editWidth: 3 * $treeWidth;
 
@@ -57,10 +57,10 @@ $fSizeMenu: 12px;
 $transitionTime: 150ms;
 $transitionDistance: 10px;
 
-$treeLineHeight: 28px;
+$treeLineHeight: 32px;
 $menuLineHeight: 30px;
 $searchHeight: 2 * $treeLineHeight;
-$iconSize: 24px;
+$iconSize: $toolbarHeight - 6px;
 $helpIconSize: 32px;
 $thumbSize: round($treeWidth * 0.75 - 1.5 * 16px + 1px);
 $thumbSizeSmall: round($treeWidth * 0.5 - 1.5 * 16px - 0px);

@@ -1,4 +1,4 @@
-/* {{{ header.info */
+// {{{ header.info
 header.info {
     height: $infoHeight;
     flex: 0 0 auto;
@@ -13,7 +13,7 @@ header.info {
         padding-left: 12px;
         font-weight: normal;
         font-size: $fSizeXS;
-        line-height: $infoHeight - 2px;
+        line-height: $infoHeight - 1px;
         color: #000000;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -32,6 +32,6 @@ header.info {
     top: 0;
     width: 100%;
 }
-/* }}} */
+// }}}
 
 // vim:set ft=scss sw=4 sts=4 fdm=marker :

@@ -121,6 +121,7 @@
             }
             &.icon-only {
                 width: calc(32px * var(--touch-scale));
+                text-overflow: none;
 
                 &:before {
                     margin-right: 20px;
@@ -151,28 +152,28 @@
                 }
             }
             &.icon-depagecms:before {
-                @include icon("depagecms", 24px);
+                @include icon("depagecms", $iconSize);
             }
             &.icon-create:before {
-                @include icon("create", 24px);
+                @include icon("create", $iconSize);
             }
             &.icon-duplicate:before {
-                @include icon("duplicate", 24px);
+                @include icon("duplicate", $iconSize);
             }
             &.icon-delete:before {
-                @include icon("delete", 24px);
+                @include icon("delete", $iconSize);
             }
             &.icon-reload:before {
-                @include icon("reload", 24px);
+                @include icon("reload", $iconSize);
             }
             &.icon-user:before {
-                @include icon("user", 24px);
+                @include icon("user", $iconSize);
             }
             &.icon-projects:before {
-                @include icon("projects", 24px);
+                @include icon("projects", $iconSize);
             }
             &.icon-settings:before {
-                @include icon("settings", 22px);
+                @include icon("settings", $iconSize);
             }
             &.icon-help {
                 width: 34px;
@@ -182,12 +183,12 @@
                 }
             }
             &.icon-help:before {
-                @include icon("help", 24px);
+                @include icon("help", $iconSize);
                 margin-right: 20px;
             }
             &.icon-help.active:before,
             &.icon-help:hover:before {
-                @include icon("help-active", 24px);
+                @include icon("help-active", $iconSize);
             }
             &.menu-project {
                 img.thumb {
