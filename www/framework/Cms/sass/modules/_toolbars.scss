@@ -121,7 +121,7 @@
             }
             &.icon-only {
                 width: calc(32px * var(--touch-scale));
-                text-overflow: none;
+                text-overflow: clip;
 
                 &:before {
                     margin-right: 20px;
@@ -145,6 +145,7 @@
             &.icon-projects {
                 @media screen and (max-width: $breakTablet) {
                     width: calc(32px * var(--touch-scale));
+                    text-overflow: clip;
 
                     &:before {
                         margin-right: 20px;
@@ -200,6 +201,7 @@
                 }
                 @media screen and (max-width: $breakMobile) {
                     width: calc(#{$toolbarHeight} * var(--touch-scale));
+                    text-overflow: clip;
 
                     img.thumb {
                         margin-right: 20px;
@@ -208,7 +210,7 @@
             }
         }
         > li > a {
-            max-width: 10em;
+            max-width: 11em;
         }
     }
     li {

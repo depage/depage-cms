@@ -139,6 +139,12 @@ figure.thumb {
             margin-right: 6px;
             margin-bottom: 0;
             background: transparent;
+            -webkit-touch-callout: none; /* disable the IOS popup when long-press on a link */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently supported by Chrome and Opera */
 
             &:hover {
                 background: $backgroundBrightColor;
