@@ -167,8 +167,8 @@ abstract class Base
                 $content = $this->notfound($this->urlPath);
             }
             $content = $this->_package($content);
-        } catch (\Exception $e) {
-            // show error page for exceptions
+        } catch (\Throwable $e) {
+            // show error page for exceptions and errors
             $error = (object) array(
                 'exception' => $e,
                 'file' => $e->getFile(),
