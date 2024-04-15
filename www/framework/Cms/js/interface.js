@@ -830,6 +830,7 @@ var depageCMS = (function() {
             var $toolbar = $("<span class=\"toolbar-filelist\"></span>").appendTo("#toolbarmain .tree-actions");
             var $deleteButton = localJS.addToolbarButton($toolbar, locale.delete, "icon-delete", localJS.deleteSelectedFiles);
             var last = false;
+            var cto = null;
 
             jstreeLibrary = $libraryTreeContainer.depageTree()
                 .on("activate_node.jstree", function(e, data) {
@@ -912,6 +913,24 @@ var depageCMS = (function() {
 
                     $fileContainer.trigger("selectionChange.depage");
                 })
+                .on('touchstart.figure', 'figure', function (e) {
+                    if(!e.originalEvent || !e.originalEvent.changedTouches || !e.originalEvent.changedTouches[0]) {
+                        return;
+                    }
+                    cto = setTimeout(function () {
+                        $(e.currentTarget).trigger('contextmenu', true);
+                    }, 750);
+                })
+				.on('touchend.figure', function (e) {
+                    if (cto) {
+                        clearTimeout(cto);
+                    }
+                })
+				.on('touchmove.figure', function (e) {
+                    if (cto && e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches[0] && (Math.abs(ex - e.originalEvent.changedTouches[0].clientX) > 10 || Math.abs(ey - e.originalEvent.changedTouches[0].clientY) > 10)) {
+							clearTimeout(cto);
+						}
+					})
                 .on("contextmenu", "figure", function(e) {
                     var $thumb = $(this);
                     if (!$thumb.hasClass("selected")) {
