@@ -3,7 +3,7 @@ Versionshistorie     {#changelog}
 
 [TOC]
 
-Version 2.4   {#v2-4}
+Version 2.5   {#v2-5}
 ===========
 
 **User Interface Highlights**
@@ -20,6 +20,18 @@ Version 2.4   {#v2-4}
 - Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
 - Neues Interface für kleine Screens
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.5.1 / 15.04.2024      {#v2-5-1}
+-------------------
+
+**Backend**
+- Fehler im Redirect nach Login behoben
+- Aktualisierung der xmldb
+
+**Frontend**
+- kleine Verbesserungen des Interface
+- Fehler im Kontextmenü auf mobilen Geräten behoben
 
 
 v2.5.0 / 25.03.2024      {#v2-5-0}

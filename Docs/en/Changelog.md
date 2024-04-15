@@ -3,7 +3,7 @@ Changelog     {#changelog}
 
 [TOC]
 
-Version 2.4   {#v2-4}
+Version 2.5   {#v2-5}
 ===========
 
 **User Interface Highlights**
@@ -20,6 +20,18 @@ Version 2.4   {#v2-4}
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New mobile interface
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.5.1 / 15.04.2024      {#v2-5-1}
+-------------------
+
+**Backend**
+- fixed bug with login redirect
+- updated xmldb
+
+**Frontend**
+- small interface enhancments
+- fixed context menu in file library on mobile devices
 
 
 v2.5.0 / 25.03.2024      {#v2-5-0}
@@ -40,6 +52,7 @@ v2.5.0 / 25.03.2024      {#v2-5-0}
 **Frontend**
 - enhanced text handling and autosaving
 - enhanced doc-properties for files
+
 
 v2.4.0 / 29.05.2023      {#v2-4-0}
 -------------------
