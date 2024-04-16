@@ -44,9 +44,9 @@
             <td class="url <?php self::t($class); ?>"><a href="<?php self::t("{$newsletterUrl}edit/"); ?>"><?php self::t($newsletter->getTitle()); ?></a></td>
             <td class="actions">
                 <div class="buttons">
-                    <a href="<?php self::t("{$newsletterUrl}edit/"); ?>" class="button"><?php self::t(_("Edit")); ?></a>
+                    <a href="<?php self::t("{$newsletterUrl}edit/"); ?>" class="button icon-edit"><?php self::t(_("Edit")); ?></a>
                     <?php if($this->user->canSendNewsletter()) { ?>
-                        <a href="<?php self::t("{$newsletterUrl}publish/"); ?>" class="button"><?php self::t(_("Publish")); ?></a>
+                        <a href="<?php self::t("{$newsletterUrl}publish/"); ?>" class="button icon-publish"><?php self::t(_("Publish")); ?></a>
                     <?php } ?>
                 </div>
             </td>

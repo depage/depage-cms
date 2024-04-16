@@ -544,6 +544,30 @@ class Tree extends Base {
         return new \Depage\Json\Json(array("status" => $status));
     }
     // }}}
+    // {{{ duplicateDocument
+    /**
+     * Remove Node
+     *
+     * @return \json
+     */
+    public function duplicateDocument()
+    {
+        $status = false;
+        $info = null;
+
+        $name = isset($_POST['docName']) ? filter_var($_POST['docName'], FILTER_SANITIZE_STRING) : null;
+        if ($this->docName == $name) {
+            $duplicate = $this->xmldb->duplicateDoc($this->docName);
+            $status = $duplicate !== false;
+            $info = $duplicate->getDocInfo();
+        }
+
+        return new \Depage\Json\Json([
+            "status" => $status,
+            "info" => $info,
+        ]);
+    }
+    // }}}
     // {{{ releaseDocument
     /**
      * releases Document

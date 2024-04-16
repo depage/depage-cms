@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-15 17:58+0200\n"
+"POT-Creation-Date: 2024-04-16 15:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2141,7 +2141,7 @@ msgstr ""
 msgid "Deleted %d pages."
 msgstr ""
 
-#: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:39 Cms/tpl/projectlist.tpl:22
+#: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:40 Cms/tpl/projectlist.tpl:22
 #: Cms/tpl/newsletterList.tpl:47 Cms/tpl/toolbar_main.tpl:43
 #: Cms/Forms/ReleasePages.php:86
 msgid "Edit"
@@ -2523,115 +2523,119 @@ msgstr ""
 msgid "Duplicate"
 msgstr ""
 
-#: Cms/js/locale.php:40
-msgid "Edit the current page in edit interface on the left ←."
+#: Cms/js/locale.php:39
+msgid "Duplicate this element now?"
 msgstr ""
 
 #: Cms/js/locale.php:41
-msgid "Edit the current page"
+msgid "Edit the current page in edit interface on the left ←."
 msgstr ""
 
 #: Cms/js/locale.php:42
-msgid "Height: "
+msgid "Edit the current page"
 msgstr ""
 
 #: Cms/js/locale.php:43
-msgid "Width: "
+msgid "Height: "
 msgstr ""
 
 #: Cms/js/locale.php:44
-msgid "Switch to edit-only layout"
+msgid "Width: "
 msgstr ""
 
 #: Cms/js/locale.php:45
-msgid "Switch to preview-only layout"
+msgid "Switch to edit-only layout"
 msgstr ""
 
 #: Cms/js/locale.php:46
-msgid "Switch to split layout"
+msgid "Switch to preview-only layout"
 msgstr ""
 
 #: Cms/js/locale.php:47
-msgid "Switch to page tree"
+msgid "Switch to split layout"
 msgstr ""
 
 #: Cms/js/locale.php:48
-msgid "Switch to document tree"
+msgid "Switch to page tree"
 msgstr ""
 
 #: Cms/js/locale.php:49
-msgid "Switch to document properties"
+msgid "Switch to document tree"
 msgstr ""
 
 #: Cms/js/locale.php:50
-msgid "Switch to document preview"
+msgid "Switch to document properties"
 msgstr ""
 
 #: Cms/js/locale.php:51
-msgid "Switch layout to: Edit-only, Split-view and Preview-only"
+msgid "Switch to document preview"
 msgstr ""
 
 #: Cms/js/locale.php:52
+msgid "Switch layout to: Edit-only, Split-view and Preview-only"
+msgstr ""
+
+#: Cms/js/locale.php:53
 msgid "News- or blog-post"
 msgstr ""
 
-#: Cms/js/locale.php:53 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:96
+#: Cms/js/locale.php:54 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:96
 msgid "No current tasks."
 msgstr ""
 
-#: Cms/js/locale.php:54
+#: Cms/js/locale.php:55
 msgid "Ok"
 msgstr ""
 
-#: Cms/js/locale.php:55
+#: Cms/js/locale.php:56
 msgid "Paste"
 msgstr ""
 
-#: Cms/js/locale.php:56
+#: Cms/js/locale.php:57
 msgid "Filter Projects"
 msgstr ""
 
-#: Cms/js/locale.php:57
+#: Cms/js/locale.php:58
 msgid "Reload"
 msgstr ""
 
-#: Cms/js/locale.php:58 Cms/js/locale.php:59
+#: Cms/js/locale.php:59 Cms/js/locale.php:60
 msgid "Reload page preview"
 msgstr ""
 
-#: Cms/js/locale.php:60
+#: Cms/js/locale.php:61
 msgid "Rename"
 msgstr ""
 
-#: Cms/js/locale.php:61
+#: Cms/js/locale.php:62
 msgid "Reset"
 msgstr ""
 
-#: Cms/js/locale.php:62
+#: Cms/js/locale.php:63
 msgid "Select all"
 msgstr ""
 
-#: Cms/js/locale.php:63 Cms/Forms/NewsletterPublish.php:29
+#: Cms/js/locale.php:64 Cms/Forms/NewsletterPublish.php:29
 msgid "Send Now"
 msgstr ""
 
-#: Cms/js/locale.php:64
+#: Cms/js/locale.php:65
 msgid "Are your sure you want to send this newsletter to"
 msgstr ""
 
-#: Cms/js/locale.php:65
+#: Cms/js/locale.php:66
 msgid "Mail Link to file"
 msgstr ""
 
-#: Cms/js/locale.php:66
+#: Cms/js/locale.php:67
 msgid "Link to file"
 msgstr ""
 
-#: Cms/js/locale.php:67
+#: Cms/js/locale.php:68
 msgid "Finished uploading/Cancel"
 msgstr ""
 
-#: Cms/js/locale.php:68
+#: Cms/js/locale.php:69
 msgid "Change zoom level of preview."
 msgstr ""
 

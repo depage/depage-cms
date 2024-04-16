@@ -478,18 +478,9 @@ var depageCMS = (function() {
                 var changesUrl;
 
                 if (project) {
-                    changesUrl = baseUrl + "project/" + project + "/details/100/?ajax=true";
+                    localJS.loadProjectDetails(baseUrl + "project/" + project + "/details/200/?ajax=true", $detail);
                 } else if (projectNewsletter) {
-                    changesUrl = baseUrl + "project/" + projectNewsletter + "/newsletters/?ajax=true";
-                }
-
-                if (changesUrl) {
-                    $.get(changesUrl)
-                        .done(function(data) {
-                            $detail.empty().html(data);
-
-                            localJS.setupAjaxContent();
-                        });
+                    localJS.loadProjectDetails(baseUrl + "project/" + projectNewsletter + "/newsletters/?ajax=true", $detail);
                 }
             });
 
@@ -532,7 +523,34 @@ var depageCMS = (function() {
                 var newsletterName = $row.data("newsletter");
                 var xmldb = new DepageXmldb(baseUrl, projectName, newsletterName);
 
-                var $deleteButton = $("<a class=\"button\">" + locale.delete + "</a>")
+                var $duplicateButton = $("<a class=\"button icon-duplicate\">" + locale.duplicate + "</a>")
+                    .appendTo($row.find(".buttons"))
+                    .depageShyDialogue({
+                        ok: {
+                            title: locale.duplicate,
+                            classes: 'default',
+                            click: function(e) {
+                                xmldb.duplicateDocument(function(e) {
+                                    if (e.status) {
+                                        window.location = baseUrl + "project/" + projectName + "/newsletter/" + e.info.name + "/edit/";
+                                    } else {
+                                        localJS.loadProjectDetails(baseUrl + "project/" + projectName + "/newsletters/?ajax=true", $row.parents("dd"));
+                                    }
+                                });
+
+                                return true;
+                            }
+                        },
+                        cancel: {
+                            title: locale.cancel
+                        }
+                    },{
+                        title: locale.duplicate,
+                        message : locale.duplicateQuestion,
+                        actionActiveTimeout: 1000,
+                        directionMarker: true
+                    });
+                var $deleteButton = $("<a class=\"button icon-delete\">" + locale.delete + "</a>")
                     .appendTo($row.find(".buttons"))
                     .depageShyDialogue({
                         ok: {
@@ -1352,6 +1370,19 @@ var depageCMS = (function() {
         },
         // }}}
 
+
+        // {{{ loadProjectDetails
+        loadProjectDetails: function(url, $detail) {
+            if (url) {
+                $.get(url)
+                    .done(function(data) {
+                        $detail.empty().html(data);
+
+                        localJS.setupAjaxContent();
+                    });
+            }
+        },
+        // }}}
         // {{{ loadPageTree
         loadPageTree: function() {
             if ($pageTreeContainer.length === 0) return false;

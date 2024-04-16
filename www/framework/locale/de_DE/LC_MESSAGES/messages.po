@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-15 17:58+0200\n"
+"POT-Creation-Date: 2024-04-16 15:43+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2159,7 +2159,7 @@ msgstr "Nicht freigegebene Seiten für Projekt '%s'"
 msgid "Deleted %d pages."
 msgstr "%d Seiten gelöscht."
 
-#: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:39 Cms/tpl/projectlist.tpl:22
+#: Cms/Ui/Newsletter.php:47 Cms/js/locale.php:40 Cms/tpl/projectlist.tpl:22
 #: Cms/tpl/newsletterList.tpl:47 Cms/tpl/toolbar_main.tpl:43
 #: Cms/Forms/ReleasePages.php:86
 msgid "Edit"
@@ -2550,118 +2550,122 @@ msgstr "Markierung für alle aufheben"
 msgid "Duplicate"
 msgstr "Duplizieren"
 
-#: Cms/js/locale.php:40
+#: Cms/js/locale.php:39
+msgid "Duplicate this element now?"
+msgstr "Dieses Element duplizieren?"
+
+#: Cms/js/locale.php:41
 msgid "Edit the current page in edit interface on the left ←."
 msgstr "Bearbeiten Sie die aktuelle Seite im Barbeitungspanel links ←."
 
-#: Cms/js/locale.php:41
+#: Cms/js/locale.php:42
 msgid "Edit the current page"
 msgstr "Aktuelle Seite bearbeiten"
 
-#: Cms/js/locale.php:42
+#: Cms/js/locale.php:43
 msgid "Height: "
 msgstr "Höhe: "
 
-#: Cms/js/locale.php:43
+#: Cms/js/locale.php:44
 msgid "Width: "
 msgstr "Breite: "
 
-#: Cms/js/locale.php:44
+#: Cms/js/locale.php:45
 msgid "Switch to edit-only layout"
 msgstr "Zum Nur-Editier-Layout wechseln"
 
-#: Cms/js/locale.php:45
+#: Cms/js/locale.php:46
 msgid "Switch to preview-only layout"
 msgstr "Zum Nur-Vorschau Layout wechseln"
 
-#: Cms/js/locale.php:46
+#: Cms/js/locale.php:47
 msgid "Switch to split layout"
 msgstr "Zum geteilten Layout wechseln"
 
-#: Cms/js/locale.php:47
+#: Cms/js/locale.php:48
 msgid "Switch to page tree"
 msgstr "Zum Seitenbaum wechseln"
 
-#: Cms/js/locale.php:48
+#: Cms/js/locale.php:49
 msgid "Switch to document tree"
 msgstr "Zum Dokumentenbaum wechseln"
 
-#: Cms/js/locale.php:49
+#: Cms/js/locale.php:50
 msgid "Switch to document properties"
 msgstr "Zu den Dokument Eigenschaften wechseln"
 
-#: Cms/js/locale.php:50
+#: Cms/js/locale.php:51
 msgid "Switch to document preview"
 msgstr "Zum Vorschau Layout wechseln"
 
-#: Cms/js/locale.php:51
+#: Cms/js/locale.php:52
 msgid "Switch layout to: Edit-only, Split-view and Preview-only"
 msgstr ""
 "Zwischen Layouts wechseln: Nur-Editieren, Geteilte Ansicht und Nur-Vorschau"
 
-#: Cms/js/locale.php:52
+#: Cms/js/locale.php:53
 msgid "News- or blog-post"
 msgstr "News- oder Blogeintrag"
 
-#: Cms/js/locale.php:53 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:96
+#: Cms/js/locale.php:54 Cms/tpl/taskProgress.tpl:1 Cms/tpl/toolbar_main.tpl:96
 msgid "No current tasks."
 msgstr "Keine aktuellen Tasks."
 
-#: Cms/js/locale.php:54
+#: Cms/js/locale.php:55
 msgid "Ok"
 msgstr ""
 
-#: Cms/js/locale.php:55
+#: Cms/js/locale.php:56
 msgid "Paste"
 msgstr "Einfügen"
 
-#: Cms/js/locale.php:56
+#: Cms/js/locale.php:57
 msgid "Filter Projects"
 msgstr "Projekte filtern"
 
-#: Cms/js/locale.php:57
+#: Cms/js/locale.php:58
 msgid "Reload"
 msgstr "Aktualisieren"
 
-#: Cms/js/locale.php:58 Cms/js/locale.php:59
+#: Cms/js/locale.php:59 Cms/js/locale.php:60
 msgid "Reload page preview"
 msgstr "Seitenvorschau neu laden"
 
-#: Cms/js/locale.php:60
+#: Cms/js/locale.php:61
 msgid "Rename"
 msgstr "Umbenennen"
 
-#: Cms/js/locale.php:61
+#: Cms/js/locale.php:62
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: Cms/js/locale.php:62
+#: Cms/js/locale.php:63
 msgid "Select all"
 msgstr "Alles markieren"
 
-#: Cms/js/locale.php:63 Cms/Forms/NewsletterPublish.php:29
+#: Cms/js/locale.php:64 Cms/Forms/NewsletterPublish.php:29
 msgid "Send Now"
 msgstr "Jetzt senden"
 
-#: Cms/js/locale.php:64
+#: Cms/js/locale.php:65
 msgid "Are your sure you want to send this newsletter to"
 msgstr ""
 "Sind Sie sicher, dass Sie diesen Newsletter an die folgenden Empfänger "
 "senden möchten:"
 
-#: Cms/js/locale.php:65
+#: Cms/js/locale.php:66
 msgid "Mail Link to file"
 msgstr "Sende Link zur Datei per Email"
 
-#: Cms/js/locale.php:66
+#: Cms/js/locale.php:67
 msgid "Link to file"
 msgstr "Link zu Datei"
 
-#: Cms/js/locale.php:67
+#: Cms/js/locale.php:68
 msgid "Finished uploading/Cancel"
 msgstr "Upload beenden/abbrechen"
 
-#: Cms/js/locale.php:68
+#: Cms/js/locale.php:69
 msgid "Change zoom level of preview."
 msgstr "Ändern Sie die Zoomstufe der Vorschau"
 

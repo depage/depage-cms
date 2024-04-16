@@ -36,6 +36,7 @@
             "deleteQuestion" => _("Delete this element now?"),
             "deselectAll" => _("Deselect all"),
             "duplicate" => _("Duplicate"),
+            "duplicateQuestion" => _("Duplicate this element now?"),
             "edit" => _("Edit"),
             "editHelp" => _("Edit the current page in edit interface on the left ←."),
             "editTooltip" => _("Edit the current page"),

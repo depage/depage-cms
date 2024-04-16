@@ -154,6 +154,13 @@ var DepageXmldb = (function() {
             }, success);
         },
         // }}}
+        // {{{ duplicateDocument()
+        duplicateDocument: function(success) {
+            this.ajaxCall("duplicateDocument", {
+                "docName": this.docName
+            }, success);
+        },
+        // }}}
         // {{{ releaseDocument()
         releaseDocument: function(success) {
             this.ajaxCall("releaseDocument", {}, success);

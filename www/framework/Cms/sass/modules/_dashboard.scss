@@ -397,6 +397,59 @@ table.recent-changes {
     }
 }
 // }}}
+// {{{ recent-changed newsletter
+table.recent-changes.newsletter {
+    @media screen and (max-width: $breakMobile) {
+        td.actions {
+            width: calc(4 * 32px * var(--touch-scale));
+        }
+    }
+    .icon-edit,
+    .icon-publish,
+    .icon-delete,
+    .icon-duplicate {
+        position: relative;
+        padding-left: calc(2.2em * var(--touch-scale));
+        overflow: none;
+        width: auto;
+
+        @media screen and (max-width: $breakMobile) {
+            padding-right: 0;
+            width: calc(24px * var(--touch-scale));
+        }
+
+        &:before {
+            display: block;
+            content: " ";
+            position: absolute;
+            top: calc(-2px * var(--touch-scale));
+            left: 2px;
+            width: calc(2em * var(--touch-scale));
+            height: calc(2em * var(--touch-scale));
+            background-color: transparent;
+        }
+    }
+    .icon-delete,
+    .icon-duplicate {
+        overflow: hidden;
+        padding-right: 0;
+        width: calc(24px * var(--touch-scale));
+        text-indent: -1000em;
+    }
+    .icon-edit:before {
+        @include icon-base("edit", 24px);
+    }
+    .icon-publish:before {
+        @include icon-base("publish", 24px);
+    }
+    .icon-delete:before {
+        @include icon-base("delete", 24px);
+    }
+    .icon-duplicate:before {
+        @include icon-base("duplicate", 24px);
+    }
+}
+// }}}
 // {{{ tasks
 .tasks {
     dt {
