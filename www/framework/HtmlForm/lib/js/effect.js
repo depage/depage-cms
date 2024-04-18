@@ -180,6 +180,16 @@
                 console.log("Squire.js not included but needed for richtext support");
             }
         }
+        $('.input-boolean', form).each(function() {
+            var $p = $(this);
+            var $input = $("input[type='checkbox']", this);
+
+            if ($p.data("label-on") && $p.data("label-off")) {
+                $input.on("change", function() {
+                    $p.find(".depage-label").text(this.checked ? $p.data("label-on") : $p.data("label-off"));
+                });
+            }
+        });
 
         if (typeof $.fn.selectize !== 'undefined') {
             setupSelectize($form);
