@@ -136,6 +136,10 @@ class DocProperties extends Base
             // only for page data content and only for get request
             $this->addPgRelease($node);
         }
+        if (in_array($node->prefix, ['sec'])) {
+            // only for section elements
+            $this->addSecActive($node);
+        }
 
         $nodes = array_merge([$node], iterator_to_array($node->childNodes));
         foreach($nodes as $n) {
@@ -654,6 +658,37 @@ class DocProperties extends Base
         ]);
     }
     // }}}
+    // {{{ addSecActive()()
+    /**
+     * @brief addSecActive
+     *
+     * @param mixed $node
+     * @return void
+     **/
+    protected function addSecActive($node)
+    {
+        if ($node->hasAttribute("active")) {
+            $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+            $fs = $this->form->addFieldset("xmledit-{$this->docRef}-active-fs", [
+                'label' => _("Active"),
+                'class' => "doc-property-fieldset",
+            ]);
+
+            $labelActive = sprintf(_("%s is active"), $node->getAttribute("name"));
+            $labelInactive = sprintf(_("%s is disabled"), $node->getAttribute("name"));
+
+            $fs->addBoolean("active", [
+                'label' => $node->getAttribute("active") == "true" ? $labelActive : $labelInactive,
+                'class' => "active",
+                'dataPath' => "//*[@db:id = '$nodeId']/@active",
+                'dataAttr' => [
+                    'label-on' => $labelActive,
+                    'label-off' => $labelInactive,
+                ]
+            ]);
+        }
+    }
+    // }}}
 
     // {{{ addEditTextSingleline()
     /**
@@ -856,14 +891,14 @@ class DocProperties extends Base
         ]);
     }
     // }}}
-    // {{{ addEditTime()
+    // {{{ addEditBool()
     /**
-     * @brief addEditTime
+     * @brief addEditBool
      *
      * @param mixed $node
      * @return void
      **/
-    protected function addEditTime($node)
+    protected function addEditBool($node)
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
@@ -871,9 +906,10 @@ class DocProperties extends Base
             $node->setAttribute("value", "");
         }
 
-        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Time")));
-        $fs->addText("xmledit-$nodeId", [
-            'label' => $node->getAttribute("lang"),
+        $label = $this->getLabelForNode($node, _("Boolean"));
+        $fs = $this->getLangFieldset($node, $label);
+        $fs->addBoolean("xmledit-$nodeId", [
+            'label' => $label,
             'dataPath' => "//*[@db:id = '$nodeId']/@value",
         ]);
     }

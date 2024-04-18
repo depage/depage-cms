@@ -149,6 +149,23 @@
             }
         }
     }
+    > p.input-boolean {
+        > label {
+            display: block;
+            width: 100%;
+            line-height: calc(20px * var(--touch-scale));
+            height: calc(26px * var(--touch-scale));
+
+            > .depage-label {
+                position: relative;
+                display: block;
+                width: 100% !important;
+                padding-top: 0;
+                padding-bottom: 0;
+                font-size: $fSizeM !important;
+            }
+        }
+    }
     @media (pointer:coarse) {
         &.lang-fieldset {
             .depage-label {
@@ -427,6 +444,18 @@
 // }}}
 // {{{ doc-properties edit-a
 .doc-properties .edit-a {
+    padding-right: 95px;
+
+    .input-single.edit-target {
+        position: absolute;
+        z-index: 100;
+        bottom: 15px;
+        right: 15px;
+    }
+}
+// }}}
+// {{{ doc-properties edit-boolean
+.doc-properties .edit-boolean {
     padding-right: 95px;
 
     .input-single.edit-target {
