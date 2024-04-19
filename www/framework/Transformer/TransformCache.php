@@ -80,7 +80,7 @@ class TransformCache
 
         $this->cache->setFile($cachePath, $content);
 
-        $query = $this->pdo->prepare("REPLACE INTO {$this->tableName} (transformId, docId, template) VALUES (?, ?, ?);");
+        $query = $this->pdo->prepare("INSERT IGNORE INTO {$this->tableName} (transformId, docId, template) VALUES (?, ?, ?);");
 
         foreach ($usedDocuments as $id) {
             $query->execute(array(

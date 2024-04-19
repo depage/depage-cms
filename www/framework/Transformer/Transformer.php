@@ -14,6 +14,7 @@ abstract class Transformer
     protected $libPath;
     protected $addonsPath;
     protected $xsltProc = null;
+    protected $xsltProcs = [];
     protected $xsltCache = null;
     protected $xmlnav = null;
     protected $isLive = false;
@@ -64,6 +65,8 @@ abstract class Transformer
         // @todo fix this for live view !important
         $this->baseUrl = DEPAGE_BASE . "project/{$this->project->name}/preview/{$this->template}/{$this->previewType}/";
         $this->baseUrlStatic = DEPAGE_BASE . "project/{$this->project->name}/preview/{$this->template}/{$this->previewType}/";
+
+        $this->lateInitialize();
     }
     // }}}
     // {{{ lateInitialize()
@@ -83,8 +86,6 @@ abstract class Transformer
 
         // get cache instance for templates
         $this->xsltCache = \Depage\Cache\Cache::factory("xslt");
-
-        $this->initXsltProc();
     }
     // }}}
     // {{{ setBaseUrl()
@@ -111,50 +112,41 @@ abstract class Transformer
         $this->baseUrlStatic = $url;
     }
     // }}}
-    // {{{ initXsltProc()
-    public function initXsltProc()
+    // {{{ getXsltProc()
+    public function getXsltProc($subtype = ""):\XSLTProcessor
     {
-        //libxml_disable_entity_loader(false);
+        $id = empty($subtype) ? "_" : $subtype;
+        if (isset($this->xsltProcs[$id])) {
+            return $this->xsltProcs[$id];
+        }
+
         libxml_use_internal_errors(true);
 
-        // @todo use own dtd loaded with caching instead of having own htmlentities file
-        // @todo add a list of whitelisted dtds and entities
-        // @see https://www.oasis-open.org/committees/entity/spec.html
-        // @see http://xmlsoft.org/catalog.html
-        // libxml_set_external_entity_loader
-        /*
-        libxml_set_external_entity_loader(
-            function ($public, $system, $context) {
-                var_dump($public);
-                var_dump($system);
-                var_dump($context);
-                $f = fopen($system, "r");
-                //$f = fopen("php://temp", "r+");
-                //fwrite($f, "");
-                rewind($f);
-                return $f;
-            }
-        );
-         */
+        $xsltProc = new \XSLTProcessor();
 
-        $this->xsltProc = new \XSLTProcessor();
+        $this->registerStreams($xsltProc);
+        $this->registerFunctions($xsltProc);
 
-        $this->registerStreams($this->xsltProc);
-        $this->registerFunctions($this->xsltProc);
+        $this->loadAddons($xsltProc);
 
-        $this->loadAddons();
-
-        $xslDOM = $this->getXsltTemplate($this->template);
+        $xslDOM = $this->getXsltTemplate($this->template, $subtype);
 
         if ($this->profiling) {
-            $this->xsltProc->setProfiling('logs/xslt-profiling.txt');
+            $file = "logs/xslt-profiling";
+            if (!empty($subtype)) {
+                $file .= "-$subtype";
+            }
+            $xsltProc->setProfiling("$file.txt");
         }
-        $this->xsltProc->importStylesheet($xslDOM);
+        $xsltProc->importStylesheet($xslDOM);
 
+        $this->xsltProcs[$id] = $xsltProc;
+
+        return $xsltProc;
     }
     // }}}
     // {{{ loadAddons()
-    public function loadAddons()
+    public function loadAddons($xsltProc)
     {
         $this->addons = [];
 
@@ -167,10 +159,10 @@ abstract class Transformer
             $this->addons[$addon] = new $class($this->project);
 
             if (method_exists($this->addons[$addon], "registerStreams")) {
-                $this->addons[$addon]->registerStreams($this->xsltProc);
+                $this->addons[$addon]->registerStreams($xsltProc);
             }
             if (method_exists($this->addons[$addon], "registerFunctions")) {
-                $this->addons[$addon]->registerFunctions($this->xsltProc);
+                $this->addons[$addon]->registerFunctions($xsltProc);
             }
         }
     }
@@ -179,11 +171,19 @@ abstract class Transformer
     /**
      * @return  null
      */
-    protected function getXsltTemplate($template)
+    protected function getXsltTemplate($template, $subtype = "")
     {
         $regenerate = false;
-        $xslFile = "{$this->project->name}/{$template}/{$this->previewType}.xsl";
-        $files = glob("{$this->xsltPath}{$template}/*.xsl");
+
+        if ($subtype == "") {
+            $xslFile = "{$this->project->name}/{$template}/{$this->previewType}.xsl";
+            $xsltPath = "{$this->xsltPath}{$template}/";
+        } else {
+            $xslFile = "{$this->project->name}/{$template}/{$this->previewType}_{$subtype}.xsl";
+            $xsltPath = "{$this->xsltPath}{$template}/{$subtype}/";
+        }
+
+        $files = glob("{$xsltPath}*.xsl");
 
         if (count($files) == 0) {
             throw new \Exception("No XSL templates found in '$this->xsltPath$template/'.");
@@ -338,8 +338,9 @@ abstract class Transformer
     public function transformDoc($pageId, $pagedataId, $lang)
     {
         $this->lang = $lang;
+        $id = $lang;
 
-        if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $this->lang)) {
+        if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $id)) {
             $content = $this->transformCache->get($pagedataId, $this->lang);
         } else {
             $pageXml = $this->xmlGetter->getDocXml($pagedataId);
@@ -371,7 +372,7 @@ abstract class Transformer
             $content = $cleaner->clean($content);
 
             if (!is_null($this->transformCache)) {
-                $this->transformCache->set($pagedataId, $this->getUsedDocuments(), $content, $this->lang);
+                $this->transformCache->set($pagedataId, $this->getUsedDocuments(), $content, $id);
             }
         }
 
@@ -390,13 +391,14 @@ abstract class Transformer
         if (is_null($this->xsltProc)) {
             $this->lateInitialize();
         }
+        $xsltProc = $this->getXsltProc();
 
         $oldUseAbsolutePath = $this->useAbsolutePaths;
         $oldUseBaseUrl = $this->useBaseUrl;
 
-        $this->xsltProc->setParameter("", $parameters);
+        $xsltProc->setParameter("", $parameters);
 
-        if (!$content = $this->xsltProc->transformToXml($xml)) {
+        if (!$content = $xsltProc->transformToXml($xml)) {
             // @todo add better error handling
             $messages = "";
             $errors = libxml_get_errors();
@@ -420,6 +422,83 @@ abstract class Transformer
         // reset absolute path settings after transform
         $this->useAbsolutePaths = $oldUseAbsolutePath;
         $this->useBaseUrl = $oldUseBaseUrl;
+
+        return $content;
+    }
+    // }}}
+    // {{{ transformSubdoc()
+    public function transformSubdoc($pageId, $pagedataId, $lang, $subtype)
+    {
+        $this->lang = $lang;
+        if ($subtype == "") {
+            $id = $lang;
+        } else {
+            $id = "{$lang}_{$subtype}";
+        }
+
+        if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $id)) {
+            $content = \DOMDocument();
+            $content->loadXML($this->transformCache->get($pagedataId, $this->lang));
+        } else {
+            $pageXml = $this->xmlGetter->getDocXml($pagedataId);
+            if ($pageXml === false) {
+                throw new \Exception("page does not exist");
+            }
+
+            $this->clearUsedDocuments($subtype);
+            $this->addToUsedDocuments($pagedataId, $subtype);
+            $params = [
+                "currentLang" => $this->lang,
+                "currentPageId" => $pageId,
+                "currentPagedataId" => $pagedataId,
+                "currentContentType" => "text/html",
+                "currentEncoding" => "UTF-8",
+                "projectName" => $this->project->name,
+                "depageVersion" => \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion(),
+                "depageIsLive" => $this->isLive ? "true" : "",
+                "depagePreviewType" => $this->previewType,
+                "baseUrl" => $this->baseUrl,
+                "baseUrlStatic" => $this->baseUrlStatic,
+            ];
+            if (!empty($_GET['__dpPreviewColor'])) {
+                $params['currentColorscheme'] = $_GET['__dpPreviewColor'];
+            }
+            $xsltProc = $this->getXsltProc($subtype);
+
+            $oldUseAbsolutePath = $this->useAbsolutePaths;
+            $oldUseBaseUrl = $this->useBaseUrl;
+
+            $xsltProc->setParameter("", $params);
+
+            if (!$content = $xsltProc->transformToDoc($pageXml)) {
+                // @todo add better error handling
+                $messages = "";
+                $errors = libxml_get_errors();
+                foreach($errors as $error) {
+                    $this->log->log("LibXMLError: " . $error->message);
+                    $messages .= $error->message . "\n";
+                }
+
+                $error = "Could not transform the XML document:\n" . $messages;
+
+                throw new \Exception($error);
+            } else {
+                // @todo add better error handling
+                $errors = libxml_get_errors();
+                foreach($errors as $error) {
+                    $this->log->log("LibXMLError: " . $error->message);
+                    //var_dump($error);
+                }
+            }
+
+            // reset absolute path settings after transform
+            $this->useAbsolutePaths = $oldUseAbsolutePath;
+            $this->useBaseUrl = $oldUseBaseUrl;
+
+            if (!is_null($this->transformCache)) {
+                $this->transformCache->set($pagedataId, $this->getUsedDocuments($subtype), $content->saveXML(), $id);
+            }
+        }
 
         return $content;
     }
@@ -489,10 +568,12 @@ abstract class Transformer
      * @param mixed
      * @return void
      **/
-    protected function clearUsedDocuments()
+    protected function clearUsedDocuments($subtype = "")
     {
-        $this->usedDocuments = array();
-
+        if (empty($subtype)) {
+            $subtype = "_";
+        }
+        $this->usedDocuments[$subtype] = [];
     }
     // }}}
     // {{{ addToUsedDocuments()
@@ -502,9 +583,15 @@ abstract class Transformer
      * @param mixed $docId
      * @return void
      **/
-    public function addToUsedDocuments($docId)
+    public function addToUsedDocuments($docId, $subtype = "")
     {
-        $this->usedDocuments[] = $docId;
+        if (empty($subtype)) {
+            $subtype = "_";
+        }
+        if (!isset($this->usedDocuments[$subtype])) {
+            $this->usedDocuments[$subtype] = [];
+        }
+        $this->usedDocuments[$subtype] = $docId;
 
     }
     // }}}
@@ -515,9 +602,12 @@ abstract class Transformer
      * @param mixed
      * @return void
      **/
-    public function getUsedDocuments()
+    public function getUsedDocuments($subtype = "")
     {
-        return array_unique($this->usedDocuments);
+        if (empty($subtype)) {
+            $subtype = "_";
+        }
+        return array_unique($this->usedDocuments[$subtype]);
     }
     // }}}
 
@@ -598,6 +688,7 @@ abstract class Transformer
             "tolower" => "mb_strtolower",
             "useAbsolutePaths" => [$this, "xsltUseAbsolutePaths"],
             "useBaseUrl" => [$this, "xsltUseBaseUrl"],
+            "transformDoc" => [$this, "transformSubdoc"],
         ]);
     }
     // }}}

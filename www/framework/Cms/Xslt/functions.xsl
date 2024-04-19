@@ -235,6 +235,19 @@
         </xsl:for-each>
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:transformDoc() -->
+    <!--
+        dp:transformDoc(pageid, xpath)
+    -->
+    <func:function name="dp:transformDoc">
+        <xsl:param name="pageid" />
+        <xsl:param name="pagedataid" />
+        <xsl:param name="lang" select="$currentLang"/>
+        <xsl:param name="subtype" select="''" />
+
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::transformDoc', $pageid, $pagedataid, $lang, $subtype)" />
+    </func:function>
+    <!-- }}} -->
 
     <!-- {{{ dp:useAbsolutePaths() -->
     <!--
