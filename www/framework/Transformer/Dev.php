@@ -7,22 +7,16 @@ class Dev extends Transformer
     protected $previewType = "dev";
     protected $profiling = true;
 
-    // {{{ getXsltEntities()
-    protected function getXsltEntities()
+    // {{{ addXsltIncludes()
+    protected function addXsltIncludes($doc, $files)
     {
-        return "";
-    }
-    // }}}
-    // {{{ getXsltIncludes()
-    protected function getXsltIncludes($files)
-    {
-        $xslt = "";
+        $root = $doc->documentElement;
 
         foreach ($files as $file) {
-            $xslt .= "\n<xsl:include href=\"" . htmlentities(rawurlencode(realpath($file))) . "\" />";
+            $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:include");
+            $n->setAttribute("href", rawurlencode(realpath($file)));
+            $root->appendChild($n);
         }
-
-        return $xslt;
     }
     // }}}
 }

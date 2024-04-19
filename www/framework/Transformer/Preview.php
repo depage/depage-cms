@@ -7,16 +7,10 @@ class Preview extends Transformer
     protected $previewType = "pre";
     protected $profiling = false;
 
-    // {{{ getXsltEntities()
-    protected function getXsltEntities()
+    // {{{ addXsltIncludes()
+    protected function addXsltIncludes($doc, $files)
     {
-        return "<!DOCTYPE xsl:stylesheet [ <!ENTITY % htmlentities SYSTEM \"xslt://htmlentities.ent\"> %htmlentities; ]>";
-    }
-    // }}}
-    // {{{ getXsltInclude()
-    protected function getXsltIncludes($files)
-    {
-        $xslt = "";
+        $root = $doc->documentElement;
         foreach ($files as $file) {
             $tpl = new \Depage\Xml\Document();
             $tpl->resolveExternals = true;
@@ -32,11 +26,9 @@ class Preview extends Transformer
              */
 
             foreach ($tpl->documentElement->childNodes as $node) {
-                $xslt .= $tpl->saveXML($node);
+                $root->appendChild($doc->importNode($node, true));
             }
         }
-
-        return $xslt;
     }
     // }}}
 }

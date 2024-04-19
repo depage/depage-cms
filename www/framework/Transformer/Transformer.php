@@ -203,6 +203,9 @@ abstract class Transformer
         // @todo clear transform cache when regenerating xsl template
         //$regenerate = true;
 
+        $doc = new \Depage\Xml\Document();
+        $doc->resolveExternals = true;
+
         if ($regenerate) {
             if (!is_null($this->transformCache)) {
                 $this->transformCache->clearAll();
@@ -223,9 +226,15 @@ abstract class Transformer
                 xmlns:func=\"http://exslt.org/functions\"
                 xmlns:str=\"http://exslt.org/strings\"
                 extension-element-prefixes=\"xsl db proj pg sec edit func exslt str \"
-            >";
+            />";
 
-            $xslt .= "<xsl:include href=\"xslt://functions.xsl\" />";
+            $doc->loadXML($xslt);
+            $root = $doc->documentElement;
+
+            // add include base functions
+            $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:include");
+            $n->setAttribute("href", "xslt://functions.xsl");
+            $root->appendChild($n);
 
             // add basic paramaters and variables
             $params = [
@@ -269,37 +278,36 @@ abstract class Transformer
 
             // now add to xslt
             foreach ($params as $key => $value) {
+                $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:param");
+                $n->setAttribute("name", $key);
                 if (!empty($value)) {
-                    $xslt .= "\n<xsl:param name=\"$key\" select=\"$value\" />";
+                    $n->setAttribute("select", $value);
                 } else {
-                    $xslt .= "\n<xsl:param name=\"$key\" select=\"false()\" />";
+                    $n->setAttribute("select", "false()");
                 }
+                $root->appendChild($n);
             }
             foreach ($variables as $key => $value) {
-                $xslt .= "\n<xsl:variable name=\"$key\" select=\"$value\" />";
+                $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:variable");
+                $n->setAttribute("name", $key);
+                $n->setAttribute("select", $value);
+                $root->appendChild($n);
             }
-
-            $xslt .= $this->getXsltIncludes($files);
-            $xslt .= "\n</xsl:stylesheet>";
-
-            $doc = new \Depage\Xml\Document();
-            $doc->resolveExternals = true;
-            $doc->loadXML($xslt);
+            $this->addXsltIncludes($doc, $files);
 
             $this->xsltCache->set($xslFile, $doc);
+        } else {
+            $doc->load($this->xsltCache->getPath($xslFile));
         }
-
-        $doc = new \Depage\Xml\Document();
-        $doc->load($this->xsltCache->getPath($xslFile));
 
         return $doc;
     }
     // }}}
     // {{{ getXsltEntities()
-    abstract protected function getXsltEntities();
-    // }}}
-    // {{{ getXsltIncludes()
-    abstract protected function getXsltIncludes($files);
+    protected function getXsltEntities()
+    {
+        return "<!DOCTYPE xsl:stylesheet [ <!ENTITY % htmlentities SYSTEM \"xslt://htmlentities.ent\"> %htmlentities; ]>";
+    }
     // }}}
 
     // {{{ transformUrl()
@@ -334,10 +342,6 @@ abstract class Transformer
         if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $this->lang)) {
             $content = $this->transformCache->get($pagedataId, $this->lang);
         } else {
-            if (is_null($this->xsltProc)) {
-                $this->lateInitialize();
-            }
-
             $pageXml = $this->xmlGetter->getDocXml($pagedataId);
             if ($pageXml === false) {
                 throw new \Exception("page does not exist");
