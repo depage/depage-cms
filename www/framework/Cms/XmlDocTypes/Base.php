@@ -43,7 +43,6 @@ class Base extends \Depage\XmlDb\XmlDoctypes\Base
     public function onHistorySave() {
         parent::onHistorySave();
 
-        // @todo get automatic list of templates
         $templates = $this->project->getXslTemplates();
         $publishingTargets = $this->project->getPublishingTargets();
         $previewTypes = ["live"];

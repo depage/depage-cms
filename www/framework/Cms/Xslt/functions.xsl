@@ -79,7 +79,7 @@
         <xsl:param name="lang" select="$currentLang" />
 
         <xsl:choose>
-            <xsl:when test="normalize-space(string($node)) != '' and (($currentPage/@multilang = 'true' or not($currentPage)) and $node/@lang = $lang) or $currentPage/@multilang != 'true'">
+            <xsl:when test="normalize-space(string($node)) != '' and $node/@lang = $lang">
                 <func:result select="true()" />
             </xsl:when>
             <xsl:otherwise>
@@ -106,10 +106,20 @@
     -->
     <func:function name="dp:getPageNode">
         <xsl:param name="pageid" />
+        <xsl:variable name="result" select="key('page-by-id',$pageid)" />
 
-        <xsl:for-each select="$navigation">
-            <func:result select="key('page-by-id',$pageid)" />
-        </xsl:for-each>
+        <xsl:choose>
+            <xsl:when test="not($result)">
+                <xsl:variable name="navigation" select="document('xmldb://pages')"/>
+
+                <xsl:for-each select="$navigation">
+                    <func:result select="key('page-by-id',$pageid)" />
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="$result" />
+            </xsl:otherwise>
+        </xsl:choose>
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:getPage() -->
@@ -240,12 +250,12 @@
         dp:transformDoc(pageid, xpath)
     -->
     <func:function name="dp:transformDoc">
-        <xsl:param name="pageid" />
-        <xsl:param name="pagedataid" />
+        <xsl:param name="docId" />
         <xsl:param name="lang" select="$currentLang"/>
         <xsl:param name="subtype" select="''" />
+        <xsl:variable name="docIdValue"><xsl:value-of select="$docId" /></xsl:variable>
 
-        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::transformDoc', $pageid, $pagedataid, $lang, $subtype)" />
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::transformDoc', $docIdValue, $lang, $subtype)" />
     </func:function>
     <!-- }}} -->
 

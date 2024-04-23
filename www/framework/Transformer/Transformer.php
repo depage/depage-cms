@@ -175,7 +175,7 @@ abstract class Transformer
     {
         $regenerate = false;
 
-        if ($subtype == "") {
+        if (empty($subtype)) {
             $xslFile = "{$this->project->name}/{$template}/{$this->previewType}.xsl";
             $xsltPath = "{$this->xsltPath}{$template}/";
         } else {
@@ -183,7 +183,7 @@ abstract class Transformer
             $xsltPath = "{$this->xsltPath}{$template}/{$subtype}/";
         }
 
-        $files = glob("{$xsltPath}*.xsl");
+        $files = glob("{$xsltPath}*.xsl") ?? [];
 
         if (count($files) == 0) {
             throw new \Exception("No XSL templates found in '$this->xsltPath$template/'.");
@@ -245,14 +245,21 @@ abstract class Transformer
                 'baseUrl' => null,
                 'baseUrlStatic' => null,
                 'projectName' => null,
-                'navigation' => "document('xmldb://pages')",
-                'settings' => "document('xmldb://settings')",
-                'colors' => "document('xmldb://colors')",
-                'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
-                'languages' => "\$settings/proj:settings/proj:languages",
-                'currentPage' => "\$navigation//pg:*[@status = 'active']",
                 'libPath' => "'" . htmlspecialchars('file://' . str_replace(" ", "%20", realpath($this->libPath))) . "'",
             ];
+            // if there are no partial xsl templates, add old default parameters
+            $subFiles = glob("{$this->xsltPath}{$template}/*/*.xsl") ?? [];
+            if (count($subFiles) == 0) {
+                $params += [
+                    'navigation' => "document('xmldb://pages')",
+                    'settings' => "document('xmldb://settings')",
+                    'colors' => "document('xmldb://colors')",
+                    'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
+                    'languages' => "\$settings/proj:settings/proj:languages",
+                    'currentPage' => "\$navigation//pg:*[@status = 'active']",
+                ];
+            }
+
             $variables = [
                 'var-ga-Account' => "''",
                 'var-ga-Domain' => "''",
@@ -342,38 +349,71 @@ abstract class Transformer
 
         if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $id)) {
             $content = $this->transformCache->get($pagedataId, $this->lang);
+
+            return $content;
+        }
+
+        $pageXml = $this->xmlGetter->getDocXml($pagedataId);
+        if ($pageXml === false) {
+            throw new \Exception("page does not exist");
+        }
+
+        $this->clearUsedDocuments();
+        $this->addToUsedDocuments($pagedataId);
+        $params = [
+            "currentLang" => $this->lang,
+            "currentPageId" => $pageId,
+            "currentPagedataId" => $pagedataId,
+            "currentPath" => $this->currentPath,
+            "currentContentType" => "text/html",
+            "currentEncoding" => "UTF-8",
+            "projectName" => $this->project->name,
+            "depageVersion" => \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion(),
+            "depageIsLive" => $this->isLive ? "true" : "",
+            "depagePreviewType" => $this->previewType,
+            "baseUrl" => $this->baseUrl,
+            "baseUrlStatic" => $this->baseUrlStatic,
+        ];
+        if (!empty($_GET['__dpPreviewColor'])) {
+            $params['currentColorscheme'] = $_GET['__dpPreviewColor'];
+        }
+        $xsltProc = $this->getXsltProc();
+
+        $oldUseAbsolutePath = $this->useAbsolutePaths;
+        $oldUseBaseUrl = $this->useBaseUrl;
+
+        $xsltProc->setParameter("", $params);
+
+        if (!$content = $xsltProc->transformToXml($pageXml)) {
+            // @todo add better error handling
+            $messages = "";
+            $errors = libxml_get_errors();
+            foreach($errors as $error) {
+                $this->log->log("LibXMLError: " . $error->message);
+                $messages .= $error->message . "\n";
+            }
+
+            $error = "Could not transform the XML document:\n" . $messages;
+
+            throw new \Exception($error);
         } else {
-            $pageXml = $this->xmlGetter->getDocXml($pagedataId);
-            if ($pageXml === false) {
-                throw new \Exception("page does not exist");
+            // @todo add better error handling
+            $errors = libxml_get_errors();
+            foreach($errors as $error) {
+                $this->log->log("LibXMLError: " . $error->message);
+                //var_dump($error);
             }
+        }
 
-            $this->clearUsedDocuments();
-            $this->addToUsedDocuments($pagedataId);
-            $params = [
-                "currentLang" => $this->lang,
-                "currentPageId" => $pageId,
-                "currentPagedataId" => $pagedataId,
-                "currentContentType" => "text/html",
-                "currentEncoding" => "UTF-8",
-                "projectName" => $this->project->name,
-                "depageVersion" => \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion(),
-                "depageIsLive" => $this->isLive ? "true" : "",
-                "depagePreviewType" => $this->previewType,
-                "baseUrl" => $this->baseUrl,
-                "baseUrlStatic" => $this->baseUrlStatic,
-            ];
-            if (!empty($_GET['__dpPreviewColor'])) {
-                $params['currentColorscheme'] = $_GET['__dpPreviewColor'];
-            }
-            $content = $this->transform($pageXml, $params);
+        // reset absolute path settings after transform
+        $this->useAbsolutePaths = $oldUseAbsolutePath;
+        $this->useBaseUrl = $oldUseBaseUrl;
 
-            $cleaner = new \Depage\Html\Cleaner();
-            $content = $cleaner->clean($content);
+        $cleaner = new \Depage\Html\Cleaner();
+        $content = $cleaner->clean($content);
 
-            if (!is_null($this->transformCache)) {
-                $this->transformCache->set($pagedataId, $this->getUsedDocuments(), $content, $id);
-            }
+        if (!is_null($this->transformCache)) {
+            $this->transformCache->set($pagedataId, $this->getUsedDocuments(), $content, $id);
         }
 
         return $content;
@@ -427,76 +467,85 @@ abstract class Transformer
     }
     // }}}
     // {{{ transformSubdoc()
-    public function transformSubdoc($pageId, $pagedataId, $lang, $subtype)
+    public function transformSubdoc($docId, $lang, $subtype)
     {
         $this->lang = $lang;
-        if ($subtype == "") {
-            $id = $lang;
-        } else {
-            $id = "{$lang}_{$subtype}";
+        $id = "{$lang}_{$subtype}";
+
+        $docId = $this->xmlGetter->docExists($docId);
+
+        if ($docId === false) {
+            throw new \Exception("page does not exist");
         }
 
-        if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $id)) {
-            $content = \DOMDocument();
-            $content->loadXML($this->transformCache->get($pagedataId, $this->lang));
+        if (!is_null($this->transformCache) && $this->transformCache->exist($docId, $id)) {
+            $content = new \DOMDocument();
+            $success = $content->loadXML($this->transformCache->get($docId, $id));
+
+            if ($success) {
+                return $content;
+            }
+        }
+
+        $pageXml = $this->xmlGetter->getDocXml($docId);
+
+        $oldUseAbsolutePath = $this->useAbsolutePaths;
+        $oldUseBaseUrl = $this->useBaseUrl;
+
+        $this->useAbsolutePaths = false;
+        $this->useBaseUrl = true;
+
+        $this->clearUsedDocuments($subtype);
+        $this->addToUsedDocuments($docId, $subtype);
+        $params = [
+            "currentLang" => $this->lang,
+            "currentPath" => "",
+            "currentPagedataId" => $docId,
+            "currentContentType" => "text/html",
+            "currentEncoding" => "UTF-8",
+            "projectName" => $this->project->name,
+            "depageVersion" => \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion(),
+            "depageIsLive" => $this->isLive ? "true" : "",
+            "depagePreviewType" => $this->previewType,
+            "baseUrl" => $this->baseUrl,
+            "baseUrlStatic" => $this->baseUrlStatic,
+        ];
+        if (!empty($_GET['__dpPreviewColor'])) {
+            $params['currentColorscheme'] = $_GET['__dpPreviewColor'];
+        }
+        $xsltProc = $this->getXsltProc($subtype);
+
+        $xsltProc->setParameter("", $params);
+
+        if (!$content = $xsltProc->transformToDoc($pageXml)) {
+            // @todo add better error handling
+            $messages = "";
+            $errors = libxml_get_errors();
+            foreach($errors as $error) {
+                $this->log->log("LibXMLError: " . $error->message);
+                $messages .= $error->message . "\n";
+            }
+
+            $error = "Could not transform the XML document:\n" . $messages;
+
+            throw new \Exception($error);
         } else {
-            $pageXml = $this->xmlGetter->getDocXml($pagedataId);
-            if ($pageXml === false) {
-                throw new \Exception("page does not exist");
+            // @todo add better error handling
+            $errors = libxml_get_errors();
+            foreach($errors as $error) {
+                $this->log->log("LibXMLError: " . $error->message);
+                //var_dump($error);
             }
+        }
 
-            $this->clearUsedDocuments($subtype);
-            $this->addToUsedDocuments($pagedataId, $subtype);
-            $params = [
-                "currentLang" => $this->lang,
-                "currentPageId" => $pageId,
-                "currentPagedataId" => $pagedataId,
-                "currentContentType" => "text/html",
-                "currentEncoding" => "UTF-8",
-                "projectName" => $this->project->name,
-                "depageVersion" => \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion(),
-                "depageIsLive" => $this->isLive ? "true" : "",
-                "depagePreviewType" => $this->previewType,
-                "baseUrl" => $this->baseUrl,
-                "baseUrlStatic" => $this->baseUrlStatic,
-            ];
-            if (!empty($_GET['__dpPreviewColor'])) {
-                $params['currentColorscheme'] = $_GET['__dpPreviewColor'];
-            }
-            $xsltProc = $this->getXsltProc($subtype);
+        // reset absolute path settings after transform
+        $this->useAbsolutePaths = $oldUseAbsolutePath;
+        $this->useBaseUrl = $oldUseBaseUrl;
 
-            $oldUseAbsolutePath = $this->useAbsolutePaths;
-            $oldUseBaseUrl = $this->useBaseUrl;
-
-            $xsltProc->setParameter("", $params);
-
-            if (!$content = $xsltProc->transformToDoc($pageXml)) {
-                // @todo add better error handling
-                $messages = "";
-                $errors = libxml_get_errors();
-                foreach($errors as $error) {
-                    $this->log->log("LibXMLError: " . $error->message);
-                    $messages .= $error->message . "\n";
-                }
-
-                $error = "Could not transform the XML document:\n" . $messages;
-
-                throw new \Exception($error);
-            } else {
-                // @todo add better error handling
-                $errors = libxml_get_errors();
-                foreach($errors as $error) {
-                    $this->log->log("LibXMLError: " . $error->message);
-                    //var_dump($error);
-                }
-            }
-
-            // reset absolute path settings after transform
-            $this->useAbsolutePaths = $oldUseAbsolutePath;
-            $this->useBaseUrl = $oldUseBaseUrl;
-
-            if (!is_null($this->transformCache)) {
-                $this->transformCache->set($pagedataId, $this->getUsedDocuments($subtype), $content->saveXML(), $id);
+        if (!is_null($this->transformCache)) {
+            $contentString = $content->saveXML();
+            if (!empty($contentString)) {
+                $this->transformCache->set($docId, $this->getUsedDocuments($subtype), $contentString, $id);
             }
         }
 
@@ -591,7 +640,7 @@ abstract class Transformer
         if (!isset($this->usedDocuments[$subtype])) {
             $this->usedDocuments[$subtype] = [];
         }
-        $this->usedDocuments[$subtype] = $docId;
+        $this->usedDocuments[$subtype][] = $docId;
 
     }
     // }}}

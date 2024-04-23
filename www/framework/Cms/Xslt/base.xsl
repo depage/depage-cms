@@ -10,6 +10,7 @@
     xmlns:sec="http://cms.depagecms.net/ns/section"
     xmlns:edit="http://cms.depagecms.net/ns/edit"
     xmlns:exslt="http://exslt.org/common"
+    xmlns:str="http://exslt.org/strings"
     extension-element-prefixes="xsl exslt db proj pg sec edit ">
 
     <xsl:import href="xslt://functions.xsl" />
@@ -644,6 +645,66 @@
         <li><span></span>
             <xsl:apply-templates select="*" />
         </li>
+    </xsl:template>
+    <!-- }}} -->
+
+    <xsl:variable name="subDocCurrentDocLevels" select="str:tokenize($currentPath, '/')" />
+
+    <!-- {{{ * subdoc -->
+    <xsl:template match="* | text()" mode="subdoc">
+        <xsl:param name="pageId" />
+
+        <xsl:copy>
+            <xsl:apply-templates select="@*" mode="subdoc">
+                <xsl:with-param name="pageId" select="$pageId" />
+            </xsl:apply-templates>
+            <xsl:apply-templates select="* | text()" mode="subdoc">
+                <xsl:with-param name="pageId" select="$pageId" />
+            </xsl:apply-templates>
+        </xsl:copy>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ @*  subdoc -->
+    <xsl:template match="@*" mode="subdoc">
+        <xsl:copy-of select="." />
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ nav/ul/li subdoc -->
+    <xsl:template match="nav//ul/li" mode="subdoc">
+        <xsl:copy>
+            <xsl:apply-templates select="@*" mode="subdoc" />
+            <xsl:attribute name="class">
+                <xsl:choose>
+                    <xsl:when test="a/@id = $currentPageId">active </xsl:when>
+                    <xsl:when test="count(.//a/@id[. = $currentPageId]) = 1">parent-of-active </xsl:when>
+                </xsl:choose>
+                <xsl:value-of select="@class" />
+            </xsl:attribute>
+            <xsl:apply-templates select="* | text()" mode="subdoc" />
+        </xsl:copy>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ @href subdoc -->
+    <xsl:template match="nav//@href" mode="subdoc">
+        <xsl:attribute name="class">
+            <xsl:choose>
+                <xsl:when test="../@id = $currentPageId">active </xsl:when>
+                <xsl:when test="count(../..//@id[. = $currentPageId]) = 1">parent-of-active </xsl:when>
+            </xsl:choose>
+            <xsl:value-of select="../@class" />
+        </xsl:attribute>
+        <xsl:attribute name="href"><xsl:value-of select="." /></xsl:attribute>
+        <xsl:attribute name="data-href"><xsl:for-each select="$subDocCurrentDocLevels[position() &gt; 1]">../</xsl:for-each><xsl:value-of select="." /></xsl:attribute>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ a@id subdoc -->
+    <xsl:template match="a/@id" mode="subdoc">
+        <xsl:attribute name="data-page-id"><xsl:value-of select="." /></xsl:attribute>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ @src subdoc -->
+    <xsl:template match="@src" mode="subdoc">
+        <xsl:attribute name="src"><xsl:value-of select="." /></xsl:attribute>
     </xsl:template>
     <!-- }}} -->
 
