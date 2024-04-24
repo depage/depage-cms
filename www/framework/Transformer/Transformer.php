@@ -175,6 +175,7 @@ abstract class Transformer
     {
         $regenerate = false;
 
+        $xsltSharedPath = "{$this->xsltPath}{$template}/_/";
         if (empty($subtype)) {
             $xslFile = "{$this->project->name}/{$template}/{$this->previewType}.xsl";
             $xsltPath = "{$this->xsltPath}{$template}/";
@@ -183,7 +184,11 @@ abstract class Transformer
             $xsltPath = "{$this->xsltPath}{$template}/{$subtype}/";
         }
 
-        $files = glob("{$xsltPath}*.xsl") ?? [];
+        $files = (glob("{$xsltPath}*.xsl") + glob("{$xsltSharedPath}*.xsl")) ?? [];
+        $files = array_merge(
+            glob("{$xsltSharedPath}*.xsl") ?? [],
+            glob("{$xsltPath}*.xsl") ?? []
+        );
 
         if (count($files) == 0) {
             throw new \Exception("No XSL templates found in '$this->xsltPath$template/'.");
