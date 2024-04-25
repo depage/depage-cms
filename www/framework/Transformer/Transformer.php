@@ -138,7 +138,19 @@ abstract class Transformer
             }
             $xsltProc->setProfiling("$file.txt");
         }
-        $xsltProc->importStylesheet($xslDOM);
+        if (!$xsltProc->importStylesheet($xslDOM)) {
+            // @todo add better error handling
+            $messages = "";
+            $errors = libxml_get_errors();
+            foreach($errors as $error) {
+                $this->log->log("LibXMLError: " . $error->message);
+                $messages .= $error->message . "\n";
+            }
+
+            $error = "Could not import stylesheet:\n" . $messages;
+
+            throw new \Exception($error);
+        }
 
         $this->xsltProcs[$id] = $xsltProc;
 
@@ -740,8 +752,10 @@ abstract class Transformer
             "replaceEmailChars" => [$this, "xsltReplaceEmailChars"],
             "urlencode" => "rawurlencode",
             "tolower" => "mb_strtolower",
-            "useAbsolutePaths" => [$this, "xsltUseAbsolutePaths"],
-            "useBaseUrl" => [$this, "xsltUseBaseUrl"],
+            "setUseAbsolutePaths" => [$this, "xsltSetUseAbsolutePaths"],
+            "getUseAbsolutePaths" => [$this, "xsltGetUseAbsolutePaths"],
+            "setUseBaseUrl" => [$this, "xsltSetUseBaseUrl"],
+            "getUseBaseUrl" => [$this, "xsltGetUseBaseUrl"],
             "transformDoc" => [$this, "transformSubdoc"],
         ]);
     }
@@ -945,14 +959,14 @@ abstract class Transformer
         return $doc;
     }
     // }}}
-    // {{{ xsltUseAbsolutePaths()
+    // {{{ xsltSetUseAbsolutePaths()
     /**
-     * @brief xsltUseAbsolutePaths
+     * @brief xsltSetUseAbsolutePaths
      *
      * @param mixed
      * @return void
      **/
-    public function xsltUseAbsolutePaths()
+    public function xsltSetUseAbsolutePaths()
     {
         $this->useAbsolutePaths = true;
         $this->useBaseUrl = false;
@@ -960,19 +974,43 @@ abstract class Transformer
         return "<true />";
     }
     // }}}
-    // {{{ xsltUseBaseUrl()
+    // {{{ xsltGetUseAbsolutePaths()
     /**
-     * @brief xsltUseBaseUrl
+     * @brief xsltGetUseAbsolutePaths
      *
      * @param mixed
      * @return void
      **/
-    public function xsltUseBaseUrl()
+    public function xsltGetUseAbsolutePaths()
+    {
+        return $this->useAbsolutePaths;
+    }
+    // }}}
+    // {{{ xsltSetUseBaseUrl()
+    /**
+     * @brief xsltSetUseBaseUrl
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function xsltSetUseBaseUrl()
     {
         $this->useBaseUrl = true;
         $this->useAbsolutePaths = false;
 
         return "<true />";
+    }
+    // }}}
+    // {{{ xsltGetUseBaseUrl()
+    /**
+     * @brief xsltGetUseBaseUrl
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function xsltGetUseBaseUrl()
+    {
+        return $this->useBaseUrl;
     }
     // }}}
     // {{{ xsltChangeSrc()

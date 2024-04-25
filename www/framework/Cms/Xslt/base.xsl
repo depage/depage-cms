@@ -619,7 +619,7 @@
     <!-- }}} -->
     <!-- {{{ header include baseurl -->
     <xsl:template name="header_include_baseurl">
-        <xsl:variable name="call" select="dp:useBaseUrl()" />
+        <xsl:variable name="call" select="dp:setUseBaseUrl()" />
 
         <base href="{$baseUrl}" />
     </xsl:template>
@@ -669,6 +669,31 @@
         <xsl:copy-of select="." />
     </xsl:template>
     <!-- }}} -->
+    <!-- {{{ @href subdoc -->
+    <xsl:template match="@href" mode="subdoc">
+        <xsl:variable name="path"><xsl:if test="not(dp:getUseBaseUrl())"><xsl:for-each select="$subDocCurrentDocLevels">../</xsl:for-each></xsl:if></xsl:variable>
+        <xsl:attribute name="href"><xsl:value-of select="$path" /><xsl:value-of select="." /></xsl:attribute>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ a@id subdoc -->
+    <xsl:template match="a/@id" mode="subdoc">
+        <xsl:attribute name="data-page-id"><xsl:value-of select="." /></xsl:attribute>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ @src subdoc -->
+    <xsl:template match="@src" mode="subdoc">
+        <xsl:variable name="path"><xsl:if test="not(dp:getUseBaseUrl())"><xsl:for-each select="$subDocCurrentDocLevels">../</xsl:for-each></xsl:if></xsl:variable>
+        <xsl:attribute name="src"><xsl:value-of select="$path" /><xsl:value-of select="." /></xsl:attribute>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ @srcset subdoc -->
+    <xsl:template match="@srcset" mode="subdoc">
+        <xsl:variable name="srcset" select="." />
+        <xsl:variable name="parts" select="str:split($srcset, 'lib/')" />
+        <xsl:variable name="path"><xsl:if test="not(dp:getUseBaseUrl())"><xsl:for-each select="$subDocCurrentDocLevels">../</xsl:for-each></xsl:if></xsl:variable>
+        <xsl:attribute name="srcset"><xsl:for-each select="$parts"><xsl:value-of select="$path" />lib/<xsl:value-of select="." /></xsl:for-each></xsl:attribute>
+    </xsl:template>
+    <!-- }}} -->
     <!-- {{{ nav/ul/li subdoc -->
     <xsl:template match="nav//ul/li" mode="subdoc">
         <xsl:copy>
@@ -684,8 +709,9 @@
         </xsl:copy>
     </xsl:template>
     <!-- }}} -->
-    <!-- {{{ @href subdoc -->
+    <!-- {{{ nav//@href subdoc -->
     <xsl:template match="nav//@href" mode="subdoc">
+        <xsl:variable name="path"><xsl:if test="not(dp:getUseBaseUrl())"><xsl:for-each select="$subDocCurrentDocLevels">../</xsl:for-each></xsl:if></xsl:variable>
         <xsl:attribute name="class">
             <xsl:choose>
                 <xsl:when test="../@id = $currentPageId">active </xsl:when>
@@ -693,18 +719,7 @@
             </xsl:choose>
             <xsl:value-of select="../@class" />
         </xsl:attribute>
-        <xsl:attribute name="href"><xsl:value-of select="." /></xsl:attribute>
-        <xsl:attribute name="data-href"><xsl:for-each select="$subDocCurrentDocLevels[position() &gt; 1]">../</xsl:for-each><xsl:value-of select="." /></xsl:attribute>
-    </xsl:template>
-    <!-- }}} -->
-    <!-- {{{ a@id subdoc -->
-    <xsl:template match="a/@id" mode="subdoc">
-        <xsl:attribute name="data-page-id"><xsl:value-of select="." /></xsl:attribute>
-    </xsl:template>
-    <!-- }}} -->
-    <!-- {{{ @src subdoc -->
-    <xsl:template match="@src" mode="subdoc">
-        <xsl:attribute name="src"><xsl:value-of select="." /></xsl:attribute>
+        <xsl:attribute name="href"><xsl:value-of select="$path" /><xsl:value-of select="." /></xsl:attribute>
     </xsl:template>
     <!-- }}} -->
 

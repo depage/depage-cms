@@ -259,24 +259,53 @@
     </func:function>
     <!-- }}} -->
 
-    <!-- {{{ dp:useAbsolutePaths() -->
+    <!-- {{{ dp:setUseAbsolutePaths() -->
     <!--
-        dp:useAbsolutePaths()
+        dp:setUseAbsolutePaths()
 
         @todo define these automatically
     -->
-    <func:function name="dp:useAbsolutePaths">
-        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::useAbsolutePaths')" />
+    <func:function name="dp:setUseAbsolutePaths">
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::setUseAbsolutePaths')" />
     </func:function>
     <!-- }}} -->
-    <!-- {{{ dp:useBaseUrl() -->
+    <!-- {{{ dp:getUseAbsolutePaths() -->
     <!--
-        dp:useBaseUrl()
+        dp:getUseAbsolutePaths()
 
         @todo define these automatically
     -->
-    <func:function name="dp:useBaseUrl">
-        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::useBaseUrl')" />
+    <func:function name="dp:getUseAbsolutePaths">
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::getUseAbsolutePaths')" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:setUseBaseUrl() -->
+    <!--
+        dp:setUseBaseUrl()
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:setUseBaseUrl">
+        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::setUseBaseUrl')" />
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:getUseBaseUrl() -->
+    <!--
+        dp:getUseBaseUrl()
+
+        @todo define these automatically
+    -->
+    <func:function name="dp:getUseBaseUrl">
+        <xsl:variable name="value" select="php:function('Depage\Cms\Xslt\FuncDelegate::getUseBaseUrl')" />
+
+        <xsl:choose>
+            <xsl:when test="$value = 'true'">
+                <func:result select="true();" />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="false()" />
+            </xsl:otherwise>
+        </xsl:choose>
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:changesrc() -->
