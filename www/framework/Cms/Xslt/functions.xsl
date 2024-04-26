@@ -279,6 +279,16 @@
         <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::getUseAbsolutePaths')" />
     </func:function>
     <!-- }}} -->
+    <!-- {{{ dp:useBaseUrl() -->
+    <!--
+        dp:useBaseUrl()
+
+        deprecated, use dp:setUseBaseUrl() instead
+    -->
+    <func:function name="dp:useBaseUrl">
+        <func:result select="dp:setUseBaseUrl()" />
+    </func:function>
+    <!-- }}} -->
     <!-- {{{ dp:setUseBaseUrl() -->
     <!--
         dp:setUseBaseUrl()
