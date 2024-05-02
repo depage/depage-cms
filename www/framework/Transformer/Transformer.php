@@ -257,6 +257,7 @@ abstract class Transformer
             $params = [
                 'currentLang' => null,
                 'currentPageId' => null,
+                'currentPath' => '',
                 'depageIsLive' => null,
                 'depagePreviewType' => null,
                 'baseUrl' => null,
@@ -304,7 +305,7 @@ abstract class Transformer
             foreach ($params as $key => $value) {
                 $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:param");
                 $n->setAttribute("name", $key);
-                if (!empty($value)) {
+                if (is_string($value) || !empty($value)) {
                     $n->setAttribute("select", $value);
                 } else {
                     $n->setAttribute("select", "false()");
