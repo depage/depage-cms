@@ -19,7 +19,7 @@ class Pageref extends Base {
         $lang = isset($parts[1]) ? $parts[1] : $this->transformer->lang;
         $absolute = isset($parts[2]) ? $parts[2] : "";
 
-        $this->data = '<return>' . htmlspecialchars($this->transformer->xsltGetPageRef($pageId, $lang, $absolute)) . '</return>';
+        $this->data = '<return>' . htmlspecialchars($this->funcClass->getPageRef($pageId, $lang, $absolute)) . '</return>';
 
         return true;
     }

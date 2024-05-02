@@ -684,6 +684,7 @@
     <xsl:template match="@src" mode="subdoc">
         <xsl:variable name="path"><xsl:if test="not(dp:getUseBaseUrl())"><xsl:for-each select="$subDocCurrentDocLevels">../</xsl:for-each></xsl:if></xsl:variable>
         <xsl:attribute name="src"><xsl:value-of select="$path" /><xsl:value-of select="." /></xsl:attribute>
+        <xsl:attribute name="data-src"><xsl:value-of select="dp:getUseBaseUrl()" /></xsl:attribute>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ @srcset subdoc -->

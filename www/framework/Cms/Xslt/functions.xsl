@@ -310,7 +310,7 @@
 
         <xsl:choose>
             <xsl:when test="$value = 'true'">
-                <func:result select="true();" />
+                <func:result select="true()" />
             </xsl:when>
             <xsl:otherwise>
                 <func:result select="false()" />

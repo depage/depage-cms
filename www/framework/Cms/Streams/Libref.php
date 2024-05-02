@@ -10,7 +10,7 @@ class Libref extends Base {
     {
         $this->init();
 
-        $this->data = '<return>' . htmlspecialchars($this->transformer->xsltGetLibRef($path)) . '</return>';
+        $this->data = '<return>' . htmlspecialchars($this->funcClass->getLibRef($path)) . '</return>';
 
         return true;
     }

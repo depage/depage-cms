@@ -6,8 +6,6 @@ use \Depage\Html\Html;
 
 abstract class Transformer
 {
-    protected $project;
-    protected $template;
     protected $xmlGetter;
     protected $xmlPath;
     protected $xsltPath;
@@ -26,6 +24,9 @@ abstract class Transformer
     protected $fl;
     protected $transformCache;
     protected $previewType = "pre";
+
+    public $template;
+    public $project;
     public $baseUrl = "";
     public $baseUrlStatic = "";
     public $useAbsolutePaths = false;
@@ -139,15 +140,8 @@ abstract class Transformer
             $xsltProc->setProfiling("$file.txt");
         }
         if (!$xsltProc->importStylesheet($xslDOM)) {
-            // @todo add better error handling
-            $messages = "";
-            $errors = libxml_get_errors();
-            foreach($errors as $error) {
-                $this->log->log("LibXMLError: " . $error->message);
-                $messages .= $error->message . "\n";
-            }
-
-            $error = "Could not import stylesheet:\n" . $messages;
+            $messages = $this->handleLibXmlErrors();
+            $error = "Could not import stylesheet:\n" . implode("\n", $messages);
 
             throw new \Exception($error);
         }
@@ -257,7 +251,7 @@ abstract class Transformer
             $params = [
                 'currentLang' => null,
                 'currentPageId' => null,
-                'currentPath' => '',
+                'currentPath' => "''",
                 'depageIsLive' => null,
                 'depagePreviewType' => null,
                 'baseUrl' => null,
@@ -402,25 +396,13 @@ abstract class Transformer
 
         $xsltProc->setParameter("", $params);
 
-        if (!$content = $xsltProc->transformToXml($pageXml)) {
-            // @todo add better error handling
-            $messages = "";
-            $errors = libxml_get_errors();
-            foreach($errors as $error) {
-                $this->log->log("LibXMLError: " . $error->message);
-                $messages .= $error->message . "\n";
-            }
+        $content = $xsltProc->transformToXml($pageXml);
+        $messages = $this->handleLibXmlErrors();
 
-            $error = "Could not transform the XML document:\n" . $messages;
+        if (!$content) {
+            $error = "Could not transform the XML document:\n" . implode("\n", $messages);
 
             throw new \Exception($error);
-        } else {
-            // @todo add better error handling
-            $errors = libxml_get_errors();
-            foreach($errors as $error) {
-                $this->log->log("LibXMLError: " . $error->message);
-                //var_dump($error);
-            }
         }
 
         // reset absolute path settings after transform
@@ -456,25 +438,13 @@ abstract class Transformer
 
         $xsltProc->setParameter("", $parameters);
 
-        if (!$content = $xsltProc->transformToXml($xml)) {
-            // @todo add better error handling
-            $messages = "";
-            $errors = libxml_get_errors();
-            foreach($errors as $error) {
-                $this->log->log("LibXMLError: " . $error->message);
-                $messages .= $error->message . "\n";
-            }
+        $content = $xsltProc->transformToXml($xml);
+        $messages = $this->handleLibXmlErrors();
 
-            $error = "Could not transform the XML document:\n" . $messages;
+        if (!$content) {
+            $error = "Could not transform the XML document:\n" . implode("\n", $messages);
 
             throw new \Exception($error);
-        } else {
-            // @todo add better error handling
-            $errors = libxml_get_errors();
-            foreach($errors as $error) {
-                $this->log->log("LibXMLError: " . $error->message);
-                //var_dump($error);
-            }
         }
 
         // reset absolute path settings after transform
@@ -535,25 +505,13 @@ abstract class Transformer
 
         $xsltProc->setParameter("", $params);
 
-        if (!$content = $xsltProc->transformToDoc($pageXml)) {
-            // @todo add better error handling
-            $messages = "";
-            $errors = libxml_get_errors();
-            foreach($errors as $error) {
-                $this->log->log("LibXMLError: " . $error->message);
-                $messages .= $error->message . "\n";
-            }
+        $content = $xsltProc->transformToDoc($pageXml);
+        $messages = $this->handleLibXmlErrors();
 
-            $error = "Could not transform the XML document:\n" . $messages;
+        if (!$content) {
+            $error = "Could not transform the XML document:\n" . implode("\n", $messages);
 
             throw new \Exception($error);
-        } else {
-            // @todo add better error handling
-            $errors = libxml_get_errors();
-            foreach($errors as $error) {
-                $this->log->log("LibXMLError: " . $error->message);
-                //var_dump($error);
-            }
         }
 
         // reset absolute path settings after transform
@@ -705,6 +663,8 @@ abstract class Transformer
          * call:doctype -> not necessary anymore
          * call:getversion -> replaced by $depageVersion
          */
+        $funcClass = new XsltFunctions($this, $this->fl);
+
         // register stream to get documents from xmldb
         \Depage\Cms\Streams\XmlDb::registerStream("xmldb", [
             "xmldb" => $this->xmlGetter,
@@ -717,14 +677,17 @@ abstract class Transformer
         // register stream to get page-links
         \Depage\Cms\Streams\Pageref::registerStream("pageref", [
             "transformer" => $this,
+            "funcClass" => $funcClass,
         ]);
 
         // register stream to get links to library
         \Depage\Cms\Streams\Libref::registerStream("libref", [
             "transformer" => $this,
+            "funcClass" => $funcClass,
         ]);
         \Depage\Cms\Streams\Libref::registerStream("libid", [
             "transformer" => $this,
+            "funcClass" => $funcClass,
         ]);
     }
     // }}}
@@ -734,30 +697,32 @@ abstract class Transformer
      */
     protected function registerFunctions($proc)
     {
+        $funcClass = new XsltFunctions($this, $this->fl);
+
         \Depage\Cms\Xslt\FuncDelegate::resetFunctions();
         \Depage\Cms\Xslt\FuncDelegate::registerFunctions($proc, [
-            "atomizeText" => [$this, "xsltAtomizeText"],
-            "autokeywords" => [$this, "xsltAutokeywords"],
-            "changesrc" => [$this, "xsltChangeSrc"],
-            "cssEscape" => [$this, "xsltCssEscape"],
-            "fileinfo" => [$this, "xsltFileinfo"],
-            "urlinfo" => [$this, "xsltUrlinfo"],
-            "filesInFolder" => [$this, "xsltFilesInFolder"],
-            "formatDate" => [$this, "xsltFormatDate"],
-            "getLibRef" => [$this, "xsltGetLibRef"],
-            "getPageRef" => [$this, "xsltGetPageRef"],
-            "glob" => [$this, "xsltGlob"],
-            "includeUnparsed" => [$this, "xsltIncludeUnparsed"],
-            "jsEscape" => [$this, "xsltJsEscape"],
-            "phpEscape" => [$this, "xsltPhpEscape"],
-            "replaceEmailChars" => [$this, "xsltReplaceEmailChars"],
-            "urlencode" => "rawurlencode",
+            "atomizeText" => [$funcClass, "atomizeText"],
+            "autokeywords" => [$funcClass, "autokeywords"],
+            "changesrc" => [$funcClass, "changeSrc"],
+            "cssEscape" => [$funcClass, "cssEscape"],
+            "fileinfo" => [$funcClass, "fileinfo"],
+            "filesInFolder" => [$funcClass, "filesInFolder"],
+            "formatDate" => [$funcClass, "formatDate"],
+            "getLibRef" => [$funcClass, "getLibRef"],
+            "getPageRef" => [$funcClass, "getPageRef"],
+            "getUseAbsolutePaths" => [$funcClass, "getUseAbsolutePaths"],
+            "getUseBaseUrl" => [$funcClass, "getUseBaseUrl"],
+            "glob" => [$funcClass, "glob"],
+            "includeUnparsed" => [$funcClass, "includeUnparsed"],
+            "jsEscape" => [$funcClass, "JsEscape"],
+            "phpEscape" => [$funcClass, "phpEscape"],
+            "replaceEmailChars" => [$funcClass, "ReplaceEmailChars"],
+            "setUseAbsolutePaths" => [$funcClass, "setUseAbsolutePaths"],
+            "setUseBaseUrl" => [$funcClass, "setUseBaseUrl"],
             "tolower" => "mb_strtolower",
-            "setUseAbsolutePaths" => [$this, "xsltSetUseAbsolutePaths"],
-            "getUseAbsolutePaths" => [$this, "xsltGetUseAbsolutePaths"],
-            "setUseBaseUrl" => [$this, "xsltSetUseBaseUrl"],
-            "getUseBaseUrl" => [$this, "xsltGetUseBaseUrl"],
             "transformDoc" => [$this, "transformSubdoc"],
+            "urlencode" => "rawurlencode",
+            "urlinfo" => [$funcClass, "urlinfo"],
         ]);
     }
     // }}}
@@ -802,406 +767,6 @@ abstract class Transformer
     }
     // }}}
 
-    // {{{ xsltGetLibRef()
-    /**
-     * @brief xsltGetLibRef
-     *
-     * @param mixed $path
-     * @return void
-     **/
-    public function xsltGetLibRef($path, $absolute = false)
-    {
-        $p = $this->fl->toLibref($path);
-
-        if ($p) $path = $p;
-
-        $url = parse_url($path);
-
-        $path = "lib/" . ($url['host'] ?? '') . ($url['path'] ?? '');
-
-        if ($absolute != "relative" && !empty($this->baseUrlStatic) && $this->baseUrl != $this->baseUrlStatic) {
-            $path = $this->baseUrlStatic . $path;
-        } else if ($absolute == "absolute" || $this->useAbsolutePaths) {
-            $path = $this->baseUrl . $path;
-        } else if ($absolute != "relative" && $this->useBaseUrl) {
-            $path = $path;
-        } else {
-            $url = new \Depage\Http\Url($this->currentPath);
-            $path = $url->getRelativePathTo($path);
-        }
-
-        return $path;
-    }
-    // }}}
-    // {{{ xsltGetPageRef()
-    /**
-     * @brief xsltGetPageRefgetPageRef
-     *
-     * @param mixed $pageId, $lang, $absolute
-     * @return void
-     **/
-    public function xsltGetPageRef($pageId, $lang = null, $absolute = false)
-    {
-        if ($lang === null) {
-            $lang = $this->lang;
-        }
-        $path = "";
-
-        $xmlnav = $this->getXmlNav();
-
-        if ($url = $xmlnav->getUrl($pageId)) {
-            $path = $lang . $url;
-        }
-
-        if ($absolute == "absolute" || $this->useAbsolutePaths) {
-            $path = $this->baseUrl . $path;
-        } else if ($this->useBaseUrl) {
-            $path = $path;
-        } else {
-            $url = new \Depage\Http\Url($this->currentPath);
-            $path = $url->getRelativePathTo($path);
-        }
-        if ($this->routeHtmlThroughPhp) {
-            //$path = preg_replace("/\.php$/", ".html", $path);
-        }
-
-        return $path;
-    }
-    // }}}
-    // {{{ xsltFileinfo
-    /**
-     * gets fileinfo for libref path
-     *
-     * @public
-     *
-     * @param    $path (string) libref path to target file
-     *
-     * @return    $xml (xml) file info as xml string
-     */
-    public function xsltFileinfo($path, $extended = "true") {
-        $info = $this->fl->getFileInfoByRef($path);
-
-        if (!$info) {
-            $xml = "<file exists=\"false\" />";
-            $doc = new \DOMDocument();
-            $doc->loadXML($xml);
-
-            return $doc;
-        }
-
-        return $info->toXml();
-    }
-    // }}}
-    // {{{ xsltUrlinfo
-    /**
-     * gets urlinfo for url
-     *
-     * @public
-     *
-     * @param    $path (string) url to get info about
-     *
-     * @return    $xml (xml) url info as xml string
-     */
-    public function xsltUrlinfo($url) {
-        $analyzer = new \Depage\Media\UrlAnalyzer();
-        $info = $analyzer->analyze($url);
-
-        return $info->toXml();
-    }
-    // }}}
-    // {{{ xsltFilesInFolder
-    /**
-     * gets fileinfo for all files in a specific folder
-     *
-     * @public
-     *
-     * @param    $id (int) id of folder
-     *
-     * @return    $xml (xml) file infos of files
-     */
-    public function xsltFilesInFolder($folderId) {
-        $files = $this->fl->getFilesInFolder($folderId);
-
-        $doc = new \DOMDocument();
-        $doc->loadXML("<files />");
-
-        foreach ($files as $f) {
-            $node = $doc->importNode($f->toXML()->documentElement, true);
-            $doc->documentElement->appendChild($node);
-        }
-
-        return $doc;
-    }
-    // }}}
-    // {{{ xsltIncludeUnparsed
-    /**
-     * gets fileinfo for libref path
-     *
-     * @public
-     *
-     * @param    $path (string) libref path to target file
-     *
-     * @return    $xml (xml) file info as xml string
-     */
-    public function xsltIncludeUnparsed($path) {
-        $xml = "";
-        $path = "projects/" . $this->project->name . "/lib" . substr($path, 8);
-
-        $xml = "<text>";
-        if (file_exists($path)) {
-            $xml .= htmlspecialchars(file_get_contents($path),
-                \ENT_COMPAT | \ENT_XML1 | \ENT_DISALLOWED, "utf-8");
-        }
-        $xml .= "</text>";
-
-        $doc = new \DOMDocument();
-        $doc->loadXML($xml);
-
-        return $doc;
-    }
-    // }}}
-    // {{{ xsltSetUseAbsolutePaths()
-    /**
-     * @brief xsltSetUseAbsolutePaths
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function xsltSetUseAbsolutePaths()
-    {
-        $this->useAbsolutePaths = true;
-        $this->useBaseUrl = false;
-
-        return "<true />";
-    }
-    // }}}
-    // {{{ xsltGetUseAbsolutePaths()
-    /**
-     * @brief xsltGetUseAbsolutePaths
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function xsltGetUseAbsolutePaths()
-    {
-        return $this->useAbsolutePaths;
-    }
-    // }}}
-    // {{{ xsltSetUseBaseUrl()
-    /**
-     * @brief xsltSetUseBaseUrl
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function xsltSetUseBaseUrl()
-    {
-        $this->useBaseUrl = true;
-        $this->useAbsolutePaths = false;
-
-        return "<true />";
-    }
-    // }}}
-    // {{{ xsltGetUseBaseUrl()
-    /**
-     * @brief xsltGetUseBaseUrl
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function xsltGetUseBaseUrl()
-    {
-        return $this->useBaseUrl;
-    }
-    // }}}
-    // {{{ xsltChangeSrc()
-    /**
-     * gets fileinfo for libref path
-     *
-     * @public
-     *
-     * @param    $path (string) libref path to target file
-     *
-     * @return    $xml (xml) file info as xml string
-     */
-    public function xsltChangeSrc($source) {
-        $url = new \Depage\Http\Url($this->currentPath);
-        $newSource = "";
-        $posOffset = 0;
-        // @todo check libref:/(/)
-        while (($startPos = strpos($source, '"libref://', $posOffset)) !== false) {
-            $newSource .= substr($source, $posOffset, $startPos - $posOffset) . '"';
-            $posOffset = $startPos + strlen("libref://") + 3;
-            $endPos = strpos($source, "\"", $posOffset);
-            $newSource .= $url->getRelativePathTo('/lib' . substr($source, $startPos + 9, $endPos - ($startPos + 9)));
-            $posOffset = $endPos;
-        }
-        $newSource .= substr($source, $posOffset);
-
-        return $newSource;
-    }
-    // }}}
-    // {{{ xsltReplaceEmailChars()
-    /**
-     * gets fileinfo for libref path
-     *
-     * @public
-     *
-     * @param    $path (string) libref path to target file
-     *
-     * @return    $xml (xml) file info as xml string
-     */
-    public function xsltReplaceEmailChars($email) {
-        $original = array(
-            "@",
-            ".",
-            "-",
-            "_",
-        );
-        if ($this->lang == "de") {
-            $repl = array(
-                " *at* ",
-                " *punkt* ",
-                " *minus* ",
-                " *unterstrich* ",
-            );
-        } else {
-            $repl = array(
-                " *at* ",
-                " *dot* ",
-                " *minus* ",
-                " *underscore* ",
-            );
-        }
-        $value = str_replace($original, $repl, $email);
-
-        return $value;
-    }
-    // }}}
-    // {{{ xsltAtomizeText()
-    /**
-     * gets fileinfo for libref path
-     *
-     * @public
-     *
-     * @param    $path (string) libref path to target file
-     *
-     * @return    $xml (xml) file info as xml string
-     */
-    public function xsltAtomizeText($text) {
-        $xml = "<spans><span>" . str_replace(" ", " </span><span>", htmlspecialchars(trim($text))) . " </span></spans>";
-
-        $doc = new \DOMDocument();
-        $doc->loadXML($xml);
-
-        return $doc;
-    }
-    // }}}
-    // {{{ xsltPhpEscape()
-    /**
-     * escapes string for use as php code in xsl
-     *
-     * @public
-     *
-     * @param    $string
-     *
-     * @return    escaped string
-     */
-    public function xsltPhpEscape($string) {
-        $value = var_export($string, true);
-
-        return $value;
-    }
-    // }}}
-    // {{{ xsltJsEscape()
-    /**
-     * escapes string for use in javascript code in xsl
-     *
-     * @public
-     *
-     * @param    $string
-     *
-     * @return    escaped string
-     */
-    public function xsltJsEscape($string) {
-        $value = json_encode($string, \JSON_UNESCAPED_UNICODE | \JSON_UNESCAPED_SLASHES | \JSON_NUMERIC_CHECK);
-
-        return $value;
-    }
-    // }}}
-    // {{{ xsltCssEscape()
-    /**
-     * escapes css identifier for use in xsl
-     *
-     * @public
-     *
-     * @param    $string
-     *
-     * @return    escaped string
-     */
-    public function xsltCssEscape($string) {
-        $value = \Depage\Html\Html::getEscapedUrl($string);
-
-        return $value;
-    }
-    // }}}
-    // {{{ xsltFormatDate()
-    /**
-     * gets fileinfo for libref path
-     *
-     * @public
-     *
-     * @param    $path (string) libref path to target file
-     *
-     * @return    $xml (xml) file info as xml string
-     */
-    public function xsltFormatDate($date = '', $format = '') {
-        if ($format == '') {
-            $format = "c";
-        }
-        if (empty($date)) {
-            $date = date($format);
-        } else {
-            $date = date($format, strtotime($date));
-        }
-
-        return $date;
-    }
-    // }}}
-    // {{{ xsltAutokeywords()
-    /**
-     * @brief xsltAutokeywords
-     *
-     * @param mixed $keywords, $content
-     * @return void
-     **/
-    public function xsltAutokeywords($keys, $content)
-    {
-        // @todo add keyword aliases?
-        $val = "";
-        $keywords = [];
-        $originalKeywords = $this->extractWords($keys);
-        foreach ($originalKeywords as $key => $value) {
-            $keywords[$key] = mb_strtolower($value);
-        }
-        $contentWords = $this->extractWords($content, true);
-
-        $found = array_intersect($contentWords, $keywords);
-
-        foreach ($found as $word) {
-            $val .= $originalKeywords[array_search($word, $keywords)] . ", ";
-        }
-        /*
-        var_dump($keys);
-        var_dump($keywords);
-        var_dump($contentWords);
-        var_dump($val);
-        die();
-         */
-        return trim($val, ", ");
-    }
-    // }}}
-
     // {{{ getXmlNav()
     /**
      * @brief getXmlNav
@@ -1209,7 +774,7 @@ abstract class Transformer
      * @param mixed
      * @return void
      **/
-    protected function getXmlNav()
+    public function getXmlNav()
     {
         if (is_null($this->xmlnav)) {
             $this->xmlnav = new \Depage\Cms\XmlNav();
@@ -1221,30 +786,26 @@ abstract class Transformer
         return $this->xmlnav;
     }
     // }}}
-    // {{{ extractWords()
+
+    // {{{ handleLibXmlErrors()
     /**
-     * @brief extractWords
+     * @brief handleLibXmlErrors
      *
-     * @param mixed $
+     * @param mixed
      * @return void
      **/
-    private function extractWords($string, $normalize = false)
+    protected function handleLibXmlErrors()
     {
-        preg_match_all("/\w+(-\w+)?/u", $string, $matches);
-        if (!isset($matches[0])) {
-            return [];
+        $messages = [];
+        $errors = libxml_get_errors();
+        foreach($errors as $error) {
+            $errorStr = $error->message . " in " . $error->file . " on line " . $error->line;
+            $this->log->log("LibXMLError: " . $errorStr);
+            $messages[] = $errorStr;
         }
+        libxml_clear_errors();
 
-        if ($normalize) {
-            foreach ($matches[0] as &$value) {
-                $value = mb_strtolower($value);
-            }
-
-            return array_unique($matches[0]);
-        } else {
-            return $matches[0];
-        }
-
+        return $messages;
     }
     // }}}
 
