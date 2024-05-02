@@ -29,6 +29,7 @@ abstract class Transformer
     public $template;
     public $project;
     public $baseUrl = "";
+    public $publishId = "";
     public $baseUrlStatic = "";
     public $useAbsolutePaths = false;
     public $useBaseUrl = false;
@@ -359,7 +360,7 @@ abstract class Transformer
     {
         $this->lang = $lang;
         $id = $lang;
-        $templateName = $this->template . "-" . $this->previewType;
+        $templateName = $this->template . "-" . $this->previewType . $this->publishId;
 
         if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $templateName, $id)) {
             $content = $this->transformCache->get($pagedataId, $templateName, $id);
@@ -461,7 +462,7 @@ abstract class Transformer
     {
         $this->lang = $lang;
         $id = $lang;
-        $templateName = $this->template . "-" . $this->previewType . "-" . $subtype;
+        $templateName = $this->template . "-" . $this->previewType . $this->publishId . "-" . $subtype;
 
         $docId = $this->xmlGetter->docExists($docId);
 
@@ -834,6 +835,7 @@ abstract class Transformer
             'transformCache',
             'baseUrl',
             'baseUrlStatic',
+            'publishId',
         );
     }
     // }}}

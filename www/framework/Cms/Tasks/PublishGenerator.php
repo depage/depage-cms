@@ -196,6 +196,8 @@ class PublishGenerator
             $transformCache
         );
 
+        $transformer->publishId = $this->publishId;
+
         $transformer->setBaseUrl(
             $this->project->getBaseUrl($this->publishId)
         );

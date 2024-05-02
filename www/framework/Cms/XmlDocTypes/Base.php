@@ -44,12 +44,7 @@ class Base extends \Depage\XmlDb\XmlDoctypes\Base
         parent::onHistorySave();
 
         $templates = $this->project->getXslTemplates();
-        $publishingTargets = $this->project->getPublishingTargets();
         $previewTypes = ["live"];
-
-        foreach ($publishingTargets as $id => $settings) {
-            array_push($previewTypes, "live-$id");
-        }
 
         $transformCache = new \Depage\Transformer\TransformCache($this->xmlDb->pdo, $this->project->name);
         foreach ($templates as $template) {
