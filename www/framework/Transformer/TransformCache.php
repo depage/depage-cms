@@ -114,6 +114,25 @@ class TransformCache
         return $this->cache->delete($cachePath);
     }
     // }}}
+    // {{{ getUsedFor()
+    /**
+     * @brief getUsedFor
+     *
+     * @param int $docId
+     * @param string $templateName
+     * @return array
+     **/
+    public function getUsedFor($docId, $templateName):array
+    {
+        $query = $this->pdo->prepare("SELECT DISTINCT docId FROM {$this->tableName} WHERE transformId = ? AND template LIKE ?");
+        $query->execute([
+            $docId,
+            $templateName . "%",
+        ]);
+
+        return $query->fetchAll(\PDO::FETCH_COLUMN, 0);
+    }
+    // }}}
     // {{{ clearFor()
     /**
      * @brief clearFor

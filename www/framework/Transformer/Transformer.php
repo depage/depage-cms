@@ -474,6 +474,8 @@ abstract class Transformer
             $success = $content->loadXML($this->transformCache->get($docId, $templateName, $id));
 
             if ($success) {
+                $this->addToUsedDocuments(...$this->transformCache->getUsedFor($docId, $templateName, $id));
+
                 return $content;
             }
         }
@@ -602,6 +604,7 @@ abstract class Transformer
     {
         if (empty($subtype)) {
             $this->usedDocuments = [];
+            $this->usedDocuments["_"] = [];
         } else {
             $this->usedDocuments[$subtype] = [];
         }
@@ -614,17 +617,17 @@ abstract class Transformer
      * @param mixed $docId
      * @return void
      **/
-    public function addToUsedDocuments($docId)
+    public function addToUsedDocuments(...$docIds)
     {
-        $subtype = $this->currentSubtype;
-        if (empty($subtype)) {
-            $subtype = "_";
+        foreach ($docIds as $id) {
+            $this->usedDocuments["_"][$id] = true;
         }
-        if (!isset($this->usedDocuments[$subtype])) {
-            $this->usedDocuments[$subtype] = [];
+        if (empty($this->currentSubtype)) {
+            return;
         }
-        $this->usedDocuments[$subtype][] = $docId;
-
+        foreach ($docIds as $id) {
+            $this->usedDocuments[$this->currentSubtype][$id] = true;
+        }
     }
     // }}}
     // {{{ getUsedDocuments()
@@ -639,7 +642,7 @@ abstract class Transformer
         if (empty($subtype)) {
             $subtype = "_";
         }
-        return array_unique($this->usedDocuments[$subtype]);
+        return array_keys($this->usedDocuments[$subtype]);
     }
     // }}}
 
