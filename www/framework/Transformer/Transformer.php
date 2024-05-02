@@ -24,6 +24,7 @@ abstract class Transformer
     protected $fl;
     protected $transformCache;
     protected $previewType = "pre";
+    protected $currentSubtype = "";
 
     public $template;
     public $project;
@@ -358,9 +359,10 @@ abstract class Transformer
     {
         $this->lang = $lang;
         $id = $lang;
+        $templateName = $this->template . "-" . $this->previewType;
 
-        if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $id)) {
-            $content = $this->transformCache->get($pagedataId, $this->lang);
+        if (!is_null($this->transformCache) && $this->transformCache->exist($pagedataId, $templateName, $id)) {
+            $content = $this->transformCache->get($pagedataId, $templateName, $id);
 
             return $content;
         }
@@ -413,7 +415,7 @@ abstract class Transformer
         $content = $cleaner->clean($content);
 
         if (!is_null($this->transformCache)) {
-            $this->transformCache->set($pagedataId, $this->getUsedDocuments(), $content, $id);
+            $this->transformCache->set($pagedataId, $this->getUsedDocuments(), $content, $templateName, $id);
         }
 
         return $content;
@@ -458,7 +460,8 @@ abstract class Transformer
     public function transformSubdoc($docId, $lang, $subtype)
     {
         $this->lang = $lang;
-        $id = "{$lang}_{$subtype}";
+        $id = $lang;
+        $templateName = $this->template . "-" . $this->previewType . "-" . $subtype;
 
         $docId = $this->xmlGetter->docExists($docId);
 
@@ -466,9 +469,9 @@ abstract class Transformer
             throw new \Exception("page does not exist");
         }
 
-        if (!is_null($this->transformCache) && $this->transformCache->exist($docId, $id)) {
+        if (!is_null($this->transformCache) && $this->transformCache->exist($docId, $templateName, $id)) {
             $content = new \DOMDocument();
-            $success = $content->loadXML($this->transformCache->get($docId, $id));
+            $success = $content->loadXML($this->transformCache->get($docId, $templateName, $id));
 
             if ($success) {
                 return $content;
@@ -483,8 +486,9 @@ abstract class Transformer
         $this->useAbsolutePaths = false;
         $this->useBaseUrl = true;
 
+        $this->currentSubtype = $subtype;
         $this->clearUsedDocuments($subtype);
-        $this->addToUsedDocuments($docId, $subtype);
+        $this->addToUsedDocuments($docId);
         $params = [
             "currentLang" => $this->lang,
             "currentPath" => "",
@@ -521,9 +525,10 @@ abstract class Transformer
         if (!is_null($this->transformCache)) {
             $contentString = $content->saveXML();
             if (!empty($contentString)) {
-                $this->transformCache->set($docId, $this->getUsedDocuments($subtype), $contentString, $id);
+                $this->transformCache->set($docId, $this->getUsedDocuments($subtype), $contentString, $templateName, $id);
             }
         }
+        $this->currentSubtype = "";
 
         return $content;
     }
@@ -596,9 +601,10 @@ abstract class Transformer
     protected function clearUsedDocuments($subtype = "")
     {
         if (empty($subtype)) {
-            $subtype = "_";
+            $this->usedDocuments = [];
+        } else {
+            $this->usedDocuments[$subtype] = [];
         }
-        $this->usedDocuments[$subtype] = [];
     }
     // }}}
     // {{{ addToUsedDocuments()
@@ -608,8 +614,9 @@ abstract class Transformer
      * @param mixed $docId
      * @return void
      **/
-    public function addToUsedDocuments($docId, $subtype = "")
+    public function addToUsedDocuments($docId)
     {
+        $subtype = $this->currentSubtype;
         if (empty($subtype)) {
             $subtype = "_";
         }

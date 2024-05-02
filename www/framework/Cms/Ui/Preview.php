@@ -182,7 +182,7 @@ class Preview extends \Depage\Depage\Ui\Base
         $this->project->setPreviewType($this->previewType);
 
         if ($this->template != "newsletter") {
-            $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName, $this->template . "-" . $this->previewType);
+            $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->projectName);
         }
         $xmlGetter = $this->project->getXmlGetter();
         $xmlGetter->timestamp = $this->timestamp;

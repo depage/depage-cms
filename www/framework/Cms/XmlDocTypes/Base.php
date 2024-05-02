@@ -31,10 +31,10 @@ class Base extends \Depage\XmlDb\XmlDoctypes\Base
         $templates = $this->project->getXslTemplates();
         $previewTypes = ["pre"];
 
+        $transformCache = new \Depage\Transformer\TransformCache($this->xmlDb->pdo, $this->project->name);
         foreach ($templates as $template) {
             foreach ($previewTypes as $type) {
-                $transformCache = new \Depage\Transformer\TransformCache($this->xmlDb->pdo, $this->project->name, "$template-$type");
-                $transformCache->clearFor($this->document->getDocId());
+                $transformCache->clearFor($this->document->getDocId(), "$template-$type");
             }
         }
     }
@@ -51,10 +51,10 @@ class Base extends \Depage\XmlDb\XmlDoctypes\Base
             array_push($previewTypes, "live-$id");
         }
 
+        $transformCache = new \Depage\Transformer\TransformCache($this->xmlDb->pdo, $this->project->name);
         foreach ($templates as $template) {
             foreach ($previewTypes as $type) {
-                $transformCache = new \Depage\Transformer\TransformCache($this->xmlDb->pdo, $this->project->name, "$template-$type");
-                $transformCache->clearFor($this->document->getDocId());
+                $transformCache->clearFor($this->document->getDocId(), "$template-$type");
             }
         }
     }

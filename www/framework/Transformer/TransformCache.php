@@ -7,7 +7,6 @@ class TransformCache
     // {{{ variables
     protected $pdo;
     protected $projectName;
-    protected $templateName;
     protected $cache;
     protected $tableName;
     // }}}
@@ -16,15 +15,15 @@ class TransformCache
     /**
      * @brief __construct
      *
-     * @param mixed $
+     * @param mixed $pdo
+     * @param string $projectName
      * @return void
      **/
-    public function __construct($pdo, $projectName, $templateName)
+    public function __construct($pdo, $projectName)
     {
         $this->pdo = $pdo;
         $this->projectName = $projectName;
-        $this->templateName = $templateName;
-        $this->cache = \Depage\Cache\Cache::factory("transform/{$this->projectName}/{$this->templateName}");
+        $this->cache = \Depage\Cache\Cache::factory("transform/{$this->projectName}");
         $this->tableName = $this->pdo->prefix . "_proj_" . $this->projectName . "_transform_used_docs";
     }
     // }}}
@@ -32,22 +31,24 @@ class TransformCache
     /**
      * @brief exists
      *
-     * @param mixed $docId
+     * @param int $docId
+     * @param string $templateName
+     * @param string $subId
      * @return void
      **/
-    public function exist($docId, $subId = "default")
+    public function exist($docId, $templateName, $subId = "default"):bool
     {
         $query = $this->pdo->prepare("SELECT COUNT(transformId) FROM {$this->tableName} WHERE docId = ? AND template = ?;");
-        $query->execute(array(
+        $query->execute([
             $docId,
-            $this->templateName,
-        ));
+            $templateName,
+        ]);
 
         if ($query->fetchColumn() == 0) {
             return false;
         }
 
-        $cachePath = $this->getCachePathFor($docId, $subId);
+        $cachePath = $this->getCachePathFor($docId, $templateName, $subId);
 
         return $this->cache->exist($cachePath);
     }
@@ -56,12 +57,14 @@ class TransformCache
     /**
      * @brief get
      *
-     * @param mixed $docId
+     * @param int $docId
+     * @param string $templateName
+     * @param string $subId
      * @return void
      **/
-    public function get($docId, $subId = "default")
+    public function get($docId, $templateName, $subId = "default"):mixed
     {
-        $cachePath = $this->getCachePathFor($docId, $subId);
+        $cachePath = $this->getCachePathFor($docId, $templateName, $subId);
 
         return $this->cache->getFile($cachePath);
     }
@@ -70,24 +73,28 @@ class TransformCache
     /**
      * @brief set
      *
-     * @param mixed
+     * @param int $docId
+     * @param array $usedDocuments
+     * @param string $content
+     * @param string $templateName
+     * @param string $subId
      * @return void
      **/
-    public function set($docId, $usedDocuments, $content, $subId = "default")
+    public function set($docId, $usedDocuments, $content, $templateName, $subId = "default"):void
     {
         $usedDocuments[] = $docId;
-        $cachePath = $this->getCachePathFor($docId, $subId);
+        $cachePath = $this->getCachePathFor($docId, $templateName, $subId);
 
         $this->cache->setFile($cachePath, $content);
 
         $query = $this->pdo->prepare("INSERT IGNORE INTO {$this->tableName} (transformId, docId, template) VALUES (?, ?, ?);");
 
         foreach ($usedDocuments as $id) {
-            $query->execute(array(
+            $query->execute([
                 $docId,
                 $id,
-                $this->templateName,
-            ));
+                $templateName,
+            ]);
         }
     }
     // }}}
@@ -95,12 +102,14 @@ class TransformCache
     /**
      * @brief delete
      *
-     * @param mixed $docId
-     * @return void
+     * @param int $docId
+     * @param string $templateName
+     * @param string $subId
+     * @return bool
      **/
-    protected function delete($docId, $subId = "")
+    protected function delete($docId, $templateName, $subId = "")
     {
-        $cachePath = $this->getCachePathFor($docId, $subId);
+        $cachePath = $this->getCachePathFor($docId, $templateName, $subId);
 
         return $this->cache->delete($cachePath);
     }
@@ -109,24 +118,26 @@ class TransformCache
     /**
      * @brief clearFor
      *
-     * @param mixed $docId
+     * @param int $docId
+     * @param string $templateName
+     * @param string $subId
      * @return void
      **/
-    public function clearFor($docId, $subId = "")
+    public function clearFor($docId, $templateName, $subId = ""):void
     {
-        $query = $this->pdo->prepare("SELECT DISTINCT transformId FROM {$this->tableName} WHERE docId = ? AND template = ?;");
-        $query->execute(array(
+        $query = $this->pdo->prepare("SELECT DISTINCT transformId, template FROM {$this->tableName} WHERE docId = ? AND template LIKE ?");
+        $query->execute([
             $docId,
-            $this->templateName,
-        ));
-        $deleteQuery = $this->pdo->prepare("DELETE FROM {$this->tableName} WHERE transformId = ? AND template = ?;");
+            $templateName . "%",
+        ]);
+        $deleteQuery = $this->pdo->prepare("DELETE FROM {$this->tableName} WHERE transformId = ? AND template = ?");
 
         while ($result = $query->fetchObject()) {
-            $deleteQuery->execute(array(
+            $deleteQuery->execute([
                 $result->transformId,
-                $this->templateName,
-            ));
-            $this->delete($result->transformId, $subId);
+                $result->template,
+            ]);
+            $this->delete($result->transformId, $result->template, $subId);
         }
     }
     // }}}
@@ -134,8 +145,7 @@ class TransformCache
     /**
      * @brief clearAll
      *
-     * @param mixed $docId
-     * @return void
+     * @return bool
      **/
     public function clearAll()
     {
@@ -149,12 +159,14 @@ class TransformCache
     /**
      * @brief getCachePathFor
      *
-     * @param mixed $
-     * @return void
+     * @param int $docId
+     * @param string $templateName
+     * @param string $subId
+     * @return string
      **/
-    protected function getCachePathFor($docId, $subId = "default")
+    protected function getCachePathFor($docId, $templateName, $subId = "default"):string
     {
-        return $docId . "/" . $subId;
+        return "$templateName/$docId/$subId";
     }
     // }}}
 }
