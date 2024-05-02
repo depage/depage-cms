@@ -44,6 +44,11 @@ class Redirector
     protected $baseUrl = "";
 
     /**
+     * @brief host
+     **/
+    protected $host = "";
+
+    /**
      * @brief scheme
      **/
     protected $scheme = "http";
