@@ -219,109 +219,111 @@ abstract class Transformer
         $doc = new \Depage\Xml\Document();
         $doc->resolveExternals = true;
 
-        if ($regenerate) {
-            $this->xsltCache->delete("{$this->project->name}/{$template}/{$this->previewType}_{$subtype}*.xsl");
-
-            if (!is_null($this->transformCache)) {
-                $this->transformCache->clearAll();
-            }
-            $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-            $xslt .= $this->getXsltEntities();
-            $xslt .= "<xsl:stylesheet
-                version=\"1.0\"
-                xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"
-                xmlns:php=\"http://php.net/xsl\"
-                xmlns:dp=\"http://cms.depagecms.net/ns/depage\"
-                xmlns:db=\"http://cms.depagecms.net/ns/database\"
-                xmlns:proj=\"http://cms.depagecms.net/ns/project\"
-                xmlns:pg=\"http://cms.depagecms.net/ns/page\"
-                xmlns:sec=\"http://cms.depagecms.net/ns/section\"
-                xmlns:edit=\"http://cms.depagecms.net/ns/edit\"
-                xmlns:exslt=\"http://exslt.org/common\"
-                xmlns:func=\"http://exslt.org/functions\"
-                xmlns:str=\"http://exslt.org/strings\"
-                extension-element-prefixes=\"xsl db proj pg sec edit func exslt str \"
-            />";
-
-            $doc->loadXML($xslt);
-            $root = $doc->documentElement;
-
-            // add include base functions
-            $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:include");
-            $n->setAttribute("href", "xslt://functions.xsl");
-            $root->appendChild($n);
-
-            // add basic paramaters and variables
-            $params = [
-                'currentLang' => null,
-                'currentPageId' => null,
-                'currentPath' => "''",
-                'depageIsLive' => null,
-                'depagePreviewType' => null,
-                'baseUrl' => null,
-                'baseUrlStatic' => null,
-                'projectName' => null,
-                'libPath' => "'" . htmlspecialchars('file://' . str_replace(" ", "%20", realpath($this->libPath))) . "'",
-            ];
-            // if there are no partial xsl templates, add old default parameters
-            $subFiles = glob("{$this->xsltPath}{$template}/*/*.xsl") ?? [];
-            if (count($subFiles) == 0) {
-                $params += [
-                    'navigation' => "document('xmldb://pages')",
-                    'settings' => "document('xmldb://settings')",
-                    'colors' => "document('xmldb://colors')",
-                    'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
-                    'languages' => "\$settings/proj:settings/proj:languages",
-                    'currentPage' => "\$navigation//pg:*[@status = 'active']",
-                ];
-            }
-
-            $variables = [
-                'var-ga-Account' => "''",
-                'var-ga-Domain' => "''",
-                'var-pa-siteId' => "''",
-                'var-pa-Domain' => "''",
-                'var-fb-Account' => "''",
-                'var-pinterest-tagId' => "''",
-            ];
-
-            // add variables from settings
-            $settings = $this->xmlGetter->getDocXml("settings");
-            if (!$settings) {
-                throw new \Exception("no settings document");
-            }
-
-            $xpath = new \DOMXPath($settings);
-            $nodelist = $xpath->query("//proj:variable");
-
-            for ($i = $nodelist->length - 1; $i >= 0; $i--) {
-                $node = $nodelist->item($i);
-                $variables["var-" . $node->getAttribute("name")] = "'" . htmlspecialchars($node->getAttribute("value")) . "'";
-            }
-
-            // now add to xslt
-            foreach ($params as $key => $value) {
-                $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:param");
-                $n->setAttribute("name", $key);
-                if (is_string($value) || !empty($value)) {
-                    $n->setAttribute("select", $value);
-                } else {
-                    $n->setAttribute("select", "false()");
-                }
-                $root->appendChild($n);
-            }
-            foreach ($variables as $key => $value) {
-                $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:variable");
-                $n->setAttribute("name", $key);
-                $n->setAttribute("select", $value);
-                $root->appendChild($n);
-            }
-            $this->addXsltIncludes($doc, $files);
-
-            $this->xsltCache->set($xslFile, $doc);
-        } else {
+        if (!$regenerate) {
             $doc->load($this->xsltCache->getPath($xslFile));
+
+            return $doc;
         }
+
+        $this->xsltCache->delete("{$this->project->name}/{$template}/{$this->previewType}_{$subtype}*.xsl");
+
+        if (!is_null($this->transformCache)) {
+            $this->transformCache->clearAll();
+        }
+        $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+        $xslt .= $this->getXsltEntities();
+        $xslt .= "<xsl:stylesheet
+            version=\"1.0\"
+            xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"
+            xmlns:php=\"http://php.net/xsl\"
+            xmlns:dp=\"http://cms.depagecms.net/ns/depage\"
+            xmlns:db=\"http://cms.depagecms.net/ns/database\"
+            xmlns:proj=\"http://cms.depagecms.net/ns/project\"
+            xmlns:pg=\"http://cms.depagecms.net/ns/page\"
+            xmlns:sec=\"http://cms.depagecms.net/ns/section\"
+            xmlns:edit=\"http://cms.depagecms.net/ns/edit\"
+            xmlns:exslt=\"http://exslt.org/common\"
+            xmlns:func=\"http://exslt.org/functions\"
+            xmlns:str=\"http://exslt.org/strings\"
+            extension-element-prefixes=\"xsl db proj pg sec edit func exslt str \"
+        />";
+
+        $doc->loadXML($xslt);
+        $root = $doc->documentElement;
+
+        // add include base functions
+        $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:include");
+        $n->setAttribute("href", "xslt://functions.xsl");
+        $root->appendChild($n);
+
+        // add basic paramaters and variables
+        $params = [
+            'currentLang' => null,
+            'currentPageId' => null,
+            'currentPath' => "''",
+            'depageIsLive' => null,
+            'depagePreviewType' => null,
+            'baseUrl' => null,
+            'baseUrlStatic' => null,
+            'projectName' => null,
+            'libPath' => "'" . htmlspecialchars('file://' . str_replace(" ", "%20", realpath($this->libPath))) . "'",
+        ];
+        // if there are no partial xsl templates, add old default parameters
+        $subFiles = glob("{$this->xsltPath}{$template}/*/*.xsl") ?? [];
+        if (count($subFiles) == 0) {
+            $params += [
+                'navigation' => "document('xmldb://pages')",
+                'settings' => "document('xmldb://settings')",
+                'colors' => "document('xmldb://colors')",
+                'currentColorscheme' => "dp:choose(//pg:meta[1]/@colorscheme, //pg:meta[1]/@colorscheme, \$colors//proj:colorscheme[@name][1]/@name)",
+                'languages' => "\$settings/proj:settings/proj:languages",
+                'currentPage' => "\$navigation//pg:*[@status = 'active']",
+            ];
+        }
+
+        $variables = [
+            'var-ga-Account' => "''",
+            'var-ga-Domain' => "''",
+            'var-pa-siteId' => "''",
+            'var-pa-Domain' => "''",
+            'var-fb-Account' => "''",
+            'var-pinterest-tagId' => "''",
+        ];
+
+        // add variables from settings
+        $settings = $this->xmlGetter->getDocXml("settings");
+        if (!$settings) {
+            throw new \Exception("no settings document");
+        }
+
+        $xpath = new \DOMXPath($settings);
+        $nodelist = $xpath->query("//proj:variable");
+
+        for ($i = $nodelist->length - 1; $i >= 0; $i--) {
+            $node = $nodelist->item($i);
+            $variables["var-" . $node->getAttribute("name")] = "'" . htmlspecialchars($node->getAttribute("value")) . "'";
+        }
+
+        // now add to xslt
+        foreach ($params as $key => $value) {
+            $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:param");
+            $n->setAttribute("name", $key);
+            if (is_string($value) || !empty($value)) {
+                $n->setAttribute("select", $value);
+            } else {
+                $n->setAttribute("select", "false()");
+            }
+            $root->appendChild($n);
+        }
+        foreach ($variables as $key => $value) {
+            $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:variable");
+            $n->setAttribute("name", $key);
+            $n->setAttribute("select", $value);
+            $root->appendChild($n);
+        }
+        $this->addXsltIncludes($doc, $files);
+
+        $this->xsltCache->set($xslFile, $doc);
 
         return $doc;
     }
@@ -634,24 +636,7 @@ abstract class Transformer
     {
         /*
          * @todo
-         * get:css -> replace with transforming css directly
-         * get:redirect -> analogous to css
-         * get:atom -> analogous to css
-         *
-         * @done but @thinkabout
-         * get:page -> replaced with dp:getpage function -> better replace manualy in template
-         *
-         * @done
-         * pageref:
-         * libref:
-         * get:xslt -> replaced with xslt://
-         * get:template -> deleted
-         * get:navigation -> replaced with $navigation
-         * get:colors -> replaced with $colors
-         * get:settings -> replaced with $settings
-         * get:languages -> replaced with $languages
-         * call:doctype -> not necessary anymore
-         * call:getversion -> replaced by $depageVersion
+         * call:doctype -> not necessary anymore, replace in debug xsl
          */
         $funcClass = new XsltFunctions($this, $this->fl);
 
