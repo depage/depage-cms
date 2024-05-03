@@ -116,11 +116,10 @@ abstract class Transformer
     }
     // }}}
     // {{{ getXsltProc()
-    public function getXsltProc($subtype = ""):\XSLTProcessor
+    public function getXsltProc($subtype = "_"):\XSLTProcessor
     {
-        $id = empty($subtype) ? "_" : $subtype;
-        if (isset($this->xsltProcs[$id])) {
-            return $this->xsltProcs[$id];
+        if (isset($this->xsltProcs[$subtype])) {
+            return $this->xsltProcs[$subtype];
         }
 
         libxml_use_internal_errors(true);
@@ -136,7 +135,7 @@ abstract class Transformer
 
         if ($this->profiling) {
             $file = "logs/xslt-profiling";
-            if (!empty($subtype)) {
+            if ($subtype != "_") {
                 $file .= "-$subtype";
             }
             $xsltProc->setProfiling("$file.txt");
@@ -148,7 +147,7 @@ abstract class Transformer
             throw new \Exception($error);
         }
 
-        $this->xsltProcs[$id] = $xsltProc;
+        $this->xsltProcs[$subtype] = $xsltProc;
 
         return $xsltProc;
     }
@@ -179,16 +178,14 @@ abstract class Transformer
     /**
      * @return  null
      */
-    protected function getXsltTemplate($template, $subtype = "")
+    protected function getXsltTemplate($template, $subtype = "_")
     {
         $regenerate = false;
 
         $xsltSharedPath = "{$this->xsltPath}{$template}/_/";
-        if (empty($subtype)) {
-            $xslFile = "{$this->project->name}/{$template}/{$this->previewType}.xsl";
+        if ($subtype == "_") {
             $xsltPath = "{$this->xsltPath}{$template}/";
         } else {
-            $xslFile = "{$this->project->name}/{$template}/{$this->previewType}_{$subtype}.xsl";
             $xsltPath = "{$this->xsltPath}{$template}/{$subtype}/";
         }
 
@@ -197,6 +194,9 @@ abstract class Transformer
             glob("{$xsltSharedPath}*.xsl") ?? [],
             glob("{$xsltPath}*.xsl") ?? []
         );
+        $hash = sha1(implode(" ", $files));
+
+        $xslFile = "{$this->project->name}/{$template}/{$this->previewType}_{$subtype}_{$hash}.xsl";
 
         if (count($files) == 0) {
             throw new \Exception("No XSL templates found in '$this->xsltPath$template/'.");
@@ -220,6 +220,8 @@ abstract class Transformer
         $doc->resolveExternals = true;
 
         if ($regenerate) {
+            $this->xsltCache->delete("{$this->project->name}/{$template}/{$this->previewType}_{$subtype}*.xsl");
+
             if (!is_null($this->transformCache)) {
                 $this->transformCache->clearAll();
             }
@@ -538,13 +540,12 @@ abstract class Transformer
     // }}}
     // {{{ saveTransformed()
     /**
-     * @return  null
+     * @return  bool
      */
-    protected function saveTransformed($savePath, $content)
+    protected function saveTransformed($savePath, $content):bool
     {
         $dynamic = array(
             "php",
-            "php5",
         );
         $info = pathinfo($savePath);
         if (!is_dir($info['dirname'])) {
@@ -561,36 +562,17 @@ abstract class Transformer
     {
         $html = $this->transformUrl($urlPath, $lang);
 
-        // cache transformed source
+        // cache transformed source to be served by browser directly
         $dynamic = $this->saveTransformed($this->savePath, $html);
 
         if ($dynamic) {
+            // tell index php to load the dynamic content
             $GLOBALS['replacementScript'] = $this->savePath;
+
             return "";
-
-            $query = "";
-            if (!empty($_SERVER['QUERY_STRING'])) {
-                $query = "?" . $_SERVER['QUERY_STRING'];
-            }
-            // @todo add headers
-            // @todo add spoofed location header
-            $request = new \Depage\Http\Request(DEPAGE_BASE . $this->savePath . $query);
-            $request
-                ->setPostData($_POST)
-                ->setCookie($_COOKIE)
-                // because it's our own local server -> @todo make this configurable
-                ->allowUnsafeSSL = true;
-
-            $response = $request->execute();
-
-            if ($response->isRedirect()) {
-                \Depage\Depage\Runner::redirect($response->getRedirectUrl());
-            }
-
-            return $response;
-        } else {
-            return $html;
         }
+
+        return $html;
     }
     // }}}
 
@@ -601,9 +583,9 @@ abstract class Transformer
      * @param mixed
      * @return void
      **/
-    protected function clearUsedDocuments($subtype = "")
+    protected function clearUsedDocuments($subtype = "_")
     {
-        if (empty($subtype)) {
+        if ($subtype == "_") {
             $this->usedDocuments = [];
             $this->usedDocuments["_"] = [];
         } else {
@@ -638,11 +620,8 @@ abstract class Transformer
      * @param mixed
      * @return void
      **/
-    public function getUsedDocuments($subtype = "")
+    public function getUsedDocuments($subtype = "_")
     {
-        if (empty($subtype)) {
-            $subtype = "_";
-        }
         return array_keys($this->usedDocuments[$subtype]);
     }
     // }}}
