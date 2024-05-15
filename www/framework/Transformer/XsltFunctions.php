@@ -85,6 +85,7 @@ class XsltFunctions
         $path = "";
 
         $xmlnav = $this->transformer->getXmlNav();
+        $this->transformer->addToUsedDocuments("1");
 
         if ($url = $xmlnav->getUrl($pageId)) {
             $path = $lang . $url;

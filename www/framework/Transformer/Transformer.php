@@ -79,7 +79,6 @@ abstract class Transformer
         $this->log = new \Depage\Log\Log();
 
         // set basic variables
-        //$this->prefix = $this->pdo->prefix . "_proj_" . $this->project->name;
         $this->fl = new \Depage\Cms\FileLibrary($this->project->getPdo(), $this->project);
 
         $this->xsltPath = "projects/{$this->project->name}/xslt/";
