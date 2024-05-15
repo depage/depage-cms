@@ -393,6 +393,24 @@ class Redirector
         header("Location: $url");
     }
     // }}}
+
+    // {{{ loadReplacementScript()
+    /**
+     * @brief loadReplacementScript
+     *
+     * @param $file
+     **/
+    public function loadReplacementScript($file)
+    {
+        try {
+            chdir(dirname($file));
+            include(basename($file));
+        } catch (\Throwable $e) {
+            error_log($e->getMessage());
+            // @todo load error page
+            die();
+        }
+    }
 }
 
 }

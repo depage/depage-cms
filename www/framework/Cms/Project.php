@@ -1469,12 +1469,10 @@ class Project extends \Depage\Entity\Entity
             $i[] = "\$redirector->setRootAliases(" . var_export($projectConf->rootAliases->toArray(), true) . ");";
         }
 
-        $i[] = "\$acceptLanguage = isset(\$_SERVER['HTTP_ACCEPT_LANGUAGE']) ? \$_SERVER['HTTP_ACCEPT_LANGUAGE'] : \"\";";
+        $i[] = "\$acceptLanguage = \$_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';";
         $i[] = "\$replacementScript = \$redirector->testAliases(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
         $i[] = "if (!empty(\$replacementScript)) {";
-            $i[] = "    chdir(dirname(\$replacementScript));";
-            $i[] = "    include(basename(\$replacementScript));";
-            $i[] = "    die();";
+            $i[] = "    \$redirector->loadReplacementScript(\$replacementScript);";
         $i[] = "}";
 
         $i[] = "if (isset(\$_GET['notfound'])) {";
