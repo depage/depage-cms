@@ -295,9 +295,9 @@ class FileLibrary
                 customKeywords=VALUES(customKeywords)
             "
         );
-        $dar = $info['displayAspectRatio'] ?? null;
-        if (is_nan($dar)) {
-            $dar = null;
+        $dar = null;
+        if (isset($info['displayAspectRatio'])) {
+            $dar = $info['displayAspectRatio'];
         }
         $f = new FileInfo();
         $f->id = $id;
