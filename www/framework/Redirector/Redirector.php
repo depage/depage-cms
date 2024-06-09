@@ -402,6 +402,10 @@ class Redirector
      **/
     public function loadReplacementScript($file)
     {
+        // add default global variables for generated pages in this context
+        // where the replacement script is executed
+        global $currentLang, $baseUrl, $depageIsLive;
+
         try {
             chdir(dirname($file));
             include(basename($file));
