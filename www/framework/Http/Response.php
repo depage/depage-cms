@@ -35,6 +35,31 @@ class Response {
     protected $redirectUrl = "";
 
     /**
+     * @brief lastModified
+     **/
+    protected $lastModified;
+
+    /**
+     * @brief contentType
+     **/
+    protected $contentType = "";
+
+    /**
+     * @brief charset
+     **/
+    protected $charset = "";
+
+    /**
+     * @brief httpCode
+     **/
+    protected $httpCode = "";
+
+    /**
+     * @brief httpMessage
+     **/
+    protected $httpMessage = "";
+
+    /**
      * @brief fiels
      **/
     protected static $fields = array(
@@ -184,7 +209,9 @@ class Response {
      **/
     public function getStatus()
     {
+        $matches = [];
         preg_match('|HTTP/[\d\.]+\s+(\d+)(\s+.*)?|', $this->headers[0] ?? '', $matches);
+
         return (object) [
             'code' => $matches[1] ?? '',
             'message' => $matches[2] ?? ''
