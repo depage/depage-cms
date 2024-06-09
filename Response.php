@@ -40,6 +40,26 @@ class Response {
     protected $lastModified;
 
     /**
+     * @brief contentType
+     **/
+    protected $contentType = "";
+
+    /**
+     * @brief charset
+     **/
+    protected $charset = "";
+
+    /**
+     * @brief httpCode
+     **/
+    protected $httpCode = "";
+
+    /**
+     * @brief httpMessage
+     **/
+    protected $httpMessage = "";
+
+    /**
      * @brief fiels
      **/
     protected static $fields = array(
