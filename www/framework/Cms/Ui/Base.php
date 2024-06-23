@@ -21,6 +21,11 @@ class Base extends \Depage\Depage\Ui\Base
     protected $autoEnforceAuth = true;
     protected $authUser;
     protected $pdo;
+    protected $auth;
+    protected $xmldbCache;
+    protected $helpUrl;
+    protected $projectName;
+
     public $defaults = [
         'cache' => [
             'xmldb' => [
