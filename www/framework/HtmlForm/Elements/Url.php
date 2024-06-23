@@ -54,6 +54,22 @@ class Url extends Text
         // @todo add option to test url by domain name (dns) or also with a request (for http/https urls)
     }
     // }}}
+
+    // {{{ typeCastValue()
+    /**
+     * @brief   Converts value into htmlDOM
+     *
+     * @return void
+     **/
+    protected function typeCastValue()
+    {
+        parent::typeCastValue();
+
+        if ($this->normalize) {
+            $this->value = \Depage\HtmlForm\Validators\Url::normalizeUrl($this->value);
+        }
+    }
+    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

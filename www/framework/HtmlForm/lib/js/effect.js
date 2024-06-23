@@ -98,6 +98,7 @@
         var $form = $(form);
         var check = $form.attr('data-jsvalidation');
         var autosave = $form.attr('data-jsautosave');
+        var submitTimeout;
 
         if ($form.data("depage-form-initialized")) return;
 
@@ -254,6 +255,7 @@
         if (autosave == "true") {
             var saveInterval = 300;
             var now = new Date();
+            var $submitButtons = $form.find("input[type='submit'], button[type='submit']");
 
             $form.addClass("autosave");
 
@@ -315,6 +317,13 @@
                 form.data.saving = true;
                 form.data.hasChanged = false;
 
+                $submitButtons.each(function() {
+                    var $button = $(this);
+
+                    $button.data("wasDisabled", $button[0].disabled);
+                    $button[0].disabled = true;
+                });
+
                 clearTimeout(form.data.successTimer);
 
                 $.post(form.action, data)
@@ -358,6 +367,12 @@
                     .always(function() {
                         form.data.saving = false;
                         $form.removeClass("autosaving");
+
+                        $submitButtons.each(function() {
+                            var $button = $(this);
+
+                            $button[0].disabled = $button.data("wasDisabled");
+                        });
                     });
             };
             form.data.changed = function(saveImmediately) {
@@ -389,6 +404,17 @@
             });
 
             $form.on("submit", function() {
+                clearTimeout(submitTimeout);
+
+                if (form.data.saving) {
+                    // form is still saving -> do not submit
+                    submitTimeout = setTimeout(function() {
+                        $form.submit();
+                    }, 100);
+
+                    return false;
+                }
+
                 // set saving so form is not autosaving anymore
                 form.data.submitting = true;
 
