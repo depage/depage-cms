@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-18 14:10+0200\n"
+"POT-Creation-Date: 2024-06-30 17:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2437,7 +2437,7 @@ msgstr ""
 msgid "News items included in other newsletters"
 msgstr ""
 
-#: Cms/Ui/Base.php:192
+#: Cms/Ui/Base.php:197
 msgid "You are not allowed here."
 msgstr ""
 
@@ -2445,21 +2445,21 @@ msgstr ""
 msgid "unnamed_color"
 msgstr ""
 
-#: Cms/BackgroundTasks.php:72
+#: Cms/BackgroundTasks.php:77
 #, php-format
 msgid "You received a new notification from %s:"
 msgstr ""
 
-#: Cms/BackgroundTasks.php:80
+#: Cms/BackgroundTasks.php:85
 msgid "Your faithful servant on"
 msgstr ""
 
-#: Cms/Tasks/PublishGenerator.php:729
+#: Cms/Tasks/PublishGenerator.php:731
 #, php-format
 msgid "%s published"
 msgstr ""
 
-#: Cms/Tasks/PublishGenerator.php:731
+#: Cms/Tasks/PublishGenerator.php:733
 msgid ""
 "The following pages got published:\n"
 "\n"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-18 14:10+0200\n"
+"POT-Creation-Date: 2024-06-30 17:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2462,7 +2462,7 @@ msgstr "Keine News verfügbar."
 msgid "News items included in other newsletters"
 msgstr "News, die in anderen Newslettern enthalten sind"
 
-#: Cms/Ui/Base.php:192
+#: Cms/Ui/Base.php:197
 msgid "You are not allowed here."
 msgstr "Sie haben hier keine Authentifizierung."
 
@@ -2470,21 +2470,21 @@ msgstr "Sie haben hier keine Authentifizierung."
 msgid "unnamed_color"
 msgstr "unbenannte_farbe"
 
-#: Cms/BackgroundTasks.php:72
+#: Cms/BackgroundTasks.php:77
 #, php-format
 msgid "You received a new notification from %s:"
 msgstr "Sie haben eine neue Benachrichtigung von %s erhalten:"
 
-#: Cms/BackgroundTasks.php:80
+#: Cms/BackgroundTasks.php:85
 msgid "Your faithful servant on"
 msgstr "Ihr treuer Helfer auf"
 
-#: Cms/Tasks/PublishGenerator.php:729
+#: Cms/Tasks/PublishGenerator.php:731
 #, php-format
 msgid "%s published"
 msgstr "%s veröffentlicht"
 
-#: Cms/Tasks/PublishGenerator.php:731
+#: Cms/Tasks/PublishGenerator.php:733
 msgid ""
 "The following pages got published:\n"
 "\n"

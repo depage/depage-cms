@@ -20,6 +20,11 @@ use \Depage\Notifications\Notification;
  */
 class BackgroundTasks
 {
+    protected $pdo;
+    protected $baseUrl;
+    protected $lang;
+    protected $htmlOptions;
+
     // {{{ __construct()
     /**
      * @brief __construct
