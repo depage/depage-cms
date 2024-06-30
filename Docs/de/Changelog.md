@@ -3,7 +3,7 @@ Versionshistorie     {#changelog}
 
 [TOC]
 
-Version 2.5   {#v2-5}
+Version 2.6   {#v2-6}
 ===========
 
 **User Interface Highlights**
@@ -20,6 +20,21 @@ Version 2.5   {#v2-5}
 - Verbesserung der Vorschau, um das gerade aktivierte Element [hervorzuheben](@ref page-preview)
 - Neues Interface für kleine Screens
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.6.0 / 30.07.2024      {#v2-6-0}
+-------------------
+
+**Backend**
+- Unterstützung für die Transformation von Unter-Dokumenten hinzugefügt
+- Verbessertes Subdoc-Caching
+- Verschiedene Verbesserungen für eine bessere PHP 8.3-Unterstützung
+
+**Frontend**
+- Verbessertes Autospeichern von Dokumenteigenschaften
+- Option hinzugefügt, Elemente im Dokumentbaum zu aktivieren/deaktivieren
+- Option hinzugefügt, Newsletter zu duplizieren
+- Verschiedene kleine UI-Verbesserungen
 
 
 v2.5.1 / 15.04.2024      {#v2-5-1}

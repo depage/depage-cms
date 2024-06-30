@@ -3,7 +3,7 @@ Changelog     {#changelog}
 
 [TOC]
 
-Version 2.5   {#v2-5}
+Version 2.6   {#v2-6}
 ===========
 
 **User Interface Highlights**
@@ -20,6 +20,21 @@ Version 2.5   {#v2-5}
 - Enhanced preview to [highlight](@ref page-preview) the currently selected document property
 - New mobile interface
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
+
+
+v2.6.0 / 30.07.2024      {#v2-6-0}
+-------------------
+
+**Backend**
+- added support for transforming sub documents
+- enhanced subdoc caching
+- various enhancements for better php 8.3 support
+
+**Frontend**
+- enhanced autosaving of doc-properties
+- added ability to enable/disable element in document tree
+- added ability to duplicate newsletters
+- various small UI enhancements
 
 
 v2.5.1 / 15.04.2024      {#v2-5-1}
