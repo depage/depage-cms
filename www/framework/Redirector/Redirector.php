@@ -406,6 +406,8 @@ class Redirector
         // where the replacement script is executed
         global $currentLang, $baseUrl, $depageIsLive;
 
+        $redirector = $this;
+
         try {
             chdir(dirname($file));
             include(basename($file));
