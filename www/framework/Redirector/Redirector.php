@@ -413,6 +413,10 @@ class Redirector
             error_log($e->getMessage());
             // @todo load error page
             die();
+        } catch (\Exception $e) {
+            error_log($e->getMessage());
+            // @todo load error page
+            die();
         }
     }
 }
