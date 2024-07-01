@@ -14,6 +14,8 @@ class FtpCurl
     protected $buffer;
     protected $pos;
     protected $dirPos;
+    protected $files;
+    protected $url;
     protected $translation = ['dev', 'ino', 'mode', 'nlink', 'uid', 'gid', 'rdev', 'size', 'atime', 'mtime', 'ctime', 'blksize', 'blocks'];
 
     static protected $parameters;
