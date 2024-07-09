@@ -24,7 +24,6 @@ abstract class Transformer
     protected $fl;
     protected $transformCache;
     protected $previewType = "pre";
-    protected $currentSubtype = "";
 
     public $template;
     public $project;
@@ -36,6 +35,7 @@ abstract class Transformer
     public $routeHtmlThroughPhp = false;
     public $lang = "";
     public $currentPath = "";
+    public $currentSubtype = "";
 
     // {{{ factory()
     static public function factory($previewType, $xmlGetter, $project, $template, $transformCache = null)
@@ -508,9 +508,6 @@ abstract class Transformer
             "baseUrl" => $this->baseUrl,
             "baseUrlStatic" => $this->baseUrlStatic,
         ];
-        if (!empty($_GET['__dpPreviewColor'])) {
-            $params['currentColorscheme'] = $_GET['__dpPreviewColor'];
-        }
         $xsltProc = $this->getXsltProc($subtype);
 
         $xsltProc->setParameter("", $params);
