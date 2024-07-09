@@ -36,7 +36,11 @@ class XmlDb extends Base {
                 // add status attributes for page tree
                 $xmlnav = new \Depage\Cms\XmlNav();
                 $xmlnav->setPageXml($data);
-                $xmlnav->addStatusAttributes($xmlnav->getPageXml(), $this->transformer->currentPath);
+
+                // only add status attributes when transforming main page document
+                if ($this->transformer->currentSubtype == "") {
+                    $xmlnav->addStatusAttributes($xmlnav->getPageXml(), $this->transformer->currentPath);
+                }
             }
             $this->data = $data->saveXML();
 
