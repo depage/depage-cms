@@ -24,7 +24,7 @@ class Document
 
     protected $xmlDb;
     protected $doc_id;
-    protected $docref;
+    protected $docname = null;
 
     protected $id_attribute = 'id';
     protected $id_data_attribute = 'dataid';
@@ -75,6 +75,21 @@ class Document
     public function getDocId()
     {
         return $this->doc_id;
+    }
+    // }}}
+    // {{{ getDocName
+    /**
+     * Get Doc Ref
+     *
+     * @return string
+     */
+    public function getDocName()
+    {
+        if (is_null($this->docname)) {
+            $this->docname = $this->getDocInfo()->name;
+        }
+
+        return $this->docname;
     }
     // }}}
     // {{{ getXml
@@ -383,7 +398,7 @@ class Document
             $this->namespaces[$this->db_ns->ns] = $this->db_ns;
             $this->lastchange = $result->lastchange;
             $this->lastchangeUid = $result->lastchangeUid;
-            $this->docref = $result->name;
+            $this->docname = $result->name;
 
             $pad = 5;
             $query = $this->pdo->prepare(
@@ -1294,7 +1309,7 @@ class Document
         self::removeNodeAttr($rootNode, $this->db_ns, 'lastchange');
         self::removeNodeAttr($rootNode, $this->db_ns, 'lastchangeUid');
         self::removeNodeAttr($rootNode, $this->db_ns, 'docid');
-        self::removeNodeAttr($rootNode, $this->db_ns, 'docref');
+        self::removeNodeAttr($rootNode, $this->db_ns, 'docname');
         self::removeNodeAttr($rootNode, $this->db_ns, 'released');
 
         return hash("sha256", $doc->saveXML());
@@ -1314,7 +1329,7 @@ class Document
             $this->db_ns->ns . ':released',
             $this->db_ns->ns . ':lastchange',
             $this->db_ns->ns . ':lastchangeUid',
-            $this->db_ns->ns . ':docref',
+            $this->db_ns->ns . ':docname',
         ];
         ksort($attributes);
         foreach($attributes as $name => $value) {
@@ -1382,7 +1397,7 @@ class Document
                     //add lastchange-data
                     $node->setAttributeNS($this->db_ns->uri, "{$this->db_ns->ns}:lastchange", $this->lastchange);
                     $node->setAttributeNS($this->db_ns->uri, "{$this->db_ns->ns}:lastchangeUid", $this->lastchangeUid ?? '');
-                    $node->setAttributeNS($this->db_ns->uri, "{$this->db_ns->ns}:docref", $this->docref ?? '');
+                    $node->setAttributeNS($this->db_ns->uri, "{$this->db_ns->ns}:docname", $this->docname ?? '');
                 }
 
                 //add attributes to node

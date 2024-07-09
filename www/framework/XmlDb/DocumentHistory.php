@@ -138,6 +138,7 @@ class DocumentHistory
                 Document::removeNodeAttr($doc, $this->db_ns, 'id');
             }
             $doc->documentElement->setAttribute('db:docid', $docId);
+            $doc->documentElement->setAttribute('db:docname', $this->document->getDocName());
             $doc->documentElement->setAttribute('db:lastchange', $result->lastchange);
         }
 
