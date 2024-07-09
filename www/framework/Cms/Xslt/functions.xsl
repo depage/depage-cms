@@ -14,7 +14,8 @@
 
     <xsl:include href="xslt://nodetostring.xsl" />
 
-    <xsl:key name="page-by-id" match="pg:*" use="@db:id"/>
+    <xsl:key name="page-by-id" match="pg:page | pg:folder | pg:redirect" use="@db:id"/>
+    <xsl:key name="page-by-docname" match="pg:page | pg:folder | pg:redirect" use="@db:docref"/>
     <xsl:key name="colorscheme-by-name" match="proj:colorscheme" use="@name"/>
 
     <!-- aliases -->
@@ -114,6 +115,28 @@
 
                 <xsl:for-each select="$navigation">
                     <func:result select="key('page-by-id',$pageid)" />
+                </xsl:for-each>
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="$result" />
+            </xsl:otherwise>
+        </xsl:choose>
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:getPageByDocName() -->
+    <!--
+        dp:getPageByDocName(docname)
+    -->
+    <func:function name="dp:getPageByDocName">
+        <xsl:param name="docname" />
+        <xsl:variable name="result" select="key('page-by-docname',$docname)" />
+
+        <xsl:choose>
+            <xsl:when test="not($result)">
+                <xsl:variable name="navigation" select="document('xmldb://pages')"/>
+
+                <xsl:for-each select="$navigation">
+                    <func:result select="key('page-by-docname',$docname)" />
                 </xsl:for-each>
             </xsl:when>
             <xsl:otherwise>
