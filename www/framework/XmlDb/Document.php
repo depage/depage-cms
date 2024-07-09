@@ -24,6 +24,7 @@ class Document
 
     protected $xmlDb;
     protected $doc_id;
+    protected $docref;
 
     protected $id_attribute = 'id';
     protected $id_data_attribute = 'dataid';
@@ -365,6 +366,7 @@ class Document
                 "SELECT
                     docs.entities AS entities,
                     docs.ns AS namespaces,
+                    docs.name AS name,
                     docs.lastchange AS lastchange,
                     docs.lastchange_uid AS lastchangeUid
                 FROM {$this->table_docs} AS docs
@@ -381,6 +383,7 @@ class Document
             $this->namespaces[$this->db_ns->ns] = $this->db_ns;
             $this->lastchange = $result->lastchange;
             $this->lastchangeUid = $result->lastchangeUid;
+            $this->docref = $result->name;
 
             $pad = 5;
             $query = $this->pdo->prepare(
@@ -1291,6 +1294,7 @@ class Document
         self::removeNodeAttr($rootNode, $this->db_ns, 'lastchange');
         self::removeNodeAttr($rootNode, $this->db_ns, 'lastchangeUid');
         self::removeNodeAttr($rootNode, $this->db_ns, 'docid');
+        self::removeNodeAttr($rootNode, $this->db_ns, 'docref');
         self::removeNodeAttr($rootNode, $this->db_ns, 'released');
 
         return hash("sha256", $doc->saveXML());
@@ -1310,6 +1314,7 @@ class Document
             $this->db_ns->ns . ':released',
             $this->db_ns->ns . ':lastchange',
             $this->db_ns->ns . ':lastchangeUid',
+            $this->db_ns->ns . ':docref',
         ];
         ksort($attributes);
         foreach($attributes as $name => $value) {
@@ -1377,6 +1382,7 @@ class Document
                     //add lastchange-data
                     $node->setAttributeNS($this->db_ns->uri, "{$this->db_ns->ns}:lastchange", $this->lastchange);
                     $node->setAttributeNS($this->db_ns->uri, "{$this->db_ns->ns}:lastchangeUid", $this->lastchangeUid ?? '');
+                    $node->setAttributeNS($this->db_ns->uri, "{$this->db_ns->ns}:docref", $this->docref ?? '');
                 }
 
                 //add attributes to node
