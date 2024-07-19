@@ -671,7 +671,21 @@
     <!-- }}} -->
     <!-- {{{ @href subdoc -->
     <xsl:template match="@href" mode="subdoc">
-        <xsl:variable name="path"><xsl:if test="not(dp:getUseBaseUrl())"><xsl:for-each select="$subDocCurrentDocLevels">../</xsl:for-each></xsl:if></xsl:variable>
+        <xsl:apply-templates select="." mode="subdoc-href" />
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ @href subdoc-href -->
+    <xsl:template match="@href" mode="subdoc-href">
+        <xsl:variable name="path">
+            <xsl:choose>
+                <xsl:when test="substring(., 1, 2) = '//'"></xsl:when>
+                <xsl:when test="substring(., 1, 6) = 'tel://'"></xsl:when>
+                <xsl:when test="substring(., 1, 7) = 'http://'"></xsl:when>
+                <xsl:when test="substring(., 1, 8) = 'https://'"></xsl:when>
+                <xsl:when test="substring(., 1, 7) = 'mailto:'"></xsl:when>
+                <xsl:when test="not(dp:getUseBaseUrl())"><xsl:for-each select="$subDocCurrentDocLevels">../</xsl:for-each></xsl:when>
+            </xsl:choose>
+        </xsl:variable>
         <xsl:attribute name="href"><xsl:value-of select="$path" /><xsl:value-of select="." /></xsl:attribute>
     </xsl:template>
     <!-- }}} -->
@@ -712,7 +726,6 @@
     <!-- }}} -->
     <!-- {{{ nav//@href subdoc -->
     <xsl:template match="nav//@href" mode="subdoc">
-        <xsl:variable name="path"><xsl:if test="not(dp:getUseBaseUrl())"><xsl:for-each select="$subDocCurrentDocLevels">../</xsl:for-each></xsl:if></xsl:variable>
         <xsl:attribute name="class">
             <xsl:choose>
                 <xsl:when test="../@id = $currentPageId">active </xsl:when>
@@ -720,7 +733,7 @@
             </xsl:choose>
             <xsl:value-of select="../@class" />
         </xsl:attribute>
-        <xsl:attribute name="href"><xsl:value-of select="$path" /><xsl:value-of select="." /></xsl:attribute>
+        <xsl:apply-templates select="." mode="subdoc-href" />
     </xsl:template>
     <!-- }}} -->
 
