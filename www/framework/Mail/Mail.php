@@ -65,7 +65,8 @@ class Mail
     protected $trackerImage = "";
     protected $dontShowEmail = true;
     protected $attachements = array();
-    protected $boundary = "";
+    public $boundary = "";
+    public $boundary2 = "";
     protected $encoding = "UTF-8";
     protected $eol = PHP_EOL;
     protected $mailFunction = "mail";
