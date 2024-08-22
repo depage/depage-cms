@@ -678,6 +678,7 @@
     <xsl:template match="@href" mode="subdoc-href">
         <xsl:variable name="path">
             <xsl:choose>
+                <xsl:when test="substring(., 1, 1) = '#' and name(..) = 'use'"></xsl:when>
                 <xsl:when test="substring(., 1, 2) = '//'"></xsl:when>
                 <xsl:when test="substring(., 1, 6) = 'tel://'"></xsl:when>
                 <xsl:when test="substring(., 1, 7) = 'http://'"></xsl:when>
