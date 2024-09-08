@@ -79,6 +79,27 @@ $conf = [
         ],
     ],
     // }}}
+    // {{{ *.bella.local/depage-cms/
+    '*.bella.local/depage-cms/' => array(
+        //'env' => 'production',
+        'cache' => array(
+            'xmldb' => array(
+                'disposition' => "redis",
+                'host' => "localhost:6379",
+            ),
+        ),
+        'video' => array (
+            'ffmpeg' => '/opt/local/bin/ffmpeg',
+            'ffprobe' => '/opt/local/bin/ffprobe',
+            'qtfaststart' => '/opt/local/bin/qt-faststart',
+            'aaccodec' => 'aac',
+        ),
+        'graphics' => [
+            'extension' => "gm",
+            'executable' => "/opt/local/bin/gm",
+        ],
+    ),
+    // }}}
     // {{{ graphics
     '*/depage-cms/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => [
         'handler' => 'Depage\Graphics\Ui\Graphics',
