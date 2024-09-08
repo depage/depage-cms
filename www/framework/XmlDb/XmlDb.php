@@ -32,6 +32,7 @@ class XmlDb implements XmlGetter
     protected $alteringTransaction;
 
     public $options;
+    public $timestamp = null;
     // }}}
     // {{{ constructor
     public function __construct($table_prefix, $pdo, $cache, $options = [])
