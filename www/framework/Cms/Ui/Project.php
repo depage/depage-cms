@@ -118,11 +118,6 @@ class Project extends Base
         } else if ($type == "maintenance") {
             $html .= $this->pageTrash();
 
-            if (!empty($h = $this->backups())) {
-                $html .= "<hr>";
-                $html .= $h;
-            }
-
             if (!empty($h = $this->import())) {
                 $html .= "<hr>";
                 $html .= $h;
@@ -619,38 +614,6 @@ class Project extends Base
             $form->addHtml("<p>" . sprintf(_("Deleted %d pages."), $count) . "</p>");
 
             $form->clearSession();
-        }
-
-        return $form;
-    }
-    // }}}
-    // {{{ backups()
-    /**
-     * @brief backup
-     *
-     * @return void
-     **/
-    private function backups()
-    {
-        $backup = new \Depage\Cms\Backup($this->pdo, $this->project);
-        $availableBackups = $backup->getAutoBackups();
-
-        if (count($availableBackups) == 0) {
-            return "";
-        }
-        //$backup->makeAutoBackup();
-
-        $form = new \Depage\Cms\Forms\BackupsRestore("backup-restore", [
-            'backups' => $availableBackups,
-        ]);
-        $form->process();
-
-        if ($form->validate()) {
-            $backup->restoreFromFile($form->getValues()['file']);
-
-            $form->clearSession();
-
-            \Depage\Depage\Runner::redirect(DEPAGE_BASE);
         }
 
         return $form;
