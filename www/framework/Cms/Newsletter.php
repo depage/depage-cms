@@ -80,7 +80,7 @@ class Newsletter
         }
         // @todo sort by document date
         usort($newsletters, function($a, $b) {
-            return $a->id <=> $b->id;
+            return $b->id <=> $a->id;
             return $a->lastchange <=> $b->lastchange;
         });
 
