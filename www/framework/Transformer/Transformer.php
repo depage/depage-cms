@@ -24,6 +24,7 @@ abstract class Transformer
     protected $fl;
     protected $transformCache;
     protected $previewType = "pre";
+    protected $savePath = "";
 
     public $template;
     public $project;
