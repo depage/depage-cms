@@ -17,6 +17,14 @@ use \Depage\Notifications\Notification;
 
 class Newsletter extends Base
 {
+    // {{{ variables
+    protected $projectName;
+    protected $project;
+    protected $newsletterName;
+    protected $newsletter;
+    protected $tabs;
+    // }}}
+
     // {{{ _init
     public function _init(array $importVariables = []) {
         parent::_init($importVariables);

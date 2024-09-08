@@ -26,7 +26,8 @@ class Newsletter
     protected $tableSubscribers;
     protected $tableSent;
     protected $id;
-    protected $lastchange;
+    public $lastchange;
+    public $released;
 
     // {{{ __construct()
     /**
@@ -79,9 +80,8 @@ class Newsletter
         }
         // @todo sort by document date
         usort($newsletters, function($a, $b) {
-            return $a->id < $b->id;
-            return $a->lastchange < $b->lastchange;
-            //return strcmp($a->getTitle(), $b->getTitle());
+            return $a->id <=> $b->id;
+            return $a->lastchange <=> $b->lastchange;
         });
 
         return $newsletters;
@@ -179,6 +179,7 @@ class Newsletter
         $this->name = $docinfo->name;
         $this->id = $docinfo->id;
         $this->lastchange = $docinfo->lastchange;
+        $this->released = $docinfo->lastrelease;
     }
     // }}}
 

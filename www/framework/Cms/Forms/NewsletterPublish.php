@@ -15,6 +15,10 @@ namespace Depage\Cms\Forms;
 
 class NewsletterPublish extends \Depage\HtmlForm\HtmlForm
 {
+    // {{{ variables
+    protected $newsletter;
+    // }}}
+
     // {{{ __construct()
     /**
      * @brief   HtmlForm class constructor

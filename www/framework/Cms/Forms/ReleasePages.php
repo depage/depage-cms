@@ -8,6 +8,15 @@ namespace Depage\Cms\Forms;
  */
 class ReleasePages extends \Depage\HtmlForm\HtmlForm
 {
+    // {{{ variables
+    protected $project;
+    protected $users;
+    protected $selectedDocId;
+    protected $canPublish;
+    // }}}
+
+    // }}}
+
     // {{{ __construct()
     /**
      * @brief __construct
@@ -61,7 +70,7 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
 
         if ($this->canPublish) {
             $class = "select-all";
-            if ($_GET['publish-only'] == 1) {
+            if (($_GET['publish-only'] ?? 0) == 1) {
                 $class .= " detail";
             }
             $fs = $this->addFieldset("recentChanges", [
