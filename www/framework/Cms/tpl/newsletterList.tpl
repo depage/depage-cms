@@ -16,10 +16,11 @@
 <table class="recent-changes newsletter">
     <?php foreach($this->newsletters as $newsletter) {
         $newsletterUrl = DEPAGE_BASE . "project/" . $newsletter->project->name . "/newsletter/" . $newsletter->name . "/";
+        $publishedClass = $newsletter->released ? "published" : "not-published";
 
         if ($headerShown == 0) {
             $headerShown++;
-            if ($newsletter->released === false) {
+            if (!$newsletter->released) {
                 ?>
                     <tr>
                         <td class="lastchange" colspan="2">— <?php self::t(_("Unreleased Newsletters")); ?> —</td>
@@ -27,7 +28,7 @@
                 <?php
             }
         }
-        if ($headerShown == 1 && $newsletter->released === true) {
+        if ($headerShown == 1 && $newsletter->released) {
             $headerShown++;
             $class = "released";
             ?>
@@ -41,7 +42,9 @@
             "data-project" => $newsletter->project->name,
             "data-newsletter" => $newsletter->name,
         ]); ?>>
-            <td class="url <?php self::t($class); ?>"><a href="<?php self::t("{$newsletterUrl}edit/"); ?>"><?php self::t($newsletter->getTitle()); ?></a></td>
+            <td <?php self::attr([
+                'class' => "url $class $publishedClass",
+            ]); ?>><a href="<?php self::t("{$newsletterUrl}edit/"); ?>"><?php self::t($newsletter->getTitle()); ?></a></td>
             <td class="actions">
                 <div class="buttons">
                     <a href="<?php self::t("{$newsletterUrl}edit/"); ?>" class="button icon-edit"><?php self::t(_("Edit")); ?></a>

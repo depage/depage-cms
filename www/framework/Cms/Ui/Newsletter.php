@@ -110,7 +110,6 @@ class Newsletter extends Base
         if (!$this->authUser->canSendNewsletter()) {
             return $this->error(_("User is not allowed to send newsletters"));
         }
-        $this->newsletter->release($this->authUser->id);
         $form = new \Depage\Cms\Forms\NewsletterPublish("newsletterPublish{$this->newsletter->name}", [
             'newsletter' => $this->newsletter,
         ]);
@@ -126,6 +125,7 @@ class Newsletter extends Base
                 }
             } else {
                 $publishId = array_keys($this->project->getPublishingTargets())[0];
+                $this->newsletter->release($this->authUser->id);
 
                 $generator = new \Depage\Cms\Tasks\NewsletterSenderGenerator($this->pdo, $this->project, $this->authUser->id);
                 $task = $generator->createNewsletterSender(
@@ -158,7 +158,7 @@ class Newsletter extends Base
                 ]),
                 $form,
             ],
-            'previewUrl' => $this->newsletter->getPreviewUrl("live"),
+            'previewUrl' => $this->newsletter->getPreviewUrl("pre"),
         ], $this->htmlOptions);
 
         return $h;

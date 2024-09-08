@@ -530,7 +530,7 @@ class Newsletter
      **/
     public function sendTo($to, $lang)
     {
-        $html = $this->transform("live", $lang);
+        $html = $this->transform("pre", $lang);
 
         $task = \Depage\Tasks\Task::loadOrCreate($this->pdo, $this->name, $this->project->name);
 
@@ -538,7 +538,7 @@ class Newsletter
         $mail
             ->setListUnsubscribe($this->conf->listUnsubscribe)
             ->setSubject($this->getSubject($lang))
-            ->setHtmlText($this->transform("live", $lang));
+            ->setHtmlText($this->transform("pre", $lang));
 
         $initId = $task->addSubtask("initializing mail", "\$mail = %s; \$newsletter = %s;", [
             $mail,
