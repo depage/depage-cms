@@ -70,7 +70,7 @@ class SessionHandler implements \SessionHandlerInterface
      * @param string $name
      * @return bool
      **/
-    public function open($save_path, $name)
+    public function open(string $save_path, string $name):bool
     {
         return true;
     }
@@ -81,7 +81,7 @@ class SessionHandler implements \SessionHandlerInterface
      *
      * @return bool
      **/
-    public function close()
+    public function close():bool
     {
         if ($this->lockWaitTime > 0) {
             // release session lock
@@ -98,7 +98,7 @@ class SessionHandler implements \SessionHandlerInterface
      * @param string $sessionId
      * @return string
      **/
-    public function read($sessionId)
+    public function read($sessionId):string|false
     {
         if ($this->lockWaitTime > 0) {
             // aquire session lock
@@ -143,7 +143,7 @@ class SessionHandler implements \SessionHandlerInterface
      * @param string $sessionData
      * @return bool
      **/
-    public function write($sessionId, $sessionData)
+    public function write(string $sessionId, string $sessionData):bool
     {
         // only update timestamp when session data has not changed
         if ($this->sessionData === $sessionData) {
@@ -200,7 +200,7 @@ class SessionHandler implements \SessionHandlerInterface
      * @param string $sessionId
      * @return bool
      **/
-    public function destroy($sessionId)
+    public function destroy(string $sessionId):bool
     {
         // logout user -> load user first
         if (class_exists("\\Depage\\Auth\\User")) {
@@ -238,8 +238,10 @@ class SessionHandler implements \SessionHandlerInterface
      * @param mixed $maxlifetime
      * @return true
      **/
-    public function gc($maxlifetime)
+    public function gc(int $maxlifetime):int|false
     {
+        $count = 0;
+
         // destroy every session of loggedin users
         $query = $this->pdo->prepare(
             "SELECT
@@ -255,6 +257,7 @@ class SessionHandler implements \SessionHandlerInterface
         ));
 
         while ($result = $query->fetchObject()) {
+            $count++;
             $this->destroy($result->sid);
         }
 
@@ -266,8 +269,9 @@ class SessionHandler implements \SessionHandlerInterface
                 userid IS NULL AND
                 dateLastUpdate < DATE_SUB(NOW(), INTERVAL $maxlifetime SECOND)"
         );
+        $count += $result->rowCount();
 
-        return true;
+        return $count;
     }
     // }}}
 }
