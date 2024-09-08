@@ -8,6 +8,11 @@ namespace Depage\Cms\Forms\Project;
  */
 class Publish extends Base
 {
+    // {{{ variables
+    protected $project;
+    protected $parentId;
+    // }}}
+
     // {{{ __construct()
     /**
      * @brief __construct

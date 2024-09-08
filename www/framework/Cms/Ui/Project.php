@@ -223,7 +223,7 @@ class Project extends Base
         $xml = new \Depage\Xml\Document();
         $xml->load(__DIR__ . "/../XmlDocTypes/SettingsXml/{$type}.xml");
         $languages = array_keys($this->project->getLanguages());
-        \Depage\Cms\XmlDocTypes\Traits\MultipleLanguages::updateLangNodes($xml, $languages);
+        \Depage\Cms\XmlDocTypes\Settings::updateLangNodes($xml, $languages);
         $form = new $formClass("edit-project-{$type}s-{$this->project->id}-new", [
             'project' => $this->project,
             'dataNode' => $xml,

@@ -13,6 +13,11 @@ class Basic extends \Depage\HtmlForm\HtmlForm
      **/
     protected $groups = [];
 
+    /**
+     * @brief project object
+     **/
+    protected $project;
+
     // {{{ __construct()
     /**
      * @brief __construct

@@ -8,6 +8,12 @@ namespace Depage\Cms\Forms\Project;
  */
 class Language extends Base
 {
+    // {{{ variables
+    protected $tags;
+    protected $project;
+    protected $parentId;
+    // }}}
+
     // {{{ __construct()
     /**
      * @brief __construct
