@@ -37,6 +37,7 @@ class Runner {
     public $log;
 
     protected $configFile;
+    protected $handler;
 
     // {{{ default config
     protected $defaults = array(

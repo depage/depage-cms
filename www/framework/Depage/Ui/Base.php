@@ -35,9 +35,15 @@ abstract class Base
     protected $options = array();
     // }}}
 
+    // {{{ variables
     protected $urlPath = null;
 
     protected $urlSubArgs = array();
+
+    protected $conf;
+    protected $log;
+    // }}}
+
 
     // {{{ constructor
     /**
