@@ -161,10 +161,10 @@ class Main extends Base {
      * @return  null
      */
     public function projects() {
-        $this->user = $this->auth->enforce();
+        $this->authUser = $this->auth->enforce();
 
         // get data
-        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
+        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->authUser);
         $projectGroups = \Depage\Cms\ProjectGroup::loadAll($this->pdo);
 
         // construct template
@@ -173,7 +173,7 @@ class Main extends Base {
             'title' => _("Projects"),
             'liveHelp' => _("Edit, preview or changed settings for your projects"),
             'content' => new Html("projectlist.tpl", [
-                'user' => $this->user,
+                'user' => $this->authUser,
                 'projects' => $projects,
                 'projectGroups' => $projectGroups,
             ]),
@@ -209,7 +209,7 @@ class Main extends Base {
      * @return  null
      */
     public function tasks($taskId = null) {
-        $this->user = $this->auth->enforce();
+        $this->authUser = $this->auth->enforce();
 
         // get data
         if (!empty($taskId)) {
@@ -226,7 +226,7 @@ class Main extends Base {
         }
 
         // filter tasks by user
-        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
+        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->authUser);
         $tasks = array_filter($tasks, function($task) use ($projects) {
             foreach ($projects as $project) {
                 if ($project->name == null || $project->name == $task->projectName) {
@@ -269,7 +269,7 @@ class Main extends Base {
      * @return  null
      */
     public function users($current = null) {
-        $this->user = $this->auth->enforce();
+        $this->authUser = $this->auth->enforce();
 
         $showCurrent = $current === "current";
 
@@ -282,8 +282,8 @@ class Main extends Base {
         }
 
         // filter users by user
-        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user);
-        $user = $this->user;
+        $projects = \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->authUser);
+        $user = $this->authUser;
         $projectsByUser = [];
 
         $users = array_filter($users, function($u) use ($projects, $user, &$projectsByUser) {

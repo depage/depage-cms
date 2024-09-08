@@ -8,6 +8,10 @@ namespace Depage\Cms\Forms\Project;
  */
 class FileSearch extends \Depage\HtmlForm\HtmlForm
 {
+    // {{{ variables
+    protected $project;
+    // }}}
+
     // {{{ __construct()
     /**
      * @brief __construct

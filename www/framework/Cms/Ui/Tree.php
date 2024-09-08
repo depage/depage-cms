@@ -18,6 +18,18 @@ namespace Depage\Cms\Ui;
 use \Depage\Html\Html;
 
 class Tree extends Base {
+    // {{{ variables
+    protected $projectName;
+    protected $project;
+    protected $docName;
+    protected $doc;
+    protected $docInfo;
+    protected $docId;
+    protected $xmldb;
+    protected $prefix;
+    protected $deltaUpdates;
+    // }}}
+
     // {{{ _init
     /**
      * Init
@@ -134,8 +146,8 @@ class Tree extends Base {
 
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
         $position = filter_input(INPUT_POST, 'position', FILTER_SANITIZE_NUMBER_INT);
-        $type = isset($_POST['node']) ? filter_var($_POST['node']['_type'], FILTER_SANITIZE_STRING) : null;
-        $extra = isset($_POST['extra']) ? filter_var($_POST['extra'], FILTER_UNSAFE_RAW) : null;
+        $type = $_POST['node'] ?? null;
+        $extra = $_POST['extra'] ?? null;
 
         $id = $this->doc->addNodeByName($type, $target_id, $position);
         $status = $id !== false;
@@ -157,8 +169,8 @@ class Tree extends Base {
 
         $position = -1;
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
-        $type = isset($_POST['node']) ? filter_var($_POST['node'], FILTER_SANITIZE_STRING) : null;
-        $extra = isset($_POST['extra']) ? filter_var($_POST['extra'], FILTER_UNSAFE_RAW) : null;
+        $type = $_POST['node'] ?? null;
+        $extra = $_POST['extra'] ?? null;
 
         $id = $this->doc->addNodeByName($type, $target_id, $position, $this->parseDataNodes($extra));
         $status = $id !== false;
@@ -179,8 +191,8 @@ class Tree extends Base {
         $status = false;
 
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
-        $type = isset($_POST['node']) ? filter_var($_POST['node'], FILTER_SANITIZE_STRING) : null;
-        $extra = isset($_POST['extra']) ? filter_var($_POST['extra'], FILTER_UNSAFE_RAW) : null;
+        $type = $_POST['node'] ?? null;
+        $extra = $_POST['extra'] ?? null;
 
         $target_pos = $this->doc->getPosById($target_id);
         $parent_id = $this->doc->getParentIdById($target_id);
@@ -204,8 +216,8 @@ class Tree extends Base {
         $status = false;
 
         $target_id = filter_input(INPUT_POST, 'target_id', FILTER_SANITIZE_NUMBER_INT);
-        $type = isset($_POST['node']) ? filter_var($_POST['node'], FILTER_SANITIZE_STRING) : null;
-        $extra = isset($_POST['extra']) ? filter_var($_POST['extra'], FILTER_UNSAFE_RAW) : null;
+        $type = $_POST['node'] ?? null;
+        $extra = $_POST['extra'] ?? null;
 
         $target_pos = $this->doc->getPosById($target_id) + 1;
         $parent_id = $this->doc->getParentIdById($target_id);
@@ -229,6 +241,10 @@ class Tree extends Base {
     protected function parseDataNodes($str)
     {
         $dataNodes = [];
+        if (is_null($str)) {
+            return ['dataNodes' => $dataNodes];
+        }
+
         $str = trim($str, " \r\n\t");
 
         $doc = new \DOMDocument();
@@ -254,8 +270,8 @@ class Tree extends Base {
     {
         $status = false;
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-        $name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-        $value = filter_input(INPUT_POST, 'value', FILTER_SANITIZE_STRING);
+        $name = $_POST['name'] ?? null;
+        $value = $_POST['value'] ?? null;
 
         $this->doc->setAttribute($id, $name, $value);
         $parent_id = $this->doc->getParentIdById($id);
@@ -283,7 +299,7 @@ class Tree extends Base {
     {
         $status = false;
         $id = filter_input(INPUT_POST, 'id', FILTER_SANITIZE_NUMBER_INT);
-        $name = filter_input(INPUT_POST, 'name', FILTER_UNSAFE_RAW);
+        $name = $_POST['name'] ?? null;
 
         $this->doc->setAttribute($id, "name", $name);
         $parent_id = $this->doc->getParentIdById($id);
@@ -536,7 +552,7 @@ class Tree extends Base {
     {
         $status = false;
 
-        $name = isset($_POST['docName']) ? filter_var($_POST['docName'], FILTER_SANITIZE_STRING) : null;
+        $name = $_POST['docName'] ?? null;
         if ($this->docName == $name) {
             $status = $this->xmldb->removeDoc($this->docName);
         }
@@ -555,7 +571,8 @@ class Tree extends Base {
         $status = false;
         $info = null;
 
-        $name = isset($_POST['docName']) ? filter_var($_POST['docName'], FILTER_SANITIZE_STRING) : null;
+        $name = $_POST['docName'] ?? null;
+
         if ($this->docName == $name) {
             $duplicate = $this->xmldb->duplicateDoc($this->docName);
             $status = $duplicate !== false;
@@ -594,7 +611,8 @@ class Tree extends Base {
     public function rollbackDocument()
     {
         $status = false;
-        $timestamp = isset($_POST['timestamp']) ? filter_var($_POST['timestamp'], FILTER_SANITIZE_STRING) : null;
+        $timestamp = $_POST['timestamp'] ?? null;
+
         if (preg_match("/^(\d{4}-\d{2}-\d{2})-(\d{2}:\d{2}:\d{2})$/", $timestamp, $m)) {
             $timestamp = strtotime("{$m[1]} {$m[2]}");
 
@@ -656,7 +674,7 @@ class Tree extends Base {
      */
     public function saveVersion()
     {
-        $published = filter_input(INPUT_POST, 'published', FILTER_SANITIZE_STRING);
+        $published = $_POST['published'];
 
         $history = $this->doc->getHistory();
         $timestamp = $history->save($this->authUser->id, $published);

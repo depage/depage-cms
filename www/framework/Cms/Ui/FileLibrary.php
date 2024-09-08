@@ -16,6 +16,12 @@ use \Depage\Html\Html;
 
 class FileLibrary extends Base
 {
+    // {{{ variables
+    protected $projectName;
+    protected $project;
+    protected $fs;
+    // }}}
+
     // {{{ _init
     public function _init(array $importVariables = []) {
         parent::_init($importVariables);

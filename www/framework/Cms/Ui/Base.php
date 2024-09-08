@@ -143,15 +143,15 @@ class Base extends \Depage\Depage\Ui\Base
 
     // {{{ toolbar
     protected function toolbar() {
-        if ($this->user = $this->auth->enforceLazy()) {
+        if ($this->authUser = $this->auth->enforceLazy()) {
             $project = "";
             if (!empty($this->projectName)) {
                 $project = $this->getProject($this->projectName);
             }
             $h = new Html("toolbar_main.tpl", [
                 'title' => $this->basetitle,
-                'user' => $this->user,
-                'projects' => \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->user),
+                'user' => $this->authUser,
+                'projects' => \Depage\Cms\Project::loadByUser($this->pdo, $this->xmldbCache, $this->authUser),
                 'project' => $project,
                 'helpUrl' => $this->helpUrl,
             ], $this->htmlOptions);

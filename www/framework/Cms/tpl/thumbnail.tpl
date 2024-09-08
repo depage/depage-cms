@@ -1,8 +1,19 @@
 <?php
     $fallbackThumb = "framework/Cms/images/icon-page.svg";
+    $thumbSrc = $fallbackThumb;
+
+    if (!$this->file) {
+?>
+    <figure class="thumb">
+        <picture>
+            <img src="<?php self::t($thumbSrc); ?>" loading="lazy">
+        </picture>
+    </figure>
+<?php
+        return;
+    }
     $class = $this->class;
     $imgSrc = "projects/{$this->project->name}/lib/{$this->file->fullname}";
-    $thumbSrc = $fallbackThumb;
     $thumbSrc2 = null;
 
     if (in_array($this->file->ext, ['png', 'jpg', 'jpeg', 'gif', 'pdf'])) {

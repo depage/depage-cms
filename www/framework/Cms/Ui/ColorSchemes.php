@@ -16,6 +16,11 @@ use \Depage\Html\Html;
 
 class ColorSchemes extends Base
 {
+    // {{{ variables
+    protected $project;
+    protected $projectName;
+    // }}}
+
     // {{{ _init
     public function _init(array $importVariables = []) {
         parent::_init($importVariables);

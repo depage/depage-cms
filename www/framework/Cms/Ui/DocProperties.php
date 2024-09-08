@@ -56,6 +56,16 @@ class DocProperties extends Base
      * @brief fs
      **/
     protected $fs = null;
+
+    /**
+     * @brief doc
+     **/
+    protected $doc = null;
+
+    /**
+     * @brief fl
+     **/
+    protected $fl = null;
     // }}}
 
     // {{{ _init()

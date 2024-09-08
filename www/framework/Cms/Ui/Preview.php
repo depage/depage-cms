@@ -22,6 +22,13 @@ class Preview extends \Depage\Depage\Ui\Base
     protected $projectName = "";
     protected $template = "";
     protected $lang = "";
+    protected $timestamp = null;
+    protected $auth = null;
+    protected $xmldb = null;
+    protected $xmldbCache = null;
+    protected $project = null;
+    protected $pdo = null;
+
     public $routeThroughIndex = true;
     public $defaults = [
         'cache' => [
@@ -97,9 +104,9 @@ class Preview extends \Depage\Depage\Ui\Base
         $args = func_get_args();
 
         // get parameters
-        $this->template = array_shift($args);
+        $this->template = array_shift($args) ?? "html";
         $this->timestamp = time();
-        $this->previewType = array_shift($args);
+        $this->previewType = array_shift($args) ?? "pre";
         if (preg_match("/^(history)-(\d{4}-\d{2}-\d{2})-(\d{2}:\d{2}:\d{2})$/", $this->previewType, $m)) {
             $this->timestamp = strtotime("{$m[2]} {$m[3]}");
         }

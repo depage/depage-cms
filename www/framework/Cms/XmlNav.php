@@ -337,6 +337,10 @@ class XmlNav {
         $node = $this->nodeByDocRef[$docref];
         $docInfo = $this->xmldb->getDocInfo($docref);
 
+        if (!$docInfo) {
+            return false;
+        }
+
         $this->pagedataIdByPageId[$this->pageIdByDocRef[$docref]] = $docInfo->id;
         $docInfo->pageId = $node->getAttribute("db:id");
         $docInfo->pageOrder = $this->pageOrderByDocRef[$docref] ?? null;

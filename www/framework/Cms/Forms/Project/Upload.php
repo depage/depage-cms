@@ -8,6 +8,10 @@ namespace Depage\Cms\Forms\Project;
  */
 class Upload extends \Depage\HtmlForm\HtmlForm
 {
+    // {{{ variables
+    protected $project;
+    protected $targetPath;
+    // }}}
     // {{{ __construct()
     /**
      * @brief __construct

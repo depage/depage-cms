@@ -25,6 +25,12 @@ class Project extends Base
             'optimize'      => false,
         ],
     ];
+
+    // {{{ variables
+    protected $project;
+    protected $projectName;
+    // }}}
+
     // {{{ _init
     public function _init(array $importVariables = []) {
         parent::_init($importVariables);

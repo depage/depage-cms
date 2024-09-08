@@ -6,6 +6,7 @@ abstract class Base {
     public $context;
     protected $position = 0;
     protected $data = null;
+    protected static $parameters;
 
     // {{{ registerAsStream()
     public static function registerStream($protocol, Array $parameters = [])

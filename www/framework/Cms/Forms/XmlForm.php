@@ -18,6 +18,14 @@ class XmlForm extends \Depage\HtmlForm\HtmlForm
      **/
     public $dataNodeXpath = null;
 
+    /**
+     * @brief dataDocument
+     **/
+    protected $dataDocument = null;
+
+    /**
+     * @brief fl
+     **/
     protected $fl = null;
 
     // {{{ __construct()
