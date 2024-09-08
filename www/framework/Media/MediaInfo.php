@@ -441,7 +441,7 @@ class MediaInfo
             return implode(", ", $str);
         }
 
-        return mb_convert_encoding($value, "UTF-8", "UTF-8");
+        return mb_convert_encoding((string) $value, "UTF-8", "UTF-8");
     }
     // }}}
     // {{{ call()
