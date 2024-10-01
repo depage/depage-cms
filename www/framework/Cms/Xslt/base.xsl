@@ -285,8 +285,8 @@
     </xsl:template>
     <!-- }}} -->
 
-    <!-- {{{ edit:text_formatted -->
-    <xsl:template name="edit:text_formatted" match="edit:text_formatted">
+    <!-- {{{ edit:text_formatted | edit:richtext -->
+    <xsl:template name="edit:text_formatted" match="edit:text_formatted | edit:richtext">
         <xsl:param name="class" />
         <xsl:param name="id" />
         <xsl:param name="linebreaks" />
@@ -300,8 +300,28 @@
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
-    <!-- {{{ edit:text_formatted mode autolist-->
-    <xsl:template match="edit:text_formatted" mode="autolist">
+    <!-- {{{ edit:richtext/h1 -->
+    <xsl:template match="edit:richtext/h1">
+        <h4><xsl:apply-templates mode="linebreaks" /></h4>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:richtext/h2 -->
+    <xsl:template match="edit:richtext/h2">
+        <h5><xsl:apply-templates mode="linebreaks" /></h5>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:richtext/h1 autolist -->
+    <xsl:template match="edit:richtext/h1" mode="autolist">
+        <h4><xsl:apply-templates mode="linebreaks" /></h4>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:richtext/h2 -->
+    <xsl:template match="edit:richtext/h2" mode="autolist">
+        <h5><xsl:apply-templates mode="linebreaks" /></h5>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ edit:text_formatted | edit:richtext mode autolist-->
+    <xsl:template match="edit:text_formatted | edit:richtext" mode="autolist">
         <xsl:if test="dp:hasLangContent()">
             <xsl:apply-templates mode="autolist" />
         </xsl:if>
