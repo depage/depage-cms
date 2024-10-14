@@ -44,8 +44,10 @@ class FtpCurl
     protected function createHandle($url, $hostOnly = false)
     {
         $parsed = Fs::parseUrl($url);
+        $parsed['path'] = str_replace(" ", "%20", $parsed['path']);
         $host = preg_replace('#' . preg_quote($parsed['path']) . '(/)?$#', '', $url);
         $path = (isset($parsed['path'])) ? $parsed['path'] : '/';
+        $url = str_replace(" ", "%20", $url);
 
         if (static::$handle) {
             curl_reset(static::$handle);
