@@ -3,10 +3,7 @@
 namespace Depage\Cms\Streams;
 
 class Libref extends Base {
-    // {{{ variables
-    protected $funcClass;
-    protected $transformer = null;
-    // }}}
+    protected static $parameters = [];
 
     // {{{ stream_open()
     public function stream_open($path, $mode, $options, &$opened_path)

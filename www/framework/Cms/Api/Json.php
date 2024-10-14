@@ -19,10 +19,10 @@ abstract class Json extends \Depage\Cms\Ui\Base
 {
     protected $autoEnforceAuth = false;
 
-    protected $projectName = "";
-    protected $project = null;
-    protected $pdo = null;
-    protected $xmldbCache = null;
+    public $projectName = "";
+    public $project = null;
+    public $pdo = null;
+    public $xmldbCache = null;
 
     // {{{ _init
     public function _init(array $importVariables = []) {

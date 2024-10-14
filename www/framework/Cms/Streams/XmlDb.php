@@ -5,7 +5,6 @@ namespace Depage\Cms\Streams;
 class XmlDb extends Base {
     protected static $parameters = [];
     protected $xmldb = null;
-    protected $transformer = null;
 
     // {{{ stream_open()
     public function stream_open($path, $mode, $options, &$opened_path)

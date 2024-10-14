@@ -6,6 +6,8 @@ abstract class Base {
     public $context;
     protected $position = 0;
     protected $data = null;
+    protected $funcClass = null;
+    protected $transformer = null;
     protected static $parameters;
 
     // {{{ registerAsStream()
