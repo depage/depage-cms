@@ -39,6 +39,7 @@ class Main extends Base {
             'api/*/library' => '\Depage\Cms\Api\Library',
             'api/*/css' => '\Depage\Cms\Api\Css',
             'api/*/project' => '\Depage\Cms\Api\Project',
+            'api/*/resource' => '\Depage\Cms\Api\Resource',
             'api/*/task' => '\Depage\Cms\Api\Task',
             'api/*/addon/*' => '\Depage\Cms\Api\Addon',
         ];

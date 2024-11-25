@@ -101,7 +101,7 @@ $conf = [
     ),
     // }}}
     // {{{ graphics
-    '*/depage-cms/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => [
+    '*/depage-cms/project**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => [
         'handler' => 'Depage\Graphics\Ui\Graphics',
         //'env' => 'production',
         'extension' => "gm",
@@ -136,7 +136,7 @@ $conf = [
     ],
     // }}}
     // {{{ edit.depage.net graphics
-    '*edit.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => [
+    '*edit.depage.net/project**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => [
         'handler' => 'Depage\Graphics\Ui\Graphics',
         'env' => 'production',
         'extension' => "gm",
@@ -173,7 +173,7 @@ $conf = [
     ],
     // }}}
     // {{{ editbeta.depage.net graphics
-    'editbeta.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => [
+    'editbeta.depage.net/project**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => [
         'handler' => 'Depage\Graphics\Ui\Graphics',
         'env' => 'production',
         'extension' => "gm",
@@ -209,7 +209,7 @@ $conf = [
     ],
     // }}}
     // {{{ office.depage.net graphics
-    'office.depage.net/depage-cms/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
+    'office.depage.net/depage-cms/project**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
         'handler' => 'Depage\Graphics\Ui\Graphics',
         'env' => 'production',
         'extension' => "gm",

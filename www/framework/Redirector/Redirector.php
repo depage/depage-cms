@@ -210,14 +210,13 @@ class Redirector
 
         $request = explode("/", $request);
 
-        if (isset($request[1]) && strlen($request[1]) == 2) {
+        if (isset($request[1]) && (strlen($request[1]) == 2 || $request[1] == 'lib')) {
             // assume its a lang identifier if strlen is 2
             $this->lang = array_splice($request, 1, 1)[0];
         }
-        if (!in_array($this->lang, $this->languages)) {
+        if (!in_array($this->lang, $this->languages) && !$request[1] == 'lib') {
             $this->lang = "";
         }
-
 
         return implode("/", $request);
     }
@@ -394,6 +393,84 @@ class Redirector
     }
     // }}}
 
+    // {{{ loadMissingResource()
+    /**
+     * @brief loadMissingResource
+     *
+     * @param $url
+     **/
+    public function loadMissingResource($uri)
+    {
+        // @todo add api key to request
+        $apikey = sha1("testkey");
+        $url = "https://bella.local/depage-cms/api/depage/resource/get/";
+
+        $request = new \Depage\Http\Request($url . $uri);
+        $request->allowUnsafeSSL = true;
+        $request->setHeaders([
+            'X-Authorization: ' . $apikey,
+        ]);
+        $response = $request->execute();
+
+        if ($response->httpCode != 200) {
+            var_dump($response->httpCode);
+            var_dump($response->body);
+            //var_dump($response->getJson());
+
+            return false;
+        }
+
+        $data = $response->getJson();
+        $body = base64_decode($data['body'], true);
+        //header("Content-Type: image/png");
+        //echo($body);
+        //die();
+
+        $path = dirname($uri);
+        var_dump($data);
+        var_dump($path);
+        var_dump($uri);
+        //if (!file_exists($path)) {
+            //mkdir($path, 0777, true);
+        //}
+
+        //file_put_contents($uri, $body);
+        // mime_content_type($uri);
+
+        die();
+
+        return true;
+    }
+    // }}}
+    // {{{ handleRequest()
+    /**
+     * @brief handleRequest
+     *
+     * @param $uri
+     **/
+    public function handleRequest($requestUri, $acceptLanguage)
+    {
+        $replacementScript = $this->testAliases($requestUri, $acceptLanguage);
+
+        if (empty($replacementScript)) {
+            $resource = $this->lang . $this->parseRequestUri($requestUri);
+        }
+        $exists = file_exists($resource);
+        if (!$exists) {
+            $exists = $this->loadMissingResource($resource);
+        }
+
+        if (!empty($replacementScript)) {
+            $this->loadReplacementScript($replacementScript);
+        }
+        if (isset($_GET['notfound'])) {
+            $this->redirectToAlternativePage($requestUri, $acceptLanguage);
+        } else {
+            $this->redirectToIndex($requestUri, $acceptLanguage);
+        }
+    }
+    // }}}
+
     // {{{ loadReplacementScript()
     /**
      * @brief loadReplacementScript
@@ -421,6 +498,7 @@ class Redirector
             die();
         }
     }
+    // }}}
 }
 
 }

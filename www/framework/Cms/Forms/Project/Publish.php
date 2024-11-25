@@ -99,6 +99,10 @@ class Publish extends Base
             "label" => _("Index this target for search"),
             "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@index",
         ]);
+        $this->addBoolean("default-$nodeId", [
+            "label" => _("Perpetually publish to this target as default"),
+            "dataPath" => "//proj:publishTarget[@db:id = '$nodeId']/@perpetual",
+        ]);
         /*
         $this->addBoolean("default-$nodeId", [
             "label" => _("Publish to this target as default"),
