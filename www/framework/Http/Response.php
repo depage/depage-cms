@@ -6,7 +6,7 @@
  * @author  Frank Hellenkamp <jonas@depage.net>
  **/
 
-namespace Depage\Http;
+namespace Depage\Http {
 
 class Response {
     /**
@@ -287,6 +287,8 @@ class Response {
         return (string) $this->body;
     }
     // }}}
+}
+
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

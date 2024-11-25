@@ -6,7 +6,7 @@
  * @author  Frank Hellenkamp <jonas@depage.net>
  **/
 
-namespace Depage\Http;
+namespace Depage\Http {
 
 /**
  * @brief Main request class
@@ -152,6 +152,8 @@ class Request {
         return $ip;
     }
     // }}}
+}
+
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */
