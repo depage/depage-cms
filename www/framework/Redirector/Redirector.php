@@ -68,6 +68,11 @@ class Redirector
      **/
     protected $lang = "";
 
+    /**
+     * @brief publishId
+     **/
+    protected $publishId = null;
+
     // {{{ __construct()
     /**
      * @brief __construct
@@ -186,6 +191,20 @@ class Redirector
         if (substr($this->basePath, -1) != "/") {
             $this->basePath .= "/";
         }
+
+        return $this;
+    }
+    // }}}
+    // {{{ setPublishId()
+    /**
+     * @brief setPublishId
+     *
+     * @param mixed $publishId
+     * @return void
+     **/
+    public function setPublishId($publishId)
+    {
+        $this->publishId = $publishId;
 
         return $this;
     }
@@ -405,10 +424,15 @@ class Redirector
         $apikey = sha1("testkey");
         $url = "https://bella.local/depage-cms/api/depage/resource/get/";
 
-        $request = new \Depage\Http\Request($url . $uri);
+        $request = new \Depage\Http\Request($url . $uri . "?publishId=" . $this->publishId);
         $request->allowUnsafeSSL = true;
         $request->setHeaders([
             'X-Authorization: ' . $apikey,
+        ]);
+        $request->setPostData([
+            'uri' => $uri,
+            'publishId' => $this->publishId,
+            'baseUrl' => $this->baseUrl,
         ]);
         $response = $request->execute();
 
@@ -422,24 +446,15 @@ class Redirector
 
         $data = $response->getJson();
         $body = base64_decode($data['body'], true);
-        //header("Content-Type: image/png");
-        //echo($body);
-        //die();
 
-        $path = dirname($uri);
-        var_dump($data);
-        var_dump($path);
-        var_dump($uri);
-        //if (!file_exists($path)) {
-            //mkdir($path, 0777, true);
-        //}
+        if (strpos($uri, "/") !== false) {
+            $path = dirname($uri);
+            if (!file_exists($path)) {
+                mkdir($path, 0777, true);
+            }
+        }
 
-        //file_put_contents($uri, $body);
-        // mime_content_type($uri);
-
-        die();
-
-        return true;
+        return file_put_contents($uri, $body);
     }
     // }}}
     // {{{ handleRequest()
@@ -454,14 +469,24 @@ class Redirector
 
         if (empty($replacementScript)) {
             $resource = $this->lang . $this->parseRequestUri($requestUri);
+        } else {
+            $resource = $replacementScript;
         }
         $exists = file_exists($resource);
         if (!$exists) {
             $exists = $this->loadMissingResource($resource);
         }
 
+        if (str_ends_with($requestUri, ".php")) {
+            $replacementScript = $resource;
+        }
+
         if (!empty($replacementScript)) {
             $this->loadReplacementScript($replacementScript);
+        } else if ($exists) {
+            header("Content-type: " . mime_content_type($resource));
+            readfile($resource);
+            die();
         }
         if (isset($_GET['notfound'])) {
             $this->redirectToAlternativePage($requestUri, $acceptLanguage);
@@ -488,6 +513,7 @@ class Redirector
         try {
             chdir(dirname($file));
             include(basename($file));
+            die();
         } catch (\Throwable $e) {
             error_log($e->getMessage());
             // @todo load error page

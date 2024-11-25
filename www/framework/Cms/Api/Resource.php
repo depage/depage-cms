@@ -29,6 +29,7 @@ class Resource extends Json
     {
         // @todo check auth per api key
         $apikey = sha1("testkey");
+        $publishId = filter_input(\INPUT_GET, 'publishId', \FILTER_SANITIZE_NUMBER_INT);
         $uri = implode("/", $args);
         $body = "";
 
@@ -49,6 +50,8 @@ class Resource extends Json
                 $body = file_get_contents($path);
                 //readfile($path);
             }
+        } else {
+            $body = $this->transformUrl($publishId, $uri, $lang);
         }
 
         $retVal = [
@@ -57,12 +60,55 @@ class Resource extends Json
             'lang' => $lang,
             'uri' => $uri,
             'project' => $this->projectName,
+            'publishId' => $publishId,
+            'publishingTargets' => $this->project->getPublishingTargets(),
             'body' => base64_encode($body),
         ];
 
         return $retVal;
     }
     // }}}
+    // {{{ transformUrl()
+    /**
+     * @brief transformUrl
+     *
+     * @param string $url
+     * @param string $lang
+     *
+     * @return string
+     **/
+    protected function transformUrl(int $publishId, string $uri, string $lang)
+    {
+        $this->project->setPreviewType("live");
+        $xmlgetter = $this->project->getXmlGetter();
+
+        $conf = $this->project->getPublishingTargets()[$publishId];
+
+        $transformCache = new \Depage\Transformer\TransformCache(
+            $this->pdo,
+            $this->project->name,
+            $conf->template_set . "-live-" . $publishId,
+        );
+
+        $transformer = \Depage\Transformer\Transformer::factory(
+            "live",
+            $this->project->getXmlGetter(),
+            $this->project,
+            $conf->template_set,
+            $transformCache
+        );
+        $transformer->publishId = $publishId;
+
+        $transformer->setBaseUrl(
+            $this->project->getBaseUrl($publishId)
+        );
+        $transformer->setBaseUrlStatic(
+            $this->project->getBaseUrlStatic($publishId)
+        );
+        $transformer->routeHtmlThroughPhp = $this->project->getProjectConfig()->routeHtmlThroughPhp;
+
+        return $transformer->transformUrl("/" . $uri, $lang);
+    }
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
