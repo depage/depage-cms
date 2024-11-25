@@ -17,6 +17,21 @@ namespace Depage\Cms\Api;
  */
 class Resource extends Json
 {
+    protected $publishId = null;
+    public $defaults = [
+        'graphics' => [
+            'extension'     => 'gd',
+            'executable'    => '',
+            'background'    => 'transparent',
+            'optimize'      => false,
+        ],
+    ];
+    protected function __construct($options = NULL) {
+        parent::__construct($options);
+
+        $this->conf = new \Depage\Config\Config($options);
+        $this->options = $this->conf->getDefaultsFromClass($this);
+    }
     // {{{ get()
     /**
      * @brief get
@@ -36,32 +51,47 @@ class Resource extends Json
         $validRequest = $_SERVER['HTTP_X_AUTHORIZATION'] == $apikey;
 
         if (!$validRequest) {
-            $response = new \Depage\Http\Response("Unauthorized", [
-                "HTTP/1.1 401 Unauthorized"
-            ]);
-
-            return $response;
+            header("HTTP/1.1 401 Unauthorized");
         }
 
         if ($lang == "lib") {
-            $path = $this->project->getProjectPath() . "/lib/" . $uri;
+            $projectPath = $this->project->getProjectPath();
+            $path = $projectPath . "/lib/" . $uri;
+            $useImgUrl = preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $uri);
 
+            if ($useImgUrl) {
+                $path = $projectPath . "lib/cache/graphics/lib/" . $uri;
+                $options = $this->options->graphics;
+                $baseUrl = $this->project->getBaseUrl($publishId);
+
+                $imgurl =  new \Depage\Graphics\Imgurl([
+                    'extension' => $options->extension,
+                    'executable' => $options->executable,
+                    'optimize' => $options->optimize,
+                    'baseUrl' => $baseUrl,
+                    'cachePath' => $projectPath . "lib/cache/graphics/",
+                    'relPath' => $projectPath,
+                ]);
+                $imgurl->render($baseUrl . "lib/" . $uri);
+            }
             if (file_exists($path)) {
                 $body = file_get_contents($path);
-                //readfile($path);
+            } else {
+                header("HTTP/1.1 404 Not Found");
             }
         } else {
             $body = $this->transformUrl($publishId, $uri, $lang);
         }
 
         $retVal = [
-            'success' => true,
+            'success' => !empty($body),
             'validRequest' => $validRequest,
             'lang' => $lang,
             'uri' => $uri,
             'project' => $this->projectName,
             'publishId' => $publishId,
-            'publishingTargets' => $this->project->getPublishingTargets(),
+            'baseUrl' => $baseUrl,
+            'file' => $projectPath . "lib/cache/graphics/" . $uri,
             'body' => base64_encode($body),
         ];
 

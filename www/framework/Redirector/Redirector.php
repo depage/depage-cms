@@ -447,11 +447,13 @@ class Redirector
         $data = $response->getJson();
         $body = base64_decode($data['body'], true);
 
-        if (strpos($uri, "/") !== false) {
-            $path = dirname($uri);
-            if (!file_exists($path)) {
-                mkdir($path, 0777, true);
-            }
+        if ($body === false) {
+            return false;
+        }
+
+        $path = dirname($uri);
+        if ($path != "" && !file_exists($path)) {
+            mkdir($path, 0777, true);
         }
 
         return file_put_contents($uri, $body);
@@ -481,13 +483,16 @@ class Redirector
             $replacementScript = $resource;
         }
 
-        if (!empty($replacementScript)) {
-            $this->loadReplacementScript($replacementScript);
-        } else if ($exists) {
+        if ($exists) {
+            if (!empty($replacementScript)) {
+                $this->loadReplacementScript($replacementScript);
+            }
+
             header("Content-type: " . mime_content_type($resource));
             readfile($resource);
             die();
         }
+        die();
         if (isset($_GET['notfound'])) {
             $this->redirectToAlternativePage($requestUri, $acceptLanguage);
         } else {
@@ -511,7 +516,10 @@ class Redirector
         $redirector = $this;
 
         try {
-            chdir(dirname($file));
+            $path = dirname($file);
+            if ($path != "") {
+                chdir(dirname($file));
+            }
             include(basename($file));
             die();
         } catch (\Throwable $e) {
