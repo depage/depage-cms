@@ -1451,11 +1451,14 @@ class Project extends \Depage\Entity\Entity
         $i[] = "<?php";
         $i[] = substr(file_get_contents(__DIR__ . "/../Redirector/Redirector.php"), 5);
         $i[] = substr(file_get_contents(__DIR__ . "/../Redirector/Result.php"), 5);
+        $i[] = substr(file_get_contents(__DIR__ . "/../Http/Request.php"), 5);
+        $i[] = substr(file_get_contents(__DIR__ . "/../Http/Response.php"), 5);
 
         $i[] = "namespace {";
 
         $i[] = "\$redirector = new \\Depage\\Redirector\\Redirector(" . var_export($baseurl, true) . ");";
 
+        $i[] = "\$redirector->setPublishId(" . var_export($publishId, true) . ");";
         $i[] = "\$redirector->setLanguages(" . var_export($languages, true) . ");";
         $i[] = "if (file_exists('lib/pageindex.php')) {";
         $i[] = "    require_once('lib/pageindex.php');";
@@ -1470,16 +1473,7 @@ class Project extends \Depage\Entity\Entity
         }
 
         $i[] = "\$acceptLanguage = \$_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';";
-        $i[] = "\$replacementScript = \$redirector->testAliases(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
-        $i[] = "if (!empty(\$replacementScript)) {";
-            $i[] = "    \$redirector->loadReplacementScript(\$replacementScript);";
-        $i[] = "}";
-
-        $i[] = "if (isset(\$_GET['notfound'])) {";
-            $i[] = "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
-        $i[] = "} else {";
-            $i[] = "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
-        $i[] = "}";
+        $i[] = "\$redirector->handleRequest(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
 
         $i[] = "}";
 

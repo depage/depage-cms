@@ -418,7 +418,7 @@ class Redirector
      *
      * @param $url
      **/
-    public function loadMissingResource($uri)
+    public function loadMissingResource(&$uri)
     {
         // @todo add api key to request
         $apikey = sha1("testkey");
@@ -451,6 +451,11 @@ class Redirector
             return false;
         }
 
+        $useImgUrl = preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $uri);
+        if ($useImgUrl) {
+            $uri = "lib/cache/graphics/" . $uri;
+        }
+
         $path = dirname($uri);
         if ($path != "" && !file_exists($path)) {
             mkdir($path, 0777, true);
@@ -459,6 +464,7 @@ class Redirector
         return file_put_contents($uri, $body);
     }
     // }}}
+
     // {{{ handleRequest()
     /**
      * @brief handleRequest
@@ -474,9 +480,15 @@ class Redirector
         } else {
             $resource = $replacementScript;
         }
+        $resource = explode("?",$resource)[0];
+
         $exists = file_exists($resource);
-        if (!$exists) {
-            $exists = $this->loadMissingResource($resource);
+        if ($resource == "/" || $resource == "") {
+            $exists = false;
+        } else {
+            if (!$exists) {
+                $exists = $this->loadMissingResource($resource);
+            }
         }
 
         if (str_ends_with($requestUri, ".php")) {
@@ -488,11 +500,11 @@ class Redirector
                 $this->loadReplacementScript($replacementScript);
             }
 
-            header("Content-type: " . mime_content_type($resource));
+            header("Content-type: " . $this->getMimeType($resource));
+            header("Content-length: " . filesize($resource));
             readfile($resource);
             die();
         }
-        die();
         if (isset($_GET['notfound'])) {
             $this->redirectToAlternativePage($requestUri, $acceptLanguage);
         } else {
@@ -530,6 +542,84 @@ class Redirector
             error_log($e->getMessage());
             // @todo load error page
             die();
+        }
+    }
+    // }}}
+
+    // {{{ getMimeType()
+    /**
+     * @brief getMimeType
+     *
+     * @param $filename
+     **/
+    protected function getMimeType($filename)
+    {
+         $mime_types = array(
+            'txt' => 'text/plain',
+            'htm' => 'text/html',
+            'html' => 'text/html',
+            'php' => 'text/html',
+            'css' => 'text/css',
+            'js' => 'application/javascript',
+            'json' => 'application/json',
+            'xml' => 'application/xml',
+            'swf' => 'application/x-shockwave-flash',
+            'flv' => 'video/x-flv',
+
+            // images
+            'png' => 'image/png',
+            'jpe' => 'image/jpeg',
+            'jpeg' => 'image/jpeg',
+            'jpg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'bmp' => 'image/bmp',
+            'ico' => 'image/vnd.microsoft.icon',
+            'tiff' => 'image/tiff',
+            'tif' => 'image/tiff',
+            'svg' => 'image/svg+xml',
+            'svgz' => 'image/svg+xml',
+
+            // archives
+            'zip' => 'application/zip',
+            'rar' => 'application/x-rar-compressed',
+            'exe' => 'application/x-msdownload',
+            'msi' => 'application/x-msdownload',
+            'cab' => 'application/vnd.ms-cab-compressed',
+
+            // audio/video
+            'mp3' => 'audio/mpeg',
+            'qt' => 'video/quicktime',
+            'mov' => 'video/quicktime',
+
+            // adobe
+            'pdf' => 'application/pdf',
+            'psd' => 'image/vnd.adobe.photoshop',
+            'ai' => 'application/postscript',
+            'eps' => 'application/postscript',
+            'ps' => 'application/postscript',
+
+            // ms office
+            'doc' => 'application/msword',
+            'rtf' => 'application/rtf',
+            'xls' => 'application/vnd.ms-excel',
+            'ppt' => 'application/vnd.ms-powerpoint',
+
+            // open office
+            'odt' => 'application/vnd.oasis.opendocument.text',
+            'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
+        );
+
+        $ext = strtolower(array_pop(explode('.',$filename)));
+
+        if (array_key_exists($ext, $mime_types)) {
+            return $mime_types[$ext];
+        } elseif (function_exists('finfo_open')) {
+            $finfo = finfo_open(FILEINFO_MIME);
+            $mimetype = finfo_file($finfo, $filename);
+            finfo_close($finfo);
+            return $mimetype;
+        } else {
+            return 'application/octet-stream';
         }
     }
     // }}}

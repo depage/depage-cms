@@ -230,7 +230,7 @@ class PublishGenerator
      **/
     public function getImgUrl()
     {
-        $options = $this->options->graphics;
+        $options = $this->project->getGraphicsOptions();
         $projectPath = $this->project->getProjectPath();
 
         return new \Depage\Graphics\Imgurl([
