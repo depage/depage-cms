@@ -52,36 +52,26 @@ class Resource extends Json
 
         if (!$validRequest) {
             header("HTTP/1.1 401 Unauthorized");
-        }
 
-        if ($lang == "lib") {
-            $projectPath = $this->project->getProjectPath();
-            $path = $projectPath . "/lib/" . $uri;
-            $useImgUrl = preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $uri);
-
-            if ($useImgUrl) {
-                $path = $projectPath . "lib/cache/graphics/lib/" . $uri;
-                $options = $this->options->graphics;
-                $baseUrl = $this->project->getBaseUrl($publishId);
-
-                $imgurl =  new \Depage\Graphics\Imgurl([
-                    'extension' => $options->extension,
-                    'executable' => $options->executable,
-                    'optimize' => $options->optimize,
-                    'baseUrl' => $baseUrl,
-                    'cachePath' => $projectPath . "lib/cache/graphics/",
-                    'relPath' => $projectPath,
-                ]);
-                $imgurl->render($baseUrl . "lib/" . $uri);
-            }
-            if (file_exists($path)) {
-                $body = file_get_contents($path);
-            } else {
-                header("HTTP/1.1 404 Not Found");
-            }
-        } else {
+            return [
+                'success' => false,
+                'body' => base64_encode(""),
+            ];
+        } else if ($lang == "lib") {
+            $body = $this->libFile($publishId, $uri, $lang);
+        } else if ($uri == "sitemap.xml") {
+            $body = $this->project->generateSitemap($publishId, $lang);
+        } else if ($uri == "atom.xml") {
+            $body = $this->project->generateAtomFeed($publishId, $lang);
+        } else if (isset($this->project->getLanguages()[$lang])) {
             $body = $this->transformUrl($publishId, $uri, $lang);
         }
+
+        if (empty($body)) {
+            header("HTTP/1.1 404 Not Found");
+        }
+
+        $this->markAsPublished($publishId, $lang, $uri, $body);
 
         $retVal = [
             'success' => !empty($body),
@@ -90,12 +80,75 @@ class Resource extends Json
             'uri' => $uri,
             'project' => $this->projectName,
             'publishId' => $publishId,
-            'baseUrl' => $baseUrl,
-            'file' => $projectPath . "lib/cache/graphics/" . $uri,
             'body' => base64_encode($body),
         ];
 
         return $retVal;
+    }
+    // }}}
+    // {{{ markAsPublished()
+    /**
+     * @brief markAsPublished
+     *
+     * @param string $lang
+     * @param string $uri
+     * @param string $body
+     *
+     * @return void
+     **/
+    protected function markAsPublished(int $publishId, string $lang, string $uri, string $body):void
+    {
+        $hash = hash("sha256", $body);
+        $conf = $this->project->getPublishingTargets()[$publishId];
+
+        $publishPdo = clone $this->pdo;
+        $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->project->name;
+
+        $fs = \Depage\Fs\Fs::factory($conf->output_folder, [
+            'user' => $conf->output_user,
+            'pass' => $conf->output_pass,
+        ]);
+
+        $publisher = new \Depage\Publisher\Publisher($publishPdo, $fs, $publishId);
+        $publisher->markfileAsPublished($lang . "/" . $uri, $hash);
+
+    }
+    // }}}
+    // {{{ libFile()
+    /**
+     * @brief libFile
+     *
+     * @param string $uri
+     *
+     * @return object
+     **/
+    protected function libFile(int $publishId, string $uri, string $lang)
+    {
+        $body = "";
+        $projectPath = $this->project->getProjectPath();
+        $path = $projectPath . "/lib/" . $uri;
+        $useImgUrl = preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $uri);
+
+        if ($useImgUrl) {
+            $path = $projectPath . "lib/cache/graphics/lib/" . $uri;
+            $options = $this->options->graphics;
+            $baseUrl = $this->project->getBaseUrl($publishId);
+
+            $imgurl =  new \Depage\Graphics\Imgurl([
+                'extension' => $options->extension,
+                'executable' => $options->executable,
+                'optimize' => $options->optimize,
+                'baseUrl' => $baseUrl,
+                'cachePath' => $projectPath . "lib/cache/graphics/",
+                'relPath' => $projectPath,
+            ]);
+            $imgurl->render($baseUrl . "lib/" . $uri);
+        }
+        if (file_exists($path)) {
+            $body = file_get_contents($path);
+        }
+
+        return $body;
     }
     // }}}
     // {{{ transformUrl()
@@ -139,6 +192,7 @@ class Resource extends Json
 
         return $transformer->transformUrl("/" . $uri, $lang);
     }
+    // }}}
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :

@@ -158,6 +158,18 @@ class Publisher
         }
     }
     // }}}
+    // {{{ markfileAsPublished()
+    /**
+     * @brief markfileAsPublished
+     *
+     * @param string $filename
+     * @param string $hash
+     * @return void
+     **/
+    public function markfileAsPublished($filename, $hash)
+    {
+        $this->fileUpdated($filename, $hash);
+    }
     // {{{ fileNeedsUpdate()
     /**
      * @brief fileNeedsUpdate

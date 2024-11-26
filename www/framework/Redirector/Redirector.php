@@ -380,7 +380,7 @@ class Redirector
         $url = $this->scheme . "://" . $this->host . $this->basePath;
         $request = $this->parseRequestUri($requestUri);
 
-        if ($this->lang != "") {
+        if ($this->lang != "" && isset($this->languages[$this->lang])) {
             $url .= $this->lang;
         } else if (!empty($this->languages)) {
             $url .= $this->getLanguageByBrowser($acceptLanguage);
@@ -505,11 +505,7 @@ class Redirector
             readfile($resource);
             die();
         }
-        if (isset($_GET['notfound'])) {
-            $this->redirectToAlternativePage($requestUri, $acceptLanguage);
-        } else {
-            $this->redirectToIndex($requestUri, $acceptLanguage);
-        }
+        $this->redirectToAlternativePage($requestUri, $acceptLanguage);
     }
     // }}}
 
@@ -609,7 +605,11 @@ class Redirector
             'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
         );
 
-        $ext = strtolower(array_pop(explode('.',$filename)));
+        $ext = "";
+        $n = strrpos($filename,".");
+        if ($n !== false) {
+            $ext = substr($filename, $n + 1);
+        }
 
         if (array_key_exists($ext, $mime_types)) {
             return $mime_types[$ext];

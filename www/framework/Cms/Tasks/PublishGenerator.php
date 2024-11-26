@@ -283,15 +283,15 @@ class PublishGenerator
         }
 
         $this->queueInit();
-        $this->queuePublishFiles();
+        $this->queuePublishPageList();
         $this->queuePublishIndex();
+        $this->queuePublishFiles();
         if ($apiAvailable) {
             $this->queueUpdateSchema();
         }
         $this->queuePublishPages();
         $this->queuePublishSitemap();
         $this->queuePublishAtom();
-        $this->queuePublishPageList();
         $this->queuePublishFinish();
         if ($this->project->hasNewsletter()) {
             $this->queuePublishNewsletter();
