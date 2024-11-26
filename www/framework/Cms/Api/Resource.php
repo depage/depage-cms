@@ -55,7 +55,7 @@ class Resource extends Json
 
             return [
                 'success' => false,
-                'body' => base64_encode(""),
+                'validRequest' => $validRequest,
             ];
         } else if ($lang == "lib") {
             $body = $this->libFile($publishId, $uri, $lang);
@@ -64,26 +64,30 @@ class Resource extends Json
         } else if ($uri == "atom.xml") {
             $body = $this->project->generateAtomFeed($publishId, $lang);
         } else if (isset($this->project->getLanguages()[$lang])) {
-            $body = $this->transformUrl($publishId, $uri, $lang);
+            try {
+                $body = $this->transformUrl($publishId, $uri, $lang);
+            } catch (\Exception $e) {
+                $body = "";
+            }
         }
 
         if (empty($body)) {
             header("HTTP/1.1 404 Not Found");
+
+            return [
+                'success' => !empty($body),
+                'validRequest' => $validRequest,
+                'lang' => $lang,
+                'uri' => $uri,
+                'project' => $this->projectName,
+                'publishId' => $publishId,
+            ];
         }
 
         $this->markAsPublished($publishId, $lang, $uri, $body);
 
-        $retVal = [
-            'success' => !empty($body),
-            'validRequest' => $validRequest,
-            'lang' => $lang,
-            'uri' => $uri,
-            'project' => $this->projectName,
-            'publishId' => $publishId,
-            'body' => base64_encode($body),
-        ];
-
-        return $retVal;
+        echo($body);
+        die();
     }
     // }}}
     // {{{ markAsPublished()
@@ -110,7 +114,7 @@ class Resource extends Json
         ]);
 
         $publisher = new \Depage\Publisher\Publisher($publishPdo, $fs, $publishId);
-        $publisher->markfileAsPublished($lang . "/" . $uri, $hash);
+        $publisher->markFileAsPublished($lang . "/" . $uri, $hash);
 
     }
     // }}}

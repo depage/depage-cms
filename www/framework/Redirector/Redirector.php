@@ -438,16 +438,14 @@ class Redirector
 
         if ($response->httpCode != 200) {
             var_dump($response->httpCode);
-            var_dump($response->body);
-            //var_dump($response->getJson());
+            var_dump($response->getJson());
 
             return false;
         }
 
-        $data = $response->getJson();
-        $body = base64_decode($data['body'], true);
+        $body = $response->body;
 
-        if ($body === false) {
+        if (empty($body)) {
             return false;
         }
 
@@ -458,7 +456,7 @@ class Redirector
 
         $path = dirname($uri);
         if ($path != "" && !file_exists($path)) {
-            mkdir($path, 0777, true);
+            @mkdir($path, 0777, true);
         }
 
         return file_put_contents($uri, $body);
