@@ -84,7 +84,7 @@ class Resource extends Json
             ];
         }
 
-        $this->markAsPublished($publishId, $lang, $uri, $body);
+        $this->markAsPublished($publishId, $lang . "/" . $uri, hash("sha256", $body));
 
         echo($body);
         die();
@@ -100,9 +100,8 @@ class Resource extends Json
      *
      * @return void
      **/
-    protected function markAsPublished(int $publishId, string $lang, string $uri, string $body):void
+    protected function markAsPublished(int $publishId, string $path, string $hash):void
     {
-        $hash = hash("sha256", $body);
         $conf = $this->project->getPublishingTargets()[$publishId];
 
         $publishPdo = clone $this->pdo;
@@ -114,7 +113,7 @@ class Resource extends Json
         ]);
 
         $publisher = new \Depage\Publisher\Publisher($publishPdo, $fs, $publishId);
-        $publisher->markFileAsPublished($lang . "/" . $uri, $hash);
+        $publisher->markFileAsPublished($path, $hash);
 
     }
     // }}}
@@ -130,11 +129,13 @@ class Resource extends Json
     {
         $body = "";
         $projectPath = $this->project->getProjectPath();
-        $path = $projectPath . "/lib/" . $uri;
+        $targetPath = "lib/" . $uri;
+        $path = $projectPath . "/" . $targetPath;
         $useImgUrl = preg_match("/(.*\.(jpg|jpeg|gif|png|webp|eps|tif|tiff|pdf|svg))\.([^\\\]*)\.(jpg|jpeg|gif|png|webp)/i", $uri);
 
         if ($useImgUrl) {
-            $path = $projectPath . "lib/cache/graphics/lib/" . $uri;
+            $targetPath = "lib/cache/graphics/lib/" . $uri;
+            $path = $projectPath . "/" . $targetPath;
             $options = $this->options->graphics;
             $baseUrl = $this->project->getBaseUrl($publishId);
 
@@ -149,7 +150,10 @@ class Resource extends Json
             $imgurl->render($baseUrl . "lib/" . $uri);
         }
         if (file_exists($path)) {
-            $body = file_get_contents($path);
+            $this->markAsPublished($publishId, $targetPath, hash_file("sha256", $path));
+
+            readfile($path);
+            die();
         }
 
         return $body;
