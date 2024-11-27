@@ -1078,11 +1078,7 @@ class Project extends \Depage\Entity\Entity
         $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name);
         $docIds = $transformCache->getUsedFor($doc->getDocId(), "html-live{$publishId}");
 
-        // @todo set userId correctly
-        $doc->getHistory()->save($userId, true);
-
-        $doc->clearCache();
-
+        $this->previewType = "live";
         $xmlnav = $this->getXmlNav();
         foreach ($docIds as $id) {
             $d = $this->xmldb->getDoc($id);
@@ -1095,6 +1091,10 @@ class Project extends \Depage\Entity\Entity
                 $publisher->unpublishFile($lang . $pageInfo->url);
             }
         }
+
+        // @todo set userId correctly
+        $doc->getHistory()->save($userId, true);
+        $doc->clearCache();
 
         return $doc->getDocInfo()->rootid;
     }
