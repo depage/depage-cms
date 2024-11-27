@@ -479,7 +479,7 @@ abstract class Transformer
             $success = $content->loadXML($this->transformCache->get($docId, $templateName, $id));
 
             if ($success) {
-                $this->addToUsedDocuments(...$this->transformCache->getUsedFor($docId, $templateName, $id));
+                $this->addToUsedDocuments(...$this->transformCache->getUsedFor($docId, $templateName));
 
                 return $content;
             }

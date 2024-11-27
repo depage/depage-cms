@@ -1060,11 +1060,41 @@ class Project extends \Depage\Entity\Entity
      **/
     public function releaseDocument($docId, $userId)
     {
-        // @todo set userId correctly
         $doc = $this->xmldb->getDoc($docId);
+        $targets = $this->getPublishingTargets();
+        $publishId = key($targets);
+        $conf = $targets[$publishId];
+
+        $publishPdo = clone $this->pdo;
+        $publishPdo->prefix = $this->pdo->prefix . "_proj_" . $this->name;
+
+        $fs = \Depage\Fs\Fs::factory($conf->output_folder, [
+            'user' => $conf->output_user,
+            'pass' => $conf->output_pass,
+        ]);
+
+        $publisher = new \Depage\Publisher\Publisher($publishPdo, $fs, $publishId);
+
+        $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name);
+        $docIds = $transformCache->getUsedFor($doc->getDocId(), "html-live{$publishId}");
+
+        // @todo set userId correctly
         $doc->getHistory()->save($userId, true);
 
         $doc->clearCache();
+
+        $xmlnav = $this->getXmlNav();
+        foreach ($docIds as $id) {
+            $d = $this->xmldb->getDoc($id);
+            $pageInfo = $xmlnav->getPageInfo($d->getDocName());
+            if (!$pageInfo || !$pageInfo->url) {
+                continue;
+            }
+
+            foreach ($this->getLanguages() as $lang => $name) {
+                $publisher->unpublishFile($lang . $pageInfo->url);
+            }
+        }
 
         return $doc->getDocInfo()->rootid;
     }
@@ -1207,11 +1237,11 @@ class Project extends \Depage\Entity\Entity
         $templates = $this->getXslTemplates();
         $previewTypes = ["dev", "pre", "live"];
 
+        $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name);
+        $transformCache->clearAll();
+
         foreach ($templates as $template) {
             foreach ($previewTypes as $type) {
-                $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name, "$template-$type");
-                $transformCache->clearAll();
-
                 $xslFile = "cache/xslt/$this->name/$template/$type.xsl";
                 if (file_exists($xslFile)) {
                     unlink($xslFile);
