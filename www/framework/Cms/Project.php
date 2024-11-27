@@ -1060,6 +1060,9 @@ class Project extends \Depage\Entity\Entity
      **/
     public function releaseDocument($docId, $userId)
     {
+        $this->previewType = "live";
+
+        // @todo only if Depage\Cms\XmlDocTypes\Page
         $doc = $this->xmldb->getDoc($docId);
         $targets = $this->getPublishingTargets();
         $publishId = key($targets);
@@ -1073,12 +1076,12 @@ class Project extends \Depage\Entity\Entity
             'pass' => $conf->output_pass,
         ]);
 
+        $urls = new \Depage\Publisher\Urls($publishPdo, $publishId);
         $publisher = new \Depage\Publisher\Publisher($publishPdo, $fs, $publishId);
 
         $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name);
         $docIds = $transformCache->getUsedFor($doc->getDocId(), "html-live{$publishId}");
 
-        $this->previewType = "live";
         $xmlnav = $this->getXmlNav();
         foreach ($docIds as $id) {
             $d = $this->xmldb->getDoc($id);
@@ -1095,6 +1098,15 @@ class Project extends \Depage\Entity\Entity
         // @todo set userId correctly
         $doc->getHistory()->save($userId, true);
         $doc->clearCache();
+
+        $pages = $this->getXmlNav()->getPublicPages();
+        foreach ($pages as $page) {
+            if ($page->id == $doc->getDocId()) {
+                $urls->addUrl($page->pageId, $page->url, $page->pageOrder);
+            }
+        }
+
+        $publisher->publishString($this->generatePageIndex($publishId), "lib/pageindex.php");
 
         return $doc->getDocInfo()->rootid;
     }
