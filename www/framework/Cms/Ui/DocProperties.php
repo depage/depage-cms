@@ -369,7 +369,7 @@ class DocProperties extends Base
         $lastPublishDateOf = $this->project->getLastPublishDateOf($lang . $pageInfo->url);
 
         if (!$lastPublishDateOf) {
-            $pageInfo->published = false;
+            $pageInfo->published = $pageInfo->lastrelease >= $pageInfo->lastchange;
         }
 
         $hasUnpublishedChanges = false;
@@ -406,6 +406,7 @@ class DocProperties extends Base
             if ($pageInfo->published && !$pageInfo->released) {
                 $message = _("Page is published but has unreleased changes.");
             } else if ($hasUnpublishedChanges) {
+                // @todo this state is only valid when not using perpetual publishing
                 $message = _("Page is waiting to be published.");
             } else if ($pageInfo->published) {
                 $message = _("Page is published.");
