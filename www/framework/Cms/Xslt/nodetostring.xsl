@@ -29,33 +29,30 @@
     <xsl:apply-templates select="node | node[text()]"/>
 
 -->
-    <xsl:variable name="q">
-        <xsl:text>"</xsl:text>
-    </xsl:variable>
-    <xsl:variable name="empty"/>
 
-
-    <xsl:template match="*" mode="selfclosetag">
+    <xsl:template match="*" mode="nodetostring-selfclosetag">
         <xsl:text>&lt;</xsl:text>
         <xsl:value-of select="name()"/>
-        <xsl:apply-templates select="@*" mode="attribs"/>
+        <xsl:apply-templates select="@*" mode="nodetostring"/>
         <xsl:text>/&gt;</xsl:text>
     </xsl:template>
 
-    <xsl:template match="*" mode="opentag">
+    <xsl:template match="*" mode="nodetostring-opentag">
         <xsl:text>&lt;</xsl:text>
         <xsl:value-of select="name()"/>
-        <xsl:apply-templates select="@*" mode="attribs"/>
+        <xsl:apply-templates select="@*" mode="nodetostring"/>
         <xsl:text>&gt;</xsl:text>
     </xsl:template>
 
-    <xsl:template match="*" mode="closetag">
+    <xsl:template match="*" mode="nodetostring-closetag">
         <xsl:text>&lt;/</xsl:text>
         <xsl:value-of select="name()"/>
         <xsl:text>&gt;</xsl:text>
     </xsl:template>
 
     <xsl:template match="* | text()" mode="nodetostring">
+        <xsl:variable name="empty"/>
+
         <xsl:choose>
             <xsl:when test="boolean(name())">
                 <xsl:choose>
@@ -63,15 +60,15 @@
                          if element is not empty
                     -->
                     <xsl:when test="normalize-space(.) != $empty or *">
-                        <xsl:apply-templates select="." mode="opentag"/>
-                            <xsl:apply-templates select="* | text()" mode="nodetostring"/>
-                        <xsl:apply-templates select="." mode="closetag"/>
+                        <xsl:apply-templates select="." mode="nodetostring-opentag"/>
+                            <xsl:apply-templates select="* | text() | processing-instruction()" mode="nodetostring"/>
+                        <xsl:apply-templates select="." mode="nodetostring-closetag"/>
                     </xsl:when>
                     <!--
                          assuming emty tags are self closing, e.g. <img/>, <source/>, <input/>
                     -->
                     <xsl:otherwise>
-                        <xsl:apply-templates select="." mode="selfclosetag"/>
+                        <xsl:apply-templates select="." mode="nodetostring-selfclosetag"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:when>
@@ -81,7 +78,18 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template match="@*" mode="attribs">
+    <xsl:template match="processing-instruction()" mode="nodetostring">
+        <xsl:text>&lt;?</xsl:text>
+        <xsl:value-of select="name()"/><xsl:text> </xsl:text>
+        <xsl:value-of select="."/>
+        <xsl:text>&gt;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="@*" mode="nodetostring">
+        <xsl:variable name="q">
+            <xsl:text>"</xsl:text>
+        </xsl:variable>
+
         <xsl:if test="position() = 1">
             <xsl:text> </xsl:text>
         </xsl:if>
