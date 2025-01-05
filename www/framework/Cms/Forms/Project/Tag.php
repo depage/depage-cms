@@ -35,7 +35,7 @@ class Tag extends Base
      * @param mixed
      * @return void
      **/
-    public function addChildElements()
+    public function addChildElements(): void
     {
         $nodeId = $this->dataNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 

@@ -13,7 +13,6 @@
 
 namespace Depage\Cms\Forms;
 
-
 class Newsletter extends \Depage\Cms\Forms\XmlForm
 {
     // {{{ __construct()
@@ -43,7 +42,7 @@ class Newsletter extends \Depage\Cms\Forms\XmlForm
      *
      * @return void
      **/
-    public function addChildElements()
+    public function addChildElements(): void
     {
         $nodes = $this->dataNodeXpath->query("//pg:meta/pg:title");
         foreach ($nodes as $node) {

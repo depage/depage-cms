@@ -29,7 +29,7 @@ class Import extends Base
      * @param mixed
      * @return void
      **/
-    public function addChildElements()
+    public function addChildElements(): void
     {
         $this->addHtml("<h1>" . _("Project Import") . "</h1>");
         $this->addHtml("<p>" . _("Import xml dataset from depage-cms 1.5") . "</p>");
