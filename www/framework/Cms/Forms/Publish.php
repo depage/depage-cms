@@ -28,7 +28,7 @@ class Publish extends ReleasePages
      *
      * @return void
      **/
-    public function addChildElements()
+    public function addChildElements(): void
     {
         $this->addHidden("action", [
             'defaultValue' => "publish",

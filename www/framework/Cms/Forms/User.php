@@ -108,7 +108,7 @@ class User extends \Depage\HtmlForm\HtmlForm
      * @param mixed $values
      * @return void
      **/
-    protected function onValidate()
+    protected function onValidate(): bool
     {
         $values = $this->getValues();
 

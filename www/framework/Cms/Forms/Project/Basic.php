@@ -30,7 +30,7 @@ class Basic extends \Depage\HtmlForm\HtmlForm
         $this->project = $params['project'];
         $this->groups = [];
 
-        foreach($params['projectGroups'] as $g) {
+        foreach ($params['projectGroups'] as $g) {
             $this->groups[$g->id] = $g->name;
         }
 
@@ -61,7 +61,7 @@ class Basic extends \Depage\HtmlForm\HtmlForm
      * @param mixed
      * @return void
      **/
-    public function addChildElements()
+    public function addChildElements(): void
     {
         $this->addText("fullname", [
             "label" => _("Display Name"),

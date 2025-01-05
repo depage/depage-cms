@@ -15,8 +15,6 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
     protected $canPublish;
     // }}}
 
-    // }}}
-
     // {{{ __construct()
     /**
      * @brief __construct
@@ -52,7 +50,7 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
      *
      * @return void
      **/
-    public function addChildElements()
+    public function addChildElements(): void
     {
         $formatter = new \Depage\Formatters\DateNatural();
 
@@ -64,8 +62,8 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
             'label' => _("Preview of Changes"),
         ]);
         $fs->addHtml("<p>");
-            $fs->addHtml("<a href=\"{$previewPath}\" class=\"preview\" target=\"previewFrame\">" . $this->project->fullname . "</a>");
-            $fs->addHtml("<a href=\"{$previewPath}\" class=\"button preview\" target=\"previewFrame\">" . _("Preview") . "</a>");
+        $fs->addHtml("<a href=\"{$previewPath}\" class=\"preview\" target=\"previewFrame\">" . $this->project->fullname . "</a>");
+        $fs->addHtml("<a href=\"{$previewPath}\" class=\"button preview\" target=\"previewFrame\">" . _("Preview") . "</a>");
         $fs->addHtml("</p>");
 
         if ($this->canPublish) {
@@ -86,7 +84,7 @@ class ReleasePages extends \Depage\HtmlForm\HtmlForm
 
         $numUnreleased = 0;
 
-        foreach($pages as $page) {
+        foreach ($pages as $page) {
             if (!$page->released) {
                 $username = isset($this->users[$page->lastchangeUid]) ? $this->users[$page->lastchangeUid]->fullname : _("unknown user");
                 $selected = $page->name == $this->selectedDocId;

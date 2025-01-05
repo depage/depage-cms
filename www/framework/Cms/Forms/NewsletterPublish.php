@@ -44,7 +44,7 @@ class NewsletterPublish extends \Depage\HtmlForm\HtmlForm
      *
      * @return void
      **/
-    public function addChildElements()
+    public function addChildElements(): void
     {
         $categories = $this->newsletter->getSubscriberCategories();
         $list = [];
