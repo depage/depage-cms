@@ -34,7 +34,7 @@ class FileSearch extends \Depage\HtmlForm\HtmlForm
      * @param mixed
      * @return void
      **/
-    public function addChildElements()
+    public function addChildElements(): void
     {
         $this->addSearch("query", [
             'label' => _("Search"),

@@ -32,7 +32,7 @@ class Login extends \Depage\HtmlForm\HtmlForm
      * @param mixed $param
      * @return void
      **/
-    public function addChildElements()
+    public function addChildElements(): void
     {
         $this->addHtml("<h2>" . _("Login") . "</h2>");
         $this->addText("name", [

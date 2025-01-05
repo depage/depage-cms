@@ -34,7 +34,7 @@ class Upload extends \Depage\HtmlForm\HtmlForm
      * @param mixed
      * @return void
      **/
-    public function addChildElements()
+    public function addChildElements(): void
     {
         $this->addFile("file", [
             'label' => _("Upload new files by choosing or dragging"),

@@ -35,7 +35,7 @@ class Publish extends Base
      * @param mixed
      * @return void
      **/
-    public function addChildElements()
+    public function addChildElements(): void
     {
         $nodeId = $this->dataNode->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
         $outputRegex = "/((file|ftps?|ssh(2.sftp)?|sftp):\/\/(.*))/";
@@ -127,7 +127,7 @@ class Publish extends Base
      * @param mixed
      * @return void
      **/
-    public function onValidate()
+    public function onValidate(): bool
     {
         // @todo validate output folders
         return true;
