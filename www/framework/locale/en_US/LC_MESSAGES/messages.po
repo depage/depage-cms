@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-08 15:31+0200\n"
+"POT-Creation-Date: 2025-01-21 12:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -144,9 +144,9 @@ msgstr ""
 msgid "Send"
 msgstr ""
 
-#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:714
-#: Cms/Ui/DocProperties.php:758 Cms/Ui/DocProperties.php:796
-#: Cms/Ui/DocProperties.php:836
+#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:718
+#: Cms/Ui/DocProperties.php:762 Cms/Ui/DocProperties.php:800
+#: Cms/Ui/DocProperties.php:840
 msgid "Text"
 msgstr ""
 
@@ -189,8 +189,8 @@ msgstr ""
 msgid "(public)"
 msgstr ""
 
-#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:1009
-#: Cms/Ui/DocProperties.php:1138
+#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:1013
+#: Cms/Ui/DocProperties.php:1149
 msgid "http://domain.com"
 msgstr ""
 
@@ -216,1779 +216,1779 @@ msgstr ""
 msgid "Please use a MIME-compliant e-mail program to open it."
 msgstr ""
 
-#: HtmlForm/Abstracts/Input.php:299
+#: HtmlForm/Abstracts/Input.php:300
 msgid "Please enter valid data"
 msgstr ""
 
-#: HtmlForm/Elements/Tel.php:53
+#: HtmlForm/Elements/Tel.php:54
 msgid "Please enter a valid telephone number"
 msgstr ""
 
-#: HtmlForm/Elements/Number.php:79
+#: HtmlForm/Elements/Number.php:80
 msgid "Please enter a valid number"
 msgstr ""
 
-#: HtmlForm/Elements/Captcha.php:47
+#: HtmlForm/Elements/Captcha.php:48
 msgid "Please fill in the correct phrase."
 msgstr ""
 
-#: HtmlForm/Elements/State.php:55
+#: HtmlForm/Elements/State.php:56
 msgid "Baden-Württemberg"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:56
+#: HtmlForm/Elements/State.php:57
 msgid "Bayern"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:57
+#: HtmlForm/Elements/State.php:58
 msgid "Berlin"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:58
+#: HtmlForm/Elements/State.php:59
 msgid "Brandenburg"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:59
+#: HtmlForm/Elements/State.php:60
 msgid "Bremen"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:60
+#: HtmlForm/Elements/State.php:61
 msgid "Hamburg"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:61
+#: HtmlForm/Elements/State.php:62
 msgid "Hessen"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:62
+#: HtmlForm/Elements/State.php:63
 msgid "Mecklenburg-Vorpommern"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:63
+#: HtmlForm/Elements/State.php:64
 msgid "Niedersachsen"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:64
+#: HtmlForm/Elements/State.php:65
 msgid "Nordrhein-Westfalen"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:65
+#: HtmlForm/Elements/State.php:66
 msgid "Rheinland-Pfalz"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:66
+#: HtmlForm/Elements/State.php:67
 msgid "Saarland"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:67
+#: HtmlForm/Elements/State.php:68
 msgid "Sachsen"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:68
+#: HtmlForm/Elements/State.php:69
 msgid "Sachsen-Anhalt"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:69
+#: HtmlForm/Elements/State.php:70
 msgid "Schleswig-Holstein"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:70
+#: HtmlForm/Elements/State.php:71
 msgid "Thüringen"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:74
+#: HtmlForm/Elements/State.php:75
 msgid "Alabama"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:75
+#: HtmlForm/Elements/State.php:76
 msgid "Alaska"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:76
+#: HtmlForm/Elements/State.php:77
 msgid "Arizona"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:77
+#: HtmlForm/Elements/State.php:78
 msgid "Arkansas"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:78
+#: HtmlForm/Elements/State.php:79
 msgid "California"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:79
+#: HtmlForm/Elements/State.php:80
 msgid "Colorado"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:80
+#: HtmlForm/Elements/State.php:81
 msgid "Connecticut"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:81
+#: HtmlForm/Elements/State.php:82
 msgid "Delaware"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:82
+#: HtmlForm/Elements/State.php:83
 msgid "Florida"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:83 HtmlForm/Elements/Country.php:132
+#: HtmlForm/Elements/State.php:84 HtmlForm/Elements/Country.php:133
 msgid "Georgia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:84
+#: HtmlForm/Elements/State.php:85
 msgid "Hawaii"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:85
+#: HtmlForm/Elements/State.php:86
 msgid "Idaho"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:86
+#: HtmlForm/Elements/State.php:87
 msgid "Illinois"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:87
+#: HtmlForm/Elements/State.php:88
 msgid "Indiana"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:88
+#: HtmlForm/Elements/State.php:89
 msgid "Iowa"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:89
+#: HtmlForm/Elements/State.php:90
 msgid "Kansas"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:90
+#: HtmlForm/Elements/State.php:91
 msgid "Kentucky"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:91
+#: HtmlForm/Elements/State.php:92
 msgid "Louisiana"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:92
+#: HtmlForm/Elements/State.php:93
 msgid "Maine"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:93
+#: HtmlForm/Elements/State.php:94
 msgid "Maryland"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:94
+#: HtmlForm/Elements/State.php:95
 msgid "Massachusetts"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:95
+#: HtmlForm/Elements/State.php:96
 msgid "Michigan"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:96
+#: HtmlForm/Elements/State.php:97
 msgid "Minnesota"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:97
+#: HtmlForm/Elements/State.php:98
 msgid "Mississippi"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:98
+#: HtmlForm/Elements/State.php:99
 msgid "Missouri"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:99
+#: HtmlForm/Elements/State.php:100
 msgid "Montana"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:100
+#: HtmlForm/Elements/State.php:101
 msgid "Nebraska"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:101
+#: HtmlForm/Elements/State.php:102
 msgid "Nevada"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:102
+#: HtmlForm/Elements/State.php:103
 msgid "New Hampshire"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:103
+#: HtmlForm/Elements/State.php:104
 msgid "New Jersey"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:104
+#: HtmlForm/Elements/State.php:105
 msgid "New Mexico"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:105
+#: HtmlForm/Elements/State.php:106
 msgid "New York"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:106
+#: HtmlForm/Elements/State.php:107
 msgid "North Carolina"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:107
+#: HtmlForm/Elements/State.php:108
 msgid "North Dakota"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:108
+#: HtmlForm/Elements/State.php:109
 msgid "Ohio"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:109
+#: HtmlForm/Elements/State.php:110
 msgid "Oklahoma"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:110
+#: HtmlForm/Elements/State.php:111
 msgid "Oregon"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:111
+#: HtmlForm/Elements/State.php:112
 msgid "Pennsylvania"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:112
+#: HtmlForm/Elements/State.php:113
 msgid "Rhode Island"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:113
+#: HtmlForm/Elements/State.php:114
 msgid "South Carolina"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:114
+#: HtmlForm/Elements/State.php:115
 msgid "South Dakota"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:115
+#: HtmlForm/Elements/State.php:116
 msgid "Tennessee"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:116
+#: HtmlForm/Elements/State.php:117
 msgid "Texas"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:117
+#: HtmlForm/Elements/State.php:118
 msgid "Utah"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:118
+#: HtmlForm/Elements/State.php:119
 msgid "Vermont"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:119
+#: HtmlForm/Elements/State.php:120
 msgid "Virginia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:120
+#: HtmlForm/Elements/State.php:121
 msgid "Washington"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:121
+#: HtmlForm/Elements/State.php:122
 msgid "West Virginia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:122
+#: HtmlForm/Elements/State.php:123
 msgid "Wisconsin"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:123
+#: HtmlForm/Elements/State.php:124
 msgid "Wyoming"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:124
+#: HtmlForm/Elements/State.php:125
 msgid "District of Columbia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:125 HtmlForm/Elements/Country.php:68
+#: HtmlForm/Elements/State.php:126 HtmlForm/Elements/Country.php:69
 msgid "American Samoa"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:126 HtmlForm/Elements/Country.php:144
+#: HtmlForm/Elements/State.php:127 HtmlForm/Elements/Country.php:145
 msgid "Guam"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:127 HtmlForm/Elements/Country.php:196
+#: HtmlForm/Elements/State.php:128 HtmlForm/Elements/Country.php:197
 msgid "Northern Mariana Islands"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:128 HtmlForm/Elements/Country.php:229
+#: HtmlForm/Elements/State.php:129 HtmlForm/Elements/Country.php:230
 msgid "Puerto Rico"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:129 HtmlForm/Elements/Country.php:275
+#: HtmlForm/Elements/State.php:130 HtmlForm/Elements/Country.php:276
 msgid "United States Minor Outlying Islands"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:130
+#: HtmlForm/Elements/State.php:131
 msgid "Virgin Islands, U.S.)"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:133
+#: HtmlForm/Elements/State.php:134
 msgid "Alberta"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:134
+#: HtmlForm/Elements/State.php:135
 msgid "British Columbia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:135
+#: HtmlForm/Elements/State.php:136
 msgid "Manitoba"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:136
+#: HtmlForm/Elements/State.php:137
 msgid "New Brunswick"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:137
+#: HtmlForm/Elements/State.php:138
 msgid "Newfoundland and Labrador"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:138
+#: HtmlForm/Elements/State.php:139
 msgid "Northwest Territories"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:139
+#: HtmlForm/Elements/State.php:140
 msgid "Nova Scotia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:140
+#: HtmlForm/Elements/State.php:141
 msgid "Nunavut"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:141
+#: HtmlForm/Elements/State.php:142
 msgid "Ontario"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:142
+#: HtmlForm/Elements/State.php:143
 msgid "Prince Edward Island"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:143
+#: HtmlForm/Elements/State.php:144
 msgid "Quebec"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:144
+#: HtmlForm/Elements/State.php:145
 msgid "Saskatchewan"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:145
+#: HtmlForm/Elements/State.php:146
 msgid "Yukon"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:148
+#: HtmlForm/Elements/State.php:149
 msgid "Agrigento"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:149
+#: HtmlForm/Elements/State.php:150
 msgid "Alessandria"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:150
+#: HtmlForm/Elements/State.php:151
 msgid "Ancona"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:151
+#: HtmlForm/Elements/State.php:152
 msgid "Aosta"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:152
+#: HtmlForm/Elements/State.php:153
 msgid "Arezzo"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:153
+#: HtmlForm/Elements/State.php:154
 msgid "Ascoli Piceno"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:154
+#: HtmlForm/Elements/State.php:155
 msgid "Asti"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:155
+#: HtmlForm/Elements/State.php:156
 msgid "Avellino"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:156
+#: HtmlForm/Elements/State.php:157
 msgid "Bari"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:157
+#: HtmlForm/Elements/State.php:158
 msgid "Barletta-Andria-Trani"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:158
+#: HtmlForm/Elements/State.php:159
 msgid "Belluno"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:159
+#: HtmlForm/Elements/State.php:160
 msgid "Benevento"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:160
+#: HtmlForm/Elements/State.php:161
 msgid "Bergamo"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:161
+#: HtmlForm/Elements/State.php:162
 msgid "Biella"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:162
+#: HtmlForm/Elements/State.php:163
 msgid "Bologna"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:163
+#: HtmlForm/Elements/State.php:164
 msgid "Bolzano"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:164
+#: HtmlForm/Elements/State.php:165
 msgid "Brescia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:165
+#: HtmlForm/Elements/State.php:166
 msgid "Brindisi"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:166
+#: HtmlForm/Elements/State.php:167
 msgid "Cagliari"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:167
+#: HtmlForm/Elements/State.php:168
 msgid "Caltanissetta"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:168
+#: HtmlForm/Elements/State.php:169
 msgid "Campobasso"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:169
+#: HtmlForm/Elements/State.php:170
 msgid "Carbonia-Iglesias"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:170
+#: HtmlForm/Elements/State.php:171
 msgid "Caserta"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:171
+#: HtmlForm/Elements/State.php:172
 msgid "Catania"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:172
+#: HtmlForm/Elements/State.php:173
 msgid "Catanzaro"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:173
+#: HtmlForm/Elements/State.php:174
 msgid "Chieti"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:174
+#: HtmlForm/Elements/State.php:175
 msgid "Como"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:175
+#: HtmlForm/Elements/State.php:176
 msgid "Cosenza"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:176
+#: HtmlForm/Elements/State.php:177
 msgid "Cremona"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:177
+#: HtmlForm/Elements/State.php:178
 msgid "Crotone"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:178
+#: HtmlForm/Elements/State.php:179
 msgid "Cuneo"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:179
+#: HtmlForm/Elements/State.php:180
 msgid "Enna"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:180
+#: HtmlForm/Elements/State.php:181
 msgid "Fermo"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:181
+#: HtmlForm/Elements/State.php:182
 msgid "Ferrara"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:182
+#: HtmlForm/Elements/State.php:183
 msgid "Firenze"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:183
+#: HtmlForm/Elements/State.php:184
 msgid "Foggia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:184
+#: HtmlForm/Elements/State.php:185
 msgid "Forlì-Cesena"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:185
+#: HtmlForm/Elements/State.php:186
 msgid "Frosinone"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:186
+#: HtmlForm/Elements/State.php:187
 msgid "Genova"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:187
+#: HtmlForm/Elements/State.php:188
 msgid "Gorizia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:188
+#: HtmlForm/Elements/State.php:189
 msgid "Grosseto"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:189
+#: HtmlForm/Elements/State.php:190
 msgid "Imperia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:190
+#: HtmlForm/Elements/State.php:191
 msgid "Isernia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:191
+#: HtmlForm/Elements/State.php:192
 msgid "L'Aquila"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:192
+#: HtmlForm/Elements/State.php:193
 msgid "La Spezia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:193
+#: HtmlForm/Elements/State.php:194
 msgid "Latina"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:194
+#: HtmlForm/Elements/State.php:195
 msgid "Lecce"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:195
+#: HtmlForm/Elements/State.php:196
 msgid "Lecco"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:196
+#: HtmlForm/Elements/State.php:197
 msgid "Livorno"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:197
+#: HtmlForm/Elements/State.php:198
 msgid "Lodi"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:198
+#: HtmlForm/Elements/State.php:199
 msgid "Lucca"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:199
+#: HtmlForm/Elements/State.php:200
 msgid "Macerata"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:200
+#: HtmlForm/Elements/State.php:201
 msgid "Mantova"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:201
+#: HtmlForm/Elements/State.php:202
 msgid "Massa-Carrara"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:202
+#: HtmlForm/Elements/State.php:203
 msgid "Matera"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:203
+#: HtmlForm/Elements/State.php:204
 msgid "Medio Campidano"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:204
+#: HtmlForm/Elements/State.php:205
 msgid "Messina"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:205
+#: HtmlForm/Elements/State.php:206
 msgid "Milano"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:206
+#: HtmlForm/Elements/State.php:207
 msgid "Modena"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:207
+#: HtmlForm/Elements/State.php:208
 msgid "Monza e della Brianza"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:208
+#: HtmlForm/Elements/State.php:209
 msgid "Napoli"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:209
+#: HtmlForm/Elements/State.php:210
 msgid "Novara"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:210
+#: HtmlForm/Elements/State.php:211
 msgid "Nuoro"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:211
+#: HtmlForm/Elements/State.php:212
 msgid "Ogliastra"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:212
+#: HtmlForm/Elements/State.php:213
 msgid "Olbia-Tempio"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:213
+#: HtmlForm/Elements/State.php:214
 msgid "Oristano"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:214
+#: HtmlForm/Elements/State.php:215
 msgid "Padova"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:215
+#: HtmlForm/Elements/State.php:216
 msgid "Palermo"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:216
+#: HtmlForm/Elements/State.php:217
 msgid "Parma"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:217
+#: HtmlForm/Elements/State.php:218
 msgid "Pavia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:218
+#: HtmlForm/Elements/State.php:219
 msgid "Perugia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:219
+#: HtmlForm/Elements/State.php:220
 msgid "Pesaro e Urbino"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:220
+#: HtmlForm/Elements/State.php:221
 msgid "Pescara"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:221
+#: HtmlForm/Elements/State.php:222
 msgid "Piacenza"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:222
+#: HtmlForm/Elements/State.php:223
 msgid "Pisa"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:223
+#: HtmlForm/Elements/State.php:224
 msgid "Pistoia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:224
+#: HtmlForm/Elements/State.php:225
 msgid "Pordenone"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:225
+#: HtmlForm/Elements/State.php:226
 msgid "Potenza"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:226
+#: HtmlForm/Elements/State.php:227
 msgid "Prato"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:227
+#: HtmlForm/Elements/State.php:228
 msgid "Ragusa"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:228
+#: HtmlForm/Elements/State.php:229
 msgid "Ravenna"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:229
+#: HtmlForm/Elements/State.php:230
 msgid "Reggio Calabria"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:230
+#: HtmlForm/Elements/State.php:231
 msgid "Reggio Emilia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:231
+#: HtmlForm/Elements/State.php:232
 msgid "Rieti"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:232
+#: HtmlForm/Elements/State.php:233
 msgid "Rimini"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:233
+#: HtmlForm/Elements/State.php:234
 msgid "Roma"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:234
+#: HtmlForm/Elements/State.php:235
 msgid "Rovigo"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:235
+#: HtmlForm/Elements/State.php:236
 msgid "Salerno"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:236
+#: HtmlForm/Elements/State.php:237
 msgid "Sassari"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:237
+#: HtmlForm/Elements/State.php:238
 msgid "Savona"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:238
+#: HtmlForm/Elements/State.php:239
 msgid "Siena"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:239
+#: HtmlForm/Elements/State.php:240
 msgid "Siracusa"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:240
+#: HtmlForm/Elements/State.php:241
 msgid "Sondrio"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:241
+#: HtmlForm/Elements/State.php:242
 msgid "Taranto"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:242
+#: HtmlForm/Elements/State.php:243
 msgid "Teramo"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:243
+#: HtmlForm/Elements/State.php:244
 msgid "Terni"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:244
+#: HtmlForm/Elements/State.php:245
 msgid "Torino"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:245
+#: HtmlForm/Elements/State.php:246
 msgid "Trapani"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:246
+#: HtmlForm/Elements/State.php:247
 msgid "Trento"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:247
+#: HtmlForm/Elements/State.php:248
 msgid "Treviso"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:248
+#: HtmlForm/Elements/State.php:249
 msgid "Trieste"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:249
+#: HtmlForm/Elements/State.php:250
 msgid "Udine"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:250
+#: HtmlForm/Elements/State.php:251
 msgid "Varese"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:251
+#: HtmlForm/Elements/State.php:252
 msgid "Venezia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:252
+#: HtmlForm/Elements/State.php:253
 msgid "Verbano-Cusio-Ossola"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:253
+#: HtmlForm/Elements/State.php:254
 msgid "Vercelli"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:254
+#: HtmlForm/Elements/State.php:255
 msgid "Verona"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:255
+#: HtmlForm/Elements/State.php:256
 msgid "Vibo Valentia"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:256
+#: HtmlForm/Elements/State.php:257
 msgid "Vicenza"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:257
+#: HtmlForm/Elements/State.php:258
 msgid "Viterbo"
 msgstr ""
 
-#: HtmlForm/Elements/State.php:308 HtmlForm/Elements/Country.php:356
+#: HtmlForm/Elements/State.php:308 HtmlForm/Elements/Country.php:357
 msgid "Please Select"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:57
+#: HtmlForm/Elements/Country.php:58
 msgid "Andorra"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:58
+#: HtmlForm/Elements/Country.php:59
 msgid "United Arab Emirates"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:59
+#: HtmlForm/Elements/Country.php:60
 msgid "Afghanistan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:60
+#: HtmlForm/Elements/Country.php:61
 msgid "Antigua &amp; Barbuda"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:61
+#: HtmlForm/Elements/Country.php:62
 msgid "Anguilla"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:62
+#: HtmlForm/Elements/Country.php:63
 msgid "Albania"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:63
+#: HtmlForm/Elements/Country.php:64
 msgid "Armenia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:64
+#: HtmlForm/Elements/Country.php:65
 msgid "Netherlands Antilles"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:65
+#: HtmlForm/Elements/Country.php:66
 msgid "Angola"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:66
+#: HtmlForm/Elements/Country.php:67
 msgid "Antarctica"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:67
+#: HtmlForm/Elements/Country.php:68
 msgid "Argentina"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:69
+#: HtmlForm/Elements/Country.php:70
 msgid "Austria"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:70
+#: HtmlForm/Elements/Country.php:71
 msgid "Australia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:71
+#: HtmlForm/Elements/Country.php:72
 msgid "Aruba"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:72
+#: HtmlForm/Elements/Country.php:73
 msgid "Azerbaijan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:73
+#: HtmlForm/Elements/Country.php:74
 msgid "Bosnia and Herzegovina"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:74
+#: HtmlForm/Elements/Country.php:75
 msgid "Barbados"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:75
+#: HtmlForm/Elements/Country.php:76
 msgid "Bangladesh"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:76
+#: HtmlForm/Elements/Country.php:77
 msgid "Belgium"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:77
+#: HtmlForm/Elements/Country.php:78
 msgid "Burkina Faso"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:78
+#: HtmlForm/Elements/Country.php:79
 msgid "Bulgaria"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:79
+#: HtmlForm/Elements/Country.php:80
 msgid "Bahrain"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:80
+#: HtmlForm/Elements/Country.php:81
 msgid "Burundi"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:81
+#: HtmlForm/Elements/Country.php:82
 msgid "Benin"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:82
+#: HtmlForm/Elements/Country.php:83
 msgid "Bermuda"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:83
+#: HtmlForm/Elements/Country.php:84
 msgid "Brunei Darussalam"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:84
+#: HtmlForm/Elements/Country.php:85
 msgid "Bolivia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:85
+#: HtmlForm/Elements/Country.php:86
 msgid "Brazil"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:86
+#: HtmlForm/Elements/Country.php:87
 msgid "Bahama"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:87
+#: HtmlForm/Elements/Country.php:88
 msgid "Bhutan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:88
+#: HtmlForm/Elements/Country.php:89
 msgid "Bouvet Island"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:89
+#: HtmlForm/Elements/Country.php:90
 msgid "Botswana"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:90
+#: HtmlForm/Elements/Country.php:91
 msgid "Belarus"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:91
+#: HtmlForm/Elements/Country.php:92
 msgid "Belize"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:92
+#: HtmlForm/Elements/Country.php:93
 msgid "Canada"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:93
+#: HtmlForm/Elements/Country.php:94
 msgid "Cocos (Keeling) Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:94
+#: HtmlForm/Elements/Country.php:95
 msgid "Central African Republic"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:95
+#: HtmlForm/Elements/Country.php:96
 msgid "Congo"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:96
+#: HtmlForm/Elements/Country.php:97
 msgid "Switzerland"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:97
+#: HtmlForm/Elements/Country.php:98
 msgid "Côte D\\'ivoire (Ivory Coast)"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:98
+#: HtmlForm/Elements/Country.php:99
 msgid "Cook Iislands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:99
+#: HtmlForm/Elements/Country.php:100
 msgid "Chile"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:100
+#: HtmlForm/Elements/Country.php:101
 msgid "Cameroon"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:101
+#: HtmlForm/Elements/Country.php:102
 msgid "China"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:102
+#: HtmlForm/Elements/Country.php:103
 msgid "Colombia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:103
+#: HtmlForm/Elements/Country.php:104
 msgid "Costa Rica"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:104
+#: HtmlForm/Elements/Country.php:105
 msgid "Cuba"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:105
+#: HtmlForm/Elements/Country.php:106
 msgid "Cape Verde"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:106
+#: HtmlForm/Elements/Country.php:107
 msgid "Christmas Island"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:107
+#: HtmlForm/Elements/Country.php:108
 msgid "Cyprus"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:108
+#: HtmlForm/Elements/Country.php:109
 msgid "Czech Republic"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:109
+#: HtmlForm/Elements/Country.php:110
 msgid "Germany"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:110
+#: HtmlForm/Elements/Country.php:111
 msgid "Djibouti"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:111
+#: HtmlForm/Elements/Country.php:112
 msgid "Denmark"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:112
+#: HtmlForm/Elements/Country.php:113
 msgid "Dominica"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:113
+#: HtmlForm/Elements/Country.php:114
 msgid "Dominican Republic"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:114
+#: HtmlForm/Elements/Country.php:115
 msgid "Algeria"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:115
+#: HtmlForm/Elements/Country.php:116
 msgid "Ecuador"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:116
+#: HtmlForm/Elements/Country.php:117
 msgid "Estonia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:117
+#: HtmlForm/Elements/Country.php:118
 msgid "Egypt"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:118
+#: HtmlForm/Elements/Country.php:119
 msgid "Western Sahara"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:119
+#: HtmlForm/Elements/Country.php:120
 msgid "Eritrea"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:120
+#: HtmlForm/Elements/Country.php:121
 msgid "Spain"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:121
+#: HtmlForm/Elements/Country.php:122
 msgid "Ethiopia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:122
+#: HtmlForm/Elements/Country.php:123
 msgid "Finland"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:123
+#: HtmlForm/Elements/Country.php:124
 msgid "Fiji"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:124
+#: HtmlForm/Elements/Country.php:125
 msgid "Falkland Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:125
+#: HtmlForm/Elements/Country.php:126
 msgid "Micronesia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:126
+#: HtmlForm/Elements/Country.php:127
 msgid "Faroe Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:127
+#: HtmlForm/Elements/Country.php:128
 msgid "France"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:128
+#: HtmlForm/Elements/Country.php:129
 msgid "France, Metropolitan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:129
+#: HtmlForm/Elements/Country.php:130
 msgid "Gabon"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:130
+#: HtmlForm/Elements/Country.php:131
 msgid "United Kingdom"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:131
+#: HtmlForm/Elements/Country.php:132
 msgid "Grenada"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:133
+#: HtmlForm/Elements/Country.php:134
 msgid "French Guiana"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:134
+#: HtmlForm/Elements/Country.php:135
 msgid "Ghana"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:135
+#: HtmlForm/Elements/Country.php:136
 msgid "Gibraltar"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:136
+#: HtmlForm/Elements/Country.php:137
 msgid "Greenland"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:137
+#: HtmlForm/Elements/Country.php:138
 msgid "Gambia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:138
+#: HtmlForm/Elements/Country.php:139
 msgid "Guinea"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:139
+#: HtmlForm/Elements/Country.php:140
 msgid "Guadeloupe"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:140
+#: HtmlForm/Elements/Country.php:141
 msgid "Equatorial Guinea"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:141
+#: HtmlForm/Elements/Country.php:142
 msgid "Greece"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:142
+#: HtmlForm/Elements/Country.php:143
 msgid "South Georgia and the South Sandwich Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:143
+#: HtmlForm/Elements/Country.php:144
 msgid "Guatemala"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:145
+#: HtmlForm/Elements/Country.php:146
 msgid "Guinea-Bissau"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:146
+#: HtmlForm/Elements/Country.php:147
 msgid "Guyana"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:147
+#: HtmlForm/Elements/Country.php:148
 msgid "Hong Kong"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:148
+#: HtmlForm/Elements/Country.php:149
 msgid "Heard &amp; McDonald Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:149
+#: HtmlForm/Elements/Country.php:150
 msgid "Honduras"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:150
+#: HtmlForm/Elements/Country.php:151
 msgid "Croatia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:151
+#: HtmlForm/Elements/Country.php:152
 msgid "Haiti"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:152
+#: HtmlForm/Elements/Country.php:153
 msgid "Hungary"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:153
+#: HtmlForm/Elements/Country.php:154
 msgid "Indonesia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:154
+#: HtmlForm/Elements/Country.php:155
 msgid "Ireland"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:155
+#: HtmlForm/Elements/Country.php:156
 msgid "Israel"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:156
+#: HtmlForm/Elements/Country.php:157
 msgid "India"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:157
+#: HtmlForm/Elements/Country.php:158
 msgid "British Indian Ocean Territory"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:158
+#: HtmlForm/Elements/Country.php:159
 msgid "Iraq"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:159
+#: HtmlForm/Elements/Country.php:160
 msgid "Islamic Republic of Iran"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:160
+#: HtmlForm/Elements/Country.php:161
 msgid "Iceland"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:161
+#: HtmlForm/Elements/Country.php:162
 msgid "Italy"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:162
+#: HtmlForm/Elements/Country.php:163
 msgid "Jamaica"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:163
+#: HtmlForm/Elements/Country.php:164
 msgid "Jordan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:164
+#: HtmlForm/Elements/Country.php:165
 msgid "Japan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:165
+#: HtmlForm/Elements/Country.php:166
 msgid "Kenya"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:166
+#: HtmlForm/Elements/Country.php:167
 msgid "Kyrgyzstan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:167
+#: HtmlForm/Elements/Country.php:168
 msgid "Cambodia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:168
+#: HtmlForm/Elements/Country.php:169
 msgid "Kiribati"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:169
+#: HtmlForm/Elements/Country.php:170
 msgid "Comoros"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:170
+#: HtmlForm/Elements/Country.php:171
 msgid "St. Kitts and Nevis"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:171
+#: HtmlForm/Elements/Country.php:172
 msgid "Korea, Democratic People\\'s Republic of"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:172
+#: HtmlForm/Elements/Country.php:173
 msgid "Korea, Republic of"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:173
+#: HtmlForm/Elements/Country.php:174
 msgid "Kuwait"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:174
+#: HtmlForm/Elements/Country.php:175
 msgid "Cayman Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:175
+#: HtmlForm/Elements/Country.php:176
 msgid "Kazakhstan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:176
+#: HtmlForm/Elements/Country.php:177
 msgid "Lao People\\'s Democratic Republic"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:177
+#: HtmlForm/Elements/Country.php:178
 msgid "Lebanon"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:178
+#: HtmlForm/Elements/Country.php:179
 msgid "Saint Lucia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:179
+#: HtmlForm/Elements/Country.php:180
 msgid "Liechtenstein"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:180
+#: HtmlForm/Elements/Country.php:181
 msgid "Sri Lanka"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:181
+#: HtmlForm/Elements/Country.php:182
 msgid "Liberia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:182
+#: HtmlForm/Elements/Country.php:183
 msgid "Lesotho"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:183
+#: HtmlForm/Elements/Country.php:184
 msgid "Lithuania"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:184
+#: HtmlForm/Elements/Country.php:185
 msgid "Luxembourg"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:185
+#: HtmlForm/Elements/Country.php:186
 msgid "Latvia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:186
+#: HtmlForm/Elements/Country.php:187
 msgid "Libyan Arab Jamahiriya"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:187
+#: HtmlForm/Elements/Country.php:188
 msgid "Morocco"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:188
+#: HtmlForm/Elements/Country.php:189
 msgid "Monaco"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:189
+#: HtmlForm/Elements/Country.php:190
 msgid "Moldova, Republic of"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:190
+#: HtmlForm/Elements/Country.php:191
 msgid "Madagascar"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:191
+#: HtmlForm/Elements/Country.php:192
 msgid "Marshall Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:192
+#: HtmlForm/Elements/Country.php:193
 msgid "Mali"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:193
+#: HtmlForm/Elements/Country.php:194
 msgid "Mongolia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:194
+#: HtmlForm/Elements/Country.php:195
 msgid "Myanmar"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:195
+#: HtmlForm/Elements/Country.php:196
 msgid "Macau"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:197
+#: HtmlForm/Elements/Country.php:198
 msgid "Martinique"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:198
+#: HtmlForm/Elements/Country.php:199
 msgid "Mauritania"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:199
+#: HtmlForm/Elements/Country.php:200
 msgid "Monserrat"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:200
+#: HtmlForm/Elements/Country.php:201
 msgid "Malta"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:201
+#: HtmlForm/Elements/Country.php:202
 msgid "Mauritius"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:202
+#: HtmlForm/Elements/Country.php:203
 msgid "Maldives"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:203
+#: HtmlForm/Elements/Country.php:204
 msgid "Malawi"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:204
+#: HtmlForm/Elements/Country.php:205
 msgid "Mexico"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:205
+#: HtmlForm/Elements/Country.php:206
 msgid "Malaysia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:206
+#: HtmlForm/Elements/Country.php:207
 msgid "Mozambique"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:207
+#: HtmlForm/Elements/Country.php:208
 msgid "Namibia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:208
+#: HtmlForm/Elements/Country.php:209
 msgid "New Caledonia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:209
+#: HtmlForm/Elements/Country.php:210
 msgid "Niger"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:210
+#: HtmlForm/Elements/Country.php:211
 msgid "Norfolk Island"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:211
+#: HtmlForm/Elements/Country.php:212
 msgid "Nigeria"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:212
+#: HtmlForm/Elements/Country.php:213
 msgid "Nicaragua"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:213
+#: HtmlForm/Elements/Country.php:214
 msgid "Netherlands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:214
+#: HtmlForm/Elements/Country.php:215
 msgid "Norway"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:215
+#: HtmlForm/Elements/Country.php:216
 msgid "Nepal"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:216
+#: HtmlForm/Elements/Country.php:217
 msgid "Nauru"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:217
+#: HtmlForm/Elements/Country.php:218
 msgid "Niue"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:218
+#: HtmlForm/Elements/Country.php:219
 msgid "New Zealand"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:219
+#: HtmlForm/Elements/Country.php:220
 msgid "Oman"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:220
+#: HtmlForm/Elements/Country.php:221
 msgid "Panama"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:221
+#: HtmlForm/Elements/Country.php:222
 msgid "Peru"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:222
+#: HtmlForm/Elements/Country.php:223
 msgid "French Polynesia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:223
+#: HtmlForm/Elements/Country.php:224
 msgid "Papua New Guinea"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:224
+#: HtmlForm/Elements/Country.php:225
 msgid "Philippines"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:225
+#: HtmlForm/Elements/Country.php:226
 msgid "Pakistan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:226
+#: HtmlForm/Elements/Country.php:227
 msgid "Poland"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:227
+#: HtmlForm/Elements/Country.php:228
 msgid "St. Pierre &amp; Miquelon"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:228
+#: HtmlForm/Elements/Country.php:229
 msgid "Pitcairn"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:230
+#: HtmlForm/Elements/Country.php:231
 msgid "Portugal"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:231
+#: HtmlForm/Elements/Country.php:232
 msgid "Palau"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:232
+#: HtmlForm/Elements/Country.php:233
 msgid "Paraguay"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:233
+#: HtmlForm/Elements/Country.php:234
 msgid "Qatar"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:234
+#: HtmlForm/Elements/Country.php:235
 msgid "Réunion"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:235
+#: HtmlForm/Elements/Country.php:236
 msgid "Romania"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:236
+#: HtmlForm/Elements/Country.php:237
 msgid "Russian Federation"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:237
+#: HtmlForm/Elements/Country.php:238
 msgid "Rwanda"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:238
+#: HtmlForm/Elements/Country.php:239
 msgid "Saudi Arabia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:239
+#: HtmlForm/Elements/Country.php:240
 msgid "Solomon Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:240
+#: HtmlForm/Elements/Country.php:241
 msgid "Seychelles"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:241
+#: HtmlForm/Elements/Country.php:242
 msgid "Sudan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:242
+#: HtmlForm/Elements/Country.php:243
 msgid "Sweden"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:243
+#: HtmlForm/Elements/Country.php:244
 msgid "Singapore"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:244
+#: HtmlForm/Elements/Country.php:245
 msgid "St. Helena"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:245
+#: HtmlForm/Elements/Country.php:246
 msgid "Slovenia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:246
+#: HtmlForm/Elements/Country.php:247
 msgid "Svalbard &amp; Jan Mayen Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:247
+#: HtmlForm/Elements/Country.php:248
 msgid "Slovakia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:248
+#: HtmlForm/Elements/Country.php:249
 msgid "Sierra Leone"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:249
+#: HtmlForm/Elements/Country.php:250
 msgid "San Marino"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:250
+#: HtmlForm/Elements/Country.php:251
 msgid "Senegal"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:251
+#: HtmlForm/Elements/Country.php:252
 msgid "Somalia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:252
+#: HtmlForm/Elements/Country.php:253
 msgid "Suriname"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:253
+#: HtmlForm/Elements/Country.php:254
 msgid "Sao Tome &amp; Principe"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:254
+#: HtmlForm/Elements/Country.php:255
 msgid "El Salvador"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:255
+#: HtmlForm/Elements/Country.php:256
 msgid "Syrian Arab Republic"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:256
+#: HtmlForm/Elements/Country.php:257
 msgid "Swaziland"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:257
+#: HtmlForm/Elements/Country.php:258
 msgid "Turks &amp; Caicos Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:258
+#: HtmlForm/Elements/Country.php:259
 msgid "Chad"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:259
+#: HtmlForm/Elements/Country.php:260
 msgid "French Southern Territories"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:260
+#: HtmlForm/Elements/Country.php:261
 msgid "Togo"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:261
+#: HtmlForm/Elements/Country.php:262
 msgid "Thailand"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:262
+#: HtmlForm/Elements/Country.php:263
 msgid "Tajikistan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:263
+#: HtmlForm/Elements/Country.php:264
 msgid "Tokelau"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:264
+#: HtmlForm/Elements/Country.php:265
 msgid "Turkmenistan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:265
+#: HtmlForm/Elements/Country.php:266
 msgid "Tunisia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:266
+#: HtmlForm/Elements/Country.php:267
 msgid "Tonga"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:267
+#: HtmlForm/Elements/Country.php:268
 msgid "East Timor"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:268
+#: HtmlForm/Elements/Country.php:269
 msgid "Turkey"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:269
+#: HtmlForm/Elements/Country.php:270
 msgid "Trinidad &amp; Tobago"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:270
+#: HtmlForm/Elements/Country.php:271
 msgid "Tuvalu"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:271
+#: HtmlForm/Elements/Country.php:272
 msgid "Taiwan, Province of China"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:272
+#: HtmlForm/Elements/Country.php:273
 msgid "Tanzania, United Republic of"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:273
+#: HtmlForm/Elements/Country.php:274
 msgid "Ukraine"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:274
+#: HtmlForm/Elements/Country.php:275
 msgid "Uganda"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:276
+#: HtmlForm/Elements/Country.php:277
 msgid "United States of America"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:277
+#: HtmlForm/Elements/Country.php:278
 msgid "Uruguay"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:278
+#: HtmlForm/Elements/Country.php:279
 msgid "Uzbekistan"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:279
+#: HtmlForm/Elements/Country.php:280
 msgid "Vatican City State (Holy See)"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:280
+#: HtmlForm/Elements/Country.php:281
 msgid "St. Vincent &amp; the Grenadines"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:281
+#: HtmlForm/Elements/Country.php:282
 msgid "Venezuela"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:282
+#: HtmlForm/Elements/Country.php:283
 msgid "British Virgin Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:283
+#: HtmlForm/Elements/Country.php:284
 msgid "United States Virgin Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:284
+#: HtmlForm/Elements/Country.php:285
 msgid "Viet Nam"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:285
+#: HtmlForm/Elements/Country.php:286
 msgid "Vanuatu"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:286
+#: HtmlForm/Elements/Country.php:287
 msgid "Wallis &amp; Futuna Islands"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:287
+#: HtmlForm/Elements/Country.php:288
 msgid "Samoa"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:288
+#: HtmlForm/Elements/Country.php:289
 msgid "Yemen"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:289
+#: HtmlForm/Elements/Country.php:290
 msgid "Mayotte"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:290
+#: HtmlForm/Elements/Country.php:291
 msgid "Yugoslavia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:291
+#: HtmlForm/Elements/Country.php:292
 msgid "South Africa"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:292
+#: HtmlForm/Elements/Country.php:293
 msgid "Zambia"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:293
+#: HtmlForm/Elements/Country.php:294
 msgid "Zaire"
 msgstr ""
 
-#: HtmlForm/Elements/Country.php:294
+#: HtmlForm/Elements/Country.php:295
 msgid "Zimbabwe"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:105
+#: HtmlForm/Elements/Address.php:106
 msgid "Address 1"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:106
+#: HtmlForm/Elements/Address.php:107
 msgid "Address 2"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:107
+#: HtmlForm/Elements/Address.php:108
 msgid "City"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:108
+#: HtmlForm/Elements/Address.php:109
 msgid "State"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:109
+#: HtmlForm/Elements/Address.php:110
 msgid "Zip"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:110
+#: HtmlForm/Elements/Address.php:111
 msgid "Country"
 msgstr ""
 
-#: HtmlForm/Elements/Address.php:169
+#: HtmlForm/Elements/Address.php:170
 msgid "State and Country do not match"
 msgstr ""
 
-#: HtmlForm/Elements/Url.php:52
+#: HtmlForm/Elements/Url.php:53
 msgid "Please enter a valid URL"
 msgstr ""
 
-#: HtmlForm/Elements/Boolean.php:64
+#: HtmlForm/Elements/Boolean.php:65
 msgid "Please check this box if you want to proceed"
 msgstr ""
 
-#: HtmlForm/Elements/Date.php:29
+#: HtmlForm/Elements/Date.php:30
 msgid "YYYY-MM-DD"
 msgstr ""
 
-#: HtmlForm/Elements/Email.php:58
+#: HtmlForm/Elements/Email.php:59
 msgid "Please enter a valid email address"
 msgstr ""
 
@@ -2050,7 +2050,7 @@ msgstr ""
 msgid "Project Settings"
 msgstr ""
 
-#: Cms/Ui/Project.php:78 Cms/Ui/Project.php:100 Cms/Ui/DocProperties.php:545
+#: Cms/Ui/Project.php:78 Cms/Ui/Project.php:100 Cms/Ui/DocProperties.php:549
 msgid "Tags"
 msgstr ""
 
@@ -2063,7 +2063,7 @@ msgid "Variables"
 msgstr ""
 
 #: Cms/Ui/Project.php:81 Cms/Ui/Newsletter.php:56 Cms/tpl/projectlist.tpl:29
-#: Cms/tpl/newsletterList.tpl:49 Cms/tpl/publish.tpl:5
+#: Cms/tpl/newsletterList.tpl:52 Cms/tpl/publish.tpl:5
 #: Cms/tpl/toolbar_main.tpl:53
 msgid "Publish"
 msgstr ""
@@ -2142,8 +2142,8 @@ msgid "Deleted %d pages."
 msgstr ""
 
 #: Cms/Ui/Newsletter.php:55 Cms/js/locale.php:40 Cms/tpl/projectlist.tpl:22
-#: Cms/tpl/newsletterList.tpl:47 Cms/tpl/toolbar_main.tpl:43
-#: Cms/Forms/ReleasePages.php:95
+#: Cms/tpl/newsletterList.tpl:50 Cms/tpl/toolbar_main.tpl:43
+#: Cms/Forms/ReleasePages.php:93
 msgid "Edit"
 msgstr ""
 
@@ -2161,279 +2161,287 @@ msgid ""
 "or to a comma separated list of custom emails for testing."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:280
+#: Cms/Ui/DocProperties.php:284
 msgid "prop_name_edit_img_caption"
 msgstr "Caption"
 
-#: Cms/Ui/DocProperties.php:281
+#: Cms/Ui/DocProperties.php:285
 msgid "prop_name_edit_img_copyright"
 msgstr "Copyright"
 
-#: Cms/Ui/DocProperties.php:282
+#: Cms/Ui/DocProperties.php:286
 msgid "prop_name_edit_img_thumb"
 msgstr "Thumbnail"
 
-#: Cms/Ui/DocProperties.php:381
+#: Cms/Ui/DocProperties.php:385
 msgid "Page Status"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:398
+#: Cms/Ui/DocProperties.php:402
 msgid "Page is published"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:401
+#: Cms/Ui/DocProperties.php:405
 msgid "Page is waiting to be published"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:404
+#: Cms/Ui/DocProperties.php:408
 msgid "Page has unreleased changes"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:407
+#: Cms/Ui/DocProperties.php:411
 msgid "Page is published but has unreleased changes."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:409
+#: Cms/Ui/DocProperties.php:413
 msgid "Page is waiting to be published."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:411
+#: Cms/Ui/DocProperties.php:415
 msgid "Page is published."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:413
+#: Cms/Ui/DocProperties.php:417
 msgid "Page has not been published yet."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:418
+#: Cms/Ui/DocProperties.php:422
 #, php-format
 msgid ""
 "<p class=\"status\">%s<span><a href=\"%s\" target=\"_blank\">%s</a></span></"
 "p>"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:425
+#: Cms/Ui/DocProperties.php:429
 #, php-format
 msgid "<p class=\"status\">%s<span>%s</span></p>"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:435
+#: Cms/Ui/DocProperties.php:439
 #, php-format
 msgid "<p class=\"date\">%s %s by %s</p>"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:436
+#: Cms/Ui/DocProperties.php:440
 msgid "Changed"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:438 Cms/Forms/ReleasePages.php:91
+#: Cms/Ui/DocProperties.php:442 Cms/Forms/ReleasePages.php:89
 msgid "unknown user"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:443
+#: Cms/Ui/DocProperties.php:447
 msgid "url"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:452 Cms/Ui/DocProperties.php:462
+#: Cms/Ui/DocProperties.php:456 Cms/Ui/DocProperties.php:466
 msgid "Earlier page versions"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:453
+#: Cms/Ui/DocProperties.php:457
 msgid "Current Version"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:474
+#: Cms/Ui/DocProperties.php:478
 msgid "Release Page"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:475
+#: Cms/Ui/DocProperties.php:479
 msgid "Mark this page to be published, when project gets published next time"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:477
+#: Cms/Ui/DocProperties.php:481
 msgid "Request Release"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:478
+#: Cms/Ui/DocProperties.php:482
 msgid "Ask for this page the be released"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:502 Cms/Ui/DocProperties.php:964
-#: Cms/Ui/DocProperties.php:998
+#: Cms/Ui/DocProperties.php:506 Cms/Ui/DocProperties.php:968
+#: Cms/Ui/DocProperties.php:1002
 msgid "Default"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:504 Cms/Ui/DocProperties.php:965
+#: Cms/Ui/DocProperties.php:508 Cms/Ui/DocProperties.php:969
 #: Cms/XmlDocTypes/Colors.php:15
 msgid "Colorscheme"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:523
+#: Cms/Ui/DocProperties.php:527
 msgid "Navigation"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:561 Cms/Ui/DocProperties.php:578
+#: Cms/Ui/DocProperties.php:565 Cms/Ui/DocProperties.php:582
 msgid "Protection"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:570
+#: Cms/Ui/DocProperties.php:574
 msgid "Page protected"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:581
+#: Cms/Ui/DocProperties.php:585
 msgid "Page is protected and cannot be changed."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:585
+#: Cms/Ui/DocProperties.php:589
 msgid "Pagetype"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:593
+#: Cms/Ui/DocProperties.php:597
 msgid "html"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:594
+#: Cms/Ui/DocProperties.php:598
 msgid "text"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:595
+#: Cms/Ui/DocProperties.php:599
 msgid "php"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:616 Cms/Ui/DocProperties.php:989
-#: Cms/Forms/Newsletter.php:54 Cms/Forms/Project/Language.php:74
+#: Cms/Ui/DocProperties.php:620 Cms/Ui/DocProperties.php:993
+#: Cms/Forms/Newsletter.php:53 Cms/Forms/Project/Language.php:74
 msgid "Title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:633
+#: Cms/Ui/DocProperties.php:637
 msgid "Linkinfo"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:635 Cms/Forms/Newsletter.php:67
+#: Cms/Ui/DocProperties.php:639 Cms/Forms/Newsletter.php:66
 msgid "Subject"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:658 Cms/Forms/Newsletter.php:80
+#: Cms/Ui/DocProperties.php:662 Cms/Forms/Newsletter.php:79
 msgid "Description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:683
+#: Cms/Ui/DocProperties.php:687
 msgid "Active"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:687
+#: Cms/Ui/DocProperties.php:691
 #, php-format
 msgid "%s is active"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:688
+#: Cms/Ui/DocProperties.php:692
 #, php-format
 msgid "%s is disabled"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:733
+#: Cms/Ui/DocProperties.php:737
 msgid "Headline"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:876 Cms/tpl/usertable.tpl:5
+#: Cms/Ui/DocProperties.php:880 Cms/tpl/usertable.tpl:5
 msgid "Type"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:897
+#: Cms/Ui/DocProperties.php:901
 msgid "Date"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:919
+#: Cms/Ui/DocProperties.php:923
 msgid "Boolean"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:942
+#: Cms/Ui/DocProperties.php:946
 msgid "Color"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:986
+#: Cms/Ui/DocProperties.php:990
 msgid "Link"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:990
+#: Cms/Ui/DocProperties.php:994
 msgid "Link title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:996
+#: Cms/Ui/DocProperties.php:1000
 msgid "Target"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:999
+#: Cms/Ui/DocProperties.php:1003
 msgid "New Window"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1007 Cms/Ui/DocProperties.php:1136
+#: Cms/Ui/DocProperties.php:1011 Cms/Ui/DocProperties.php:1147
 msgid "href"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1027 Cms/Forms/Project/FileSearch.php:52
+#: Cms/Ui/DocProperties.php:1031 Cms/Forms/Project/FileSearch.php:52
 msgid "Audio"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1031 Cms/Ui/DocProperties.php:1056
-#: Cms/Ui/DocProperties.php:1086 Cms/Ui/DocProperties.php:1114
+#: Cms/Ui/DocProperties.php:1035 Cms/Ui/DocProperties.php:1060
+#: Cms/Ui/DocProperties.php:1090 Cms/Ui/DocProperties.php:1118
 msgid "src"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1052 Cms/Forms/Project/FileSearch.php:51
+#: Cms/Ui/DocProperties.php:1056 Cms/Forms/Project/FileSearch.php:51
 msgid "Video"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1076
+#: Cms/Ui/DocProperties.php:1080
 msgid "File"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1106 Cms/Forms/Project/FileSearch.php:50
+#: Cms/Ui/DocProperties.php:1110 Cms/Forms/Project/FileSearch.php:50
 msgid "Image"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1124
+#: Cms/Ui/DocProperties.php:1128
 msgid "title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1125
+#: Cms/Ui/DocProperties.php:1129
 msgid "Image title"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1130
+#: Cms/Ui/DocProperties.php:1134
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1131
+#: Cms/Ui/DocProperties.php:1135
 msgid "Image description"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1155
+#: Cms/Ui/DocProperties.php:1140
+msgid "copyright"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:1141
+msgid "Image copyright"
+msgstr ""
+
+#: Cms/Ui/DocProperties.php:1166
 msgid "Table"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1194
+#: Cms/Ui/DocProperties.php:1205
 msgid "Source"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1213
+#: Cms/Ui/DocProperties.php:1224
 msgid "Not allowed to edit this element."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1250
+#: Cms/Ui/DocProperties.php:1261
 msgid "Please choose the news items you want to include in the newsletter:"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1252 Cms/Forms/Newsletter.php:88
+#: Cms/Ui/DocProperties.php:1263 Cms/Forms/Newsletter.php:87
 msgid "Unsent news items"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1267 Cms/Ui/DocProperties.php:1287
-#: Cms/Forms/Newsletter.php:102 Cms/Forms/Newsletter.php:124
+#: Cms/Ui/DocProperties.php:1278 Cms/Ui/DocProperties.php:1298
+#: Cms/Forms/Newsletter.php:101 Cms/Forms/Newsletter.php:123
 msgid "No news items available."
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1273 Cms/Forms/Newsletter.php:108
+#: Cms/Ui/DocProperties.php:1284 Cms/Forms/Newsletter.php:107
 msgid "News items included in other newsletters"
 msgstr ""
 
@@ -2465,7 +2473,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: Cms/js/locale.php:21 Cms/Forms/User.php:26 Cms/Forms/ReleasePages.php:32
+#: Cms/js/locale.php:21 Cms/Forms/User.php:26 Cms/Forms/ReleasePages.php:30
 msgid "Cancel"
 msgstr ""
 
@@ -2686,7 +2694,7 @@ msgstr ""
 #: Cms/tpl/projectlist.tpl:25 Cms/tpl/newsletterEdit.tpl:33
 #: Cms/tpl/colorschemes.tpl:48 Cms/tpl/projectmain.tpl:48
 #: Cms/tpl/newsletterPublish.tpl:19 Cms/tpl/publish.tpl:18
-#: Cms/Forms/ReleasePages.php:68 Cms/Forms/ReleasePages.php:94
+#: Cms/Forms/ReleasePages.php:66 Cms/Forms/ReleasePages.php:92
 #: Cms/Forms/NewsletterPublish.php:69
 msgid "Preview"
 msgstr ""
@@ -2876,11 +2884,11 @@ msgstr ""
 msgid "Download Subscribers"
 msgstr ""
 
-#: Cms/tpl/newsletterList.tpl:25
+#: Cms/tpl/newsletterList.tpl:26
 msgid "Unreleased Newsletters"
 msgstr ""
 
-#: Cms/tpl/newsletterList.tpl:35
+#: Cms/tpl/newsletterList.tpl:36
 msgid "Released Newsletters"
 msgstr ""
 
@@ -2888,8 +2896,8 @@ msgstr ""
 msgid "Inline help"
 msgstr ""
 
-#: Cms/tpl/changelist.tpl:13 Cms/Forms/ReleasePages.php:77
-#: Cms/Forms/ReleasePages.php:83
+#: Cms/tpl/changelist.tpl:13 Cms/Forms/ReleasePages.php:75
+#: Cms/Forms/ReleasePages.php:81
 msgid "Unreleased Pages"
 msgstr ""
 
@@ -3014,24 +3022,24 @@ msgstr ""
 msgid "Clear transform cache before publishing"
 msgstr ""
 
-#: Cms/Forms/ReleasePages.php:37
+#: Cms/Forms/ReleasePages.php:35
 msgid "Release Pages Now"
 msgstr ""
 
-#: Cms/Forms/ReleasePages.php:64
+#: Cms/Forms/ReleasePages.php:62
 msgid "Preview of Changes"
 msgstr ""
 
-#: Cms/Forms/ReleasePages.php:80
+#: Cms/Forms/ReleasePages.php:78
 msgid "Please select the pages you want to release:"
 msgstr ""
 
-#: Cms/Forms/ReleasePages.php:100
+#: Cms/Forms/ReleasePages.php:98
 #, php-format
 msgid "Changed by %s, %s"
 msgstr ""
 
-#: Cms/Forms/ReleasePages.php:106
+#: Cms/Forms/ReleasePages.php:104
 msgid "All pages are already released."
 msgstr ""
 
@@ -3054,7 +3062,7 @@ msgstr ""
 msgid "Emails"
 msgstr ""
 
-#: Cms/Forms/Newsletter.php:30
+#: Cms/Forms/Newsletter.php:29
 msgid "Save"
 msgstr ""
 

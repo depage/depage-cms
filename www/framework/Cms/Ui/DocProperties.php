@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    framework/Cms/Ui/DocProperties.php
  *
@@ -12,7 +13,7 @@
 
 namespace Depage\Cms\Ui;
 
-use \Depage\Html\Html;
+use Depage\Html\Html;
 
 class DocProperties extends Base
 {
@@ -69,7 +70,8 @@ class DocProperties extends Base
     // }}}
 
     // {{{ _init()
-    public function _init(array $importVariables = []) {
+    public function _init(array $importVariables = [])
+    {
         parent::_init($importVariables);
 
         if (!empty($this->urlSubArgs[0])) {
@@ -95,7 +97,8 @@ class DocProperties extends Base
      *
      * @return  null
      */
-    public function package($output) {
+    public function package($output)
+    {
         // pack into base-html if output is html-object
         if (!isset($_REQUEST['ajax']) && is_object($output) && is_a($output, "Depage\Html\Html")) {
             // pack into body html
@@ -116,7 +119,8 @@ class DocProperties extends Base
      *
      * @return  null
      */
-    public function index() {
+    public function index()
+    {
         $this->auth->enforce();
 
         $h = "";
@@ -152,7 +156,7 @@ class DocProperties extends Base
         }
 
         $nodes = array_merge([$node], iterator_to_array($node->childNodes));
-        foreach($nodes as $n) {
+        foreach ($nodes as $n) {
             if ($callback = $this->getCallbackForNode($n, "add")) {
                 $this->$callback($n);
                 $hasInputs = true;
@@ -170,7 +174,7 @@ class DocProperties extends Base
             $changed = $hashOld !== $hashNew;
             $savedAlready = false;
 
-            foreach($nodes as $n) {
+            foreach ($nodes as $n) {
                 if ($callback = $this->getCallbackForNode($n, "save")) {
                     $changed = $this->$callback($n) || $changed;
                     $savedAlready = true;
@@ -405,11 +409,11 @@ class DocProperties extends Base
             }
             if ($pageInfo->published && !$pageInfo->released) {
                 $message = _("Page is published but has unreleased changes.");
-            } else if ($hasUnpublishedChanges) {
+            } elseif ($hasUnpublishedChanges) {
                 $message = _("Page is waiting to be published.");
-            } else if ($pageInfo->published) {
+            } elseif ($pageInfo->published) {
                 $message = _("Page is published.");
-            } else if (!$pageInfo->released) {
+            } elseif (!$pageInfo->released) {
                 $message = _("Page has not been published yet.");
             }
 
@@ -573,7 +577,7 @@ class DocProperties extends Base
                     'pageId' => $pageInfo->pageId,
                 ],
             ]);
-        } else if ($pageInfo->protected) {
+        } elseif ($pageInfo->protected) {
             $fs = $this->form->addFieldset("xmledit-$nodeId-protected-fs", [
                 'label' => _("Protection"),
                 'class' => "doc-property-fieldset",
@@ -856,7 +860,7 @@ class DocProperties extends Base
         $options = $node->getAttribute("options");
         $variables = $this->project->getVariables();
 
-        $options = preg_replace_callback("/%var_([^%]*)%/", function($matches) use ($variables) {
+        $options = preg_replace_callback("/%var_([^%]*)%/", function ($matches) use ($variables) {
             return $variables[$matches[1]];
         }, $options);
 
@@ -1131,6 +1135,13 @@ class DocProperties extends Base
             'placeholder' => _("Image description"),
             'dataPath' => "//*[@db:id = '$nodeId']/@alt",
         ]);
+
+        $fs->addText("xmledit-$nodeId-copyright", [
+            'label' => _("copyright"),
+            'placeholder' => _("Image copyright"),
+            'dataPath' => "//*[@db:id = '$nodeId']/@copyright",
+        ]);
+
         if ($node->hasAttribute("href") || $node->hasAttribute("href_id")) {
             $fs->addText("xmledit-$nodeId-href", [
                 'label' => _("href"),
@@ -1210,7 +1221,7 @@ class DocProperties extends Base
     protected function addNotAllowed()
     {
         $this->form->addHtml("<p class=\"error\">");
-            $this->form->addHtml(htmlentities(_("Not allowed to edit this element.")));
+        $this->form->addHtml(htmlentities(_("Not allowed to edit this element.")));
         $this->form->addHtml("</p>");
     }
     // }}}
@@ -1321,7 +1332,9 @@ class DocProperties extends Base
     protected function clearOldFormData()
     {
         foreach ($_SESSION as $key => $val) {
-            if (substr($key, 0, 17) != "htmlform-xmldata_") continue;
+            if (substr($key, 0, 17) != "htmlform-xmldata_") {
+                continue;
+            }
 
             $timestamp = time();
             $ttl = 60 * 60; // 60 minutes
