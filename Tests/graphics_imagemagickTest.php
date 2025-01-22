@@ -13,7 +13,7 @@ class graphics_imagemagickTest extends TestCase
     /**
      * Prepares fresh test objects
      **/
-    public function setUp():void
+    public function setUp(): void
     {
         $this->graphics = new graphics_imagemagickTestClass([
             'executable' => 'bin',
@@ -141,7 +141,7 @@ class graphics_imagemagickTest extends TestCase
         $this->assertFalse($this->graphics->getExecuted(), 'Command has already been executed.');
         $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test2.png');
 
-        $this->assertSame("bin -size 100x100 -background none ( '" . __DIR__ . "/images/test.jpg' ) -colorspace sRGB -flatten -quality 95 -strip -define png:format=png00 png:'" . __DIR__ . "/output/test2.png'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin -size 100x100 -background none ( -auto-orient '+profile' '*' -auto-orient '" . __DIR__ . "/images/test.jpg' ) -colorspace sRGB -flatten -quality 95 -strip -define png:format=png00 png:'" . __DIR__ . "/output/test2.png'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}
@@ -155,7 +155,7 @@ class graphics_imagemagickTest extends TestCase
         $this->graphics->addResize(200, 200);
         $this->graphics->render(__DIR__ . '/images/test.jpg', __DIR__ . '/output/test.jpg');
 
-        $this->assertSame("bin -size 200x200 -background #FFF ( '" . __DIR__ . "/images/test.jpg' -resize 200x200! ) -colorspace sRGB -flatten -quality 85 -strip -interlace Plane jpg:'" . __DIR__ . "/output/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
+        $this->assertSame("bin -size 200x200 -background #FFF ( -auto-orient '+profile' '*' -auto-orient '" . __DIR__ . "/images/test.jpg' -resize 200x200! ) -colorspace sRGB -flatten -quality 85 -strip -interlace Plane jpg:'" . __DIR__ . "/output/test.jpg'", $this->graphics->getCommand(), 'Error in command string.');
         $this->assertTrue($this->graphics->getExecuted(), 'Command has not been executed.');
     }
     // }}}

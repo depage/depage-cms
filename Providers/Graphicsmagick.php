@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    graphics_graphicsmagick.php
  * @brief   GraphicsMagick interface
@@ -88,12 +89,12 @@ class Graphicsmagick extends Imagemagick
 
         $pageNumber = $this->getPageNumber();
 
-        $this->command = $this->executable . " convert " . escapeshellarg($this->input) . "{$pageNumber} -background none";
+        $this->command = $this->executable . " convert -auto-orient '+profile' '*' -auto-orient " . escapeshellarg($this->input) . "{$pageNumber} -background none";
         $this->processQueue();
 
         if ($this->otherRender && file_exists($this->output)) {
             // do nothing file is already generated
-        } else if (
+        } elseif (
             $this->bypass
             && $this->inputFormat == $this->outputFormat
         ) {
