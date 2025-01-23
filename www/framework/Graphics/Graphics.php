@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    graphics.php
  * @brief   Main graphics class
@@ -162,12 +163,12 @@ class Graphics
      **/
     public function __construct($options = array())
     {
-        $this->background = (isset($options['background'])) ? $options['background']      : 'transparent';
-        $this->quality    = (isset($options['quality']))    ? intval($options['quality']) : null;
-        $this->format     = (isset($options['format']))     ? $options['format']          : null;
-        $this->optimize   = (isset($options['optimize']))   ? $options['optimize']        : false;
-        $this->optimizers = (isset($options['optimizers'])) ? $options['optimizers']      : [];
-        $this->limits     = (isset($options['limits']))     ? $options['limits']          : [
+        $this->background = (isset($options['background'])) ? $options['background'] : 'transparent';
+        $this->quality    = (isset($options['quality'])) ? intval($options['quality']) : null;
+        $this->format     = (isset($options['format'])) ? $options['format'] : null;
+        $this->optimize   = (isset($options['optimize'])) ? $options['optimize'] : false;
+        $this->optimizers = (isset($options['optimizers'])) ? $options['optimizers'] : [];
+        $this->limits     = (isset($options['limits'])) ? $options['limits'] : [
             'memory' => "64MiB",
             'map' => "128MiB",
         ];
@@ -179,6 +180,32 @@ class Graphics
             putenv("MAGICK_MAP_LIMIT=" . $this->limits['map']);
             putenv("MAGICK_LIMIT_MAP=" . $this->limits['map']);
         }
+    }
+    // }}}
+
+    // {{{ canRead()
+    /**
+     * @brief   Checks if extension support reading file type
+     *
+     * @param  string $ext file extension
+     * @return bool   true if image type can be read
+     **/
+    public function canRead($ext)
+    {
+        return in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+    }
+    // }}}
+    // {{{ canWrite()
+    /**
+     * @brief   Checks if extension supports writing file type
+     *
+     * @param  string $ext file extension
+     * @return bool   true if image type can be read
+     **/
+    public function canWrite($ext)
+    {
+        return in_array($ext, ['png']);
+        return in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
     }
     // }}}
 
@@ -307,7 +334,7 @@ class Graphics
             $width  = round(($this->size[0] / $this->size[1]) * $height);
         }
 
-        return array($width, $height);
+        return [$width, $height];
     }
     // }}}
 
@@ -341,7 +368,9 @@ class Graphics
      **/
     public function render($input, $output = null)
     {
-        if (!file_exists($input)) throw new Exceptions\FileNotFound();
+        if (!file_exists($input)) {
+            throw new Exceptions\FileNotFound();
+        }
 
         $this->input        = $input;
         $this->output       = ($output == null) ? $input : $output;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    Imagick.php
  *
@@ -21,6 +22,19 @@ class Imagick extends \Depage\Graphics\Graphics
      * @brief image
      **/
     protected $image = null;
+
+    // {{{ canRead()
+    /**
+     * @brief   Checks if extension support reading file type
+     *
+     * @param  string $ext file extension
+     * @return bool   true if image type can be read
+     **/
+    public function canRead($ext)
+    {
+        return parent::canRead($ext) || in_array($ext, ['tif', 'tiff', 'pdf', 'eps']);
+    }
+    // }}}
 
     // {{{ crop()
     /**
@@ -54,8 +68,9 @@ class Imagick extends \Depage\Graphics\Graphics
         if (!$this->bypassTest($newSize[0], $newSize[1])) {
             $filter = $this->getResizeFilter($newSize[0], $newSize[1]);
 
+            $this->image->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
             $this->image->setImageGravity(\Imagick::GRAVITY_CENTER);
-            $this->image->resizeImage($newSize[0], $newSize[1], $filter, 1);
+            $this->image->resizeImage($newSize[0], $newSize[1], $filter, 0.5);
             $this->image->setImageExtent($newSize[0], $newSize[1]);
             $this->size = $newSize;
         }
@@ -234,7 +249,7 @@ class Imagick extends \Depage\Graphics\Graphics
 
         if ($this->otherRender && file_exists($this->output)) {
             // do nothing file is already generated
-        } else if ($this->bypass
+        } elseif ($this->bypass
             && $this->inputFormat == $this->outputFormat
         ) {
             $this->bypass();

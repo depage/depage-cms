@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    graphics_imagemagick.php
  * @brief   ImageMagick interface
@@ -46,6 +47,19 @@ class Imagemagick extends \Depage\Graphics\Graphics
 
         $this->executable = isset($options['executable']) ? $options['executable'] : null;
         $this->timeout = isset($options['timeout']) ? $options['timeout'] : 0;
+    }
+    // }}}
+
+    // {{{ canRead()
+    /**
+     * @brief   Checks if extension support reading file type
+     *
+     * @param  string $ext file extension
+     * @return bool   true if image type can be read
+     **/
+    public function canRead($ext)
+    {
+        return parent::canRead($ext) || in_array($ext, ['tif', 'tiff', 'pdf', 'eps']);
     }
     // }}}
 
@@ -205,7 +219,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
 
         if ($this->otherRender && file_exists($this->output)) {
             // do nothing file is already generated
-        } else if (
+        } elseif (
             $this->bypass
             && $this->inputFormat == $this->outputFormat
         ) {
@@ -216,7 +230,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
             $optimize   = $this->getOptimize();
             $pageNumber = $this->getPageNumber();
 
-            $this->command = "{$this->executable} {$background} ( " . escapeshellarg($this->input) . "{$pageNumber}{$this->command}";
+            $this->command = "{$this->executable} {$background} ( -auto-orient '+profile' '*' -auto-orient " . escapeshellarg($this->input) . "{$pageNumber}{$this->command}";
             $this->command .= " ) -colorspace sRGB -flatten {$quality}{$optimize}";
 
             $this->command .= " {$this->outputFormat}:" . escapeshellarg($this->output);
@@ -261,7 +275,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
 
         if (is_resource($process)) {
             // read stdin and stderr
-            while(!feof($pipes[1]) && !feof($pipes[2])) {
+            while (!feof($pipes[1]) && !feof($pipes[2])) {
                 for ($i = 1; $i < 3; $i++) {
                     $s = fgets($pipes[$i]);
                     $output[$i] .= $s;
@@ -285,7 +299,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
             $this->unlock();
 
             throw new \Depage\Graphics\Exceptions\Exception("Conversion over timeout");
-        } else if ($returnStatus != 0) {
+        } elseif ($returnStatus != 0) {
             $this->unlock();
 
             throw new \Depage\Graphics\Exceptions\Exception($output[2]);
@@ -349,9 +363,9 @@ class Imagemagick extends \Depage\Graphics\Graphics
 
         if ($this->outputFormat == 'jpg') {
             $param .= " -interlace Plane";
-        } else if ($this->outputFormat == 'png') {
+        } elseif ($this->outputFormat == 'png') {
             $param .= " -define png:format=png00";
-        } else if ($this->outputFormat == "webp" && $this->inputFormat == "png") {
+        } elseif ($this->outputFormat == "webp" && $this->inputFormat == "png") {
             $param .= " -define webp:lossless=true -define webp:image-hint=graph";
         }
 
