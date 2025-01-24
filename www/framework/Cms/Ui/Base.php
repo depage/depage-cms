@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    framework/Cns/Ui/Base.php
  *
@@ -12,7 +13,7 @@
 
 namespace Depage\Cms\Ui;
 
-use \Depage\Html\Html;
+use Depage\Html\Html;
 
 class Base extends \Depage\Depage\Ui\Base
 {
@@ -36,14 +37,15 @@ class Base extends \Depage\Depage\Ui\Base
     ];
 
     // {{{ _init
-    public function _init(array $importVariables = []) {
+    public function _init(array $importVariables = [])
+    {
         parent::_init($importVariables);
 
         $this->helpUrl = "https://docs.depage.net/depage-cms-manual/" . DEPAGE_LANG . "/index.html";
 
         if (empty($this->pdo)) {
             // get database instance
-            $this->pdo = new \Depage\Db\Pdo (
+            $this->pdo = new \Depage\Db\Pdo(
                 $this->options->db->dsn, // dsn
                 $this->options->db->user, // user
                 $this->options->db->password, // password
@@ -55,7 +57,7 @@ class Base extends \Depage\Depage\Ui\Base
 
         if (empty($importVariables)) {
             // register session handler
-            \Depage\Session\SessionHandler::register($this->pdo);
+            \Depage\Session\essionHandler::register($this->pdo, 0);
         }
 
         if (empty($this->auth)) {
@@ -104,7 +106,8 @@ class Base extends \Depage\Depage\Ui\Base
      *
      * @return  null
      */
-    protected function _package($output) {
+    protected function _package($output)
+    {
         $output = parent::_package($output);
 
         // pack into base-html if output is html-object
@@ -142,7 +145,8 @@ class Base extends \Depage\Depage\Ui\Base
     // }}}
 
     // {{{ toolbar
-    protected function toolbar() {
+    protected function toolbar()
+    {
         if ($this->authUser = $this->auth->enforceLazy()) {
             $project = "";
             if (!empty($this->projectName)) {
@@ -171,7 +175,8 @@ class Base extends \Depage\Depage\Ui\Base
      *
      * @return  null
      */
-    public function notfound($function = "") {
+    public function notfound($function = "")
+    {
         parent::notfound();
 
         $h = new Html("box.tpl", [
@@ -192,7 +197,8 @@ class Base extends \Depage\Depage\Ui\Base
      *
      * @return  null
      */
-    public function notallowed($message = "") {
+    public function notallowed($message = "")
+    {
         if ($message == "") {
             $message = _("You are not allowed here.");
         }
@@ -212,7 +218,8 @@ class Base extends \Depage\Depage\Ui\Base
      *
      * @return  null
      */
-    public function error($error, $env) {
+    public function error($error, $env)
+    {
         $content = parent::error($error, $env);
 
         $h = new Html("box.tpl", [
