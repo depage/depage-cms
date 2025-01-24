@@ -57,7 +57,7 @@ class Base extends \Depage\Depage\Ui\Base
 
         if (empty($importVariables)) {
             // register session handler
-            \Depage\Session\essionHandler::register($this->pdo, 0);
+            \Depage\Session\SessionHandler::register($this->pdo, 0);
         }
 
         if (empty($this->auth)) {
