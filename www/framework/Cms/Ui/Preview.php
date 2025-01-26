@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    framework/cms/Ui/Preview.php
  *
@@ -12,7 +13,7 @@
 
 namespace Depage\Cms\Ui;
 
-use \Depage\Html\Html;
+use Depage\Html\Html;
 
 class Preview extends \Depage\Depage\Ui\Base
 {
@@ -40,12 +41,13 @@ class Preview extends \Depage\Depage\Ui\Base
     ];
 
     // {{{ _init
-    public function _init(array $importVariables = []) {
+    public function _init(array $importVariables = [])
+    {
         parent::_init($importVariables);
 
         if (empty($this->pdo)) {
             // get database instance
-            $this->pdo = new \Depage\Db\Pdo (
+            $this->pdo = new \Depage\Db\Pdo(
                 $this->options->db->dsn, // dsn
                 $this->options->db->user, // user
                 $this->options->db->password, // password
@@ -88,7 +90,8 @@ class Preview extends \Depage\Depage\Ui\Base
      *
      * @return  null
      */
-    public function _package($output) {
+    public function _package($output)
+    {
         return $output;
     }
     // }}}
@@ -125,28 +128,28 @@ class Preview extends \Depage\Depage\Ui\Base
             $redirector = new \Depage\Redirector\Redirector($project->getBaseUrl());
             require($project->getProjectPath() . 'lib/global/api.php');
             die();
-        } else if ($lang == "sitemap.xml") {
+        } elseif ($lang == "sitemap.xml") {
             $sitemap = new \Depage\Http\Response();
             $sitemap
                 ->setBody($project->generateSitemap())
                 ->addHeader("Content-Type: text/xml; charset=UTF-8");
 
             return $sitemap;
-        } else if ($urlPath == "/sitemap.xml") {
+        } elseif ($urlPath == "/sitemap.xml") {
             $sitemap = new \Depage\Http\Response();
             $sitemap
                 ->setBody($project->generateSitemap(null, $lang))
                 ->addHeader("Content-Type: text/xml; charset=UTF-8");
 
             return $sitemap;
-        } else if ($urlPath == "/atom.xml") {
+        } elseif ($urlPath == "/atom.xml") {
             $feed = new \Depage\Http\Response();
             $feed
                 ->setBody($project->generateAtomFeed(null, $lang))
                 ->addHeader("Content-Type: text/xml; charset=UTF-8");
 
             return $feed;
-        } else if ($urlPath == "/") {
+        } elseif ($urlPath == "/") {
             // redirect to home
             \Depage\Depage\Runner::redirect($project->getHomeUrl());
         }
@@ -160,12 +163,13 @@ class Preview extends \Depage\Depage\Ui\Base
      *
      * @return  null
      */
-    public function error($error, $env) {
+    public function error($error, $env)
+    {
         $content = parent::error($error, $env);
 
         $h = new Html("html.tpl", [
             'title' => $this->basetitle,
-            'subtitle' => $output->title,
+            'subtitle' => $content->title ?? "",
             'content' => new Html("box.tpl", [
                 'id' => "error",
                 'class' => "box-error",
@@ -204,9 +208,12 @@ class Preview extends \Depage\Depage\Ui\Base
 
         if ($this->template == "newsletter") {
             preg_match("/\/(_Newsletter_([a-z0-9]*))\.html/", $urlPath, $matches);
-            $newsletterName = $matches[1];
+            $newsletterName = $matches[1] ?? "";
             $newsletter = \Depage\Cms\Newsletter::loadByName($this->pdo, $this->project, $newsletterName);
 
+            if ($newsletter === false) {
+                return $this->error("Newsletter not found", $this->options->env);
+            }
             $html = $newsletter->transform($this->previewType, $lang);
         } else {
             $html = $transformer->display($urlPath, $lang);

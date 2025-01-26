@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    framework/cms/cms_project.php
  *
@@ -12,7 +13,7 @@
 
 namespace Depage\Cms;
 
-use \Depage\Notifications\Notification;
+use Depage\Notifications\Notification;
 
 class Project extends \Depage\Entity\Entity
 {
@@ -20,7 +21,7 @@ class Project extends \Depage\Entity\Entity
     /**
      * @brief fields
      **/
-    static protected $fields = [
+    protected static $fields = [
         "id" => null,
         "name" => "",
         "fullname" => "",
@@ -30,7 +31,7 @@ class Project extends \Depage\Entity\Entity
     /**
      * @brief primary
      **/
-    static protected $primary = ["id"];
+    protected static $primary = ["id"];
 
     /**
      * @brief pdo object for database access
@@ -68,7 +69,8 @@ class Project extends \Depage\Entity\Entity
      *
      * @return      void
      */
-    public function __construct($pdo, $cache) {
+    public function __construct($pdo, $cache)
+    {
         parent::__construct($pdo);
 
         $this->pdo = $pdo;
@@ -86,7 +88,8 @@ class Project extends \Depage\Entity\Entity
      *
      * @return      Array array of projects
      */
-    static public function loadAll($pdo, $cache) {
+    public static function loadAll($pdo, $cache)
+    {
         $fields = implode(", ", self::getFields("projects"));
 
         $query = $pdo->prepare(
@@ -117,7 +120,8 @@ class Project extends \Depage\Entity\Entity
      *
      * @return      Array array of projects
      */
-    static public function loadByUser($pdo, $cache, $user, $name = null) {
+    public static function loadByUser($pdo, $cache, $user, $name = null)
+    {
         if ($user->canEditAllProjects()) {
             if (!empty($name)) {
                 return [self::loadByName($pdo, $cache, $name)];
@@ -171,7 +175,8 @@ class Project extends \Depage\Entity\Entity
      *
      * @return      Array array of projects
      */
-    static public function loadByName($pdo, $cache, $name) {
+    public static function loadByName($pdo, $cache, $name)
+    {
         $fields = implode(", ", self::getFields("projects"));
 
         $query = $pdo->prepare(
@@ -203,7 +208,7 @@ class Project extends \Depage\Entity\Entity
      * @param mixed $query
      * @return void
      **/
-    static protected function fetch($pdo, $cache, $query, $params = [])
+    protected static function fetch($pdo, $cache, $query, $params = [])
     {
         $projects = [];
         $query->execute($params);
@@ -228,7 +233,8 @@ class Project extends \Depage\Entity\Entity
      *
      * @return
      */
-    public function save() {
+    public function save()
+    {
         $fields = [];
         $primary = self::$primary[0];
         $isNew = $this->data[$primary] === null;
@@ -253,7 +259,7 @@ class Project extends \Depage\Entity\Entity
                 $dirty[] = $primary;
             }
 
-            $params = array_intersect_key($this->data,  array_flip($dirty));
+            $params = array_intersect_key($this->data, array_flip($dirty));
 
             $cmd = $this->pdo->prepare($query);
             $success = $cmd->execute($params);
@@ -988,9 +994,9 @@ class Project extends \Depage\Entity\Entity
         $prefix = $this->pdo->prefix . "_proj_" . $this->name;
 
         $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $docId, $this, 0);
-        $nodeIdNews = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']"));
-        $nodeIdYear = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']/pg:folder[@name = '$year']"));
-        $nodeIdMonth = reset($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']/pg:folder[@name = '$year']/pg:folder[@name = '$month']"));
+        $nodeIdNews = current($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']"));
+        $nodeIdYear = current($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']/pg:folder[@name = '$year']"));
+        $nodeIdMonth = current($pages->getNodeIdsByXpath("//pg:*[@nav_blog = 'true' or @nav_news = 'true']/pg:folder[@name = '$year']/pg:folder[@name = '$month']"));
 
         if (!$nodeIdYear) {
             $nodeIdYear = $pages->addNodeByName("pg:folder", $nodeIdNews, 0);
@@ -1084,7 +1090,7 @@ class Project extends \Depage\Entity\Entity
 
         $requestingUser = $users[$userId];
         $releaseRequestNotifications = $conf->releaseRequestNotifications->toArray();
-        $users = array_filter($users, function($u) use ($releaseRequestNotifications) {
+        $users = array_filter($users, function ($u) use ($releaseRequestNotifications) {
             if ($u == $requestingUser) {
                 return false;
             }
@@ -1472,13 +1478,13 @@ class Project extends \Depage\Entity\Entity
         $i[] = "\$acceptLanguage = \$_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';";
         $i[] = "\$replacementScript = \$redirector->testAliases(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
         $i[] = "if (!empty(\$replacementScript)) {";
-            $i[] = "    \$redirector->loadReplacementScript(\$replacementScript);";
+        $i[] = "    \$redirector->loadReplacementScript(\$replacementScript);";
         $i[] = "}";
 
         $i[] = "if (isset(\$_GET['notfound'])) {";
-            $i[] = "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
+        $i[] = "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
         $i[] = "} else {";
-            $i[] = "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
+        $i[] = "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
         $i[] = "}";
 
         $i[] = "}";

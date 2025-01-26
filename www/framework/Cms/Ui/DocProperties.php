@@ -155,6 +155,7 @@ class DocProperties extends Base
             $this->addSecActive($node);
         }
 
+        $hasInputs = false;
         $nodes = array_merge([$node], iterator_to_array($node->childNodes));
         foreach ($nodes as $n) {
             if ($callback = $this->getCallbackForNode($n, "add")) {
@@ -167,7 +168,7 @@ class DocProperties extends Base
         $this->form->process();
 
         if ($hasInputs && $this->form->validateAutosave()) {
-            // @todo check if content has changed
+            // check if content has changed
             $released = $doc->isReleased();
             $node = $this->form->getValuesXml();
             $hashNew = $doc->hashDomNode($node);
