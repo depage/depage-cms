@@ -2,7 +2,8 @@
 
 namespace Depage\Cms\Streams;
 
-class XmlDb extends Base {
+class XmlDb extends Base
+{
     protected static $parameters = [];
     protected $xmldb = null;
 
@@ -12,7 +13,7 @@ class XmlDb extends Base {
         $this->init();
 
         $url = parse_url($path);
-        $docName = $url['host'];
+        $docName = $url['host'] ?? '';
         $xpath = isset($url['path']) ? substr($url['path'], 1) : '';
 
         if (!empty($docName) && $docId = $this->xmldb->docExists($docName)) {

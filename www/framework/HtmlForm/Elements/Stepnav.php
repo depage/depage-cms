@@ -50,13 +50,6 @@ class Stepnav
      **/
     public function __toString(): string
     {
-        $scheme   = isset($this->form->url['scheme']) ? $this->form->url['scheme'] . '://' : '';
-        $host     = isset($this->form->url['host']) ? $this->form->url['host'] : '';
-        $port     = isset($this->form->url['port']) ? ':' . $this->form->url['port'] : '';
-        $path     = isset($this->form->url['path']) ? $this->form->url['path'] : '';
-        $baseUrl  = "$scheme$host$port$path";
-
-
         $currentStepId = $this->form->getCurrentStepId();
         $firstInvalidStep = $this->form->getFirstInvalidStep();
 
@@ -68,7 +61,7 @@ class Stepnav
 
             // add link to previously unsaved steps
             if ($stepNum <= $firstInvalidStep && $stepNum != $currentStepId) {
-                $link = "href=\"" . htmlspecialchars($baseUrl . $this->form->buildUrlQuery(['step' => $stepNum])) . "\"";
+                $link = "href=\"" . htmlspecialchars($this->form->buildUrl(['step' => $stepNum])) . "\"";
             }
 
             // add valid-class to previous steps

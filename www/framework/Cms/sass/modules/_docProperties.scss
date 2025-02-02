@@ -395,6 +395,19 @@
     p {
         width: 100%;
     }
+    > p {
+        $labelWidth: 70px;
+
+        > .depage-label,
+        > label > .depage-label {
+            width: $labelWidth;
+        }
+        input,
+        textarea,
+        .textarea {
+            padding-left: $labelWidth;
+        }
+    }
 
     span.clear {
         display: block;
