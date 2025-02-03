@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    Project.php
  *
@@ -26,7 +27,8 @@ class Resource extends Json
             'optimize'      => false,
         ],
     ];
-    protected function __construct($options = NULL) {
+    protected function __construct($options = null)
+    {
         parent::__construct($options);
 
         $this->conf = new \Depage\Config\Config($options);
@@ -43,12 +45,12 @@ class Resource extends Json
     public function get(string $lang, string ...$args)
     {
         // @todo check auth per api key
-        $apikey = sha1("testkey");
+        $apiKey = $this->project->getProjectConfig()->apiKey;
         $publishId = filter_input(\INPUT_GET, 'publishId', \FILTER_SANITIZE_NUMBER_INT);
         $uri = implode("/", $args);
         $body = "";
 
-        $validRequest = $_SERVER['HTTP_X_AUTHORIZATION'] == $apikey;
+        $validRequest = $_SERVER['HTTP_X_AUTHORIZATION'] == $apiKey;
 
         if (!$validRequest) {
             header("HTTP/1.1 401 Unauthorized");
@@ -57,13 +59,13 @@ class Resource extends Json
                 'success' => false,
                 'validRequest' => $validRequest,
             ];
-        } else if ($lang == "lib") {
+        } elseif ($lang == "lib") {
             $body = $this->libFile($publishId, $uri, $lang);
-        } else if ($uri == "sitemap.xml") {
+        } elseif ($uri == "sitemap.xml") {
             $body = $this->project->generateSitemap($publishId, $lang);
-        } else if ($uri == "atom.xml") {
+        } elseif ($uri == "atom.xml") {
             $body = $this->project->generateAtomFeed($publishId, $lang);
-        } else if (isset($this->project->getLanguages()[$lang])) {
+        } elseif (isset($this->project->getLanguages()[$lang])) {
             try {
                 $body = $this->transformUrl($publishId, $uri, $lang);
             } catch (\Exception $e) {
@@ -100,7 +102,7 @@ class Resource extends Json
      *
      * @return void
      **/
-    protected function markAsPublished(int $publishId, string $path, string $hash):void
+    protected function markAsPublished(int $publishId, string $path, string $hash): void
     {
         $conf = $this->project->getPublishingTargets()[$publishId];
 
@@ -204,4 +206,3 @@ class Resource extends Json
 }
 
 // vim:set ft=php sw=4 sts=4 fdm=marker et :
-

@@ -1069,6 +1069,7 @@ class Project extends \Depage\Entity\Entity
         $this->previewType = "live";
 
         // @todo only if Depage\Cms\XmlDocTypes\Page
+        // @todo only clear published files when using continuous publishing
         $doc = $this->xmldb->getDoc($docId);
         $targets = $this->getPublishingTargets();
         $publishId = key($targets);
@@ -1234,6 +1235,7 @@ class Project extends \Depage\Entity\Entity
             'routeHtmlThroughPhp' => false,
             'publishNotifications' => [],
             'releaseRequestNotifications' => [],
+            'apiKey' => null,
             'version' => 2,
         ]);
 
@@ -1490,6 +1492,9 @@ class Project extends \Depage\Entity\Entity
         $projectPath = $this->getProjectPath();
         $conf = $targets[$publishId];
         $baseurl = $this->getBaseUrl($publishId);
+        $projectConf = $this->getProjectConfig();
+        $apiKey = $projectConf->apiKey;
+        $apiUrl = DEPAGE_BASE;
 
         $transformer = \Depage\Transformer\Transformer::factory("live", $xmlgetter, $this, $conf->template_set);
 
@@ -1506,19 +1511,23 @@ class Project extends \Depage\Entity\Entity
 
         $i[] = "\$redirector = new \\Depage\\Redirector\\Redirector(" . var_export($baseurl, true) . ");";
 
-        $i[] = "\$redirector->setPublishId(" . var_export($publishId, true) . ");";
-        $i[] = "\$redirector->setLanguages(" . var_export($languages, true) . ");";
+        $i[] = "\$redirector->setPublishId(" . var_export($publishId, true) . ")";
+        if (!empty($apiKey)) {
+            $i[] = "->setApiUrl(" . var_export($apiUrl, true) . ")";
+            $i[] = "->setApiKey(" . var_export($apiKey, true) . ")";
+        }
+
+        if (isset($projectConf->aliases)) {
+            $i[] = "->setAliases(" . var_export($projectConf->aliases->toArray(), true) . ")";
+        }
+        if (isset($projectConf->rootAliases)) {
+            $i[] = "->setRootAliases(" . var_export($projectConf->rootAliases->toArray(), true) . ")";
+        }
+        $i[] = "->setLanguages(" . var_export($languages, true) . ");";
+
         $i[] = "if (file_exists('lib/pageindex.php')) {";
         $i[] = "    require_once('lib/pageindex.php');";
         $i[] = "}";
-
-        $projectConf = $this->getProjectConfig();
-        if (isset($projectConf->aliases)) {
-            $i[] = "\$redirector->setAliases(" . var_export($projectConf->aliases->toArray(), true) . ");";
-        }
-        if (isset($projectConf->rootAliases)) {
-            $i[] = "\$redirector->setRootAliases(" . var_export($projectConf->rootAliases->toArray(), true) . ");";
-        }
 
         $i[] = "\$acceptLanguage = \$_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';";
         $i[] = "\$redirector->handleRequest(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
