@@ -1,10 +1,12 @@
 <?php
+
 /**
  * @file    mediainfo.php
  * @brief   file-/mediainfo class
  *
  * @author  Frank Hellenkamp <jonas@depage.net>
  */
+
 namespace Depage\Media;
 
 class MediaInfo
@@ -63,7 +65,8 @@ class MediaInfo
      *
      * @return void
      */
-    public function __construct($options = array()) {
+    public function __construct($options = array())
+    {
         $options = array_change_key_case($options);
         foreach ($this->defaults as $option => $default) {
             $this->$option = isset($options[$option]) ? $options[$option] : $default;
@@ -72,7 +75,8 @@ class MediaInfo
     // }}}
 
     // {{{ setFilename()
-    public function setFilename($filename) {
+    public function setFilename($filename)
+    {
         $this->info = array(
             'exists' => false,
             'isImage' => false,
@@ -90,7 +94,8 @@ class MediaInfo
      *
      * @return array
      */
-    public function getInfo($filename = null) {
+    public function getInfo($filename = null)
+    {
         if (!is_null($filename)) {
             $this->setFilename($filename);
         }
@@ -110,7 +115,7 @@ class MediaInfo
             if ($this->info['exists']) {
                 if ($this->hasImageExtension()) {
                     $this->getImageInfo();
-                } else if ($this->hasMediaExtension()) {
+                } elseif ($this->hasMediaExtension()) {
                     // we cache only mediainfo because only this takes a longer time
                     $identifier = $this->filename . ".ser";
                     if (!is_null($this->cache) && $this->cache->age($identifier) >= $this->info['filemtime']) {
@@ -134,7 +139,8 @@ class MediaInfo
      *
      * @return array
      */
-    public function getBasicInfo($filename = null) {
+    public function getBasicInfo($filename = null)
+    {
         if (!is_null($filename)) {
             $this->setFilename($filename);
         }
@@ -172,7 +178,8 @@ class MediaInfo
      *
      * @return array
      */
-    protected function getImageInfo() {
+    protected function getImageInfo()
+    {
         $imageinfo = $this->getImageSize($this->filename, $extras);
         if (isset($imageinfo[1]) && $imageinfo[1] > 0) {
             $info = array();
@@ -203,7 +210,11 @@ class MediaInfo
             $this->info = array_merge($this->info, $info);
         }
         if (function_exists("exif_read_data") && isset($info['mime']) && ($info['mime'] == 'image/jpeg' || $info['mime'] == 'image/tif')) {
-            $exif = @exif_read_data($this->filename);
+            try {
+                $exif = @exif_read_data($this->filename);
+            } catch (\Exception $e) {
+                $exif = false;
+            }
             if ($exif) {
                 $info = array();
                 foreach ($exif as $key => $value) {
@@ -266,7 +277,8 @@ class MediaInfo
      *
      * @return array
      */
-    protected function getMediaInfo() {
+    protected function getMediaInfo()
+    {
         $info = array(
             'streams' => array(
                 'video' => array(),
@@ -289,7 +301,7 @@ class MediaInfo
                 $streams[] = $tmp;
             } elseif ($line == "[/FORMAT]") {
                 $format = $tmp;
-            } else if (strpos($line, "=") !== false){
+            } elseif (strpos($line, "=") !== false) {
                 list($key, $value) = explode("=", $line, 2);
                 $tmp[$key] = $value;
             }
@@ -344,7 +356,8 @@ class MediaInfo
     // }}}
 
     // {{{ clearInfo()
-    public function clearInfo($filename = null) {
+    public function clearInfo($filename = null)
+    {
         if (!is_null($this->cache)) {
             $identifier = $filename . ".ser";
             $this->cache->clear($identifier);
@@ -358,7 +371,8 @@ class MediaInfo
      *
      * @return bool
      */
-    public function isImage() {
+    public function isImage()
+    {
         return $this->info['isImage'];
     }
     // }}}
@@ -368,7 +382,8 @@ class MediaInfo
      *
      * @return bool
      */
-    public function isVideo() {
+    public function isVideo()
+    {
         return $this->info['isVideo'];
     }
     // }}}
@@ -378,7 +393,8 @@ class MediaInfo
      *
      * @return bool
      */
-    public function isAudio() {
+    public function isAudio()
+    {
         return $this->info['isAudio'];
     }
     // }}}
@@ -389,7 +405,8 @@ class MediaInfo
      *
      * @return bool
      */
-    protected function hasImageExtension() {
+    protected function hasImageExtension()
+    {
         $extensions = array("png", "jpg", "jpeg", "gif", "webp", "tif", "tiff", "pdf", "eps");
 
         return in_array(strtolower($this->info['extension']), $extensions);
@@ -454,7 +471,8 @@ class MediaInfo
      *
      * @return string output
      */
-    private function call($cmd) {
+    private function call($cmd)
+    {
         $cmd = escapeshellcmd($cmd);
 
         exec($cmd, $output, $var);
