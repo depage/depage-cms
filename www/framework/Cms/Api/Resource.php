@@ -27,6 +27,8 @@ class Resource extends Json
             'optimize'      => false,
         ],
     ];
+
+    // {{{ __construct()
     protected function __construct($options = null)
     {
         parent::__construct($options);
@@ -34,6 +36,8 @@ class Resource extends Json
         $this->conf = new \Depage\Config\Config($options);
         $this->options = $this->conf->getDefaultsFromClass($this);
     }
+    // }}}
+
     // {{{ get()
     /**
      * @brief get
@@ -61,14 +65,23 @@ class Resource extends Json
             ];
         } elseif ($lang == "lib") {
             $body = $this->libFile($publishId, $uri, $lang);
+        } elseif ($lang == "sitemap.xml") {
+            $body = $this->project->generateSitemap($publishId);
         } elseif ($uri == "sitemap.xml") {
             $body = $this->project->generateSitemap($publishId, $lang);
         } elseif ($uri == "atom.xml") {
             $body = $this->project->generateAtomFeed($publishId, $lang);
+        } elseif ($lang == "robots.txt") {
+            $body = $this->project->generateRobotsTxt($publishId);
+        } elseif ($lang == "humans.txt") {
+            $body = $this->project->generateHumansTxt($publishId);
+        } elseif ($lang == "security.txt") {
+            $body = $this->project->generateSecurityTxt($publishId);
         } elseif (isset($this->project->getLanguages()[$lang])) {
             try {
                 $body = $this->transformUrl($publishId, $uri, $lang);
             } catch (\Exception $e) {
+                error_log($e->getMessage());
                 $body = "";
             }
         }

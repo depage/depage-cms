@@ -510,7 +510,7 @@ namespace Depage\Redirector {
         }
         // }}}
 
-        // {{{ handleRequest()
+        // {{{ handleRequest()
         /**
          * @brief handleRequest
          *
@@ -521,7 +521,7 @@ namespace Depage\Redirector {
             $replacementScript = $this->testAliases($requestUri, $acceptLanguage);
 
             if (empty($replacementScript)) {
-                $resource = $this->lang . $this->parseRequestUri($requestUri);
+                $resource = trim($this->lang . $this->parseRequestUri($requestUri), "/");
             } else {
                 $resource = $replacementScript;
             }

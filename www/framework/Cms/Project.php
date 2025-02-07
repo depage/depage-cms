@@ -1089,6 +1089,11 @@ class Project extends \Depage\Entity\Entity
         $transformCache = new \Depage\Transformer\TransformCache($this->pdo, $this->name);
         $docIds = $transformCache->getUsedFor($doc->getDocId(), "html-live{$publishId}");
 
+        $filesToDelete = ["sitemap.xml"];
+        foreach ($this->getLanguages() as $lang => $name) {
+            $filesToDelete[] = $lang . "/sitemap.xml";
+        }
+
         $xmlnav = $this->getXmlNav();
         foreach ($docIds as $id) {
             $d = $this->xmldb->getDoc($id);
@@ -1098,8 +1103,12 @@ class Project extends \Depage\Entity\Entity
             }
 
             foreach ($this->getLanguages() as $lang => $name) {
-                $publisher->unpublishFile($lang . $pageInfo->url);
+                $filesToDelete[] = $lang . $pageInfo->url;
             }
+        }
+
+        foreach ($filesToDelete as $file) {
+            $publisher->unpublishFile($file);
         }
 
         // @todo set userId correctly
@@ -1114,6 +1123,15 @@ class Project extends \Depage\Entity\Entity
         }
 
         $publisher->publishString($this->generatePageIndex($publishId), "lib/pageindex.php");
+        $publisher->publishString($this->generateHtaccess($publishId), ".htaccess");
+        $publisher->publishString($this->generateHumansTxt($publishId), "humans.txt");
+
+        if (!empty($tobotsTxt = $this->generateRobotsTxt($publishId))) {
+            $publisher->publishString($tobotsTxt, "robots.txt");
+        }
+        if (!empty($securityTxt = $this->generateSecurityTxt($publishId))) {
+            $publisher->publishString($securityTxt, "security.txt");
+        }
 
         return $doc->getDocInfo()->rootid;
     }
@@ -1558,6 +1576,67 @@ class Project extends \Depage\Entity\Entity
         $i[] = "\$redirector->setAlternatePages(" . var_export($urls->getAlternateUrls(), true) . ");";
 
         return implode("\n", $i);
+    }
+    // }}}
+    // {{{ generateRobotsTxt()
+    /**
+     * @brief generateRobotsTxt
+     *
+     * @param int $publishId
+     * @return string
+     **/
+    public function generateRobotsTxt(int $publishId): string
+    {
+        $projectPath = $this->getProjectPath();
+
+        if (file_exists("$projectPath/lib/robots.txt")) {
+            return file_get_contents("$projectPath/lib/robots.txt");
+        }
+
+        return "";
+    }
+    // }}}
+    // {{{ generateHumansTxt()
+    /**
+     * @brief generateHumansTxt
+     *
+     * @param int $publishId
+     * @return string
+     **/
+    public function generateHumansTxt(int $publishId): string
+    {
+        $h = "";
+        $projectPath = $this->getProjectPath();
+
+        if (file_exists("$projectPath/lib/humans.txt")) {
+            $h = file_get_contents("$projectPath/lib/humans.txt");
+        }
+        if (!empty($h)) {
+            $h .= "\n\n";
+        }
+        $h .= "/* SITE */\n";
+        $h .= "Last Update: " . date(\DATE_ATOM) . "\n";
+        $h .= "Software: " . \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion() . "\n";
+
+        return $h;
+    }
+    // }}}
+    // {{{ generateSecurityTxt()
+    /**
+     * @brief generateSecurityTxt
+     *
+     * @param int $publishId
+     * @return string
+     **/
+    public function generateSecurityTxt(int $publishId): string
+    {
+        $projectPath = $this->getProjectPath();
+
+        if (file_exists("$projectPath/lib/security.txt")) {
+            return file_get_contents("$projectPath/lib/security.txt");
+        }
+
+        return "";
     }
     // }}}
     // {{{ generateCss()

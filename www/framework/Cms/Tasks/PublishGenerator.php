@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    Publish.php
  *
@@ -538,7 +539,7 @@ class PublishGenerator
             );", [
                 $this->publishId,
                 ".htaccess",
-        ], $this->initId);
+            ], $this->initId);
 
         $this->task->addSubtask("publishing index", "
             \$project = \$generator->getProject();
@@ -548,19 +549,7 @@ class PublishGenerator
             );", [
                 $this->publishId,
                 "index.php",
-        ], $this->initId);
-
-        // @todo updated with humans.txt
-        // http://humanstxt.org/Standard.html
-        $version = \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion() . "\npublished at ";
-        $this->task->addSubtask("publishing info", "
-            \$publisher->publishString(
-                %s . date('r'),
-                %s
-            );", [
-                $version,
-                "publishInfo.txt",
-        ], $this->initId);
+            ], $this->initId);
     }
     // }}}
     // {{{  queuePublishPageList()
@@ -590,17 +579,36 @@ class PublishGenerator
      **/
     protected function queuePublishFinish()
     {
-        // @todo updated with humans.txt
-        // http://humanstxt.org/Standard.html
-        $version = \Depage\Depage\Runner::getName() . " " . \Depage\Depage\Runner::getVersion() . "\npublished at ";
-        $this->task->addSubtask("publishing info", "
+        $this->task->addSubtask("publishing humans.txt", "
             \$publisher->publishString(
-                %s . date('r'),
+                \$project->generateHumansTxt(%s),
                 %s
             );", [
-                $version,
-                "publishInfo.txt",
-        ], $this->initId);
+                $this->publishId,
+                "humans.txt",
+            ], $this->initId);
+
+        if (!empty($this->project->generateRobotsTxt($this->publishId))) {
+            $this->task->addSubtask("publishing robots.txt", "
+            \$publisher->publishString(
+                \$project->generateRobotsTxt(%s),
+                %s
+            );", [
+                    $this->publishId,
+                    "robots.txt",
+                ], $this->initId);
+        }
+
+        if (!empty($this->project->generateSecurityTxt($this->publishId))) {
+            $this->task->addSubtask("publishing security.txt", "
+                \$publisher->publishString(
+                    \$project->generateSecurityTxt(%s),
+                    %s
+                );", [
+                    $this->publishId,
+                    "security.txt",
+                ], $this->initId);
+        }
 
         $newlyPublishedPages = [];
 
@@ -610,7 +618,7 @@ class PublishGenerator
             $this->project->getLastPublishDate(),
             true
         );
-        foreach($unpublishedPages as $p) {
+        foreach ($unpublishedPages as $p) {
             foreach ($languages as $lang => $name) {
                 $newlyPublishedPages[] = $baseUrl . $lang . $p->url;
             }
@@ -733,7 +741,7 @@ class PublishGenerator
         $message = _("The following pages got published:\n\n") .
             implode("\n", $pages);
 
-        foreach($conf->publishNotifications as $email) {
+        foreach ($conf->publishNotifications as $email) {
             try {
                 $user = \Depage\Auth\User::loadByEmail($this->pdo, $email);
 
