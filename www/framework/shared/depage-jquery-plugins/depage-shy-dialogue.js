@@ -12,6 +12,7 @@
  *
  * @author    Ben Wallis
  */
+
 (function($){
     if(!$.depage){
         $.depage = {};
@@ -96,6 +97,8 @@
                 base.show(x, y);
                 base.showButtons();
 
+                base.$dialogue.attr('role', 'dialog').attr('tabindex', '-1');
+
                 // bind escape key to cancel
                 $(document).on('keyup.shydialogue', function(e){
                     var key = e.which || e.keyCode;
@@ -152,13 +155,15 @@
         base.showButtons = function() {
             $buttonWrapper = $('<div class="buttons" />');
             $inputWrapper = $('<div class="inputs" />');
-            this.$wrapper.append($inputWrapper);
-            this.$wrapper.append($buttonWrapper);
+            base.$wrapper.append($inputWrapper);
+            base.$wrapper.append($buttonWrapper);
 
             base.setInputs(base.options.inputs);
             base.setButtons(base.buttons);
 
-            this.$wrapper.find('input, a.button.default').first().focus().select();
+            setTimeout(function() {
+                base.$wrapper.find('input, a.button.default').first().focus().select();
+            }, 100);
         };
         // }}}
 
