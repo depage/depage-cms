@@ -630,11 +630,12 @@
     <xsl:template name="header_include_js">
         <xsl:param name="file" />
         <xsl:param name="defer" select="true()" />
+        <xsl:param name="type" select="'text/javascript'" />
 
         <xsl:variable name="fileref" select="concat('libref://', $file)" />
         <xsl:variable name="date" select="translate(dp:fileinfo($fileref, false())/file/@date,'/:- ','')" />
 
-        <script type="text/javascript"><xsl:if test="$defer = true()"><xsl:attribute name="defer"></xsl:attribute></xsl:if><xsl:attribute name="src"><xsl:value-of select="dp:getLibRef($fileref)"/>?<xsl:value-of select="$date" /></xsl:attribute></script>
+        <script><xsl:if test="$type != ''"><xsl:attribute name="type"><xsl:value-of select="$type" /></xsl:attribute></xsl:if><xsl:if test="$defer = true()"><xsl:attribute name="defer"></xsl:attribute></xsl:if><xsl:attribute name="src"><xsl:value-of select="dp:getLibRef($fileref)"/>?<xsl:value-of select="$date" /></xsl:attribute></script>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ header include baseurl -->
