@@ -2,7 +2,7 @@
 
 namespace Depage\Transformer;
 
-use \Depage\Html\Html;
+use Depage\Html\Html;
 
 abstract class Transformer
 {
@@ -39,7 +39,7 @@ abstract class Transformer
     public $currentSubtype = "";
 
     // {{{ factory()
-    static public function factory($previewType, $xmlGetter, $project, $template, $transformCache = null)
+    public static function factory($previewType, $xmlGetter, $project, $template, $transformCache = null)
     {
         if ($previewType == "live") {
             return new Live($xmlGetter, $project, $template, $transformCache);
@@ -56,7 +56,7 @@ abstract class Transformer
             return new Dev($xmlGetter, $project, $template, null);
         }
     }
-   // }}}
+    // }}}
     // {{{ constructor()
     public function __construct($xmlGetter, $project, $template, $transformCache = null)
     {
@@ -116,7 +116,7 @@ abstract class Transformer
     }
     // }}}
     // {{{ getXsltProc()
-    public function getXsltProc($subtype = "_"):\XSLTProcessor
+    public function getXsltProc($subtype = "_"): \XSLTProcessor
     {
         if (isset($this->xsltProcs[$subtype])) {
             return $this->xsltProcs[$subtype];
@@ -245,7 +245,8 @@ abstract class Transformer
             xmlns:exslt=\"http://exslt.org/common\"
             xmlns:func=\"http://exslt.org/functions\"
             xmlns:str=\"http://exslt.org/strings\"
-            extension-element-prefixes=\"xsl db proj pg sec edit func exslt str \"
+            xmlns:set=\"http://exslt.org/sets\"
+            extension-element-prefixes=\"xsl db proj pg sec edit func exslt str set\"
         />";
 
         $doc->loadXML($xslt);
@@ -541,7 +542,7 @@ abstract class Transformer
     /**
      * @return  bool
      */
-    protected function saveTransformed($savePath, $content):bool
+    protected function saveTransformed($savePath, $content): bool
     {
         $dynamic = array(
             "php",
@@ -770,7 +771,7 @@ abstract class Transformer
     {
         $messages = [];
         $errors = libxml_get_errors();
-        foreach($errors as $error) {
+        foreach ($errors as $error) {
             $errorStr = $error->message . " in " . $error->file . " on line " . $error->line;
             $this->log->log("LibXMLError: " . $errorStr);
             $messages[] = $errorStr;
