@@ -922,7 +922,7 @@ class DocProperties extends Base
         }
 
         $label = $this->getLabelForNode($node, _("Boolean"));
-        $fs = $this->getLangFieldset($node, $label);
+        $fs = $this->getLangFieldset($node, "");
         $fs->addBoolean("xmledit-$nodeId", [
             'label' => $label,
             'dataPath' => "//*[@db:id = '$nodeId']/@value",
