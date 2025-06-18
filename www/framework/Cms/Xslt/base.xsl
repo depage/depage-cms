@@ -674,6 +674,7 @@
     <!-- {{{ * subdoc -->
     <xsl:template match="* | text()" mode="subdoc">
         <xsl:param name="pageId" />
+        <xsl:param name="class" />
 
         <xsl:copy>
             <xsl:apply-templates select="@*" mode="subdoc">
@@ -681,6 +682,7 @@
             </xsl:apply-templates>
             <xsl:apply-templates select="* | text()" mode="subdoc">
                 <xsl:with-param name="pageId" select="$pageId" />
+                <xsl:with-param name="class" select="$class" />
             </xsl:apply-templates>
         </xsl:copy>
     </xsl:template>
