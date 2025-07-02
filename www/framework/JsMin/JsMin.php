@@ -32,7 +32,7 @@ abstract class JsMin
         if ( strtolower($extension) == 'closurelocal' ) {
             return new Providers\ClosureLocal($options);
         } else {
-            return new Providers\ClosureApi($options);
+            return new Providers\Simple($options);
         }
     }
     // }}}
