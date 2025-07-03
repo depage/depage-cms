@@ -29,10 +29,11 @@ class Simple extends \Depage\JsMin\JsMin {
             '!/\*[^*]*\*+([^/][^*]*\*+)*/!u' => "", // Remove other comments
             '/\/\*[^\/]*\*\//u' => "", // Remove single line comments
             '/\/\*\*((\r\n|\n) \*[^\n]*)+(\r\n|\n) \*\//u' => "", // Remove multiline comments
+            '/^\h+|\h+$/mu' => '', // Remove leading/trailing whitespace;
             '/^\h*\v+/mu' => '', // Remove leading whitespace
             '/\h*\v+$/mu' => '', // Remove trailing whitespace
             '/ +/u' => ' ', // Remove multiple spaces
-            '/' . $skipQuotes . '|\h?([' . $controlChars . '])\h?/u' => "\\1", // Remove unnecessary whitespace around operators
+            '/' . $skipQuotes . '|\h*([' . $controlChars . '])\h*/u' => "\\1", // Remove unnecessary whitespace around operators
         ];
 
         foreach ($repl as $pattern => $replacement) {

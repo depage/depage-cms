@@ -282,15 +282,15 @@ class Html {
             // get cache instance
             $src = false;
             $jsmin = \Depage\JsMin\JsMin::factory(array(
-                'extension' => isset($this->param['jsmin']->extension) ? $this->param['jsmin']->extension : "",
-                'jar' => isset($this->param['jsmin']->jar) ? $this->param['jsmin']->jar : "",
-                'java' => isset($this->param['jsmin']->java) ? $this->param['jsmin']->java : "",
+                'extension' => $this->param['jsmin']->extension ?? 'simple',
+                'jar' => $this->param['jsmin']->jar ?? "",
+                'java' => $this->param['jsmin']->java ?? "",
             ));
             try {
                 $src = $jsmin->minifyFiles($name, $files);
             } catch (\Depage\JsMin\Exceptions\JsminException $e) {
                 $log = new \Depage\Log\Log();
-                $log->log("closure compiler: " . $e->getMessage());
+                $log->log("compiler error: " . $e->getMessage());
                 $src = false;
             }
             if ($src === false) {

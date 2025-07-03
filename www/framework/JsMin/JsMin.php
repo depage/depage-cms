@@ -27,13 +27,13 @@ abstract class JsMin
      * @return  (object) jsmin object
      **/
     public static function factory($options = array()) {
-        $extension = (isset($options['extension'])) ? $options['extension'] : 'closureApi';
+        $extension = strtolower($options['extension'] ?? 'simple');
 
-        if ( strtolower($extension) == 'closurelocal' ) {
+        if (strtolower($extension) == 'closurelocal') {
             return new Providers\ClosureLocal($options);
-        } else {
-            return new Providers\Simple($options);
         }
+
+        return new Providers\Simple($options);
     }
     // }}}
     // {{{ __construct()
