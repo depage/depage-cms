@@ -3,7 +3,7 @@
     $iSize: 48px * $scale;
 
     background-repeat: no-repeat;
-    background-image: url(../images/icon_sprite.svg?202203291336);
+    background-image: url(../images/icon_sprite.svg?202507072242);
     background-size: calc(#{(8 * $iSize)} * var(--touch-scale)) calc(#{(24 * $iSize)} * var(--touch-scale));
 
     @if ($name != "") {
@@ -87,6 +87,18 @@
         sec-section-3col-1: 1 15,
         sec-section-3col-2: 2 15,
         sec-section-3col-3: 3 15,
+        align-left: 6 10,
+        align-center: 6 11,
+        align-right: 6 12,
+        align-top: 6 13,
+        align-middle: 6 14,
+        align-bottom: 6 15,
+        align-left-white: 7 10,
+        align-center-white: 7 11,
+        align-right-white: 7 12,
+        align-top-white: 7 13,
+        align-middle-white: 7 14,
+        align-bottom-white: 7 15,
         create: 0 17,
         duplicate: 1 17,
         delete: 2 17,

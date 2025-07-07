@@ -489,10 +489,7 @@
 }
 // }}}
 // {{{ .input-single.edit-type with icons
-.depage-form .input-single.edit-type {
-    label.input-single-option-contain,
-    label.input-single-option-fill,
-    label.input-single-option-full {
+@mixin select-icon-only {
         > span {
             text-indent: -1000em;
             width: 36px;
@@ -503,6 +500,12 @@
                 @include icon-base();
             }
         }
+}
+.depage-form .input-single.edit-type {
+    label.input-single-option-contain,
+    label.input-single-option-fill,
+    label.input-single-option-full {
+        @include select-icon-only();
     }
     label.input-single-option-fill > span::after {
         @include icon("img-crop", 32px);
@@ -521,6 +524,56 @@
     }
     label.input-single-option-full > input[type="radio"]:checked + span::after {
         @include icon("img-full-white", 32px);
+    }
+}
+.depage-form .input-single.edit-align-x {
+    label.input-single-option-0,
+    label.input-single-option-50,
+    label.input-single-option-100 {
+        @include select-icon-only();
+    }
+    label.input-single-option-0 > span::after {
+        @include icon("align-left", 32px);
+    }
+    label.input-single-option-0 > input[type="radio"]:checked + span::after {
+        @include icon("align-left-white", 32px);
+    }
+    label.input-single-option-50 > span::after {
+        @include icon("align-center", 32px);
+    }
+    label.input-single-option-50 > input[type="radio"]:checked + span::after {
+        @include icon("align-center-white", 32px);
+    }
+    label.input-single-option-100 > span::after {
+        @include icon("align-right", 32px);
+    }
+    label.input-single-option-100 > input[type="radio"]:checked + span::after {
+        @include icon("align-right-white", 32px);
+    }
+}
+.depage-form .input-single.edit-align-y {
+    label.input-single-option-0,
+    label.input-single-option-50,
+    label.input-single-option-100 {
+        @include select-icon-only();
+    }
+    label.input-single-option-0 > span::after {
+        @include icon("align-top", 32px);
+    }
+    label.input-single-option-0 > input[type="radio"]:checked + span::after {
+        @include icon("align-top-white", 32px);
+    }
+    label.input-single-option-50 > span::after {
+        @include icon("align-middle", 32px);
+    }
+    label.input-single-option-50 > input[type="radio"]:checked + span::after {
+        @include icon("align-middle-white", 32px);
+    }
+    label.input-single-option-100 > span::after {
+        @include icon("align-bottom", 32px);
+    }
+    label.input-single-option-100 > input[type="radio"]:checked + span::after {
+        @include icon("align-bottom-white", 32px);
     }
 }
 .doc-properties .depage-form .input-single.edit-target {

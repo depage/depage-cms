@@ -913,56 +913,40 @@ class DocProperties extends Base
     {
         $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
 
-        $list = [
-            '0-0' => _("Top Left"),
-            '50-0' => _("Top Center"),
-            '100-0' => _("Top Right"),
-            '0-50' => _("Middle Left"),
-            '50-50' => _("Middle Center"),
-            '100-50' => _("Middle Right"),
-            '0-100' => _("Bottom Left"),
-            '50-100' => _("Bottom Center"),
-            '100-100' => _("Bottom Right"),
+        $listX = [
+            '0' => _("Left"),
+            '50' => _("Center"),
+            '100' => _("Right"),
+        ];
+        $listY = [
+            '0' => _("Top"),
+            '50' => _("Middle"),
+            '100' => _("Bottom"),
         ];
 
-        $class = "edit-align";
+        $class = "edit-type";
         $skin = "radio";
         $defaultValue = $node->getAttribute("x") . "-" . $node->getAttribute("y");
 
-        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Alignment")));
-        $fs->addSingle("xmledit-$nodeId", [
-            'label' => $node->getAttribute("lang"),
-            'list' => $list,
-            'class' => $class,
-            'skin' => $skin,
-            'defaultValue' => $defaultValue,
-        ]);
-    }
-    // }}}
-    // {{{ saveEditAlign()
-    /**
-     * @brief saveEditAlign
-     *
-     * @param mixed $node
-     * @return void
-     **/
-    protected function saveEditAlign($node)
-    {
-        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
-        $value = $this->form->getValues()["xmledit-$nodeId"];
-        $changed = false;
-        $x = $node->getAttribute("x");
-        $y = $node->getAttribute("y");
-
-        if (preg_match("/^([0-9]+)-([0-9]+)$/", $value, $matches)) {
-            $node->setAttribute("x", $matches[1]);
-            $node->setAttribute("y", $matches[2]);
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Alignment")), "edit-align");
+        if ($node->hasAttribute("x")) {
+            $fs->addSingle("xmledit-$nodeId-x", [
+                'label' => $node->getAttribute("lang"),
+                'list' => $listX,
+                'class' => $class . " edit-align-x",
+                'skin' => $skin,
+                'dataPath' => "//*[@db:id = '$nodeId']/@x",
+            ]);
         }
-        if ($x != $node->getAttribute("x") || $y != $node->getAttribute("y")) {
-            $changed = true;
+        if ($node->hasAttribute("y")) {
+            $fs->addSingle("xmledit-$nodeId-y", [
+                'label' => "",
+                'list' => $listY,
+                'class' => $class . " edit-align-y",
+                'skin' => $skin,
+                'dataPath' => "//*[@db:id = '$nodeId']/@y",
+            ]);
         }
-
-        return $changed;
     }
     // }}}
     // {{{ addEditDate()

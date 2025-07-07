@@ -481,95 +481,14 @@
 // }}}
 // {{{ doc-properties edit-align
 .doc-properties {
-    .input-single.edit-align {
-        $cellSize: 30px;
-        $inset: 8px;
-
-        > span:nth-child(2) {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1px;;
-            width: 3 * $cellSize;
-            margin: 0 auto;
-
-            > span {
-                width: $cellSize;
-                height: $cellSize;
-
-                span:before {
-                    border-radius: 50% !important;
-                    //border-bottom-right-radius: 0 !important;
-                }
-
-                &:nth-child(1) span {
-                    border-top-left-radius: $cornerRadius;
-                }
-                &:nth-child(3) span {
-                    border-top-right-radius: $cornerRadius;
-                }
-                &:nth-child(7) span {
-                    border-bottom-left-radius: $cornerRadius;
-                }
-                &:nth-child(9) span {
-                    border-bottom-right-radius: $cornerRadius;
-                }
-                &:nth-child(5) span:before {
-                    border-radius: 50% !important;
-                }
-
-                &:nth-child(2) span:before {
-                    transform: rotate(45deg);
-                }
-                &:nth-child(3) span:before {
-                    transform: rotate(90deg);
-                }
-                &:nth-child(4) span:before {
-                    transform: rotate(-45deg);
-                }
-                &:nth-child(6) span:before {
-                    transform: rotate(135deg);
-                }
-                &:nth-child(7) span:before {
-                    transform: rotate(-90deg);
-                }
-                &:nth-child(8) span:before {
-                    transform: rotate(-135deg);
-                }
-                &:nth-child(9) span:before {
-                    transform: rotate(180deg);
-                }
-            }
-
-            label,
-            label span {
-                display: block;
-                width: $cellSize;
-                height: $cellSize;
-                padding: 0 !important;
-            }
-            label span {
-                text-indent: -1000em !important;
-                display: block;
-                //background: darken($backgroundColor, 35%);
-                background: $backgroundColor;
-
-                &::before {
-                    background-image: none !important;
-                    top: $inset;
-                    left: $inset;
-                    width: $cellSize - 2 * $inset;
-                    height: $cellSize - 2 * $inset;
-                }
-            }
-            input:checked + span {
-                background: darken($backgroundColor, 35%);
-                @include box-shadow(inset 0 0 4px 0 rgba(0, 0, 0, 0.7));
-
-                &::before {
-                    background-color: $textBrightColor;
-                }
-            }
-        }
+    .edit-align {
+        text-align: center;
+    }
+    .input-single.edit-align-x,
+    .input-single.edit-align-y {
+        display: inline-block;
+        margin-left: 10px;
+        margin-right: 10px;
     }
 }
 // }}}
