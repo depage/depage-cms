@@ -67,6 +67,16 @@ class DocProperties extends Base
      * @brief fl
      **/
     protected $fl = null;
+
+    /**
+     * @brief newsletter
+     **/
+    protected $newsletter = null;
+
+    /**
+     * @brief newsletterCandidates
+     **/
+    protected $newsletterCandidates = [];
     // }}}
 
     // {{{ _init()
@@ -178,14 +188,18 @@ class DocProperties extends Base
             foreach ($nodes as $n) {
                 if ($callback = $this->getCallbackForNode($n, "save")) {
                     $changed = $this->$callback($n) || $changed;
-                    $savedAlready = true;
+
+                    if ($callback == "saveSecAutoNewsList") {
+                        $savedAlready = true;
+                    }
                 }
             }
 
-            if ($changed && !$savedAlready) {
-                $doc->saveNode($node);
-            }
             if ($changed) {
+                if (!$savedAlready) {
+                    $doc->saveNode($node);
+                }
+
                 $prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
                 $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->project, 0);
                 $parentId = $doc->getParentIdById($this->nodeId);
@@ -888,6 +902,69 @@ class DocProperties extends Base
         ]);
     }
     // }}}
+    // {{{ addEditAlign()
+    /**
+     * @brief addEditAlign
+     *
+     * @param mixed $node
+     * @return void
+     **/
+    protected function addEditAlign($node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+
+        $list = [
+            '0-0' => _("Top Left"),
+            '50-0' => _("Top Center"),
+            '100-0' => _("Top Right"),
+            '0-50' => _("Middle Left"),
+            '50-50' => _("Middle Center"),
+            '100-50' => _("Middle Right"),
+            '0-100' => _("Bottom Left"),
+            '50-100' => _("Bottom Center"),
+            '100-100' => _("Bottom Right"),
+        ];
+
+        $class = "edit-align";
+        $skin = "radio";
+        $defaultValue = $node->getAttribute("x") . "-" . $node->getAttribute("y");
+
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Alignment")));
+        $fs->addSingle("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
+            'list' => $list,
+            'class' => $class,
+            'skin' => $skin,
+            'defaultValue' => $defaultValue,
+        ]);
+    }
+    // }}}
+    // {{{ saveEditAlign()
+    /**
+     * @brief saveEditAlign
+     *
+     * @param mixed $node
+     * @return void
+     **/
+    protected function saveEditAlign($node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+        $value = $this->form->getValues()["xmledit-$nodeId"];
+        $changed = false;
+        $x = $node->getAttribute("x");
+        $y = $node->getAttribute("y");
+
+        if (preg_match("/^([0-9]+)-([0-9]+)$/", $value, $matches)) {
+            $node->setAttribute("x", $matches[1]);
+            $node->setAttribute("y", $matches[2]);
+        }
+        if ($x != $node->getAttribute("x") || $y != $node->getAttribute("y")) {
+            $changed = true;
+        }
+
+        return $changed;
+    }
+    // }}}
     // {{{ addEditDate()
     /**
      * @brief addEditDate
@@ -1256,7 +1333,6 @@ class DocProperties extends Base
         $this->newsletterCandidates = $this->newsletter->getCandidates();
 
         $pages = $this->newsletter->getNewsletterPages();
-        //var_dump($pages);
 
         $count = 0;
         $this->form->addHtml("<div class=\"info\"><p>" . _("Please choose the news items you want to include in the newsletter:") . "</p></div>");
