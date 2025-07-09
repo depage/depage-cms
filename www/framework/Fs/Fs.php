@@ -431,10 +431,10 @@ class Fs
     protected function buildUrl($parsed, $showPass = true)
     {
         $path = $parsed['scheme'] . '://';
-        $path .= !empty($parsed['user']) ? $parsed['user'] : '';
+        $path .= !empty($parsed['user']) ? rawurlencode($parsed['user']) : '';
 
         if (!empty($parsed['pass'])) {
-            $path .= ($showPass) ? ':' . $parsed['pass'] : ':...';
+            $path .= ($showPass) ? ':' . rawurlencode($parsed['pass']) : ':...';
         }
 
         $path .= !empty($parsed['user']) ? '@'                   : '';

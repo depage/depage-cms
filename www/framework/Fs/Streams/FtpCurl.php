@@ -64,7 +64,8 @@ class FtpCurl
         $password = (isset($parsed['pass'])) ? $parsed['pass'] : '';
 
         $options = [
-            CURLOPT_USERPWD        => $username . ':' . $password,
+            CURLOPT_USERNAME       => rawurldecode($username),
+            CURLOPT_PASSWORD       => rawurldecode($password),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_PORT           => (isset($parsed['port'])) ? $parsed['port'] : 21,
             CURLOPT_FOLLOWLOCATION => true,
