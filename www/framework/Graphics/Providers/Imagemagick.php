@@ -390,22 +390,6 @@ class Imagemagick extends \Depage\Graphics\Graphics
         }
     }
     // }}}
-    // {{{ getPageNumber()
-    /**
-     * @brief getPageNumber
-     *
-     * @param mixed
-     * @return void
-     **/
-    public function getPageNumber()
-    {
-        if ($this->inputFormat == "pdf") {
-            return "[0]";
-        } else {
-            return "";
-        }
-    }
-    // }}}
 }
 
 /* vim:set ft=php sw=4 sts=4 fdm=marker et : */

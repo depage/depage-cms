@@ -570,6 +570,22 @@ class Graphics
         return (string) $quality;
     }
     // }}}
+    // {{{ getPageNumber()
+    /**
+     * @brief getPageNumber
+     *
+     * @param mixed
+     * @return void
+     **/
+    public function getPageNumber()
+    {
+        if ($this->inputFormat == "pdf") {
+            return "[0]";
+        } else {
+            return "";
+        }
+    }
+    // }}}
 
     // {{{ bypassTest()
     /**

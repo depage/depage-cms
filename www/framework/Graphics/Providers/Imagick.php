@@ -5,7 +5,7 @@
  *
  * description
  *
- * copyright (c) 2021-2022 Frank Hellenkamp [jonas@depage.net]
+ * copyright (c) 2021-2025 Frank Hellenkamp [jonas@depage.net]
  *
  * @author    Frank Hellenkamp [jonas@depage.net]
  */
@@ -64,13 +64,18 @@ class Imagick extends \Depage\Graphics\Graphics
     protected function resize($width, $height)
     {
         $newSize = $this->dimensions($width, $height);
+        $blur = 0.5;
+
+        if (in_array($this->outputFormat, ["webp", "png"]) && $this->inputFormat == "png") {
+            $blur = 0.9;
+        }
 
         if (!$this->bypassTest($newSize[0], $newSize[1])) {
             $filter = $this->getResizeFilter($newSize[0], $newSize[1]);
 
             $this->image->mergeImageLayers(\Imagick::LAYERMETHOD_FLATTEN);
             $this->image->setImageGravity(\Imagick::GRAVITY_CENTER);
-            $this->image->resizeImage($newSize[0], $newSize[1], $filter, 0.5);
+            $this->image->resizeImage($newSize[0], $newSize[1], $filter, $blur);
             $this->image->setImageExtent($newSize[0], $newSize[1]);
             $this->size = $newSize;
         }
@@ -148,7 +153,9 @@ class Imagick extends \Depage\Graphics\Graphics
      **/
     protected function load()
     {
-        $this->image = new \Imagick(realpath($this->input));
+        $pageNumber = $this->getPageNumber();
+
+        $this->image = new \Imagick(realpath($this->input) . $pageNumber);
         $this->image->transformImageColorspace(\Imagick::COLORSPACE_SRGB);
         $this->setBackground();
     }
@@ -162,7 +169,9 @@ class Imagick extends \Depage\Graphics\Graphics
      **/
     protected function save()
     {
-
+        if (in_array($this->outputFormat, ["webp"]) && $this->inputFormat == "png") {
+            $this->image->setImageCompressionQuality(100);
+        }
         $result = $this->image->writeImage($this->output);
 
         $this->image->clear();
@@ -206,10 +215,9 @@ class Imagick extends \Depage\Graphics\Graphics
     {
         if ($width <= 160 && $height <= 160) {
             return \Imagick::FILTER_TRIANGLE;
-        } else {
+        }
             return \Imagick::FILTER_LANCZOS;
         }
-    }
     // }}}
     // {{{ getImageSize()
     /**
