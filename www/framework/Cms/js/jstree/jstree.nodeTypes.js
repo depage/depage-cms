@@ -265,7 +265,7 @@
                 return false;
             } else if ((operation == "move_node" || operation == "copy_node") && typeof node_parent.li_attr != 'undefined' && (node_parent.li_attr.rel == 'pg:meta' || node_parent.li_attr.rel == 'sec:separator')) {
                 return false;
-            } else if ((operation == "edit" || operation == "create_node") && node.li_attr.rel == 'sec:separator') {
+            } else if ((operation == "edit" || operation == "rename_node") && node.li_attr.rel == 'sec:separator') {
                 return false;
             }
 
