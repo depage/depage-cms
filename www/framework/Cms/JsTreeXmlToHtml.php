@@ -24,13 +24,13 @@ class JsTreeXmlToHtml
 
                 if (!$info) return "";
 
-                $path = "projects/{$project->name}/lib/{$info->fullname}";
+                $path = \DEPAGE_BASE . "projects/{$project->name}/lib/{$info->fullname}";
 
-                if ($info->ext == "svg") {
-                    return $path;
+                if ($info->ext != "svg") {
+                    $path = $path . ".tf-48x48.png";
                 }
 
-                return $path . ".tf-48x48.png";
+                return "background-image: url('" . $path . "');";
             },
         ]);
 

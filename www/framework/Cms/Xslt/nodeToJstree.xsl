@@ -122,9 +122,12 @@
 
     <xsl:template match="edit:img" mode="hint">
         <xsl:if test="substring(@src, 1, 9) = 'libref://' or substring(@src, 1, 8) = 'libid://'">
-            <span class="mini-thumb">
-                <xsl:attribute name="style">background-image: url('<xsl:value-of select="php:function('Depage\Cms\Xslt\FuncDelegate::thumbnailSrc', string(@src))" />');</xsl:attribute>
-            </span>
+            <xsl:variable name="style" select="php:function('Depage\Cms\Xslt\FuncDelegate::thumbnailSrc', string(@src))" />
+            <xsl:if test="string-length($style) &gt; 0">
+                <span class="mini-thumb">
+                    <xsl:attribute name="style"><xsl:value-of select="$style" /></xsl:attribute>
+                </span>
+            </xsl:if>
         </xsl:if>
     </xsl:template>
 
