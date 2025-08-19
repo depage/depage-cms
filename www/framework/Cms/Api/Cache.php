@@ -28,21 +28,15 @@ class Cache extends Json
     public function clear()
     {
         $values = $this->parseJsonParams();
+        $success = $this->project->clearTransformCache();
 
-        $folders = [
-            '/global/',
-            '/global/css/',
-            '/global/js/',
-            '/global/assets/',
-        ];
-
-        $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
-        foreach ($folders as $folder) {
-            $fl->syncFiles($folder);
+        // clear xmldb cache
+        if (!empty($this->xmldbCache)) {
+            $this->xmldbCache->delete($this->pdo->prefix . '_proj_' . $this->project->name . '_xmldocs/');
         }
 
         $retVal = [
-            'success' => $this->project->clearTransformCache(),
+            'success' => $success,
         ];
 
         return $retVal;

@@ -1225,10 +1225,18 @@ class Project extends \Depage\Entity\Entity
             }
         }
 
-        // reindex css path
+        // reindex global asset paths
+        $folders = [
+            '/global/',
+            '/global/css/',
+            '/global/js/',
+            '/global/assets/',
+        ];
+
         $fl = new \Depage\Cms\FileLibrary($this->pdo, $this);
-        $fl->syncFiles("global/css/");
-        $fl->syncFiles("global/js/");
+        foreach ($folders as $folder) {
+            $fl->syncFiles($folder);
+        }
 
         return true;
     }
