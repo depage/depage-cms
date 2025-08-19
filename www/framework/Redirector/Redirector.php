@@ -263,6 +263,8 @@ class Redirector
         $altPage = "";
         $isFallback = false;
 
+        $request = strtolower($request);
+
         if (isset($this->alternatePages[$request])) {
             return new Result($this->alternatePages[$request], $isFallback);
         }
