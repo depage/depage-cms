@@ -389,6 +389,8 @@ class Main extends Base {
         \Depage\Cms\Project::updateSchema($this->pdo);
         \Depage\Notifications\Notification::updateSchema($this->pdo);
 
+        $this->authUser = $this->auth->enforce();
+
         $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->xmldbCache);
 
         foreach ($projects as $project) {
