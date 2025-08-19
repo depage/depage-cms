@@ -195,6 +195,10 @@ class FileLibrary
     public function syncFiles($path):int
     {
         $folderId = $this->getFolderIdByPath($path);
+        if ($folderId === false) {
+            return false;
+        }
+
         $oldFiles = $this->getFilesInFolder($folderId);
 
         $files = $this->fs->lsFiles(trim($path . "/*", '/'));

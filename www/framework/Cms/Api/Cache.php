@@ -19,15 +19,27 @@ class Cache extends Json
 {
     protected $autoEnforceAuth = false;
 
-    // {{{ status()
+    // {{{ clear()
     /**
-     * @brief status
+     * @brief clear
      *
      * @return object
      **/
     public function clear()
     {
         $values = $this->parseJsonParams();
+
+        $folders = [
+            '/global/',
+            '/global/css/',
+            '/global/js/',
+            '/global/assets/',
+        ];
+
+        $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
+        foreach ($folders as $folder) {
+            $fl->syncFiles($folder);
+        }
 
         $retVal = [
             'success' => $this->project->clearTransformCache(),
