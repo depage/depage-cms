@@ -346,7 +346,7 @@ class Document
      */
     public function getNodeIdsByXpath($xpath)
     {
-        $identifier = "{$this->table_docs}_d{$this->doc_id}/xpath_" . sha1($xpath);
+        $identifier = "{$this->table_docs}/d{$this->doc_id}/xpath_" . sha1($xpath);
         $fetched_ids = $this->cache->get($identifier);
 
         if ($fetched_ids === false) {
@@ -367,7 +367,7 @@ class Document
      */
     public function getSubdocByNodeId($id, $add_id_attribute = true)
     {
-        $identifier = "{$this->table_docs}_d{$this->doc_id}/{$id}.xml";
+        $identifier = "{$this->table_docs}/d{$this->doc_id}/{$id}.xml";
         $xmlDoc = new \Depage\Xml\Document();
 
         if ($xmlStr = $this->cache->get($identifier)) {
@@ -1892,7 +1892,7 @@ class Document
     public function clearCache()
     {
         if (!is_null($this->doc_id)) {
-            $this->cache->delete("{$this->table_docs}_d{$this->doc_id}/");
+            $this->cache->delete("{$this->table_docs}/d{$this->doc_id}/");
         }
     }
     // }}}
