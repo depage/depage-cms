@@ -114,7 +114,7 @@ class Publisher
             $this->fileUpdated($target, $hash);
             $updated = true;
         } else {
-            $this->fileKept($target);
+            $this->markFileAsPublished($target);
         }
     }
     // }}}
@@ -154,7 +154,7 @@ class Publisher
             $this->fileUpdated($target, $hash);
             $updated = true;
         } else {
-            $this->fileKept($target);
+            $this->markFileAsPublished($target);
         }
     }
     // }}}
@@ -249,15 +249,14 @@ class Publisher
         ));
     }
     // }}}
-    // {{{ fileKept()
+    // {{{ markFileAsPublished()
     /**
-     * @brief fileKept
+     * @brief markFileAsPublished
      *
      * @param string $filename
-     * @param string $hash
      * @return void
      **/
-    protected function fileKept($filename)
+    public function markFileAsPublished($filename)
     {
         $query = $this->pdo->prepare("UPDATE {$this->tableFiles}
             SET

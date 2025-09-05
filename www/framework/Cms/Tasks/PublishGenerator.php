@@ -282,6 +282,11 @@ class PublishGenerator
             $this->getTransformCache()->clearAll();
         }
 
+        // only reset if there not in the middle of a publishing
+        if ($this->task->getProgress()->percent == 0) {
+            $publisher->resetPublishedState();
+        }
+
         $this->queueInit();
         $this->queuePublishFiles();
         $this->queuePublishIndex();
@@ -320,9 +325,6 @@ class PublishGenerator
         ", [
             $this,
         ]);
-
-        $this->task->addSubtask("resetting publishing state", "\$publisher->resetPublishedState();", [], $this->initId);
-
     }
     // }}}
     // {{{ queuePublishFiles()
@@ -338,6 +340,8 @@ class PublishGenerator
 
         $fl = new \Depage\Cms\FileLibrary($this->pdo, $this->project);
 
+        $publisher = $this->getPublisher();
+
         $fl->syncLibrary();
         $folders = $fl->getAllFolderIds();
 
@@ -347,6 +351,14 @@ class PublishGenerator
             // adding tasks for all files
             $files = $fl->getFilesInFolder($folderId);
             foreach ($files as $file) {
+                $publishedFile = $publisher->getFileInfo("lib/" . $file->fullname);
+                
+                // filter out files that are already published
+                if ($publishedFile && $publishedFile->hash == $file->hash) {
+                    $publisher->markFileAsPublished("lib/" . $file->fullname);
+                    continue;
+                }
+                
                 $this->task->addSubtask("publishing $file->fullname", "\$publisher->publishFileWithHash(%s, %s, %s);", [
                     $libPath . $file->fullname,
                     "lib/" . $file->fullname,
