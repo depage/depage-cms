@@ -123,7 +123,7 @@ Es stehen folgende Eigenschaftselemente zur Verfügung:
 
     *Text (formatiert)* steht für formatierten, mehrzeiligen Text zur Verfügung. Dort können Texte mit Auszeichnungen wie fett oder kursiv versehen werden. Es werden auch Absatzstile wie Listen mit Aufzählungszeichen oder nummerierte Listen unterstützt. Außerdem können innerhalb des Textes Links zu anderen Seiten gesetzt werden.
 
-> [Mehr über den Text Editor](@ref text-editor)
+[Mehr über den Text Editor](@ref text-editor)
 
 - **Bild**
 
@@ -133,7 +133,7 @@ Es stehen folgende Eigenschaftselemente zur Verfügung:
 
     Je nach Template kann auch noch ein Link ausgewählt werden, der geöffnet wird, wenn man auf das Bild klickt.
 
-> [Mehr über die Dateibibliothek](@ref file-library)
+[Mehr über die Dateibibliothek](@ref file-library)
 
 - **Tabelle**
 
@@ -202,7 +202,7 @@ Interne Links sehen folgendermaßen aus:
 
     pageref://[docid]
 
-> *Interne Links lassen sich einfach setzen, indem man die zu verlinkende Seite aus dem Seitenbaum in das Textfeld des Dialogs zieht.*
+*Interne Links lassen sich einfach setzen, indem man die zu verlinkende Seite aus dem Seitenbaum in das Textfeld des Dialogs zieht.*
 
 Links zu Dateien in der Dateibibliothek sind folgendermaßen aufgebaut:
 
@@ -268,4 +268,4 @@ Projektschnellzugriff      {#project-shortcuts}
 ![Der Projektschnellzugriff in der Projektübersicht](images/project-shortcuts.png)
 
 
-> [Weiter zum Thema: Publizieren](@ref publishing)
+[Weiter zum Thema: Publizieren](@ref publishing)

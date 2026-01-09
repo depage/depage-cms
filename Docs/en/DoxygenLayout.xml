@@ -3,19 +3,19 @@
   <navindex>
     <tab type="mainpage" visible="yes" title="Index"/>
 
-    <tab type="user" url="@ref get-started" title="Get Started">
+    <tab type="usergroup" url="@ref get-started" title="Get Started">
         <tab type="user" url="@ref get-started" title="Introduction" />
         <tab type="user" url="@ref editing-pages" title="Editing Pages" />
         <tab type="user" url="@ref publishing" title="Publishing" />
     </tab>
-    <tab type="user" url="@ref file-library" title="Advanced Topics">
+    <tab type="usergroup" url="@ref file-library" title="Advanced Topics">
         <tab type="user" url="@ref file-library" title="File Library" />
         <tab type="user" url="@ref file-search" title="File Search" />
         <tab type="user" url="@ref image-gravitational-center" title="Gravitational center of images" />
         <tab type="user" url="@ref colors" title="Colors" />
         <tab type="user" url="@ref newsletter" title="Newsletter" />
     </tab>
-    <tab type="user" url="@ref admin-project-settings" title="Administration">
+    <tab type="usergroup" url="@ref admin-project-settings" title="Administration">
         <tab type="user" url="@ref admin-project-settings" title="Project Settings" />
         <!--
         <tab type="user" url="@ref admin-user-management" title="User Management" />

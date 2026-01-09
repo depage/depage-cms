@@ -76,4 +76,4 @@ The following graphic shows the structure between live- and edit-server.
 
 
 
-> [Go to the chapter: File Library](@ref file-library)
+[Go to the chapter: File Library](@ref file-library)

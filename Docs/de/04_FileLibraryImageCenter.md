@@ -31,10 +31,9 @@ Unter dem Bild sind Live-Beispiele sichtbar, die zeigen, wie das Bild bei der An
 
 ![Den Bildschwerpunkt festlegen](images/choose-image-center-dialog.png)
 
-> **Achtung**
->
+> [!note]
 > Wenn man unterschiedliche Bildschwerpunkte für das gleiche Bild festlegen möchte, muss man das gleiche Bild unter unterschiedlichen Namen in die Dateibibliothek hochladen und dann jeweils unterschiedliche Bildschwerpunkte pro Bild festlegen.
 
 
 
-> [Weiter zum Thema: Farben](@ref colors)
+[Weiter zum Thema: Farben](@ref colors)

@@ -34,4 +34,4 @@ It is the task of administrators and developers to manage the color names.
 
 
 
-> [Go to the chapter: Newsletter](@ref newsletter)
+[Go to the chapter: Newsletter](@ref newsletter)

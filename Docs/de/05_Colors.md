@@ -34,4 +34,4 @@ Die Verwaltung der Farbnamen unterliegt den Administratoren und Entwicklern.
 
 
 
-> [Weiter zum Thema: Newsletter](@ref newsletter)
+[Weiter zum Thema: Newsletter](@ref newsletter)

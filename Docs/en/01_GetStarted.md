@@ -92,4 +92,4 @@ Help
 
 There is an inline help buttons, which opens short descriptions of the interface elements currently displayed on your screen.
 
-> [Go to the chapter: Editing Pages](@ref editing-pages)
+[Go to the chapter: Editing Pages](@ref editing-pages)

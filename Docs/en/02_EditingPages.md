@@ -124,7 +124,7 @@ This are the document property types available:
 
     *Text (styled)* is a richt text field. It allows styling of the text like bold and italic or to structure your text with bullet or numbered lists, but it also supports linking parts of the text.
 
-> [More about editing text](@ref text-editor)
+[More about editing text](@ref text-editor)
 
 - **Image**
 
@@ -134,7 +134,7 @@ This are the document property types available:
 
     Depending on the template, you can also add a Link to an image.
 
-> [More about about the file library](@ref file-library)
+[More about about the file library](@ref file-library)
 
 - **Table**
 
@@ -203,7 +203,7 @@ Internal links look like this:
 
     pageref://[docid]
 
-> *You can add an internal link, by dragging a page from the page tree into the input in the dialog.*
+*You can add an internal link, by dragging a page from the page tree into the input in the dialog.*
 
 Links to files in the file library look like this:
 
@@ -270,4 +270,4 @@ By clicking on the *project shortcuts* on the dashboard, you can quickly add spe
 
 
 
-> [Go the the chapter: Publishing](@ref publishing)
+[Go the the chapter: Publishing](@ref publishing)

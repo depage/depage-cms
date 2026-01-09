@@ -75,4 +75,4 @@ Die folgende Darstellung zeigt schematisch das Verhältnis von Live- zum Edit-Se
 
 
 
-> [Weiter zum Thema: Dateibibliothek](@ref file-library)
+[Weiter zum Thema: Dateibibliothek](@ref file-library)

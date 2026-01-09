@@ -17,8 +17,7 @@ Ordner umbenennen / verschieben
 
 Ordner können ineinander mitsamt ihrem Inhalt verschoben oder auch umbenannt werden.
 
-> **Vorsicht**
->
+> [!caution] 
 > Es ist allerdings dabei zu beachten, dass sich zu allen Dateien, die sich in diesem Ordner befinden und schon verlinkt sind, die Verknüpfungen lösen, und *so nicht mehr auf der Seite angezeigt werden*.
 
 Es wird deshalb empfohlen, sich möglichst vorab eine flexible und erweiterbare Struktur der Ordner zu überlegen, so dass die Dateibibliothek problemlos mit den Anforderungen der Seite mitwachsen kann.
@@ -28,8 +27,7 @@ Ordner löschen
 
 Ordner können über den Button löschen auch wieder gelöscht werden.
 
-> **Vorsicht**
->
+> [!caution] 
 > Es gilt auch beim Löschen: *Alle zu in diesem Ordner befindlichen Dateien gesetzten Verknüpfungen gehen verloren*.
 
 
@@ -42,10 +40,9 @@ Dazu klickt man auf den Button Upload. Es öffnet sich ein Dialog, in dem man ve
 
 Dateien lassen sich auch per *Drag and Drop* hochladen in dem sie direkt in die Dateiübersicht (die rechte Seite des Fensters) gezogen werden. Der Upload startet dann sofort in den gerade gewählten Ordner.
 
-> **Vorsicht**
->
-> _Dateien, die bereits unter dem gleichen Namen im aktuellen Verzeichnis liegen, werden ohne Vorwarnung überschrieben!_
-> _Das dient vor allem dazu, dass Bilder einfach mit einer neuen Version aktualisiert werden können, ohne für jede Datei eine Überschreib-Warnung bestätigen zu müssen._
+> [!caution] 
+> Dateien, die bereits unter dem gleichen Namen im aktuellen Verzeichnis liegen, werden ohne Vorwarnung überschrieben!
+> Das dient vor allem dazu, dass Bilder einfach mit einer neuen Version aktualisiert werden können, ohne für jede Datei eine Überschreib-Warnung bestätigen zu müssen.
 
 
 Dateien löschen
@@ -73,4 +70,4 @@ Es ist auch möglich die Dateisuche nach Dateitypen einzuschränken.
 
 
 
-> [Weiter zum Thema: Bildschwerpunkt](@ref image-gravitational-center)
+[Weiter zum Thema: Bildschwerpunkt](@ref image-gravitational-center)

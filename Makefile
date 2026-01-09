@@ -2,6 +2,7 @@ RM = rm -rf
 I18N = ~/Dev/depage-cms/www/framework/i18n.sh
 JSMIN = ~/Dev/depage-cms/www/framework/JsMin/minimize
 PHP = $(shell which php)
+VERSION = $(shell cat www/framework/Depage/version.txt)
 
 SASSDIR = www/framework/Cms/sass/
 CSSDIR = www/framework/Cms/css/
@@ -26,17 +27,15 @@ tags:  $(wildcard www/framework/**/*.php)
 doc: Docs/html/de/index.html Docs/html/en/index.html
 
 Docs/html/en/index.html: Docs/en/Doxyfile Docs/en/*.md Docs/en/DoxygenLayout.xml
-	cd Docs ; git clone https://github.com/depage/depage-docu.git depage-docu || true
+	cd Docs ; git clone --recurse-submodules https://github.com/depage/depage-docu.git depage-docu || true
 	mkdir -p Docs/html/en/
-	doxygen Docs/en/Doxyfile
-	cp -r Docs/depage-docu/www/lib Docs/html/en/
+	( cat Docs/en/Doxyfile ; echo "PROJECT_NUMBER=$(VERSION)" ) | doxygen -
 	cp -r Docs/de/images Docs/html/en/
 
 Docs/html/de/index.html: Docs/de/Doxyfile Docs/de/*.md Docs/de/DoxygenLayout.xml
-	cd Docs ; git clone https://github.com/depage/depage-docu.git depage-docu || true
+	cd Docs ; git clone --recurse-submodules https://github.com/depage/depage-docu.git depage-docu || true
 	mkdir -p Docs/html/de/
-	doxygen Docs/de/Doxyfile
-	cp -r Docs/depage-docu/www/lib Docs/html/de/
+	( cat Docs/de/Doxyfile ; echo "PROJECT_NUMBER=$(VERSION)" ) | doxygen -
 	cp -r Docs/de/images Docs/html/de/
 
 clean:

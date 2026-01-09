@@ -30,9 +30,8 @@ Below the you will see live examples how the image will be cropped for certain d
 
 ![Choose the image center and see live examples for the resulting cropping](images/choose-image-center-dialog.png)
 
-> **Attention**
->
+> [!note]
 > If you want to have different gravitational image centers for the same image, you have to upload the same image multiple times under new filenames.
 
 
-> [Go to the chapter: Colors](@ref colors)
+[Go to the chapter: Colors](@ref colors)

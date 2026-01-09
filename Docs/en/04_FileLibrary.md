@@ -17,8 +17,7 @@ Renaming / Moving Folders
 
 You can move and rename folders.
 
-> **Attention**
->
+> [!caution] 
 > Moving or renaming folders, removes existing links to embeded files in this folder so that they *won't be displayed on the live site anymore*.
 
 We suggest, to use a flexible and extendible folder structure from the beginning, that will grow without problems when adding content to your project.
@@ -28,8 +27,7 @@ Deleting Folders
 
 You can delete folders with the *Delete* button.
 
-> **Attention**
->
+> [!caution] 
 > The same applies when deleting folders: *All links to assets in this folder get lost when deleting*.
 
 
@@ -42,10 +40,9 @@ Just click on the *Upload* button in the folder you want to upload the files to.
 
 You can also upload files by *drag and drop* just my dragging them over the file list (the right side of the window). The upload will start immediately after dropping them.
 
-> **Attention**
->
-> _Files that have the same name as the uploaded files, will automatically be overriden without warning!_
-> _This is mainly useful to update existing images and files with a newer version, without explicitly confirming every override action._
+> [!caution] 
+> Files that have the same name as the uploaded files, will automatically be overriden without warning!
+> This is mainly useful to update existing images and files with a newer version, without explicitly confirming every override action.
 
 
 Deleting Files
@@ -70,8 +67,4 @@ You can also filter your file search by the file-type:
 - PDF
 
 
-
-
-
-
-> [Go to the chapter: Gravitational Center of Images](@ref image-gravitational-center)
+[Go to the chapter: Gravitational Center of Images](@ref image-gravitational-center)
