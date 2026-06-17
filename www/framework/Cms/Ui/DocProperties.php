@@ -902,6 +902,46 @@ class DocProperties extends Base
         ]);
     }
     // }}}
+    // {{{ addEditOptions()
+    /**
+     * @brief addEditOptions
+     *
+     * @param mixed $node
+     * @return void
+     **/
+    protected function addEditOptions($node)
+    {
+        $nodeId = $node->getAttributeNs("http://cms.depagecms.net/ns/database", "id");
+        $options = $node->getAttribute("options");
+        $variables = $this->project->getVariables();
+
+        $options = preg_replace_callback("/%var_([^%]*)%/", function ($matches) use ($variables) {
+            return $variables[$matches[1]];
+        }, $options);
+
+        $list = [];
+        foreach (explode(",", $options) as $val) {
+            $list[$val] = $val;
+        }
+
+        $class = "edit-type";
+        $skin = "checkbox";
+
+        if (count($list) > 6) {
+            $class = "";
+            //$skin = "tags";
+        }
+
+        $fs = $this->getLangFieldset($node, $this->getLabelForNode($node, _("Options")));
+        $fs->addMultiple("xmledit-$nodeId", [
+            'label' => $node->getAttribute("lang"),
+            'list' => $list,
+            'class' => $class,
+            'skin' => $skin,
+            'dataPath' => "//*[@db:id = '$nodeId']/@value",
+        ]);
+    }
+    // }}}
     // {{{ addEditAlign()
     /**
      * @brief addEditAlign
