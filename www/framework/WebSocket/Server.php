@@ -18,4 +18,5 @@ $server = new \Wrench\BasicServer('ws://0.0.0.0:8000/', [
 ]);
 $server->registerApplication('jstree', new \Depage\WebSocket\JsTree\Application());
 $server->registerApplication('notifications', new \Depage\WebSocket\Notifications\Application());
+$server->registerApplication('health', new \Depage\WebSocket\Healthcheck\Application());
 $server->run();
