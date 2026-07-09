@@ -2,6 +2,7 @@
 
 namespace Wrench;
 
+use Exception;
 use InvalidArgumentException;
 use Wrench\Exception\FrameException;
 use Wrench\Exception\HandshakeException;
@@ -9,6 +10,7 @@ use Wrench\Exception\SocketException;
 use Wrench\Payload\Payload;
 use Wrench\Payload\PayloadHandler;
 use Wrench\Protocol\Protocol;
+use Wrench\Socket\AbstractSocket;
 use Wrench\Socket\ClientSocket;
 use Wrench\Util\Configurable;
 
@@ -56,7 +58,7 @@ class Client extends Configurable
     /**
      * @var PayloadHandler|null
      */
-    protected $payloadHandler = null;
+    protected $payloadHandler;
 
     /**
      * Complete received payloads.
@@ -121,7 +123,7 @@ class Client extends Configurable
     public function onData(Payload $payload): void
     {
         $this->received[] = $payload;
-        if (($callback = $this->options['on_data_callback'])) {
+        if ($callback = $this->options['on_data_callback']) {
             \call_user_func($callback, $payload);
         }
     }
@@ -187,15 +189,17 @@ class Client extends Configurable
     /**
      * Receives data sent by the server.
      *
+     * @param float $waitSeconds the maximum amount of time to wait for data, in seconds
+     *
      * @return array<Payload> Payload received since the last call to receive()
      */
-    public function receive(): ?array
+    public function receive(float $waitSeconds = 0.0): ?array
     {
         if (!$this->isConnected()) {
             return null;
         }
 
-        $data = $this->socket->receive();
+        $data = $this->socket->receive(AbstractSocket::DEFAULT_RECEIVE_LENGTH, $waitSeconds);
 
         if (!$data) {
             return [];
@@ -224,7 +228,7 @@ class Client extends Configurable
 
         try {
             $this->socket->connect();
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return false;
         }
 
@@ -237,7 +241,9 @@ class Client extends Configurable
         );
 
         $this->socket->send($handshake);
-        $response = $this->socket->receive(self::MAX_HANDSHAKE_RESPONSE);
+
+        // wait for the response to arrive, since receive() does not block waiting for data
+        $response = $this->socket->receive(self::MAX_HANDSHAKE_RESPONSE, ClientSocket::TIMEOUT_SOCKET);
 
         return $this->connected =
             $this->protocol->validateResponseHandshake($response, $key);
@@ -285,5 +291,21 @@ class Client extends Configurable
         ], $options);
 
         parent::configure($options);
+    }
+
+    /**
+     * Waits for data to become available on the socket.
+     *
+     * @param float $maxSeconds the maximum amount of time to wait for data, in seconds
+     *
+     * @return ?bool returns true if data is available, false if the wait timed out, and null on error
+     */
+    public function waitForData(float $maxSeconds): ?bool
+    {
+        if (!$this->isConnected()) {
+            return null;
+        }
+
+        return $this->socket->waitForData($maxSeconds);
     }
 }

@@ -120,7 +120,7 @@ abstract class Protocol
     /**
      * Used for parsing requested path. preg_* compatible.
      */
-    public const REQUEST_LINE_REGEX = '/^GET (\S+) HTTP\/1.1$/';
+    public const REQUEST_LINE_REGEX = '/^GET (\S+) HTTP\/1\.1$/D';
 
     /**
      * printf compatible.
@@ -459,9 +459,9 @@ abstract class Protocol
         $statusCode = $this->getStatusCode($response);
 
         if (self::HTTP_SWITCHING_PROTOCOLS !== $statusCode) {
-            $errorMessage = \explode("\n", \trim($this->getBody($response)), 2)[0];
+            $errorMessage = \explode("\n", \trim($this->getBody($response), " \n\r\t\0\x0B"), 2)[0];
 
-            throw new HandshakeException(\trim(\sprintf('Expected handshake response status code %d, but received %d. %s', self::HTTP_SWITCHING_PROTOCOLS, $statusCode, $errorMessage)));
+            throw new HandshakeException(\trim(\sprintf('Expected handshake response status code %d, but received %d. %s', self::HTTP_SWITCHING_PROTOCOLS, $statusCode, $errorMessage), " \n\r\t\0\x0B"));
         }
 
         $acceptHeaderValue = $this->getHeaders($response)[self::HEADER_ACCEPT] ?? '';
@@ -510,12 +510,12 @@ abstract class Protocol
             if (2 == \count($parts)) {
                 [$name, $value] = $parts;
                 if (!isset($return[$name])) {
-                    $return[$name] = \trim($value);
+                    $return[$name] = \trim($value, " \n\r\t\0\x0B");
                 } else {
                     if (\is_array($return[$name])) {
-                        $return[$name][] = \trim($value);
+                        $return[$name][] = \trim($value, " \n\r\t\0\x0B");
                     } else {
-                        $return[$name] = [$return[$name], \trim($value)];
+                        $return[$name] = [$return[$name], \trim($value, " \n\r\t\0\x0B")];
                     }
                 }
             }
@@ -569,9 +569,8 @@ abstract class Protocol
 
         if (empty($headers[self::HEADER_ORIGIN])) {
             throw new BadRequestException('No origin header');
-        } else {
-            unset($extraHeaders[self::HEADER_ORIGIN]);
         }
+        unset($extraHeaders[self::HEADER_ORIGIN]);
 
         $origin = $headers[self::HEADER_ORIGIN];
 
@@ -579,25 +578,22 @@ abstract class Protocol
             || self::UPGRADE_VALUE != \strtolower($headers[self::HEADER_UPGRADE])
         ) {
             throw new BadRequestException('Invalid upgrade header');
-        } else {
-            unset($extraHeaders[self::HEADER_UPGRADE]);
         }
+        unset($extraHeaders[self::HEADER_UPGRADE]);
 
         if (!isset($headers[self::HEADER_CONNECTION])
             || false === \stripos($headers[self::HEADER_CONNECTION], self::CONNECTION_VALUE)
         ) {
             throw new BadRequestException('Invalid connection header');
-        } else {
-            unset($extraHeaders[self::HEADER_CONNECTION]);
         }
+        unset($extraHeaders[self::HEADER_CONNECTION]);
 
         if (!isset($headers[self::HEADER_HOST])) {
             // @todo Validate host == listening socket? Or would that break
             //        TCP proxies?
             throw new BadRequestException('No host header');
-        } else {
-            unset($extraHeaders[self::HEADER_HOST]);
         }
+        unset($extraHeaders[self::HEADER_HOST]);
 
         if (!isset($headers[self::HEADER_VERSION])) {
             throw new BadRequestException('No version header received on handshake request');
@@ -605,21 +601,19 @@ abstract class Protocol
 
         if (!$this->acceptsVersion((int) $headers[self::HEADER_VERSION])) {
             throw new BadRequestException('Unsupported version: '.$headers[self::HEADER_VERSION]);
-        } else {
-            unset($extraHeaders[self::HEADER_VERSION]);
         }
+        unset($extraHeaders[self::HEADER_VERSION]);
 
         if (!isset($headers[self::HEADER_KEY])) {
             throw new BadRequestException('No key header received');
         }
 
-        $key = \trim($headers[self::HEADER_KEY]);
+        $key = \trim($headers[self::HEADER_KEY], " \n\r\t\0\x0B");
 
         if (!$key) {
             throw new BadRequestException('Invalid key');
-        } else {
-            unset($extraHeaders[self::HEADER_KEY]);
         }
+        unset($extraHeaders[self::HEADER_KEY]);
 
         // Optional
         $protocol = null;

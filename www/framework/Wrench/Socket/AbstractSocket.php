@@ -3,7 +3,6 @@
 namespace Wrench\Socket;
 
 use InvalidArgumentException;
-use Socket;
 use Wrench\Exception\SocketException;
 use Wrench\ResourceInterface;
 use Wrench\Util\Configurable;
@@ -33,12 +32,12 @@ abstract class AbstractSocket extends Configurable implements ResourceInterface
     /**
      * @var resource|null
      */
-    protected $socket = null;
+    protected $socket;
 
     /**
      * Stream context.
      */
-    protected $context = null;
+    protected $context;
 
     /**
      * Whether the socket is connected to a server
@@ -60,7 +59,7 @@ abstract class AbstractSocket extends Configurable implements ResourceInterface
     /**
      * Gets the IP address of the socket.
      *
-     * @throws \Wrench\Exception\SocketException If the IP address cannot be obtained
+     * @throws SocketException If the IP address cannot be obtained
      *
      * @return string
      */
@@ -70,9 +69,9 @@ abstract class AbstractSocket extends Configurable implements ResourceInterface
 
         if ($name) {
             return self::getNamePart($name, self::NAME_PART_IP);
-        } else {
-            throw new SocketException('Cannot get socket IP address');
         }
+
+        throw new SocketException('Cannot get socket IP address');
     }
 
     /**
@@ -121,15 +120,15 @@ abstract class AbstractSocket extends Configurable implements ResourceInterface
             return \end($parts);
         } elseif (self::NAME_PART_IP == $part) {
             return \implode(':', \array_slice($parts, 0, -1));
-        } else {
-            throw new InvalidArgumentException('Invalid name part');
         }
+
+        throw new InvalidArgumentException('Invalid name part');
     }
 
     /**
      * Gets the port of the socket.
      *
-     * @throws \Wrench\Exception\SocketException If the port cannot be obtained
+     * @throws SocketException If the port cannot be obtained
      *
      * @return int
      */
@@ -139,9 +138,9 @@ abstract class AbstractSocket extends Configurable implements ResourceInterface
 
         if ($name) {
             return (int) self::getNamePart($name, self::NAME_PART_PORT);
-        } else {
-            throw new SocketException('Cannot get socket IP address');
         }
+
+        throw new SocketException('Cannot get socket IP address');
     }
 
     /**
@@ -161,9 +160,9 @@ abstract class AbstractSocket extends Configurable implements ResourceInterface
             }
 
             return $err;
-        } else {
-            return 'Not connected';
         }
+
+        return 'Not connected';
     }
 
     /**
@@ -226,10 +225,50 @@ abstract class AbstractSocket extends Configurable implements ResourceInterface
     }
 
     /**
-     * Receive data from the socket.
+     * Waits for data to become available on the socket.
+     *
+     * @param float $maxSeconds the maximum amount of time to wait for data, in seconds
+     *
+     * @return ?bool returns true if data is available, false if the wait timed out, and null on error
      */
-    public function receive(int $length = self::DEFAULT_RECEIVE_LENGTH): string
+    public function waitForData(float $maxSeconds): ?bool
     {
+        if (null === $this->socket) {
+            return null;
+        }
+
+        $read = [$this->socket];
+        $write = null;
+        $except = null;
+        $seconds = (int) \floor($maxSeconds);
+        $microseconds = (int) (($maxSeconds - $seconds) * 1e6);
+        $result = @\stream_select($read, $write, $except, $seconds, $microseconds);
+        if (false === $result) {
+            // An error occurred. stream_select() probably triggered an error internally.
+            return null;
+        } elseif (0 === $result) {
+            // Timeout occurred, no data available
+            return false;
+        }
+
+        // Data is available
+        return true;
+    }
+
+    /**
+     * Receive data from the socket.
+     *
+     * Data that has already arrived is drained without blocking. Pass a wait
+     * time to also wait for up to that many seconds for data to first arrive.
+     *
+     * @param float $waitSeconds the maximum amount of time to wait for data, in seconds
+     */
+    public function receive(int $length = self::DEFAULT_RECEIVE_LENGTH, float $waitSeconds = 0.0): string
+    {
+        if ($waitSeconds > 0) {
+            $this->waitForData($waitSeconds);
+        }
+
         $buffer = '';
         $metadata['unread_bytes'] = 0;
         $makeBlockingAfterRead = false;
@@ -243,8 +282,19 @@ abstract class AbstractSocket extends Configurable implements ResourceInterface
 
                     return $buffer;
                 }
-
-                $result = \fread($this->socket, $length);
+                // poll before reading so that an empty socket returns immediately instead
+                // of blocking until the socket timeout; callers that expect a reply must
+                // wait for data to arrive before reading, as the handshake does
+                $readArray = [$this->socket];
+                $writeArray = null;
+                $exceptArray = null;
+                $selectResult = \stream_select($readArray, $writeArray, $exceptArray, 0);
+                // 1 means there is data to read, false means we were unable to check if there is data to read
+                if (1 === $selectResult || false === $selectResult) {
+                    $result = \fread($this->socket, $length);
+                } else {
+                    $result = false;
+                }
 
                 if ($makeBlockingAfterRead) {
                     \stream_set_blocking($this->socket, true);
