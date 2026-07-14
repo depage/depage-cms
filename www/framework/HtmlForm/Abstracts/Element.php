@@ -17,6 +17,14 @@ use Depage\HtmlForm\Exceptions;
  *
  * The abstract element class contains the basic attributes and tools of
  * container and input elements.
+ *
+ * @method string htmlValue() Returns HTML escaped value attribute.
+ * @method array  htmlDataAttr() Returns HTML escaped dataAttr attribute.
+ * @method string htmlMarker() Returns HTML escaped marker attribute.
+ * @method string htmlLabel() Returns HTML escaped label attribute.
+ * @method string htmlWrapperAttributes() Returns HTML escaped wrapperAttributes attribute.
+ * @method string htmlErrorMessage() Returns HTML escaped errorMessage attribute.
+ * @method string htmlHelpMessage() Returns HTML escaped helpMessage attribute.
  **/
 abstract class Element
 {
@@ -90,7 +98,7 @@ abstract class Element
      * @param  object $form       parent form object reference
      * @return void
      **/
-    public function __construct(string $name, array $parameters, object|null $form)
+    public function __construct(string $name, array $parameters, ?object $form)
     {
         $this->checkName($name);
 
@@ -148,12 +156,12 @@ abstract class Element
                 return $this->$escapedAttribute;
             }
             if (!isset($this->$attribute)) {
-                trigger_error("Call to undefined method $function", E_USER_ERROR);
+                throw new Exceptions\UndefinedMethodException($function);
             }
 
             return $this->htmlEscape($this->$attribute);
         } else {
-            trigger_error("Call to undefined method $function", E_USER_ERROR);
+            throw new Exceptions\UndefinedMethodException($function);
         }
     }
     // }}}
@@ -244,7 +252,7 @@ abstract class Element
      * @param  string $type     type of log message
      * @return void
      **/
-    protected function log(string $argument, string $type = null): void
+    protected function log(string $argument, ?string $type = null): void
     {
         if (is_callable([$this->log, 'log'])) {
             $this->log->log($argument, $type);
@@ -296,6 +304,19 @@ abstract class Element
     }
     // }}}
 
+    // {{{ htmlList()
+    /**
+     * @brief   Renders HTML datalist
+     *
+     * @param  array  $options datalist
+     * @return string $htmlList   rendered HTML datalist
+     **/
+    protected function htmlList(?array $options = null, array|string|null $value = null): string
+    {
+        return "";
+    }
+    // }}}
+
     // {{{ htmlDataAttributes()
     /**
      * @brief   Returns dataAttr escaped as attribute string
@@ -306,7 +327,7 @@ abstract class Element
         if (is_array($this->dataAttr)) {
             foreach ($this->dataAttr as $key => $val) {
                 // @todo throw error when key is not plain string?
-                $attributes .= " data-$key=\"" . $this->htmlEscape($val) . "\"";
+                $attributes .= " data-$key=\"" . $this->htmlEscape((string) $val) . "\"";
             }
         }
 

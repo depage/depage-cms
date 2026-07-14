@@ -62,6 +62,15 @@ class Single extends Abstracts\Input
     protected $list = [];
 
     /**
+     * @brief Contains list of html prerendered options
+     *
+     * This is used for custom html inside of options.
+     * Indexes have to be the same as in $list.
+     * This also only works with radio and checkbox skins.
+     */
+    protected $listHtml = [];
+
+    /**
      * @brief HTML skin type (radio or select).
      **/
     protected $skin = 'radio';
@@ -81,6 +90,7 @@ class Single extends Abstracts\Input
         parent::__construct($name, $parameters, $form);
 
         $this->list = (isset($parameters['list']) && is_array($parameters['list'])) ? $parameters['list'] : [];
+        $this->listHtml = (isset($parameters['listHtml']) && is_array($parameters['listHtml'])) ? $parameters['listHtml'] : [];
     }
     // }}}
 
@@ -115,7 +125,7 @@ class Single extends Abstracts\Input
      * @param  string $value   value to be marked as selected
      * @return string $list       options-part of the HTML-select-element
      **/
-    protected function htmlList(?array $options = null, ?string $value = null): string
+    protected function htmlList(?array $options = null, array|string|null $value = null): string
     {
         if ($value == null) {
             $value      = $this->htmlValue();
@@ -142,14 +152,15 @@ class Single extends Abstracts\Input
             foreach ($options as $index => $option) {
                 // typecasted for non-associative arrays
                 $selected = ((string) $index === (string) $value) ? " checked=\"yes\"" : '';
-                $class = htmlentities("input-single-option-" . str_replace(" ", "-", $index));
+                $class = "input-single-option-" . str_replace(" ", "-", $index);
+                $optionHtml = $this->listHtml[$index] ?? "<span>{$option}</span>";
 
-                $list .= "<span>" .
-                    "<label class=\"{$class}\" title=\"{$option}\">" .
-                        "<input type=\"radio\" name=\"{$this->name}\"{$inputAttributes} value=\"{$index}\"{$selected}>" .
-                        "<span>{$option}</span>" .
-                    "</label>" .
-                "</span>";
+                $list .= "<span>"
+                    . "<label class=\"{$class}\" title=\"{$option}\">"
+                        . "<input type=\"radio\" name=\"{$this->name}\"{$inputAttributes} value=\"{$index}\"{$selected}>"
+                        . $optionHtml
+                    . "</label>"
+                . "</span>";
             }
         }
 
@@ -176,22 +187,22 @@ class Single extends Abstracts\Input
             // render HTML select
             $inputAttributes = $this->htmlInputAttributes();
 
-            return "<p {$wrapperAttributes}>" .
-                "<label>" .
-                    "<span class=\"depage-label\">{$label}{$marker}</span>" .
-                    "<select name=\"{$this->name}\"{$inputAttributes}>{$list}</select>" .
-                "</label>" .
-                $errorMessage .
-                $helpMessage .
-            "</p>\n";
+            return "<p {$wrapperAttributes}>"
+                . "<label>"
+                    . "<span class=\"depage-label\">{$label}{$marker}</span>"
+                    . "<select name=\"{$this->name}\"{$inputAttributes}>{$list}</select>"
+                . "</label>"
+                . $errorMessage
+                . $helpMessage
+            . "</p>\n";
         } else {
             // render HTML radio button list
-            return "<p {$wrapperAttributes}>" .
-                "<span class=\"depage-label\">{$label}{$marker}</span>" .
-                "<span>{$list}</span>" .
-                $errorMessage .
-                $helpMessage .
-            "</p>\n";
+            return "<p {$wrapperAttributes}>"
+                . "<span class=\"depage-label\">{$label}{$marker}</span>"
+                . "<span>{$list}</span>"
+                . $errorMessage
+                . $helpMessage
+            . "</p>\n";
         }
     }
     // }}}

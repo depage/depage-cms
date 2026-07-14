@@ -52,7 +52,7 @@ class Country extends Single
      *
      * @param array $iso list/subset of country iso codes to filter
      **/
-    public static function getCountries(array|string $iso = null): array
+    public static function getCountries(array|string|null $iso = null): array
     {
         $countries = [
             'ad' => _("Andorra"),
@@ -298,7 +298,7 @@ class Country extends Single
         // return a subset
         if ($iso !== null) {
             if (is_array($iso)) {
-                return array_intersect_key($countries, $iso);
+                return array_intersect_key($countries, array_fill_keys($iso, true));
             } else {
                 return isset($countries[$iso]) ? $countries[$iso] : '';
             }

@@ -14,7 +14,7 @@
 
 // {{{ namespace
 /**
- * @namespace depage
+ * @namespace Depage
  * @brief depage cms
  *
  * @namespace Depage::HtmlForm
@@ -121,6 +121,8 @@ spl_autoload_register(__NAMESPACE__ . '\autoload');
  *
  * You can find a list of available input-class in @link Depage::HtmlForm::Elements
  * elements@endlink.
+ *
+ * @see Depage::HtmlForm::Elements
  **/
 class HtmlForm extends Abstracts\Container
 {
@@ -906,7 +908,7 @@ class HtmlForm extends Abstracts\Container
             $this->valid = $this->valid && $hasCorrectToken;
 
             if (!$hasCorrectToken) {
-                http_response_code(400);
+                $this->httpResponseCode(400);
                 $this->log("HtmlForm: Requst invalid because of incorrect CsrfToken");
             }
         }
@@ -982,6 +984,17 @@ class HtmlForm extends Abstracts\Container
     {
         header('Location: ' . $url);
         die("Tried to redirect you to <a href=\"$url\">$url</a>");
+    }
+    // }}}
+    // {{{ httpResponseCode()
+    /**
+     * @brief Sets the HTTP response code.
+     *
+     * @param int $code http response code
+     */
+    public function httpResponseCode(int $code): void
+    {
+        http_response_code($code);
     }
     // }}}
     // {{{ clearSession()

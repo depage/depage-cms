@@ -65,6 +65,15 @@ class Multiple extends Abstracts\Input
     protected $list = [];
 
     /**
+     * @brief Contains list of html prerendered options
+     *
+     * This is used for custom html inside of options.
+     * Indexes have to be the same as in $list.
+     * This also only works with radio and checkbox skins.
+     */
+    protected $listHtml = [];
+
+    /**
      * @brief HTML skin type (checkbox or select).
      **/
     protected $skin = 'radio';
@@ -88,6 +97,7 @@ class Multiple extends Abstracts\Input
         parent::__construct($name, $parameters, $form);
 
         $this->list = (isset($parameters['list']) && is_array($parameters['list'])) ? $parameters['list'] : [];
+        $this->listHtml = (isset($parameters['listHtml']) && is_array($parameters['listHtml'])) ? $parameters['listHtml'] : [];
         $this->maxItems = isset($parameters['maxItems']) ? $parameters['maxItems'] : $this->maxItems;
     }
     // }}}
@@ -127,7 +137,7 @@ class Multiple extends Abstracts\Input
      *
      * @see     __toString()
      **/
-    protected function htmlList(array|null $options = null, array|null $value = null): string
+    protected function htmlList(?array $options = null, array|string|null $value = null): string
     {
         if ($value == null) {
             $value      = $this->htmlValue();
@@ -155,13 +165,15 @@ class Multiple extends Abstracts\Input
 
             foreach ($options as $index => $option) {
                 $selected = (is_array($value) && (in_array($index, $value))) ? " checked=\"yes\"" : '';
+                $class = "input-multiple-option-" . str_replace(" ", "-", $index);
+                $optionHtml = $this->listHtml[$index] ?? "<span>{$option}</span>";
 
-                $list .= "<span>" .
-                    "<label>" .
-                        "<input type=\"checkbox\" name=\"{$this->name}[]\"{$inputAttributes} value=\"{$index}\"{$selected}>" .
-                        "<span>{$option}</span>" .
-                    "</label>" .
-                "</span>";
+                $list .= "<span>"
+                    . "<label class=\"{$class}\" title=\"{$option}\">"
+                        . "<input type=\"checkbox\" name=\"{$this->name}[]\"{$inputAttributes} value=\"{$index}\"{$selected}>"
+                        . $optionHtml
+                    . "</label>"
+                . "</span>";
             }
         }
 
@@ -191,22 +203,22 @@ class Multiple extends Abstracts\Input
 
             $inputAttributes = $this->htmlInputAttributes();
 
-            return "<p {$wrapperAttributes}>" .
-                "<label>" .
-                    "<span class=\"depage-label\">{$label}{$marker}</span>" .
-                    "<select multiple name=\"{$this->name}[]\"{$inputAttributes}>{$list}</select>" .
-                "</label>" .
-                $errorMessage .
-                $helpMessage .
-            "</p>\n";
+            return "<p {$wrapperAttributes}>"
+                . "<label>"
+                    . "<span class=\"depage-label\">{$label}{$marker}</span>"
+                    . "<select multiple name=\"{$this->name}[]\"{$inputAttributes}>{$list}</select>"
+                . "</label>"
+                . $errorMessage
+                . $helpMessage
+            . "</p>\n";
         } else {
             // render HTML checkbox
-            return "<p {$wrapperAttributes}>" .
-                "<span class=\"depage-label\">{$label}{$marker}</span>" .
-                "<span>{$list}</span>" .
-                $errorMessage .
-                $helpMessage .
-            "</p>\n";
+            return "<p {$wrapperAttributes}>"
+                . "<span class=\"depage-label\">{$label}{$marker}</span>"
+                . "<span>{$list}</span>"
+                . $errorMessage
+                . $helpMessage
+            . "</p>\n";
         }
     }
     // }}}

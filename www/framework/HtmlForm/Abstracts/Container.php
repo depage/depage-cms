@@ -18,6 +18,43 @@ use Depage\HtmlForm\Exceptions;
  *
  * The abstract container class contains the base for container type elements.
  * ie. htmlform, fieldset and step
+ *
+ * @subsection  MagicMethods Magic Methods
+ *
+ * The container class implements various magic methods to add new input elements
+ *
+ * @see Depage::HtmlForm::Elements
+ *
+ * @method Element addAddress($name, $parameters = array()) Adds a new address fieldset to the container.
+ * @method Element addBoolean($name, $parameters = array()) Adds a new boolean input element to the container.
+ * @method Element addButton($name, $parameters = array()) Adds a new button input element to the container.
+ * @method Element addCaptcha($name, $parameters = array()) Adds a new captcha input element to the container.
+ * @method Element addColor($name, $parameters = array()) Adds a new color input element to the container.
+ * @method Element addCreditcard($name, $parameters = array()) Adds a new creditcard fieldset to the container.
+ * @method Element addDate($name, $parameters = array()) Adds a new date input element to the container.
+ * @method Element addDatetime($name, $parameters = array()) Adds a new datetime input element to the container.
+ * @method Element addEmail($name, $parameters = array()) Adds a new email input element to the container.
+ * @method Element addFieldset($name, $parameters = array()) Adds a new fieldset container to the container.
+ * @method Element addFile($name, $parameters = array()) Adds a new file input element to the container.
+ * @method Element addHidden($name, $parameters = array()) Adds a new hidden input element to the container.
+ * @method Element addMonth($name, $parameters = array()) Adds a new month input element to the container.
+ * @method Element addMultiple($name, $parameters = array()) Adds a new multiple
+ * @method Element addNumber($name, $parameters = array()) Adds a new number input element to the container.
+ * @method Element addPassword($name, $parameters = array()) Adds a new password
+ * @method Element addPlaceholder($name, $parameters = array()) Adds a new placeholder input element to the container.
+ * @method Element addPlaceholderMultiple($name, $parameters = array()) Adds a new multiple placeholder input element to the container
+ * @method Element addRange($name, $parameters = array()) Adds a new range input element to the container.
+ * @method Element addRichtext($name, $parameters = array()) Adds a new richtext input element to the container.
+ * @method Element addSearch($name, $parameters = array()) Adds a new search input element to the container.
+ * @method Element addSingle($name, $parameters = array()) Adds a new single choice input element to the container.
+ * @method Element addState($name, $parameters = array()) Adds a new state input element to the container.
+ * @method Element addStep($name, $parameters = array()) Adds a new step container
+ * @method Element addTel($name, $parameters = array()) Adds a new telephone input element to the container.
+ * @method Element addText($name, $parameters = array()) Adds a new text input element to the container.
+ * @method Element addTextarea($name, $parameters = array()) Adds a new textarea input
+ * @method Element addTime($name, $parameters = array()) Adds a new time input element to the container.
+ * @method Element addUrl($name, $parameters = array()) Adds a new URL input element to the container.
+ * @method Element addWeek($name, $parameters = array()) Adds a new week input element to the container.
  **/
 abstract class Container extends Element
 {
