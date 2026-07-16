@@ -1,13 +1,13 @@
 $toolbarHeight: 36px;
 $infoHeight: 18px;
-$treeWidth: 255px;
+$treeWidth: 260px;
 $editWidth: 3 * $treeWidth;
 
 $breakMobile: 3 * $treeWidth;
 $breakTablet: 1200px;
 
-$touchScale: 1.4;
-$touchScaleTree: 1.4;
+$touchScale: 1.3;
+$touchScaleTree: 1.3;
 $touchScaleFont: 1.2;
 
 $baseColor: #ccc8c4;
@@ -76,18 +76,20 @@ html {
     @media (pointer:coarse) {
         --touch-scale: #{$touchScale};
         --touch-scale-font: #{$touchScaleFont};
+        --tree-width: #{1.25 * $treeWidth};
     }
     @media screen and (min-width: 1800px) {
-        --edit-width: #{$editWidth + 0.5 * $treeWidth};
+        --tree-width: #{1.125 * $treeWidth};
+        --edit-width: calc(#{$editWidth} + 0.5 * #{$treeWidth});
     }
     @media screen and (min-width: 2100px) {
-        --edit-width: #{$editWidth + 1 * $treeWidth};
+        --edit-width: calc(#{$editWidth} + 1 * #{$treeWidth});
     }
     @media screen and (max-width: 1340px) {
-        --edit-width: #{$editWidth - 0.5 * $treeWidth};
+        --edit-width: calc(#{$editWidth} - 0.5 * #{$treeWidth});
     }
     @media screen and (max-width: #{$breakMobile + 0.5 * $treeWidth}) {
-        --edit-width: #{$editWidth - 1 * $treeWidth};
+        --edit-width: calc(#{$editWidth} - 1 * #{$treeWidth});
     }
 }
 
