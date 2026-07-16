@@ -427,19 +427,14 @@
     > span.depage-label + span {
         @include radius($cornerRadius);
         display: inline-block;
-        background: $backgroundColor;
         margin-top: 10px;
         cursor: pointer;
+        max-width: 100%;
+        @include radius($cornerRadius);
+        overflow: hidden;
     }
     > span > span {
-        &:first-child input[type="radio"] + span {
-            @include radius($cornerRadius, "top", "left");
-            @include radius($cornerRadius, "bottom", "left");
-        }
-        &:last-child input[type="radio"] + span {
-            @include radius($cornerRadius, "top", "right");
-            @include radius($cornerRadius, "bottom", "right");
-        }
+        display: inline-block;
     }
     input[type="radio"] {
         position: absolute;
@@ -449,8 +444,11 @@
     }
     input[type="radio"] + span {
         display: inline-block;
-        padding: 3px 12px !important;
+        padding: 3px 15px !important;
         color: $textBaseColor;
+        background: $backgroundColor;
+        @include radius($cornerRadius);
+        margin-left: - $cornerRadius;
 
         &::before {
             display: none !important;
@@ -460,14 +458,17 @@
         background: darken($backgroundColor, 35%);
         color: $textBrightColor;
         @include box-shadow(inset 0 0 4px 0 rgba(0, 0, 0, 0.7));
+        z-index: 10;
     }
     input[type="radio"]:disabled + span {
     }
     input[type="radio"]:focus + span {
         @include box-shadow(inset 0 0 0 1px $selectionBackgroundColor);
+        z-index: 10;
     }
     input[type="radio"]:checked:focus + span {
         @include box-shadow(inset 0 0 4px 1px $selectionBackgroundColor);
+        z-index: 10;
     }
     label {
         cursor: pointer;
