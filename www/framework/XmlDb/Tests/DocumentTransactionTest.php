@@ -12,13 +12,13 @@ class DocumentTransactionTest extends XmlDbTestCase
     protected $namespaces;
     // }}}
     // {{{ setUp
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->cache = \Depage\Cache\Cache::factory('xmlDb', ['disposition' => 'uncached']);
 
-        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, [
+        $this->xmlDb = new XmlDbTestClass($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, [
             'root',
             'child',
         ]);
@@ -198,12 +198,12 @@ class DocumentTransactionTest extends XmlDbTestCase
     // {{{ testSave
     public function testSave()
     {
-        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">' .
-            '<child>' .
-                '<child/>' .
-            '</child>' .
-            '<child/>' .
-        '</root>';
+        $xmlStr = '<root xmlns:db="http://cms.depagecms.net/ns/database">'
+            . '<child>'
+                . '<child/>'
+            . '</child>'
+            . '<child/>'
+        . '</root>';
 
         $xml = $this->generateDomDocument($xmlStr);
         $this->doc->save($xml);

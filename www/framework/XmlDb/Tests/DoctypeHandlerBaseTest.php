@@ -16,13 +16,13 @@ class DoctypeHandlerBaseTest extends XmlDbTestCase
     // }}}
 
     // {{{ setUp
-    protected function setUp():void
+    protected function setUp(): void
     {
         parent::setUp();
 
         $this->cache = \Depage\Cache\Cache::factory('xmlDb', ['disposition' => 'uncached']);
 
-        $this->xmlDb = new \Depage\XmlDb\XmlDb($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, [
+        $this->xmlDb = new XmlDbTestClass($this->pdo->prefix . '_proj_test', $this->pdo, $this->cache, [
             'root',
             'child',
         ]);

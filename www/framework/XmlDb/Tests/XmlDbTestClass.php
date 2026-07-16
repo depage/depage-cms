@@ -18,6 +18,13 @@ class XmlDbTestClass extends \Depage\XmlDb\XmlDb
     {
         return parent::cleanOperator($operator);
     }
+
+    // {{{ beginPdoTransaction
+    protected function beginPdoTransaction() {}
+    // }}}
+    // {{{ commitPdoTransaction
+    protected function commitPdoTransaction() {}
+    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */

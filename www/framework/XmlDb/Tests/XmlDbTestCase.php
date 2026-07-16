@@ -11,31 +11,24 @@ class XmlDbTestCase extends \PHPUnit\Framework\TestCase
     // }}}
 
     // {{{ setUp
-    protected function setUp():void {
-        $this->getConnection();
-        $this->setForeignKeyChecks(false);
-        parent::setUp();
-        exec("mysql -u test_db_user --password=test_db_password test_db < Tests/dataset.sql");
-        $this->setForeignKeyChecks(true);
-    }
-    // }}}
-    // {{{ tearTown
-    protected function tearTown():void {
-        $this->pdo = null;
-    }
-    // }}}
-    // {{{ getSetUpOperation
-    /**
-     * From https://gist.github.com/mlively/1319731
-     */
-    public function getSetUpOperation()
+    protected function setUp(): void
     {
-        return new \PHPUnit_Extensions_Database_Operation_Composite(
-            [
-                new PHPUnit_Extensions_Database_Operation_MySQL55Truncate(false),
-                \PHPUnit_Extensions_Database_Operation_Factory::INSERT(),
-            ]
-        );
+        parent::setUp();
+        //self::prepareDatabase();
+
+        $this->pdo = null;
+
+        self::getConnection();
+
+        $this->pdo->beginTransaction();
+    }
+    // }}}
+    // {{{ tearDown
+    protected function tearDown(): void
+    {
+        $this->pdo->rollBack();
+
+        parent::tearDown();
     }
     // }}}
 
@@ -56,7 +49,8 @@ class XmlDbTestCase extends \PHPUnit\Framework\TestCase
     // }}}
 
     // {{{ setForeignKeyChecks
-    protected function setForeignKeyChecks($enable) {
+    protected function setForeignKeyChecks($enable)
+    {
         $setString = 'SET FOREIGN_KEY_CHECKS=';
         $setString .= ($enable) ? '1;' : '0;';
 
@@ -70,72 +64,44 @@ class XmlDbTestCase extends \PHPUnit\Framework\TestCase
         $pdo = new \Depage\Db\Pdo(
             $GLOBALS['DB_DSN'],
             $GLOBALS['DB_USER'],
-            $GLOBALS['DB_PASSWD']
+            $GLOBALS['DB_PASSWD'],
+            [
+                'prefix' => 'xmldb',
+                \PDO::ATTR_PERSISTENT => true,
+            ]
         );
+        $pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
+
+        $tablesToDrop = [
+            '_auth_user',
+            '_proj_test_xmldocs',
+            '_proj_test_xmltree',
+            '_proj_test_history',
+            '_proj_test_xmldeltaupdates',
+        ];
+        foreach ($tablesToDrop as $tableName) {
+            $pdo->exec('DROP TABLE IF EXISTS ' . $pdo->prefix . $tableName . ';');
+        }
 
         $schema = new \Depage\Db\Schema($pdo);
+
         $schema->setReplace(
-            function ($name)
-            {
+            function ($name) {
                 return 'xmldb_proj_test' . $name;
             }
         );
         $schema->loadGlob(__DIR__ . '/../Sql/*.sql');
-
-        $pdo->exec('SET FOREIGN_KEY_CHECKS=0;');
         $schema->update();
-        $pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
-    }
-    // }}}
 
-    // {{{ tableExists
-    protected function tableExists($tableName)
-    {
-        $exists = false;
-
-        try {
-            $this->pdo->query('SELECT 1 FROM ' . $tableName);
-            $exists = true;
-        } catch (\PDOException $e) {
-            // only catch "table doesn't exist" exception
-            if (!preg_match("/SQLSTATE\\[42S02\\]/", $e->getMessage())) {
-                throw $e;
+        $schema->setReplace(
+            function ($name) {
+                return 'xmldb' . $name;
             }
-        }
+        );
+        $schema->loadGlob(__DIR__ . '/*.sql');
+        $schema->update();
 
-        return $exists;
-    }
-    // }}}
-    // {{{ dropTable
-    protected function dropTable($tableName)
-    {
-        $this->setForeignKeyChecks(false);
-        $this->pdo->query('DROP TABLE IF EXISTS ' . $tableName);
-        $this->setForeignKeyChecks(true);
-        $this->assertFalse($this->tableExists($tableName));
-    }
-    // }}}
-    // {{{ dropTables
-    protected function dropTables($tableNames)
-    {
-        foreach($tableNames as $tableName) {
-            $this->dropTable($tableName);
-        }
-    }
-    // }}}
-    // {{{ insertDummyDataIntoTable
-    protected function insertDummyDataIntoTable($tableName)
-    {
-        $statement = $this->pdo->query('DESCRIBE ' . $tableName . ';');
-        $statement->execute();
-        while ($row = $statement->fetch()) {
-            $values[] = '" "';
-        }
-
-        $this->setForeignKeyChecks(false);
-        $rows = $this->pdo->exec('INSERT INTO ' . $tableName . ' VALUES (' . implode(',', $values) . ');');
-        $this->assertEquals(1, $rows);
-        $this->setForeignKeyChecks(true);
+        $pdo->exec('SET FOREIGN_KEY_CHECKS=1;');
     }
     // }}}
 
@@ -153,7 +119,7 @@ class XmlDbTestCase extends \PHPUnit\Framework\TestCase
     // {{{ removeAttribute
     protected function removeAttribute($attribute, $xmlString)
     {
-        $regex = ' ' . preg_quote($attribute .'=') . '"[^"]*"';
+        $regex = ' ' . preg_quote($attribute . '=') . '"[^"]*"';
         $result = preg_replace('#' . $regex . '#', '', $xmlString);
 
         return $result;

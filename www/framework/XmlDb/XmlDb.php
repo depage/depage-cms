@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    modules/xmlDb/xmlDb.php
  *
@@ -49,7 +50,6 @@ class XmlDb implements XmlGetter
         $this->table_prefix = $table_prefix;
         $this->table_docs = $table_prefix . '_xmldocs';
         $this->table_xml = $table_prefix . '_xmltree';
-        $this->table_nodetypes = $table_prefix . '_xmlnodetypes';
     }
     // }}}
 
@@ -314,7 +314,7 @@ class XmlDb implements XmlGetter
 
         foreach ($xpathElements as $level => $element) {
             $element[] = '';
-            list(,$divider, $ns, $name, $condition) = $element;
+            [, $divider, $ns, $name, $condition] = $element;
 
             if ($level == 0) {
                 $tableSql[] = "SELECT l$levels.id FROM";
@@ -340,12 +340,12 @@ class XmlDb implements XmlGetter
 
             if ($hasPosition) {
                 $fallback = true;
-            } else if ($condition != '') {
+            } elseif ($condition != '') {
                 if ($attributes = $this->parseAttributes($condition)) {
                     // fetch by simple attributes: "ns:name[@attr1] ..."
                     $attributeCond = '';
                     foreach ($attributes as $i => $attribute) {
-                        list($name, $operator, $value, $bool) = $attribute;
+                        [$name, $operator, $value, $bool] = $attribute;
 
                         if ($bool) {
                             $attributeCond .= $this->cleanOperator($bool);
@@ -354,7 +354,7 @@ class XmlDb implements XmlGetter
                         if ($name == 'db:id') {
                             $attributeCond .= " l$level.id {$this->cleanOperator($operator)} :attr{$level}n{$i} ";
                             $params["attr{$level}n{$i}"] = $value;
-                        } else if ($operator == '=' || $operator == '') {
+                        } elseif ($operator == '=' || $operator == '') {
                             $attributeCond .= " l$level.value REGEXP :attr{$level}n{$i} ";
                             $regExValue = (is_null($value)) ? '.*' : $value;
                             $params["attr{$level}n{$i}"] = "(^| )$name=\"$regExValue\"( |$)";
@@ -514,7 +514,7 @@ class XmlDb implements XmlGetter
 
         $first = true;
         foreach ($conditions as $condition) {
-            $bool = isset($condition[1]) ? $condition[1] : null;
+            $bool = $condition[1] ?? null;
 
             if ($first == $bool) {
                 throw new XmlDbException('Invalid XPath syntax');
@@ -526,7 +526,7 @@ class XmlDb implements XmlGetter
 
             $conditionArray[] = [
                 $condition[2],
-                isset($condition[3]) ? $condition[3] : null,
+                $condition[3] ?? null,
                 (isset($condition[4]) && $condition[4] != '') ? $strings[$condition[4]] : null,
                 $bool,
             ];
@@ -659,8 +659,7 @@ class XmlDb implements XmlGetter
 
             $this->doc_ids = array_filter(
                 $this->doc_ids,
-                function($id) use ($doc_id)
-                {
+                function ($id) use ($doc_id) {
                     return $id != $doc_id;
                 }
             );
@@ -688,8 +687,7 @@ class XmlDb implements XmlGetter
         $tablePrefix = $this->table_prefix;
 
         $schema->setReplace(
-            function ($tableName) use ($pdoPrefix, $tablePrefix)
-            {
+            function ($tableName) use ($pdoPrefix, $tablePrefix) {
                 if ($tableName == '_auth_user') {
                     return $pdoPrefix . $tableName;
                 } else {
@@ -714,9 +712,7 @@ class XmlDb implements XmlGetter
     public function clearTables()
     {
         $this->pdo->query("DELETE FROM `{$this->table_docs}`;");
-        $this->pdo->query("DELETE FROM `{$this->table_nodetypes}`;");
-        $this->pdo->query("ALTER TABLE `{$this->table_docs}` AUTO_INCREMENT = 1;");
-        $this->pdo->query("ALTER TABLE `{$this->table_nodetypes}` AUTO_INCREMENT = 1;");
+        //$this->pdo->query("ALTER TABLE `{$this->table_docs}` AUTO_INCREMENT = 1;");
 
         $this->doc_ids = [];
     }
@@ -734,7 +730,7 @@ class XmlDb implements XmlGetter
     public function beginTransactionNonAltering()
     {
         if ($this->transactions == 0) {
-            $this->pdo->beginTransaction();
+            $this->beginPdoTransaction();
         }
         $this->transactions++;
 
@@ -748,13 +744,26 @@ class XmlDb implements XmlGetter
         $this->transactions--;
 
         if ($this->transactions == 0) {
-            $this->pdo->commit();
+            $this->commitPdoTransaction();
 
             $altered = $this->alteringTransaction;
             $this->alteringTransaction = false;
         }
 
         return $altered;
+    }
+    // }}}
+
+    // {{{ beginPdoTransaction
+    protected function beginPdoTransaction()
+    {
+        $this->pdo->beginTransaction();
+    }
+    // }}}
+    // {{{ commitPdoTransaction
+    protected function commitPdoTransaction()
+    {
+        $this->pdo->commit();
     }
     // }}}
 }
