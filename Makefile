@@ -42,7 +42,7 @@ clean:
 	$(RM) Docs/depage-docu/ Docs/html/
 
 $(CSSDIR)%.css: $(SASSDIR)%.scss $(SASSDIR)modules/*.scss www/framework/HtmlForm/lib/sass/*.scss
-	sassc --style compressed $< $@
+	sass -q --style compressed $< $@
 
 sassc: $(patsubst %.scss,$(CSSDIR)%.css, $(notdir $(wildcard $(SASSDIR)*.scss)))
 

@@ -435,6 +435,13 @@
     }
     > span > span {
         display: inline-block;
+        margin-left: -1.5 * $cornerRadius;
+
+        &:first-child {
+            margin-left: 0;
+        }
+        label span {
+        }
     }
     input[type="radio"] {
         position: absolute;
@@ -444,11 +451,10 @@
     }
     input[type="radio"] + span {
         display: inline-block;
-        padding: 3px 15px !important;
+        padding: 3px calc(#{1.5 * $cornerRadius} + 10px) !important;
         color: $textBaseColor;
         background: $backgroundColor;
         @include radius($cornerRadius);
-        margin-left: - $cornerRadius;
 
         &::before {
             display: none !important;
@@ -459,6 +465,7 @@
         color: $textBrightColor;
         @include box-shadow(inset 0 0 4px 0 rgba(0, 0, 0, 0.7));
         z-index: 10;
+        padding: 3px 15px !important;
     }
     input[type="radio"]:disabled + span {
     }
@@ -491,16 +498,17 @@
 // }}}
 // {{{ .input-single.edit-type with icons
 @mixin select-icon-only {
-        > span {
-            text-indent: -1000em;
-            width: 36px;
-            height: 32px;
-            padding: 0;
+    > span {
+        text-indent: -1000em;
+        width: 46px;
+        height: 32px;
+        padding: 0;
 
-            &::after {
-                @include icon-base();
-            }
+        &::after {
+            @include icon-base();
+            transform: translateX(7px);
         }
+    }
 }
 .depage-form .input-single.edit-type {
     label.input-single-option-contain,
