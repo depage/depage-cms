@@ -3,7 +3,7 @@ Changelog     {#changelog}
 
 [TOC]
 
-Version 2.6   {#v2-6}
+Version 2.7   {#v2-7}
 ===========
 
 **User Interface Highlights**
@@ -21,6 +21,24 @@ Version 2.6   {#v2-6}
 - New mobile interface
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
+v2.7.0 / 19.07.2026      {#v2-7-0}
+-------------------
+
+**Backend**
+- updated websocket server to support sending updates directly to all connected clients
+- added basic health check for websocket server
+- enhanced graphics providers
+- enhanced htmlform library
+- updated dependencies for better php 8.4 support
+
+**Frontend**
+- added new edit:options doc-property
+- added better scroll handling in preview when selected and updating elements in document tree
+- slight layout enhancements
+
+
+Version 2.6   {#v2-6}
+===========
 
 v2.6.0 / 30.07.2024      {#v2-6-0}
 -------------------
@@ -36,6 +54,9 @@ v2.6.0 / 30.07.2024      {#v2-6-0}
 - added ability to duplicate newsletters
 - various small UI enhancements
 
+
+Version 2.4   {#v2-4}
+===========
 
 v2.5.1 / 15.04.2024      {#v2-5-1}
 -------------------
@@ -69,6 +90,9 @@ v2.5.0 / 25.03.2024      {#v2-5-0}
 - enhanced doc-properties for files
 
 
+Version 2.4   {#v2-4}
+===========
+
 v2.4.0 / 29.05.2023      {#v2-4-0}
 -------------------
 
@@ -84,6 +108,9 @@ v2.4.0 / 29.05.2023      {#v2-4-0}
 - added option to add additional manual content to newsletters
 - updated options to edit user permissions for projects
 
+
+Version 2.3   {#v2-3}
+===========
 
 v2.3.1 / 08.08.2022      {#v2-3-1}
 -------------------
@@ -108,6 +135,9 @@ v2.3.0 / 29.03.2022      {#v2-3-0}
 - added new mobile layout for small screens like mobile phones and touch screens
 
 
+Version 2.2   {#v2-2}
+===========
+
 v2.2.0 / 19.11.2021      {#v2-2-0}
 -------------------
 
@@ -126,6 +156,9 @@ v2.2.0 / 19.11.2021      {#v2-2-0}
 - added live-preview when editing color schemes
 - fixed various smaller bugs
 
+
+Version 2.1   {#v2-1}
+===========
 
 v2.1.14 / 29.04.2021      {#v2-1-14}
 -------------------
@@ -288,6 +321,9 @@ v2.1.0 / 22.01.2020      {#v2-1-0}
 - added integration of the depage-analytics plugin
 - fixed bug where user for new pages was not assigned correctly
 
+
+Version 2.0   {#v2-0}
+===========
 
 v2.0.9 / 25.11.2019      {#v2-0-9}
 -------------------

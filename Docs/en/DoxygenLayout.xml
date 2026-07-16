@@ -22,6 +22,7 @@
         <tab type="user" url="@ref admin-tasks" title="Tasks" />
         -->
     </tab>
+    <tab type="user" url="@ref changelog" title="Changelog" />
 
     <tab type="examples" visible="no" title="Examples" intro=""/>
 

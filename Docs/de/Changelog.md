@@ -3,7 +3,7 @@ Versionshistorie     {#changelog}
 
 [TOC]
 
-Version 2.6   {#v2-6}
+Version 2.7   {#v2-7}
 ===========
 
 **User Interface Highlights**
@@ -21,6 +21,24 @@ Version 2.6   {#v2-6}
 - Neues Interface für kleine Screens
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
+v2.7.0 / 19.07.2026      {#v2-7-0}
+-------------------
+
+**Backend**
+- WebSocket-Server aktualisiert, um Updates direkt an alle verbundenen Clients zu senden
+- Einfacher Health Check für den WebSocket-Server hinzugefügt
+- Grafik-Provider verbessert
+- HTML-Formular-Bibliothek erweitert
+- Abhängigkeiten für eine bessere PHP-8.4-Unterstützung aktualisiert 
+
+**Frontend**
+- Neue doc-Eigenschaft „edit:options“ hinzugefügt
+- Verbessertes Scroll-Handling in der Vorschau beim Auswählen und Aktualisieren von Elementen im Dokumentenbaum
+- Leichte Layout-Verbesserungen
+
+
+Version 2.6   {#v2-6}
+===========
 
 v2.6.0 / 30.07.2024      {#v2-6-0}
 -------------------
@@ -36,6 +54,9 @@ v2.6.0 / 30.07.2024      {#v2-6-0}
 - Option hinzugefügt, Newsletter zu duplizieren
 - Verschiedene kleine UI-Verbesserungen
 
+
+Version 2.5   {#v2-5}
+===========
 
 v2.5.1 / 15.04.2024      {#v2-5-1}
 -------------------
@@ -68,6 +89,9 @@ v2.5.0 / 25.03.2024      {#v2-5-0}
 - Verbesserte Textverarbeitung und Autospeichern
 - Verbesserte Dokumenteigenschaften für Dateien
 
+Version 2.4   {#v2-4}
+===========
+
 v2.4.0 / 29.05.2023      {#v2-4-0}
 -------------------
 
@@ -83,6 +107,9 @@ v2.4.0 / 29.05.2023      {#v2-4-0}
 - Neue Funktion zur Erstellung von Newslettern mit zusätzlichen Inhalt hinzugefügt
 - Neue Funktion zur Bearbeitung der Benutzerrechte von Projekten hinzugefügt
 
+
+Version 2.3   {#v2-3}
+===========
 
 v2.3.1 / 08.08.2022      {#v2-3-1}
 -------------------
@@ -107,6 +134,9 @@ v2.3.0 / 29.03.2022      {#v2-3-0}
 - Neues Interface für kleiner Bildschirme wie Mobiltelefone und Touch Screens hinzugefügt
 
 
+Version 2.2   {#v2-2}
+===========
+
 v2.2.0 / 19.11.2021      {#v2-2-0}
 -------------------
 
@@ -125,6 +155,9 @@ v2.2.0 / 19.11.2021      {#v2-2-0}
 - Live-Vorschau beim Bearbeiten von Farbschemata hinzugefügt
 - Verschiedene kleinere Bugs behoben
 
+
+Version 2.1   {#v2-1}
+===========
 
 v2.1.14 / 29.04.2021      {#v2-1-14}
 -------------------
@@ -287,6 +320,9 @@ v2.1.0 / 22.01.2020      {#v2-1-0}
 - Integration des depage-analytics Plugins hinzugefügt
 - Fehler bei der Zuweisung von Benutzern beim Erstellung neuer Seiten behoben
 
+
+Version 2.0   {#v2-0}
+===========
 
 v2.0.9 / 25.11.2019      {#v2-0-9}
 -------------------
