@@ -158,6 +158,7 @@ class XsltFunctions
      * @return    $xml (xml) file infos of files
      */
     public function filesInFolder($folderId) {
+        $folderId = (int) $folderId;
         $files = $this->fl->getFilesInFolder($folderId);
 
         $doc = new \DOMDocument();
