@@ -390,6 +390,9 @@ class Main extends Base {
         \Depage\Notifications\Notification::updateSchema($this->pdo);
 
         $this->authUser = $this->auth->enforce();
+        if (!$this->authUser || !$this->authUser->canEditAllProjects()) {
+            throw new \Depage\Auth\PermissionDeniedException("You are not allowed to update all projects.");
+        }
 
         $projects = \Depage\Cms\Project::loadAll($this->pdo, $this->xmldbCache);
 
