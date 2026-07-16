@@ -615,6 +615,22 @@
     </xsl:template>
     <!-- }}} -->
 
+    <!-- {{{ header preload -->
+    <xsl:template name="header_preload">
+        <xsl:param name="file" />
+
+        <xsl:variable name="fileref" select="concat('libref://', $file)" />
+        <xsl:variable name="ext" select="dp:fileinfo($fileref, false())/file/@extension" />
+
+        <link
+            rel="preload"
+            as="font"
+            crossorigin="anonymous">
+            <xsl:attribute name="href"><xsl:value-of select="dp:getLibRef($fileref)"/></xsl:attribute>
+            <xsl:attribute name="type">font/<xsl:value-of select="$ext"/></xsl:attribute>
+        </link>
+    </xsl:template>
+    <!-- }}} -->
     <!-- {{{ header include css -->
     <xsl:template name="header_include_css">
         <xsl:param name="file" />
@@ -650,6 +666,14 @@
     <xsl:template match="@db:id" mode="highlight">
         <xsl:if test="not($depageIsLive)">
             <xsl:attribute name="data-db-id"><xsl:value-of select="." /></xsl:attribute>
+        </xsl:if>
+    </xsl:template>
+    <!-- }}} -->
+    <!-- {{{ highlight-only -->
+    <xsl:template match="@db:id" mode="highlight-only">
+        <xsl:if test="not($depageIsLive)">
+            <xsl:attribute name="data-db-id"><xsl:value-of select="." /></xsl:attribute>
+            <xsl:attribute name="data-db-full-reload">true</xsl:attribute>
         </xsl:if>
     </xsl:template>
     <!-- }}} -->
@@ -750,11 +774,17 @@
     <!-- }}} -->
     <!-- {{{ nav//@href subdoc -->
     <xsl:template match="nav//@href" mode="subdoc">
+        <xsl:param name="pageId" />
+        <xsl:param name="class" />
+        <xsl:variable name="pageId2" select="../@id" />
+
         <xsl:attribute name="class">
             <xsl:choose>
-                <xsl:when test="../@id = $currentPageId">active </xsl:when>
-                <xsl:when test="count(../..//@id[. = $currentPageId]) = 1">parent-of-active </xsl:when>
+                <xsl:when test="../@id = $currentPageId">active</xsl:when>
+                <xsl:when test="count(../..//@id[. = $currentPageId]) = 1">parent-of-active</xsl:when>
+                <xsl:otherwise><xsl:value-of select="document('xmldb://pages')//pg:*[@db:id = $pageId2]/@status" /></xsl:otherwise>
             </xsl:choose>
+            <xsl:text> </xsl:text>
             <xsl:value-of select="../@class" />
         </xsl:attribute>
         <xsl:apply-templates select="." mode="subdoc-href" />
