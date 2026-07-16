@@ -50,7 +50,7 @@ class Imagick extends \Depage\Graphics\Graphics
             $this->image->cropImage($width, $height, $x, $y);
             $this->image->extentImage($width, $height, 0, 0);
             $this->image->setImagePage(0, 0, 0, 0);
-            $this->size = array($width, $height);
+            $this->size = [$width, $height];
         }
     }
     // }}}
@@ -90,7 +90,7 @@ class Imagick extends \Depage\Graphics\Graphics
      **/
     protected function thumb($width, $height)
     {
-        list($width, $height) = $this->dimensions($width, $height);
+        [$width, $height] = $this->dimensions($width, $height);
 
         if (!$this->bypassTest($width, $height)) {
             $newSize = $this->dimensions($width, null);
@@ -107,7 +107,7 @@ class Imagick extends \Depage\Graphics\Graphics
 
             $this->image->resizeImage($newSize[0], $newSize[1], $filter, 1, true);
             $this->image->extentImage($width, $height, $xOffset, $yOffset);
-            $this->size = array($newSize[0], $newSize[1]);
+            $this->size = [$newSize[0], $newSize[1]];
         }
     }
     // }}}
@@ -120,7 +120,7 @@ class Imagick extends \Depage\Graphics\Graphics
      **/
     protected function thumbfill($width, $height, $centerX = 50, $centerY = 50)
     {
-        list($width, $height) = $this->dimensions($width, $height);
+        [$width, $height] = $this->dimensions($width, $height);
 
         if (!$this->bypassTest($width, $height, $centerX - 50, $centerY - 50)) {
             $newSize = $this->dimensions($width, null);
@@ -139,7 +139,7 @@ class Imagick extends \Depage\Graphics\Graphics
 
             $this->image->resizeImage($newSize[0], $newSize[1], $filter, 1, true);
             $this->image->extentImage($width, $height, $xOffset, $yOffset);
-            $this->size = array($width, $height);
+            $this->size = [$width, $height];
         }
     }
     // }}}
@@ -151,7 +151,7 @@ class Imagick extends \Depage\Graphics\Graphics
      * @param mixed
      * @return void
      **/
-    protected function load()
+    protected function load(): void
     {
         $pageNumber = $this->getPageNumber();
 
@@ -169,6 +169,7 @@ class Imagick extends \Depage\Graphics\Graphics
      **/
     protected function save()
     {
+        $this->autoOrient();
         if (in_array($this->outputFormat, ["webp"]) && $this->inputFormat == "png") {
             $this->image->setImageCompressionQuality(100);
         }
@@ -179,6 +180,48 @@ class Imagick extends \Depage\Graphics\Graphics
         if (!$result) {
             throw new \Depage\Graphics\Exceptions\Exception('Could not save output image.');
         }
+    }
+    // }}}
+
+    // {{{ autoOrient()
+    /**
+     * @brief autoOrient
+     *
+     * @return void
+     **/
+    protected function autoOrient(): void
+    {
+        switch ($this->image->getImageOrientation()) {
+            case \Imagick::ORIENTATION_TOPLEFT:
+                break;
+            case \Imagick::ORIENTATION_TOPRIGHT:
+                $this->image->flopImage();
+                break;
+            case \Imagick::ORIENTATION_BOTTOMRIGHT:
+                $this->image->rotateImage("#000", 180);
+                break;
+            case \Imagick::ORIENTATION_BOTTOMLEFT:
+                $this->image->flopImage();
+                $this->image->rotateImage("#000", 180);
+                break;
+            case \Imagick::ORIENTATION_LEFTTOP:
+                $this->image->flopImage();
+                $this->image->rotateImage("#000", -90);
+                break;
+            case \Imagick::ORIENTATION_RIGHTTOP:
+                $this->image->rotateImage("#000", 90);
+                break;
+            case \Imagick::ORIENTATION_RIGHTBOTTOM:
+                $this->image->flopImage();
+                $this->image->rotateImage("#000", 90);
+                break;
+            case \Imagick::ORIENTATION_LEFTBOTTOM:
+                $this->image->rotateImage("#000", -90);
+                break;
+            default: // Invalid orientation
+                break;
+        }
+        $this->image->setImageOrientation(\Imagick::ORIENTATION_TOPLEFT);
     }
     // }}}
 
@@ -216,22 +259,22 @@ class Imagick extends \Depage\Graphics\Graphics
         if ($width <= 160 && $height <= 160) {
             return \Imagick::FILTER_TRIANGLE;
         }
-            return \Imagick::FILTER_LANCZOS;
-        }
+        return \Imagick::FILTER_LANCZOS;
+    }
     // }}}
     // {{{ getImageSize()
     /**
      * @brief   Determine size of input image
      *
-     * @return void
+     * @return array with width and height of the input image
      **/
-    protected function getImageSize()
+    protected function getImageSize(): array
     {
         $this->image = new \Imagick(realpath($this->input));
 
         $imageSize = [
             $this->image->getImageWidth(),
-            $this->image->getImageHeight()
+            $this->image->getImageHeight(),
         ];
 
         return $imageSize;
@@ -248,7 +291,7 @@ class Imagick extends \Depage\Graphics\Graphics
      * @param  string $output output filename
      * @return void
      **/
-    public function render($input, $output = null)
+    public function render($input, $output = null): void
     {
         parent::render($input, $output);
 

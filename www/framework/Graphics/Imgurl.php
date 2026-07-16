@@ -26,7 +26,7 @@ class Imgurl
      * Note that the order is important so shoter action names should
      * come after larger ones
      */
-    protected $aliases = array(
+    protected $aliases = [
         'quality'    => "setQuality",
         'q'          => "setQuality",
         'crop'       => "addCrop",
@@ -39,13 +39,13 @@ class Imgurl
         't'          => "addThumb",
         'background' => "addBackground",
         'bg'         => "addBackground",
-    );
+    ];
 
     // {{{ constructor
     /*
      * @param $options hold the same options as the graphics class
      */
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         $this->options = $options;
     }
@@ -54,8 +54,10 @@ class Imgurl
     // {{{ analyze
     /*
      * Analyzes the image url and set the path for srcImg and outImg
+     *
+     * @param string $url the url to analyze
      */
-    protected function analyze($url)
+    protected function analyze($url): void
     {
         $this->invalidAction = false;
         $this->notFound = false;
@@ -67,7 +69,7 @@ class Imgurl
             $baseUrl = rtrim($this->options['baseUrl'], '/');
             $this->cachePath = $this->options['cachePath'];
             $relativePath = $this->options['relPath'] ?? '';
-        } else if (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
+        } elseif (defined('DEPAGE_PATH') && defined('DEPAGE_CACHE_PATH')) {
             // we are using depage-framework so use constants for paths
             $info = parse_url(DEPAGE_BASE);
             $baseUrl = rtrim($info['path'], '/');
@@ -110,9 +112,9 @@ class Imgurl
         $imgUrl = $url;
         if ($baseUrl == "" && $baseUrlStatic == "") {
             $imgUrl = substr($url, 1);
-        } else if (strpos($url, $baseUrlStatic) === 0) {
+        } elseif (strpos($url, $baseUrlStatic) === 0) {
             $imgUrl = substr($url, strlen($baseUrlStatic) + 1);
-        } else if (strpos($url, $baseUrl) === 0) {
+        } elseif (strpos($url, $baseUrl) === 0) {
             $imgUrl = substr($url, strlen($baseUrl) + 1);
         }
 
@@ -135,8 +137,10 @@ class Imgurl
     // {{{ analyzeActions
     /*
      * Analyzes actions and replaces shortcuts with real actions
+     *
+     * @param string $actionString the string with actions to analyze
      */
-    protected function analyzeActions($actionString)
+    protected function analyzeActions($actionString): array
     {
         $actions = explode(".", $actionString);
 
@@ -156,7 +160,7 @@ class Imgurl
                 $params = preg_split("/[-x,]+/", $params, -1, PREG_SPLIT_NO_EMPTY);
 
                 if ($func == "addBackground") {
-                    if (!in_array($params[0], array("transparent", "checkerboard"))) {
+                    if (!in_array($params[0], ["transparent", "checkerboard"])) {
                         $params[0] = "#{$params[0]}";
                     }
                 } else {
@@ -168,7 +172,7 @@ class Imgurl
                     }
                 }
 
-                $this->actions[] = array($func, $params);
+                $this->actions[] = [$func, $params];
             } else {
                 $this->invalidAction = true;
             }
@@ -178,7 +182,12 @@ class Imgurl
     }
     // }}}
     // {{{ render
-    public function render($url = null)
+    /*
+     * Renders the image with the given actions
+     *
+     * @param string $url the url to analyze and render
+     */
+    public function render($url = null): self
     {
         if (is_null($url)) {
             $url = $_SERVER["REQUEST_URI"];
@@ -204,8 +213,8 @@ class Imgurl
             // add actions to graphics class
             foreach ($this->actions as $action) {
                 list($func, $params) = $action;
-                if (is_callable(array($graphics, $func))) {
-                    call_user_func_array(array($graphics, $func), $params);
+                if (is_callable([$graphics, $func])) {
+                    call_user_func_array([$graphics, $func], $params);
                 }
             }
 
@@ -225,10 +234,13 @@ class Imgurl
     // }}}
 
     // {{{ display()
-    public function display()
+    /*
+     * Displays the rendered image with correct header
+     */
+    public function display(): self
     {
         $info = pathinfo($this->outImg);
-        $ext = strtolower($info['extension']);
+        $ext = strtolower($info['extension'] ?? '');
 
         if ($this->invalidAction) {
             header("HTTP/1.1 500 Internal Server Error");
@@ -257,7 +269,12 @@ class Imgurl
     // }}}
 
     // {{{ getUrl()
-    public function getUrl($img)
+    /*
+     * Returns the url for the given image with the actions added
+     *
+     * @param string $img the image to get the url for
+     */
+    public function getUrl($img): string
     {
         $info = pathinfo($img);
         $ext = $info['extension'];
@@ -271,7 +288,12 @@ class Imgurl
     // }}}
 
     // {{{ addBackground()
-    public function addBackground($background)
+    /*
+     * Adds a background action to the image
+     *
+     * @param string $background the background to add (color in hex or "transparent" or "checkerboard")
+     */
+    public function addBackground($background): self
     {
         $this->actions[] = "bg{$background}";
 
@@ -279,7 +301,15 @@ class Imgurl
     }
     // }}}
     // {{{ addCrop()
-    public function addCrop($width, $height, $x = 0, $y = 0)
+    /*
+     * Adds a crop action to the image
+     *
+     * @param int $width the width to crop to
+     * @param int $height the height to crop to
+     * @param int $x the x position to start cropping from (default: 0)
+     * @param int $y the y position to start cropping from (default: 0)
+     */
+    public function addCrop($width, $height, $x = 0, $y = 0): self
     {
         $this->actions[] = "crop{$width}x{$height}-{$x}x{$y}";
 
@@ -287,7 +317,13 @@ class Imgurl
     }
     // }}}
     // {{{ addResize()
-    public function addResize($width, $height)
+    /*
+     * Adds a resize action to the image
+     *
+     * @param int $width the width to resize to
+     * @param int $height the height to resize to
+     */
+    public function addResize($width, $height): self
     {
         $this->actions[] = "r{$width}x{$height}";
 
@@ -295,7 +331,13 @@ class Imgurl
     }
     // }}}
     // {{{ addThumb()
-    public function addThumb($width, $height)
+    /*
+     * Adds a thumb action to the image
+     *
+     * @param int $width the width to thumb to
+     * @param int $height the height to thumb to
+     */
+    public function addThumb($width, $height): self
     {
         $this->actions[] = "t{$width}x{$height}";
 
@@ -303,7 +345,15 @@ class Imgurl
     }
     // }}}
     // {{{ addThumbfill()
-    public function addThumbfill($width, $height, $centerX = 50, $centerY = 50)
+    /*
+     * Adds a thumbfill action to the image
+     *
+     * @param int $width the width to thumbfill to
+     * @param int $height the height to thumbfill to
+     * @param int $centerX the x position of the center of the thumbfill (default: 50)
+     * @param int $centerY the y position of the center of the thumbfill (default: 50)
+     */
+    public function addThumbfill($width, $height, $centerX = 50, $centerY = 50): self
     {
         $action = "tf{$width}x{$height}";
         if ($centerX != 50 || $centerY != 50) {
@@ -316,7 +366,12 @@ class Imgurl
     }
     // }}}
     // {{{ setQuality()
-    public function setQuality($quality)
+    /*
+     * Adds a quality action to the image
+     *
+     * @param int $quality the quality to set (0-100)
+     */
+    public function setQuality($quality): self
     {
         $this->actions[] = "q{$quality}";
 

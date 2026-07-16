@@ -10,7 +10,7 @@ class GraphicsTestClass extends \Depage\Graphics\Graphics
 {
     protected $testQueueString = '';
     // imaginary test image size
-    protected $size = array(100, 100);
+    protected $size = [100, 100];
 
     public function getBackground()
     {
@@ -22,45 +22,45 @@ class GraphicsTestClass extends \Depage\Graphics\Graphics
         return $this->queue;
     }
 
-    public function escapeNumber($number)
+    public function escapeNumber($number): ?int
     {
         return parent::escapeNumber($number);
     }
 
     // simulating queue
-    public function crop($width, $height, $x, $y)
+    public function crop($width, $height, $x, $y): self
     {
         $this->testQueueString .= "-crop-{$width}-{$height}-{$x}-{$y}-";
+
+        return $this;
     }
 
     // simulating queue
-    public function resize($width, $height)
+    public function resize($width, $height): self
     {
         $this->testQueueString .= "-resize-{$width}-{$height}-";
+
+        return $this;
     }
 
     // simulating queue
-    public function thumb($width, $height)
+    public function thumb($width, $height): self
     {
         $this->testQueueString .= "-thumb-{$width}-{$height}-";
+
+        return $this;
     }
 
     // don't lock
-    protected function lock()
-    {
-
-    }
-    protected function unlock()
-    {
-
-    }
+    protected function lock() {}
+    protected function unlock() {}
 
     public function getTestQueueString()
     {
         return $this->testQueueString;
     }
 
-    public function processQueue()
+    public function processQueue(): void
     {
         parent::processQueue();
     }
@@ -70,7 +70,7 @@ class GraphicsTestClass extends \Depage\Graphics\Graphics
         $this->size = $size;
     }
 
-    public function dimensions($width, $height)
+    public function dimensions($width, $height): array
     {
         return parent::dimensions($width, $height);
     }
@@ -91,9 +91,9 @@ class GraphicsTestClass extends \Depage\Graphics\Graphics
     }
 
     // imaginary test image size
-    public function getImageSize()
+    public function getImageSize(): array
     {
-        return array(100, 100);
+        return [100, 100];
     }
     public function getInputFormat()
     {

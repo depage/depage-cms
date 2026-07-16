@@ -2,7 +2,7 @@ RM = rm -rf
 
 test:
 	mkdir -p output
-	phpunit --bootstrap bootstrap.php --coverage-html phpunit/ .
+	XDEBUG_MODE=coverage phpunit --bootstrap bootstrap.php --coverage-html phpunit/ .
 
 clean:
 	${RM} phpunit

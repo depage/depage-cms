@@ -9,7 +9,7 @@ use Depage\Graphics\Providers;
 class graphics_graphicsmagickTestClass extends \Depage\Graphics\Providers\Graphicsmagick
 {
     // imaginary test image size
-    protected $size = array(100, 100);
+    protected $size = [100, 100];
     // simulate gm execution
     protected $executed = false;
 
@@ -28,25 +28,25 @@ class graphics_graphicsmagickTestClass extends \Depage\Graphics\Providers\Graphi
         return $this->limits[$limit];
     }
 
-    public function crop($width, $height, $x = 0, $y = 0)
+    public function crop($width, $height, $x = 0, $y = 0): void
     {
         parent::crop($width, $height, $x, $y);
     }
 
-    public function resize($width, $height)
+    public function resize($width, $height): void
     {
         parent::resize($width, $height);
     }
 
-    public function thumb($width, $height)
+    public function thumb($width, $height): void
     {
         parent::thumb($width, $height);
     }
 
     // imaginary test image size
-    protected function getImageSize()
+    protected function getImageSize(): array
     {
-        return array(100, 100);
+        return [100, 100];
     }
 
     // simulate gm execution
@@ -61,9 +61,7 @@ class graphics_graphicsmagickTestClass extends \Depage\Graphics\Providers\Graphi
     }
 
     // don't even copy on bypass
-    protected function bypass()
-    {
-    }
+    protected function bypass() {}
 
     public function getBackground()
     {

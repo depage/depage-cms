@@ -30,7 +30,7 @@ class Graphicsmagick extends Imagemagick
      * @param  int  $y      crop y-offset
      * @return void
      **/
-    protected function crop($width, $height, $x = 0, $y = 0)
+    protected function crop($width, $height, $x = 0, $y = 0): void
     {
         if (!$this->bypassTest($width, $height, $x, $y)) {
             // '+' for positive offset (the '-' is already there)
@@ -40,7 +40,7 @@ class Graphicsmagick extends Imagemagick
             $xExtent = ($x > 0) ? "+0" : $x;
             $yExtent = ($y > 0) ? "+0" : $y;
             $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}! -gravity NorthWest -extent {$width}x{$height}{$xExtent}{$yExtent}";
-            $this->size = array($width, $height);
+            $this->size = [$width, $height];
         }
     }
     // }}}
@@ -49,9 +49,9 @@ class Graphicsmagick extends Imagemagick
     /**
      * @brief   Determine size of input image
      *
-     * @return void
+     * @return array image size as array(width, height)
      **/
-    protected function getImageSize()
+    protected function getImageSize(): array
     {
         $imageSize = false;
         if (is_callable('getimagesize')) {
@@ -83,7 +83,7 @@ class Graphicsmagick extends Imagemagick
      * @param  string $output output filename
      * @return void
      **/
-    public function render($input, $output = null)
+    public function render($input, $output = null): void
     {
         \Depage\Graphics\Graphics::render($input, $output);
 

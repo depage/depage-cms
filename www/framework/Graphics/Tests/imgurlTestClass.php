@@ -13,13 +13,13 @@ class imgurlTestClass extends \Depage\Graphics\Imgurl
      * @param mixed $
      * @return void
      **/
-    public function analyze($url)
+    public function analyze($url): void
     {
-        return parent::analyze($url);
+        parent::analyze($url);
     }
     // }}}
     // {{{ getActions()
-    public function getActions()
+    public function getActions(): array
     {
         return $this->actions;
     }

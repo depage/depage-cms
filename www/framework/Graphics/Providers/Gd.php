@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file    graphics_gd.php
  * @brief   PHP GD extension interface
@@ -49,11 +50,11 @@ class Gd extends \Depage\Graphics\Graphics
                 ($x < 0) ? 0 : $x,
                 ($y < 0) ? 0 : $y,
                 $this->size[0] - abs($x),
-                $this->size[1] - abs($y)
+                $this->size[1] - abs($y),
             );
 
             $this->image = $newImage;
-            $this->size = array($width, $height);
+            $this->size = [$width, $height];
         }
     }
     // }}}
@@ -111,7 +112,7 @@ class Gd extends \Depage\Graphics\Graphics
             imagecopyresampled($newImage, $this->image, $xOffset, $yOffset, 0, 0, $newSize[0], $newSize[1], $this->size[0], $this->size[1]);
 
             $this->image = $newImage;
-            $this->size = array($width, $height);
+            $this->size = [$width, $height];
         }
     }
     // }}}
@@ -150,7 +151,7 @@ class Gd extends \Depage\Graphics\Graphics
             imagecopyresampled($newImage, $this->image, $xOffset, $yOffset, 0, 0, $newSize[0], $newSize[1], $this->size[0], $this->size[1]);
 
             $this->image = $newImage;
-            $this->size = array($width, $height);
+            $this->size = [$width, $height];
         }
     }
     // }}}
@@ -192,9 +193,12 @@ class Gd extends \Depage\Graphics\Graphics
      **/
     protected function save()
     {
+        $this->autoOrient();
+
         $bg = $this->createBackground($this->size[0], $this->size[1]);
         imagecopy($bg, $this->image, 0, 0, 0, 0, $this->size[0], $this->size[1]);
         $this->image = $bg;
+
         $result = false;
 
         if ($this->outputFormat == 'gif' && function_exists('imagegif')) {
@@ -213,13 +217,53 @@ class Gd extends \Depage\Graphics\Graphics
     }
     // }}}
 
+    // {{{ autoOrient()
+    /**
+     * @brief   Auto orient image
+     *
+     * @return void
+     **/
+    protected function autoOrient(): void
+    {
+        $exif = @exif_read_data($this->input);
+
+        if (isset($exif['Orientation'])) {
+            switch ($exif['Orientation']) {
+                case 2:
+                    imageflip($this->image, IMG_FLIP_HORIZONTAL);
+                    break;
+                case 3:
+                    $this->image = imagerotate($this->image, 180, 0);
+                    break;
+                case 4:
+                    imageflip($this->image, IMG_FLIP_VERTICAL);
+                    break;
+                case 5:
+                    $this->image = imagerotate($this->image, -90, 0);
+                    imageflip($this->image, IMG_FLIP_HORIZONTAL);
+                    break;
+                case 6:
+                    $this->image = imagerotate($this->image, -90, 0);
+                    break;
+                case 7:
+                    $this->image = imagerotate($this->image, -90, 0);
+                    imageflip($this->image, IMG_FLIP_VERTICAL);
+                    break;
+                case 8:
+                    $this->image = imagerotate($this->image, 90, 0);
+                    break;
+            }
+        }
+    }
+    // }}}
+
     // {{{ getImageSize()
     /**
      * @brief   Determine size of input image
      *
-     * @return void
+     * @return array image dimensions as array(width, height)
      **/
-    protected function getImageSize()
+    protected function getImageSize(): array
     {
         return getimagesize($this->input);
     }
@@ -235,7 +279,7 @@ class Gd extends \Depage\Graphics\Graphics
      * @param  string $output output filename
      * @return void
      **/
-    public function render($input, $output = null)
+    public function render($input, $output = null): void
     {
         parent::render($input, $output);
 
@@ -244,7 +288,7 @@ class Gd extends \Depage\Graphics\Graphics
 
         if ($this->otherRender && file_exists($this->output)) {
             // do nothing file is already generated
-        } else if ($this->bypass
+        } elseif ($this->bypass
             && $this->inputFormat == $this->outputFormat
         ) {
             $this->bypass();
@@ -298,23 +342,25 @@ class Gd extends \Depage\Graphics\Graphics
             $color = substr($this->background, 1);
 
             if (strlen($color) == 6) {
-                list($r, $g, $b) = array(
-                    $color[0].$color[1],
-                    $color[2].$color[3],
-                    $color[4].$color[5]
-                );
+                list($r, $g, $b) = [
+                    $color[0] . $color[1],
+                    $color[2] . $color[3],
+                    $color[4] . $color[5],
+                ];
             } elseif (strlen($color) == 3) {
-                list($r, $g, $b) = array($color[0].$color[0], $color[1].$color[1], $color[2].$color[2]);
+                list($r, $g, $b) = [$color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]];
             }
 
-            $r = hexdec($r); $g = hexdec($g); $b = hexdec($b);
+            $r = hexdec($r);
+            $g = hexdec($g);
+            $b = hexdec($b);
 
             imagefill($newImage, 0, 0, imagecolorallocate($newImage, $r, $g, $b));
         } elseif ($this->background == 'checkerboard') {
             $transLen = 15;
-            $transColor = array();
-            $transColor[0] = imagecolorallocate ($newImage, 153, 153, 153);
-            $transColor[1] = imagecolorallocate ($newImage, 102, 102, 102);
+            $transColor = [];
+            $transColor[0] = imagecolorallocate($newImage, 153, 153, 153);
+            $transColor[1] = imagecolorallocate($newImage, 102, 102, 102);
             for ($i = 0; $i * $transLen < $width; $i++) {
                 for ($j = 0; $j * $transLen < $height; $j++) {
                     imagefilledrectangle(
@@ -323,13 +369,15 @@ class Gd extends \Depage\Graphics\Graphics
                         $j * $transLen,
                         ($i + 1) * $transLen,
                         ($j + 1) * $transLen,
-                        $transColor[$j % 2 == 0 ? $i % 2 : ($i % 2 == 0 ? 1 : 0)]
+                        $transColor[$j % 2 == 0 ? $i % 2 : ($i % 2 == 0 ? 1 : 0)],
                     );
                 }
             }
         } elseif ($this->background == 'transparent') {
             imagefill($newImage, 0, 0, imagecolorallocatealpha($newImage, 255, 255, 255, 127));
-            if ($this->outputFormat == 'gif') imagecolortransparent($newImage, imagecolorallocatealpha($newImage, 255, 255, 255, 127));
+            if ($this->outputFormat == 'gif') {
+                imagecolortransparent($newImage, imagecolorallocatealpha($newImage, 255, 255, 255, 127));
+            }
             imagesavealpha($newImage, true);
         }
 

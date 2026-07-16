@@ -41,12 +41,12 @@ class Imagemagick extends \Depage\Graphics\Graphics
      *
      * @param array $options image processing parameters
      **/
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         parent::__construct($options);
 
-        $this->executable = isset($options['executable']) ? $options['executable'] : null;
-        $this->timeout = isset($options['timeout']) ? $options['timeout'] : 0;
+        $this->executable = $options['executable'] ?? null;
+        $this->timeout = $options['timeout'] ?? 0;
     }
     // }}}
 
@@ -83,7 +83,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
             $y = ($y < 0) ? $y : '+' . $y;
 
             $this->command .= " -gravity NorthWest -crop {$width}x{$height}{$x}{$y}! -flatten";
-            $this->size = array($width, $height);
+            $this->size = [$width, $height];
         }
     }
     // }}}
@@ -126,7 +126,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
             $resizeAction = $this->getResizeAction($width, $height);
 
             $this->command .= " -gravity Center $resizeAction {$width}x{$height} -extent {$width}x{$height}";
-            $this->size = array($width, $height);
+            $this->size = [$width, $height];
         }
     }
     // }}}
@@ -163,7 +163,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
             $resizeAction = $this->getResizeAction($width, $height);
 
             $this->command .= " -gravity Center $resizeAction {$width}x{$height}^ -extent {$width}x{$height}{$x}{$y}";
-            $this->size = array($width, $height);
+            $this->size = [$width, $height];
         }
     }
     // }}}
@@ -172,9 +172,9 @@ class Imagemagick extends \Depage\Graphics\Graphics
     /**
      * @brief   Determine size of input image
      *
-     * @return void
+     * @return array image size as array(width, height)
      **/
-    protected function getImageSize()
+    protected function getImageSize(): array
     {
         $imageSize = false;
         if (is_callable('getimagesize')) {
@@ -210,7 +210,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
      * @param  string $output output filename
      * @return void
      **/
-    public function render($input, $output = null)
+    public function render($input, $output = null): void
     {
         parent::render($input, $output);
 
@@ -258,11 +258,11 @@ class Imagemagick extends \Depage\Graphics\Graphics
     {
         $command = str_replace('!', '\!', escapeshellcmd($this->command));
 
-        $descriptorspec = array(
-            0 => array("pipe", "r"),  // stdin is a pipe that the child will read from
-            1 => array("pipe", "w"),  // stdout is a pipe that the child will write to
-            2 => array("pipe", "w") // stderr is pipe that the child will write errors to
-        );
+        $descriptorspec = [
+            0 => ["pipe", "r"],  // stdin is a pipe that the child will read from
+            1 => ["pipe", "w"],  // stdout is a pipe that the child will write to
+            2 => ["pipe", "w"], // stderr is pipe that the child will write errors to
+        ];
         $process = proc_open("exec " . $command, $descriptorspec, $pipes);
 
         // set pipes non blocking
@@ -270,7 +270,7 @@ class Imagemagick extends \Depage\Graphics\Graphics
         stream_set_blocking($pipes[2], false);
 
         $startTime = time();
-        $output = array(1 => "", 2 => "");
+        $output = [1 => "", 2 => ""];
         $terminated = false;
 
         if (is_resource($process)) {

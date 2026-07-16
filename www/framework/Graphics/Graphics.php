@@ -24,7 +24,7 @@ function autoload($class)
 {
     if (strpos($class, __NAMESPACE__ . '\\') == 0) {
         $class = str_replace('\\', '/', str_replace(__NAMESPACE__ . '\\', '', $class));
-        $file = __DIR__ . '/' .  $class . '.php';
+        $file = __DIR__ . '/' . $class . '.php';
 
         if (file_exists($file)) {
             require_once($file);
@@ -40,7 +40,7 @@ spl_autoload_register(__NAMESPACE__ . '\autoload');
  *
  * Contains graphics factory and tools. Collects actions with "add"-methods.
  **/
-class Graphics
+abstract class Graphics
 {
     // {{{ variables
     /**
@@ -66,11 +66,11 @@ class Graphics
     /**
      * @brief Action queue array
      **/
-    protected $queue = array();
+    protected $queue = [];
     /**
      * @brief Image size array(width, height)
      **/
-    protected $size = array();
+    protected $size = [];
     /**
      * @brief Image background string
      **/
@@ -118,7 +118,7 @@ class Graphics
      * @param  array  $options image processing parameters
      * @return object graphics object
      **/
-    public static function factory($options = array())
+    public static function factory($options = [])
     {
         $extension = (isset($options['extension'])) ? $options['extension'] : 'gd';
 
@@ -161,7 +161,7 @@ class Graphics
      *
      * @param array $options image processing parameters
      **/
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         $this->background = (isset($options['background'])) ? $options['background'] : 'transparent';
         $this->quality    = (isset($options['quality'])) ? intval($options['quality']) : null;
@@ -218,7 +218,7 @@ class Graphics
      * @param  string $background image background
      * @return object $this
      **/
-    public function addBackground($background)
+    public function addBackground($background): self
     {
         $this->background = $background;
 
@@ -237,9 +237,9 @@ class Graphics
      * @param  int    $y      crop y-offset
      * @return object $this
      **/
-    public function addCrop($width, $height, $x = 0, $y = 0)
+    public function addCrop($width, $height, $x = 0, $y = 0): self
     {
-        $this->queue[] = array('crop', func_get_args());
+        $this->queue[] = ['crop', func_get_args()];
 
         return $this;
     }
@@ -254,9 +254,9 @@ class Graphics
      * @param  int    $height output height
      * @return object $this
      **/
-    public function addResize($width, $height)
+    public function addResize($width, $height): self
     {
-        $this->queue[] = array('resize', func_get_args());
+        $this->queue[] = ['resize', func_get_args()];
 
         return $this;
     }
@@ -271,9 +271,9 @@ class Graphics
      * @param  int    $height output height
      * @return object $this
      **/
-    public function addThumb($width, $height)
+    public function addThumb($width, $height): self
     {
-        $this->queue[] = array('thumb', func_get_args());
+        $this->queue[] = ['thumb', func_get_args()];
 
         return $this;
     }
@@ -290,9 +290,9 @@ class Graphics
      * @param  int    $centerY center of image from top in percent
      * @return object $this
      **/
-    public function addThumbfill($width, $height, $centerX = 50, $centerY = 50)
+    public function addThumbfill($width, $height, $centerX = 50, $centerY = 50): self
     {
-        $this->queue[] = array('thumbfill', func_get_args());
+        $this->queue[] = ['thumbfill', func_get_args()];
 
         return $this;
     }
@@ -307,7 +307,7 @@ class Graphics
      * @param  int $number int to check
      * @return int number value
      **/
-    protected function escapeNumber($number)
+    protected function escapeNumber($number): ?int
     {
         return (is_numeric($number)) ? intval($number) : null;
     }
@@ -323,7 +323,7 @@ class Graphics
      * @param  int   $height output height
      * @return array of width and height
      **/
-    protected function dimensions($width, $height)
+    protected function dimensions($width, $height): array
     {
         if (!is_numeric($width) && !is_numeric($height)) {
             $width  = null;
@@ -338,6 +338,15 @@ class Graphics
     }
     // }}}
 
+    // {{{ getImageSize()
+    /**
+     * @brief   Determine size of input image
+     *
+     * @return array image dimensions as array(width, height)
+     **/
+    abstract protected function getImageSize(): array;
+    // }}}
+
     // {{{ processQueue()
     /**
      * @brief   Process action queue
@@ -346,13 +355,13 @@ class Graphics
      *
      * @return void
      **/
-    protected function processQueue()
+    protected function processQueue(): void
     {
         foreach ($this->queue as $task) {
             $action     = $task[0];
-            $arguments  = array_map(array($this, 'escapeNumber'), $task[1]);
+            $arguments  = array_map([$this, 'escapeNumber'], $task[1]);
 
-            call_user_func_array(array($this, $action), $arguments);
+            call_user_func_array([$this, $action], $arguments);
         }
     }
     // }}}
@@ -366,7 +375,7 @@ class Graphics
      * @param  string $output output filename
      * @return void
      **/
-    public function render($input, $output = null)
+    public function render($input, $output = null): void
     {
         if (!file_exists($input)) {
             throw new Exceptions\FileNotFound();

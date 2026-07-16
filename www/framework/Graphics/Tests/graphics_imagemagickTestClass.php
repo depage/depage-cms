@@ -7,7 +7,7 @@
 class graphics_imagemagickTestClass extends \Depage\Graphics\Providers\Imagemagick
 {
     // imaginary test image size
-    protected $size = array(100, 100);
+    protected $size = [100, 100];
     // simulate gm execution
     protected $executed = false;
 
@@ -42,9 +42,9 @@ class graphics_imagemagickTestClass extends \Depage\Graphics\Providers\Imagemagi
     }
 
     // imaginary test image size
-    protected function getImageSize()
+    protected function getImageSize(): array
     {
-        return array(100, 100);
+        return [100, 100];
     }
 
     protected function execCommand()
@@ -58,9 +58,7 @@ class graphics_imagemagickTestClass extends \Depage\Graphics\Providers\Imagemagi
     }
 
     // don't even copy on bypass
-    protected function bypass()
-    {
-    }
+    protected function bypass() {}
 
     public function getBackground()
     {
