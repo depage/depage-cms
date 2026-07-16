@@ -24,9 +24,10 @@ class DeltaUpdates {
         $this->doc_id = (int)$doc_id;
         $this->project = $project;
 
-        $this->seq_nr = (int)$seq_nr;
-        if ($this->seq_nr == -1)
+        $this->seq_nr = (int) $seq_nr;
+        if ($this->seq_nr == -1) {
             $this->seq_nr = $this->currentChangeNumber();
+        }
     }
 
     public function currentChangeNumber()
@@ -47,14 +48,11 @@ class DeltaUpdates {
 
     public function discardOldChanges()
     {
-        $min_id_query = $this->pdo->prepare("SELECT id FROM " . $this->table_name . " WHERE doc_id = ? ORDER BY id DESC LIMIT " . (self::MAX_UPDATES_BEFORE_RELOAD - 1) . ", 1");
-        $min_id_query->execute(array($this->doc_id));
-        $row = $min_id_query->fetch();
-
-        if ($row) {
-            $delete_query = $this->pdo->prepare("DELETE FROM " . $this->table_name . " WHERE id < ? AND doc_id = ?");
-            $delete_query->execute(array((int)$row["id"], $this->doc_id));
-        }
+        $delete_query = $this->pdo->prepare("DELETE FROM " . $this->table_name . " WHERE id < ? AND doc_id = ?");
+        $delete_query->execute([
+            (int)$this->seq_nr,
+            $this->doc_id],
+        );
     }
 
     private function changedParentIds()
@@ -64,7 +62,7 @@ class DeltaUpdates {
         $query = $this->pdo->prepare("SELECT id, node_id FROM " . $this->table_name . " WHERE id > ? AND doc_id = ? ORDER BY id ASC");
         if ($query->execute(array($this->seq_nr, $this->doc_id))) {
             while ($row = $query->fetch()) {
-                $node_id = (int)$row["node_id"];
+                $node_id = (int) $row["node_id"];
                 if (!in_array($node_id, $parent_ids))
                     $parent_ids[] = $node_id;
 
@@ -83,13 +81,11 @@ class DeltaUpdates {
 
         if ($doc = $this->xmldb->getDoc($this->doc_id)) {
             // do a partial update with only immediate children by default
-            $level_of_children = 0;
             $initial_seq_nr = $this->seq_nr;
             $parent_ids = $this->changedParentIds();
 
             // very unlikely case that more delta updates happened than will be retained in db. reload whole document
             if ($this->seq_nr - $initial_seq_nr > self::MAX_UPDATES_BEFORE_RELOAD) {
-                $level_of_children = PHP_INT_MAX;
                 $doc_info = $doc->getDocInfo();
                 $parent_ids = array($doc_info->rootid);
             }
@@ -110,10 +106,12 @@ class DeltaUpdates {
     public function encodedDeltaUpdate()
     {
         $changed_nodes = $this->changedNodes();
-        if (empty($changed_nodes))
+        if (empty($changed_nodes)) {
             return "";
+        }
 
         $result = array(
+            'action' => 'forwandDeltaUpdate',
             'nodes' => \Depage\Cms\JsTreeXmlToHtml::toHTML($changed_nodes, $this->project),
             'projectName' => $this->project->name,
             'docId' => $this->doc_id,
@@ -121,5 +119,27 @@ class DeltaUpdates {
         );
 
         return new \Depage\Json\Json($result);
+    }
+
+    public function sendChangesTo($url = null)
+    {
+        if (empty($url)) {
+            return;
+        }
+        try {
+            $url = "$url/jstree";
+            $client = new \Wrench\Client($url, \DEPAGE_BASE);
+
+            $connected = $client->connect();
+
+            if ($connected) {
+                $client->sendData($this->encodedDeltaUpdate());
+                $client->disconnect();
+
+                $this->discardOldChanges();
+            }
+        } catch (\Wrench\Exception\SocketException | \Wrench\Exception\ConnectionException $e) {
+            error_log("Error sending delta update: " . $e->getMessage());
+        }
     }
 }

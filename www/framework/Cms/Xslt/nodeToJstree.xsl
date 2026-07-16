@@ -186,67 +186,28 @@
     </xsl:template>
 
     <xsl:template match="pg:folder | pg:page" mode="icon-class">
-        <xsl:if test="@nav_hidden = 'true'">
-            <xsl:text> </xsl:text>
-            page-hidden
-        </xsl:if>
-        <xsl:if test="@db:published = 'true'">
-            <xsl:text> </xsl:text>
-            page-published
-        </xsl:if>
-        <xsl:if test="@db:published = 'false'">
-            <xsl:text> </xsl:text>
-            page-not-published
-        </xsl:if>
-        <xsl:if test="@db:released = 'true'">
-            <xsl:text> </xsl:text>
-            page-released
-        </xsl:if>
-        <xsl:if test="@db:released = 'false'">
-            <xsl:text> </xsl:text>
-            page-unreleased
-        </xsl:if>
-        <xsl:if test="@db:protected = 'true'">
-            <xsl:text> </xsl:text>
-            page-protected
-        </xsl:if>
+        <xsl:if test="@nav_hidden = 'true'"><xsl:text> </xsl:text>page-hidden</xsl:if>
+        <xsl:if test="@db:published = 'true'"><xsl:text> </xsl:text>page-published</xsl:if>
+        <xsl:if test="@db:published = 'false'"><xsl:text> </xsl:text>page-not-published</xsl:if>
+        <xsl:if test="@db:released = 'true'"><xsl:text> </xsl:text>page-released</xsl:if>
+        <xsl:if test="@db:released = 'false'"><xsl:text> </xsl:text>page-unreleased</xsl:if>
+        <xsl:if test="@db:protected = 'true'"><xsl:text> </xsl:text>page-protected</xsl:if>
     </xsl:template>
 
-    <xsl:template match="pg:page[@redirect = 'true'] | pg:redirect" mode="icon-class">
-        <xsl:text> </xsl:text>
-        icon-redirect
-    </xsl:template>
+    <xsl:template match="pg:page[@redirect = 'true'] | pg:redirect" mode="icon-class"><xsl:text> </xsl:text>icon-redirect</xsl:template>
 
     <xsl:template match="sec:*" mode="icon-class">
         <xsl:text> </xsl:text>
         <xsl:choose>
-            <xsl:when test="@icon != ''">
-                icon-<xsl:value-of select="@icon" />
-            </xsl:when>
-            <xsl:when test="count(edit:video) &gt; 0">
-               icon-edit_video
-            </xsl:when>
-            <xsl:when test="count(edit:audio) &gt; 0">
-               icon-edit_audio
-            </xsl:when>
-            <xsl:when test="count(edit:img) &gt; 0 and count(edit:text_multiline | edit:text_formatted) &gt; 0">
-            icon-edit_imgtext
-            </xsl:when>
-            <xsl:when test="count(edit:img) &gt; 0">
-               icon-edit_img
-            </xsl:when>
-            <xsl:when test="count(edit:text_headline) &gt; 0">
-               icon-edit_headline
-            </xsl:when>
-            <xsl:when test="count(edit:text_singleline | edit:text_multiline | edit:text_formatted) &gt; 0">
-               icon-edit_text
-            </xsl:when>
-            <xsl:when test="count(edit:a) &gt; 0">
-               icon-edit_a
-            </xsl:when>
-            <xsl:otherwise>
-                icon-edit_unknown
-            </xsl:otherwise>
+            <xsl:when test="@icon != ''">icon-<xsl:value-of select="@icon" /></xsl:when>
+            <xsl:when test="count(edit:video) &gt; 0">icon-edit_video</xsl:when>
+            <xsl:when test="count(edit:audio) &gt; 0">icon-edit_audio</xsl:when>
+            <xsl:when test="count(edit:img) &gt; 0 and count(edit:text_multiline | edit:text_formatted) &gt; 0">icon-edit_imgtext</xsl:when>
+            <xsl:when test="count(edit:img) &gt; 0">icon-edit_img</xsl:when>
+            <xsl:when test="count(edit:text_headline) &gt; 0">icon-edit_headline</xsl:when>
+            <xsl:when test="count(edit:text_singleline | edit:text_multiline | edit:text_formatted) &gt; 0">icon-edit_text</xsl:when>
+            <xsl:when test="count(edit:a) &gt; 0">icon-edit_a</xsl:when>
+            <xsl:otherwise>icon-edit_unknown</xsl:otherwise>
         </xsl:choose>
     </xsl:template>
 

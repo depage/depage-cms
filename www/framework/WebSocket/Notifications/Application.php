@@ -4,8 +4,7 @@ namespace Depage\WebSocket\Notifications;
 
 use \Depage\Notifications\Notification;
 
-class Application implements \Wrench\Application\DataHandlerInterface,
-    \Wrench\Application\ConnectionHandlerInterface,
+class Application implements \Wrench\Application\ConnectionHandlerInterface,
     \Wrench\Application\UpdateHandlerInterface
 {
     // {{{ variables
@@ -15,7 +14,7 @@ class Application implements \Wrench\Application\DataHandlerInterface,
         "db" => null,
         "auth" => null,
         'env' => "development",
-        'timezone' => "UST",
+        'timezone' => "UCT",
     );
     protected $options = null;
     protected $pdo = null;
@@ -48,6 +47,8 @@ class Application implements \Wrench\Application\DataHandlerInterface,
     {
         $id = $client->getId();
         if (empty($this->clients[$id])) {
+            //error_log("Notifications connection established with client: " . $id);
+
             $this->clients[$id] = $client;
             $this->projects[$id] = [];
 
@@ -86,11 +87,6 @@ class Application implements \Wrench\Application\DataHandlerInterface,
             $this->sendTasks();
         }
         $this->lastTaskUpdate = time();
-    }
-    // }}}
-    // {{{ onData
-    public function onData(string $data, \Wrench\Connection $client):void
-    {
     }
     // }}}
 

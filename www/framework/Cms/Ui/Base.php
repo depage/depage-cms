@@ -34,6 +34,7 @@ class Base extends \Depage\Depage\Ui\Base
                 'host' => "",
             ],
         ],
+        'websocket' => null,
     ];
 
     // {{{ _init

@@ -982,7 +982,7 @@ class Project extends \Depage\Entity\Entity
      * @param mixed
      * @return void
      **/
-    public function addNewPost($userId = null)
+    public function addNewPost($userId = null, &$deltaUpdates = null)
     {
         $this->xmldb = $this->getXmlDb($userId);
 
@@ -1487,9 +1487,7 @@ class Project extends \Depage\Entity\Entity
         $i[] = "\$replacementScript = \$redirector->testAliases(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
         $i[] = "if (!empty(\$replacementScript)) {";
         $i[] = "    \$redirector->loadReplacementScript(\$replacementScript);";
-        $i[] = "}";
-
-        $i[] = "if (isset(\$_GET['notfound'])) {";
+        $i[] = "} else if (isset(\$_GET['notfound'])) {";
         $i[] = "    \$redirector->redirectToAlternativePage(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";
         $i[] = "} else {";
         $i[] = "    \$redirector->redirectToIndex(\$_SERVER['REQUEST_URI'], \$acceptLanguage);";

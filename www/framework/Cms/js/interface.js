@@ -944,11 +944,11 @@ var depageCMS = (function() {
                         clearTimeout(cto);
                     }
                 })
-				.on('touchmove.figure', function (e) {
+                .on('touchmove.figure', function (e) {
                     if (cto && e.originalEvent && e.originalEvent.changedTouches && e.originalEvent.changedTouches[0] && (Math.abs(ex - e.originalEvent.changedTouches[0].clientX) > 10 || Math.abs(ey - e.originalEvent.changedTouches[0].clientY) > 10)) {
-							clearTimeout(cto);
-						}
-					})
+                        clearTimeout(cto);
+                    }
+                })
                 .on("contextmenu", "figure", function(e) {
                     var $thumb = $(this);
                     if (!$thumb.hasClass("selected")) {
@@ -2426,25 +2426,54 @@ var depageCMS = (function() {
                             return;
                         }
                         $.get(newUrl, function(data) {
-                            var $loaded = $.parseHTML(data);
-                            var found = 0;
+                            var loaded = $.parseHTML(data);
+                            let forceReload = false;
+                            let forceReloadReason = "";
+
+                            if (updatedIds.length == 2) {
+                                // workaround for setting parent element in doc-properties to tree update
+                                updatedIds.shift();
+                            }
 
                             for (var i in updatedIds) {
                                 var id = updatedIds[i];
                                 var $current = $iframe.find("*[data-db-id='" + id + "']");
-                                var $new = $($loaded).find("*[data-db-id='" + id + "']");
+                                var $new = $(loaded).find("*[data-db-id='" + id + "']");
+
+                                if ($new.attr("data-db-full-reload") == "true") {
+                                    forceReload = true;
+                                    forceReloadReason = "data-db-full-reload='true' on updated element";
+                                    break;
+                                }
+                                if ($new.find("*[data-db-full-reload]").length > 0) {
+                                    forceReload = true;
+                                    forceReloadReason = "data-db-full-reload='true' on child of updated element";
+                                    break;
+                                }
+                                if ($current.parents("*[data-db-full-reload='true']").length > 0) {
+                                    forceReload = true;
+                                    forceReloadReason = "data-db-full-reload='true' on parent of updated element";
+                                    break;
+                                }
 
                                 $new.find("*").andSelf().addClass("depage-live-edit-updated");
 
                                 if ($current.length == 1 && $new.length == 1) {
-                                    $current.replaceWith($new);
-                                    found++;
+                                    $current[0].outerHTML = $new[0].outerHTML;
+                                } else {
+                                    forceReload = true;
+                                    forceReloadReason = "updated element not found in preview or new content";
+                                    break;
                                 }
                             }
-                            if (found == updatedIds.length) {
-                                localJS.onPreviewUpdated();
-                            } else {
+                            //console.log("updated ids: " + updatedIds.join(", ") + (forceReload ? " -> full reload" : "") + (forceReloadReason ? " (" + forceReloadReason + ")" : ""));
+
+                            if (forceReload) {
                                 $previewFrame[0].contentWindow.location.reload();
+                                $previewFrame.one("load", () => { localJS.scrollCurrentDocPropertyIntoView() });
+                            } else {
+                                localJS.onPreviewUpdated();
+                                localJS.scrollCurrentDocPropertyIntoView();
                             }
                         });
                     } catch(error) {
@@ -2454,8 +2483,8 @@ var depageCMS = (function() {
                     var $newFrame = $("<iframe />").insertAfter($previewFrame);
                     $previewFrame.remove();
                     $previewFrame = $newFrame.attr("id", "previewFrame");
-                    $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
-                    $previewFrame.on("load", localJS.onPreviewUpdated);
+                    $previewFrame.one("load", () => { localJS.hightlighCurrentDocProperty() });
+                    $previewFrame.on("load", () => { localJS.onPreviewUpdated() });
                     $previewFrame[0].contentWindow.addEventListener('DOMContentLoaded', function() {
                         localJS.onPreviewUpdated();
                     });
@@ -2472,8 +2501,8 @@ var depageCMS = (function() {
                         .appendTo($body);
 
                     $previewFrame = $("#previewFrame");
-                    $previewFrame.one("load", localJS.hightlighCurrentDocProperty);
-                    $previewFrame.on("load", localJS.onPreviewUpdated);
+                    $previewFrame.one("load", () => { localJS.hightlighCurrentDocProperty() });
+                    $previewFrame.on("load", () => { localJS.onPreviewUpdated() });
                     $previewFrame[0].contentWindow.addEventListener('DOMContentLoaded', function() {
                         localJS.onPreviewUpdated();
                     });
@@ -2582,11 +2611,38 @@ var depageCMS = (function() {
                 var $current = $iframe.find("*[data-db-id='" + currentDocPropertyId + "']");
 
                 $iframe.find("." + className).removeClass(className);
-                $current.addClass(className);
                 if ($current.length == 1) {
-                    $current[0].scrollIntoView();
-                    var $scroller = $current.scrollParent();
-                    $scroller.scrollTop($scroller.scrollTop() - 100);
+                    $current.addClass(className);
+
+                    localJS.scrollCurrentDocPropertyIntoView(true);
+                }
+            } catch(error) {
+            }
+        },
+        // }}}
+        // {{{ scrollCurrentDocPropertyIntoView
+        scrollCurrentDocPropertyIntoView: function(force) {
+            try {
+                var $iframe = $previewFrame.contents();
+                var $current = $iframe.find("*[data-db-id='" + currentDocPropertyId + "']");
+
+                if ($current.length == 1) {
+                    let block = "center";
+                    let clientRect = $current[0].getBoundingClientRect();
+                    let viewportHeight = $previewFrame.height();
+
+                    if ($current.height() > viewportHeight - 100) {
+                        block = "start";
+                    }
+                    if (force || !(
+                        clientRect.top < viewportHeight &&
+                        clientRect.bottom > 0 &&
+                        clientRect.left < viewportWidth &&
+                        clientRect.right > 0
+                    )) {
+                        $current[0].style.setProperty("scroll-margin-top", "10vh");
+                        $current[0].scrollIntoView({ behavior: "smooth", block: block, inline: "nearest" });
+                    }
                 }
             } catch(error) {
             }
@@ -2608,6 +2664,7 @@ var depageCMS = (function() {
             previewLoadTime = Math.min(4000, Math.max(200, previewLoadTime));
             //console.log("load times: " + lastLoadTime + "/" + previewLoadTime);
 
+            clearTimeout(previewUpdateTimer);
             previewUpdateTimer = setInterval(function () {
                 try {
                     title = $previewFrame[0].contentDocument.title;

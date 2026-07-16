@@ -36,7 +36,10 @@ class JsTreeXmlToHtml
 
         $html = [];
         foreach ($nodes as $id => &$subdoc) {
-            $html[$id] = $xslt->transformToXML($subdoc);
+            $transformed = $xslt->transformToXML($subdoc);
+            if (!empty($transformed)) {
+                $html[$id] = $transformed;
+            }
         }
 
         return $html;

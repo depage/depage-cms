@@ -227,9 +227,7 @@
                 // only apply delta updates if no updates are in progress
                 // pending delta updates are applied when local update ajax calls return
                 if (!this._data.deltaUpdates.active_ajax_requests) {
-                    if (!$(".jstree-rename-input").unbind('end_edit').bind('end_edit', function() { this.applyDeltaUpdates(); }).length) {
-                        this.applyDeltaUpdates();
-                    }
+                    this.applyDeltaUpdates();
                 }
             }
         }, this);

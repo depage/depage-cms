@@ -63,18 +63,7 @@ class Tree extends Base {
         if (!$this->project) {
             throw new \Depage\Cms\Exceptions\Project("not allowed");
         }
-        $this->deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, $this->project, 0);
-    }
-    // }}}
-
-    // {{{ destructor
-    /**
-     * Destructor
-     *
-     */
-    public function __destruct()
-    {
-        $this->deltaUpdates->discardOldChanges();
+        $this->deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $this->docId, $this->project);
     }
     // }}}
 
@@ -756,6 +745,8 @@ class Tree extends Base {
         foreach ($parent_ids as $parent_id) {
             $this->deltaUpdates->recordChange($parent_id);
         }
+
+        $this->deltaUpdates->sendChangesTo($this->options->websocket);;
     }
     // }}}
 

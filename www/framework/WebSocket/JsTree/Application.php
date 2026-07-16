@@ -3,8 +3,7 @@
 namespace Depage\WebSocket\JsTree;
 
 class Application implements \Wrench\Application\DataHandlerInterface,
-    \Wrench\Application\ConnectionHandlerInterface,
-    \Wrench\Application\UpdateHandlerInterface
+    \Wrench\Application\ConnectionHandlerInterface
 {
     // {{{ variables
     private $clients = [];
@@ -13,7 +12,7 @@ class Application implements \Wrench\Application\DataHandlerInterface,
         "db" => null,
         "auth" => null,
         'env' => "development",
-        'timezone' => "UST",
+        'timezone' => "UTC",
     );
     protected $options = null;
     protected $pdo = null;
@@ -57,28 +56,6 @@ class Application implements \Wrench\Application\DataHandlerInterface,
         }
     }
     // }}}
-    // {{{ onUpdate
-    public function onUpdate():void
-    {
-        foreach ($this->clients as $cid => $clients) {
-            $data = null;
-            if (isset($this->deltaUpdates[$cid]) && $this->deltaUpdates[$cid] instanceof DeltaUpdates) {
-                $data = (string) $this->deltaUpdates[$cid]->encodedDeltaUpdate();
-            }
-
-            if (!empty($data)) {
-                // send to clients
-                foreach ($clients as $client) {
-                    try {
-                        $client->send($data);
-                    } catch (\Wrench\Exception\SocketException | \Wrench\Exception\ConnectionException $e) {
-                        $this->onDisconnect($client);
-                    }
-                }
-            }
-        }
-    }
-    // }}}
     // {{{ onData
     public function onData(string $data, \Wrench\Connection $client):void
     {
@@ -89,6 +66,22 @@ class Application implements \Wrench\Application\DataHandlerInterface,
             $this->subscribe($client, $data->projectName, $data->docId);
         } else if ($data->action == "unsubscribe") {
             $this->unsubscribe($client, "{$data->projectName}_{$data->docId}");
+        } else if ($data->action == "forwandDeltaUpdate") {
+            unset($data->action);
+
+            $forwardData = json_encode($data);
+            $cid = "{$data->projectName}_{$data->docId}";
+
+            if (!empty($this->clients[$cid])) {
+                // send to clients
+                foreach ($this->clients[$cid] as $client) {
+                    try {
+                        $client->send($forwardData);
+                    } catch (\Wrench\Exception\SocketException | \Wrench\Exception\ConnectionException $e) {
+                        $this->onDisconnect($client);
+                    }
+                }
+            }
         }
     }
     // }}}
@@ -104,6 +97,8 @@ class Application implements \Wrench\Application\DataHandlerInterface,
         $cid = "{$projectName}_{$docId}";
 
         if (empty($this->clients[$cid])) {
+            error_log("Subscribing client {$client->getId()} to {$cid}");
+            //error_log("Creating new deltaUpdates for $cid");
             $this->clients[$cid] = [];
             $prefix = "{$this->pdo->prefix}_proj_{$projectName}";
 
@@ -134,6 +129,7 @@ class Application implements \Wrench\Application\DataHandlerInterface,
     {
         $id = $client->getId();
         if (isset($this->clients[$cid][$id])) {
+            error_log("Unsubscribing client {$client->getId()} from {$cid}");
             unset($this->clients[$cid][$id]);
 
             if (empty($this->clients[$cid])) {

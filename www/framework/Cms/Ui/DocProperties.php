@@ -197,22 +197,25 @@ class DocProperties extends Base
 
             if ($changed) {
                 if (!$savedAlready) {
-                    $doc->saveNode($node);
+                    $nodeId = $doc->saveNode($node);
                 }
 
                 $prefix = $this->pdo->prefix . "_proj_" . $this->projectName;
-                $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->project, 0);
+                $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $doc->getDocId(), $this->project);
                 $parentId = $doc->getParentIdById($this->nodeId);
+
+                $deltaUpdates->recordChange($this->nodeId);
                 $deltaUpdates->recordChange($parentId);
 
                 if ($released) {
                     // get pageId correctly
                     $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docRef);
                     $pageDoc = $this->xmldb->getDoc("pages");
-                    $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $pageDoc->getDocId(), $this->project, 0);
+                    $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $pageDoc->getDocId(), $this->project);
                     $parentId = $pageDoc->getParentIdById($pageInfo->pageId);
                     $deltaUpdates->recordChange($parentId);
                 }
+                $deltaUpdates->sendChangesTo($this->options->websocket);;
             }
 
             $this->form->clearSession(false);

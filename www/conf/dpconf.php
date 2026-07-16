@@ -15,9 +15,6 @@ $conf = [
         'auth' => [
             'realm' => 'depage::cms',
             'method' => 'http_cookie',
-            //'method' => 'http_basic',
-            //'method' => 'http_digest',
-            //'digestCompat' => true,
         ],
         'timezone' => 'UTC',
         //'env' => 'production',
@@ -27,14 +24,15 @@ $conf = [
 
     // {{{ */depage-cms/
     '*/depage-cms/' => array(
-        //'handler' => 'DepageLegacy\LegacyUI',
-        'handler' => 'depage\Cms\Ui\Main',
+        'handler' => 'Depage\Cms\Ui\Main',
         //'env' => 'production',
         'phpcli' => "/opt/local/bin/php",
+        'websocket' => "ws://localhost:8000",
     ),
     '*/depage-cms-dev/' => array(
         'handler' => 'Depage\Cms\Ui\Main',
         'phpcli' => "/opt/local/bin/php",
+        'websocket' => "ws://localhost:8000",
     ),
     // }}}
     // {{{ localhost/depage-cms/
@@ -56,6 +54,7 @@ $conf = [
             'extension' => "gm",
             'executable' => "/opt/local/bin/gm",
         ],
+        'websocket' => "ws://localhost:8000",
     ),
     // }}}
     // {{{ shirasu/depage-cms/
@@ -77,11 +76,12 @@ $conf = [
             'extension' => "gm",
             'executable' => "/opt/local/bin/gm",
         ],
+        'websocket' => "ws://localhost:8000",
     ],
     // }}}
     // {{{ *.bella.local/depage-cms/
     '*.bella.local/depage-cms/' => array(
-        //'env' => 'production',
+        'env' => 'production',
         'cache' => array(
             'xmldb' => array(
                 'disposition' => "redis",
@@ -98,6 +98,7 @@ $conf = [
             'extension' => "gm",
             'executable' => "/opt/local/bin/gm",
         ],
+        'websocket' => "ws://localhost:8000",
     ),
     // }}}
     // {{{ graphics
@@ -112,7 +113,7 @@ $conf = [
 
     // {{{ edit.depage.net
     '*edit.depage.net/' => [
-        'handler' => 'depage\Cms\Ui\Main',
+        'handler' => 'Depage\Cms\Ui\Main',
         'phpcli' => "/usr/bin/php",
         'db' => [
             'dsn' => 'mysql:dbname=depage-edit;host=aaf.mariadb',
@@ -132,6 +133,7 @@ $conf = [
             'executable' => "/usr/bin/gm",
             'optimize' => true,
         ],
+        'websocket' => "wss://edit.depage.net",
         'env' => 'production',
     ],
     // }}}
@@ -145,79 +147,6 @@ $conf = [
         'base' => 'inherit',
         'env' => 'production',
     ],
-    // }}}
-
-    // {{{ editbeta.depage.net
-    'editbeta.depage.net/' => [
-        'handler' => 'depage\Cms\Ui\Main',
-        'phpcli' => "/usr/bin/php",
-        'db' => [
-            'dsn' => 'mysql:dbname=depage-edit;host=aaf.mariadb',
-            //'dsn' => 'mysql:dbname=depage-edit;host=mariadb',
-            'user' => 'depagecms',
-            'password' => 'YLBD49g.!ega-6Pd1F!di0xAHqf.AKuK',
-            'prefix' => 'dp',
-        ],
-        'cache' => [
-            'xmldb' => [
-                'disposition' => "redis",
-                'host' => "redis:6379",
-            ],
-        ],
-        'graphics' => [
-            'extension' => "gm",
-            'executable' => "/usr/bin/gm",
-            'optimize' => true,
-        ],
-        'env' => 'production',
-    ],
-    // }}}
-    // {{{ editbeta.depage.net graphics
-    'editbeta.depage.net/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => [
-        'handler' => 'Depage\Graphics\Ui\Graphics',
-        'env' => 'production',
-        'extension' => "gm",
-        'executable' => "/usr/bin/gm",
-        'optimize' => true,
-        'base' => 'inherit',
-        'env' => 'production',
-    ],
-    // }}}
-
-    // {{{ office.depage.net
-    'office.depage.net/depage-cms/' => [
-        'handler' => 'depage\Cms\Ui\Main',
-        'phpcli' => "/usr/bin/php",
-        'db' => [
-            'dsn' => 'mysql:dbname=depage-edit;host=mariadb',
-            'user' => 'root',
-            'password' => 'killroy',
-            'prefix' => 'dp',
-        ],
-        'cache' => [
-            'xmldb' => [
-                'disposition' => "redis",
-                'host' => "redis:6379",
-            ],
-        ],
-        'graphics' => [
-            'extension' => "gm",
-            'executable' => "/usr/bin/gm",
-            'optimize' => true,
-        ],
-        'env' => 'production',
-    ],
-    // }}}
-    // {{{ office.depage.net graphics
-    'office.depage.net/depage-cms/**.(gif|jpg|jpeg|png|webp|pdf|eps|svg|tif|tiff).*.(gif|jpg|jpeg|png|webp)$' => array(
-        'handler' => 'Depage\Graphics\Ui\Graphics',
-        'env' => 'production',
-        'extension' => "gm",
-        'executable' => "/usr/bin/gm",
-        'optimize' => true,
-        'base' => 'inherit',
-        'env' => 'production',
-    ),
     // }}}
 ];
 

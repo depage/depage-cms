@@ -14,6 +14,12 @@
 namespace depage\Cms\Ui;
 
 class SocketFallback extends Base {
+    protected $projectName = "";
+    protected $docName = "";
+    protected $prefix = "";
+    protected $project;
+    protected $xmldb;
+
     // {{{ _init
     public function _init(array $importVariables = []) {
         parent::_init($importVariables);

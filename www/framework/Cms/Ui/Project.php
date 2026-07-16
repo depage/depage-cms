@@ -486,9 +486,21 @@ class Project extends Base
     function add_new_post() {
         if ($_SERVER['REQUEST_METHOD'] != 'POST') return $this->notallowed();
 
-        return new \Depage\Json\Json([
-            "pageId" => $this->project->addNewPost($this->authUser->id),
-        ]);
+        try {
+            $pageId = $this->project->addNewPost($this->authUser->id, $deltaUpdates);
+
+            if ($deltaUpdates) {
+                $deltaUpdates->sendChangesTo($this->options->websocket);
+            }
+
+            return new \Depage\Json\Json([
+                "pageId" => $pageId,
+            ]);
+        } catch (\Exception $e) {
+            return new \Depage\Json\Json([
+                "error" => $e->getMessage(),
+            ]);
+        }
     }
     // }}}
     // {{{ empty_page_trash()

@@ -16,7 +16,17 @@ $server = new \Wrench\BasicServer('ws://0.0.0.0:8000/', [
         'https://' . parse_url(\DEPAGE_BASE, \PHP_URL_HOST),
     ],
 ]);
+
+error_log("Starting WebSocket server");
 $server->registerApplication('jstree', new \Depage\WebSocket\JsTree\Application());
 $server->registerApplication('notifications', new \Depage\WebSocket\Notifications\Application());
 $server->registerApplication('health', new \Depage\WebSocket\Healthcheck\Application());
-$server->run();
+
+try {
+    $server->run();
+} catch (\Exception $e) {
+    error_log("WebSocket server error: " . $e->getMessage() . " in " . $e->getFile() . ":" . $e->getLine());
+    exit(1);
+}
+
+error_log("WebSocket server stopped.");
