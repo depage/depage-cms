@@ -1,6 +1,7 @@
 <?php
+
 /**
- * @file    response.php
+ * @file    Response.php
  * @brief   http response class
  *
  * @author  Frank Hellenkamp <jonas@depage.net>
@@ -8,11 +9,12 @@
 
 namespace Depage\Http;
 
-class Response {
+class Response
+{
     /**
      * @brief headers
      **/
-    protected $headers = array();
+    protected $headers = [];
 
     /**
      * @brief body
@@ -22,7 +24,7 @@ class Response {
     /**
      * @brief info
      **/
-    protected $info = array();
+    protected $info = [];
 
     /**
      * @brief isRedirect
@@ -62,7 +64,7 @@ class Response {
     /**
      * @brief fiels
      **/
-    protected static $fields = array(
+    protected static $fields = [
         "headers",
         "body",
         "info",
@@ -73,10 +75,19 @@ class Response {
         "isRedirect",
         "redirectUrl",
         "lastModified",
-    );
+    ];
 
     // {{{ __construct()
-    public function __construct($body = "", $headers = [], $info = []) {
+    /**
+     * @brief __construct
+     *
+     * @param mixed $body
+     * @param mixed $headers
+     * @param mixed $info
+     * @return void
+     **/
+    public function __construct($body = "", $headers = [], $info = [])
+    {
         $this->lastModified = new \DateTimeImmutable("now");
         $this->setBody($body);
         $this->info = $info;
@@ -94,10 +105,10 @@ class Response {
     /**
      * @brief setBody
      *
-     * @param mixed $$
+     * @param string|array $body
      * @return void
      **/
-    public function setBody($body = "")
+    public function setBody(string|array $body = ""): self
     {
         if (is_array($body)) {
             $this->body = implode('', $body);
@@ -112,32 +123,30 @@ class Response {
     /**
      * @brief getJson
      *
-     * @param mixed $param
-     * @return void
+     * @return mixed
      **/
-    public function getJson()
+    public function getJson(): mixed
     {
         $data = json_decode((string) $this->body, true);
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new \Exception('Unable to parse response body into JSON: ' . json_last_error());
         }
 
-        return $data === null ? array() : $data;
+        return $data === null ? [] : $data;
     }
     // }}}
     // {{{ getXml()
     /**
      * @brief getXml
      *
-     * @param mixed $param
-     * @return void
+     * @return DOMDocument
      **/
-    public function getXml()
+    public function getXml(): \DOMDocument
     {
         $useErrors = libxml_use_internal_errors(true);
 
         $doc = new \DOMDocument("1.0", "UTF-8");
-        if (!$doc->loadHtml($this->body)) {
+        if (!$doc->loadHTML($this->body)) {
             throw new \Exception('Unable to parse response body into XML: ' . libxml_get_last_error());
         }
 
@@ -150,36 +159,36 @@ class Response {
     /**
      * @brief addHeader
      *
-     * @param mixed $
-     * @return void
+     * @param string $headerLine
+     * @return self
      **/
-    public function addHeader($headerLine)
+    public function addHeader(string $headerLine): self
     {
         if (empty($headerLine)) {
-            return;
+            return $this;
         }
         $this->headers[] = $headerLine;
 
-        list($key, $value) = array_replace(array("", ""), explode(": ", $headerLine));
+        list($key, $value) = array_replace(["", ""], explode(": ", $headerLine));
 
         $key = strtolower($key);
 
         if (substr($key, 0, 4) == "http") {
             $data = explode(' ', $headerLine, 3);
             $this->httpCode = $data[1];
-            $this->httpMessage = $data[2];
-        } else if ($key == "content-type") {
-            preg_match('/([\w\/+]+)(;\s+charset=(\S+))?/i', $value, $matches );
+            $this->httpMessage = $data[2] ?? "";
+        } elseif ($key == "content-type") {
+            preg_match('/([\w\/+]+)(;\s+charset=(\S+))?/i', $value, $matches);
             if (isset($matches[1])) {
                 $this->contentType = $matches[1];
             }
             if (isset($matches[3])) {
                 $this->charset = $matches[3];
             }
-        } else if ($key == "location") {
+        } elseif ($key == "location") {
             $this->isRedirect = true;
             $this->redirectUrl = $value;
-        } else if ($key == "last-modified") {
+        } elseif ($key == "last-modified") {
             $this->lastModified = new \DateTimeImmutable($value);
         }
 
@@ -193,9 +202,9 @@ class Response {
      * @param mixed
      * @return void
      **/
-    public function sendHeaders()
+    public function sendHeaders(): void
     {
-        foreach($this->headers as $header) {
+        foreach ($this->headers as $header) {
             header($header);
         }
     }
@@ -204,17 +213,16 @@ class Response {
     /**
      * @brief getStatus
      *
-     * @param mixed
-     * @return void
+     * @return object
      **/
-    public function getStatus()
+    public function getStatus(): object
     {
         $matches = [];
         preg_match('|HTTP/[\d\.]+\s+(\d+)(\s+.*)?|', $this->headers[0] ?? '', $matches);
 
         return (object) [
             'code' => $matches[1] ?? '',
-            'message' => $matches[2] ?? ''
+            'message' => $matches[2] ?? '',
         ];
     }
     // }}}
@@ -222,13 +230,13 @@ class Response {
     /**
      * @brief getHeader
      *
-     * @param mixed $key
+     * @param string search
      * @return void
      **/
-    public function getHeader($search)
+    public function getHeader(string $search): string
     {
-        foreach($this->headers as $header) {
-            list($key, $value) = array_replace(array("", ""), explode(": ", $header));
+        foreach ($this->headers as $header) {
+            list($key, $value) = array_replace(["", ""], explode(": ", $header));
             if (strtolower($key) == strtolower($search)) {
                 return trim($value);
             }
@@ -242,10 +250,10 @@ class Response {
     /**
      * @brief __get
      *
-     * @param mixed $
-     * @return void
+     * @param string $key
+     * @return mixed
      **/
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         if (in_array($key, static::$fields)) {
             return $this->$key;
@@ -256,10 +264,11 @@ class Response {
     /**
      * @brief __get
      *
-     * @param mixed $
-     * @return void
+     * @param szring $name
+     * @param array $arguments
+     * @return mixed
      **/
-    public function __call($name, $arguments)
+    public function __call(string $name, array $arguments): mixed
     {
         $prefix = substr($name, 0, 3);
         $key = lcfirst(substr($name, 3));
@@ -273,17 +282,22 @@ class Response {
     /**
      * @brief isRedirect
      *
-     * @param mixed
-     * @return void
+     * @return bool
      **/
-    public function isRedirect()
+    public function isRedirect(): bool
     {
         return $this->isRedirect;
     }
     // }}}
 
     // {{{ __toString()
-    public function __toString() {
+    /**
+     * @brief __toString
+     *
+     * @return string
+     **/
+    public function __toString(): string
+    {
         return (string) $this->body;
     }
     // }}}

@@ -1,6 +1,7 @@
 <?php
+
 /**
- * @file    request.php
+ * @file    Eequest.php
  * @brief   http request class
  *
  * @author  Frank Hellenkamp <jonas@depage.net>
@@ -11,10 +12,11 @@ namespace Depage\Http;
 /**
  * @brief Main request class
  **/
-class Request {
+class Request
+{
     protected $url = "";
-    protected $postData = array();
-    protected $headers = array();
+    protected $postData = [];
+    protected $headers = [];
     protected $cookie = "";
     protected $password = "";
     public $allowUnsafeSSL = false;
@@ -25,40 +27,45 @@ class Request {
      *
      * @param $options (array) image processing parameters
      **/
-    public function __construct($url = "") {
+    public function __construct($url = "")
+    {
         $this->url = $url;
     }
     // }}}
 
     // {{{ setUrl()
-    public function setUrl($url) {
+    public function setUrl($url)
+    {
         $this->url = $url;
 
         return $this;
     }
     // }}}
     // {{{ setPostData()
-    public function setPostData($postData) {
+    public function setPostData($postData)
+    {
         $this->postData = $postData;
 
         return $this;
     }
     // }}}
     // {{{ setJson()
-    public function setJson($postData) {
+    public function setJson($postData)
+    {
         $this->setPostData(json_encode($postData));
 
         return $this;
     }
     // }}}
     // {{{ setCookie()
-    public function setCookie($cookie) {
+    public function setCookie($cookie)
+    {
         if (is_array($cookie)) {
-            $cookies = array();
+            $cookies = [];
             foreach ($cookie as $key => $val) {
                 $cookies[] = $key . "=" . rawurlencode($val);
             }
-            if( count($cookies) > 0 ) {
+            if (count($cookies) > 0) {
                 $this->cookie = trim(implode('; ', $cookies));
             }
         } else {
@@ -69,14 +76,16 @@ class Request {
     }
     // }}}
     // {{{ setHeader()
-    public function setHeaders($headers) {
+    public function setHeaders($headers)
+    {
         $this->headers = $headers;
 
         return $this;
     }
     // }}}
     // {{{ setPassword()
-    public function setPassword($password) {
+    public function setPassword($password)
+    {
         $this->password = $password;
 
         return $this;
@@ -86,7 +95,8 @@ class Request {
     /**
      * @brief executes query
      **/
-    public function execute() {
+    public function execute()
+    {
         //open connection
         $ch = curl_init();
 
@@ -107,7 +117,7 @@ class Request {
             $postStr = http_build_query($this->postData, '', '&');
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $postStr);
-        } else if (is_string($this->postData) && strlen($this->postData) > 0) {
+        } elseif (is_string($this->postData) && strlen($this->postData) > 0) {
             // string for already encoded post data
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $this->postData);
@@ -130,22 +140,21 @@ class Request {
         $header = substr($response, 0, $info['header_size']);
         $body = substr($response, $info['header_size']);
 
-        curl_close($ch);
-
         return new Response($body, $header, $info);
     }
     // }}}
 
     // {{{ getRequestIp()
-    static function getRequestIp() {
+    public static function getRequestIp()
+    {
         // get ip of request
         $ip = $_SERVER['REMOTE_ADDR'];
 
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = array_pop(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']));
-        } else if (!empty($_SERVER['HTTP_X_REAL_IP'])) {
+        } elseif (!empty($_SERVER['HTTP_X_REAL_IP'])) {
             $ip = $_SERVER['HTTP_X_REAL_IP'];
-        } else if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        } elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip = $_SERVER['HTTP_CLIENT_IP'];
         }
 
