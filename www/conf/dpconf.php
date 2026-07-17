@@ -133,7 +133,7 @@ $conf = [
             'executable' => "/usr/bin/gm",
             'optimize' => true,
         ],
-        'websocket' => "wss://edit.depage.net",
+        'websocket' => "ws://phpwebsocketserver:8000",
         'env' => 'production',
     ],
     // }}}
