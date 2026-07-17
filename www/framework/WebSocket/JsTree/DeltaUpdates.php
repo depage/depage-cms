@@ -137,6 +137,8 @@ class DeltaUpdates {
                 $client->disconnect();
 
                 $this->discardOldChanges();
+            } else {
+                error_log("Failed to connect to $url for sending delta update.");
             }
         } catch (\Wrench\Exception\SocketException | \Wrench\Exception\ConnectionException $e) {
             error_log("Error sending delta update: " . $e->getMessage());
