@@ -21,7 +21,7 @@ Version 2.7   {#v2-7}
 - Neues Interface für kleine Screens
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
-v2.7.0 / 19.07.2026      {#v2-7-0}
+v2.7.0 / 17.07.2026      {#v2-7-0}
 -------------------
 
 **Backend**
@@ -34,6 +34,7 @@ v2.7.0 / 19.07.2026      {#v2-7-0}
 **Frontend**
 - Neue doc-Eigenschaft „edit:options“ hinzugefügt
 - Verbessertes Scroll-Handling in der Vorschau beim Auswählen und Aktualisieren von Elementen im Dokumentenbaum
+- Bug mit Editor-Button behoben
 - Leichte Layout-Verbesserungen
 
 

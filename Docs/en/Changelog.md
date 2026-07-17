@@ -21,7 +21,7 @@ Version 2.7   {#v2-7}
 - New mobile interface
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
-v2.7.0 / 19.07.2026      {#v2-7-0}
+v2.7.0 / 17.07.2026      {#v2-7-0}
 -------------------
 
 **Backend**
@@ -34,6 +34,7 @@ v2.7.0 / 19.07.2026      {#v2-7-0}
 **Frontend**
 - added new edit:options doc-property
 - added better scroll handling in preview when selected and updating elements in document tree
+- fixed bug with edit button
 - slight layout enhancements
 
 
