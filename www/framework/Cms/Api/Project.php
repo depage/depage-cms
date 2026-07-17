@@ -35,7 +35,7 @@ class Project extends Json
         if (!empty($url)) {
             $xmlGetter = $this->project->getXmlGetter();
 
-            $transformer = \Depage\Transformer\Transformer::factory("dev", $xmlGetter, $this->project->name, "html");
+            $transformer = \Depage\Transformer\Transformer::factory("dev", $xmlGetter, $this->project, "html");
             $transformer->routeHtmlThroughPhp = true;
             list($retVal['pageId'],, $retVal['urlPath']) = $transformer->getPageIdFor($url);
 
