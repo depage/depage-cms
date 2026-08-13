@@ -190,8 +190,17 @@
         <xsl:param name="pageid" />
         <xsl:param name="lang" select="$currentLang" />
         <xsl:param name="absolute" select="false()" />
+        <xsl:param name="hash" select="''" />
+        <xsl:variable name="url" select="php:function('Depage\Cms\Xslt\FuncDelegate::getPageRef', string($pageid), string($lang), $absolute)" />
 
-        <func:result select="php:function('Depage\Cms\Xslt\FuncDelegate::getPageRef', string($pageid), string($lang), $absolute)" />
+        <xsl:choose>
+            <xsl:when test="$hash != ''">
+                <func:result select="concat($url, '#', $hash)" />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="$url" />
+            </xsl:otherwise>
+        </xsl:choose>
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:getLibRef() -->
@@ -215,7 +224,7 @@
         <xsl:param name="url" />
         <xsl:param name="lang" select="$currentLang" />
         <xsl:param name="absolute" select="false()" />
-        <xsl:param name="hash" select="substring-after($url, '#')" />
+        <xsl:param name="hash" select="dp:getHashFromRef($url)" />
 
         <xsl:choose>
             <xsl:when test="substring($url, 1, 8) = 'libid://' and substring-after($url, '.') != ''">
@@ -230,11 +239,8 @@
             <xsl:when test="substring($url, 1, 9) = 'libref://'">
                 <func:result select="dp:getLibRef($url, $absolute)"/>
             </xsl:when>
-            <xsl:when test="substring($url, 1, 10) = 'pageref://' and $hash = ''">
-                <func:result select="dp:getPageRef(substring-after($url, 'pageref://'), $lang, $absolute)"/>
-            </xsl:when>
             <xsl:when test="substring($url, 1, 10) = 'pageref://'">
-                <func:result select="concat(dp:getPageRef(substring-before(substring-after($url, 'pageref://'), '#'), $lang, $absolute), '#', $hash)"/>
+                <func:result select="dp:getPageRef(dp:getPageIdFromRef($url), $lang, $absolute, $hash)"/>
             </xsl:when>
             <xsl:when test="substring($url, 1, 7) = 'mailto:'">
                 <func:result select="dp:replaceEmailChars($url)"/>
@@ -243,6 +249,37 @@
                 <func:result select="$url"/>
             </xsl:otherwise>
         </xsl:choose>
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:getPageIdFromRef() -->
+    <!--
+        dp:getPageIdFromRef(url)
+    -->
+    <func:function name="dp:getPageIdFromRef">
+        <xsl:param name="url" />
+        <xsl:variable name="hash" select="substring-after($url, '#')" />
+
+        <xsl:choose>
+            <xsl:when test="substring($url, 1, 10) = 'pageref://' and $hash = ''">
+                <func:result select="substring-after($url, 'pageref://')" />
+            </xsl:when>
+            <xsl:when test="substring($url, 1, 10) = 'pageref://'">
+                <func:result select="substring-before(substring-after($url, 'pageref://'), '#')" />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="''"/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </func:function>
+    <!-- }}} -->
+    <!-- {{{ dp:getHashFromRef() -->
+    <!--
+        dp:getHashFromRef(url)
+    -->
+    <func:function name="dp:getHashFromRef">
+        <xsl:param name="url" />
+
+        <func:result select="substring-after($url, '#')" />
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:color() -->
@@ -601,6 +638,7 @@
                 <xsl:if test="position() &gt; 1">, </xsl:if>
                 <xsl:variable name="currentSize" select="substring-before(normalize-space(.), ' ')" />
                 <xsl:variable name="mediaSize" select="substring-after(normalize-space(.), ' ')" />
+
                 <xsl:value-of select="concat($realSrc, '.', $action, $currentSize, $center, '.', $ext, ' ', $mediaSize)" />
             </xsl:for-each>
         </xsl:variable>

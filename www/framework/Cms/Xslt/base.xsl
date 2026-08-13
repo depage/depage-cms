@@ -18,7 +18,8 @@
     <!-- {{{ edit:a -->
     <xsl:template match="edit:a" name="edit:a">
         <xsl:param name="href" select="@href"/>
-        <xsl:param name="href_id" select="dp:value(@href_id, substring-after($href, 'pageref://'))"/>
+        <xsl:param name="href_id" select="dp:value(@href_id, dp:getPageIdFromRef($href))"/>
+        <xsl:param name="hash" select="dp:getHashFromRef($href)" />
         <xsl:param name="type" select="@type"/>
         <xsl:param name="rel" select="@rel"/>
         <xsl:param name="pretext" select="@pretext"/>
@@ -30,7 +31,7 @@
         <xsl:param name="class" select="@class"/>
         <xsl:param name="id" select="@id"/>
         <xsl:param name="target" select="@target"/>
-        <xsl:param name="lang" select="$currentLang"/>
+        <xsl:param name="lang" select="dp:choose($href_id, $currentLang, '')"/>
         <xsl:param name="role" />
         <xsl:param name="tabindex" />
 
@@ -47,6 +48,7 @@
                 <xsl:call-template name="dp:linkAttr">
                     <xsl:with-param name="href" select="$href" />
                     <xsl:with-param name="href_id" select="$href_id" />
+                    <xsl:with-param name="hash" select="$hash" />
                     <xsl:with-param name="type" select="$type" />
                     <xsl:with-param name="rel" select="$rel" />
                     <xsl:with-param name="class" select="$class" />
@@ -94,11 +96,12 @@
     <!-- {{{ edit:img -->
     <xsl:template match="edit:img" name="edit:img">
         <xsl:param name="href" select="@href"/>
-        <xsl:param name="href_id" select="dp:value(@href_id, substring-after($href, 'pageref://'))"/>
+        <xsl:param name="href_id" select="dp:value(@href_id, dp:getPageIdFromRef($href))"/>
+        <xsl:param name="hash" select="dp:getHashFromRef($href)" />
         <xsl:param name="type" select="@type"/>
         <xsl:param name="rel" select="@rel"/>
         <xsl:param name="target" select="@target"/>
-        <xsl:param name="lang" select="$currentLang"/>
+        <xsl:param name="lang" select="dp:choose($href_id, $currentLang, '')"/>
         <xsl:param name="src" select="@src"/>
         <xsl:param name="sizes" select="@sizes"/>
         <xsl:param name="srcset" select="@srcset"/>
@@ -121,6 +124,7 @@
                     <xsl:call-template name="dp:linkAttr">
                         <xsl:with-param name="href" select="$href" />
                         <xsl:with-param name="href_id" select="$href_id" />
+                        <xsl:with-param name="hash" select="$hash" />
                         <xsl:with-param name="type" select="$type" />
                         <xsl:with-param name="rel" select="$rel" />
                         <xsl:with-param name="class" select="$class" />
@@ -180,11 +184,12 @@
     <!-- {{{ edit:img inline-svg -->
     <xsl:template match="edit:img" name="img-svg" mode="inline-svg">
         <xsl:param name="href" select="@href"/>
-        <xsl:param name="href_id" select="dp:value(@href_id, substring-after($href, 'pageref://'))"/>
+        <xsl:param name="href_id" select="dp:value(@href_id, dp:getPageIdFromRef($href))"/>
+        <xsl:param name="hash" select="dp:getHashFromRef($href)" />
         <xsl:param name="type" select="@type"/>
         <xsl:param name="rel" select="@rel"/>
         <xsl:param name="target" select="@target"/>
-        <xsl:param name="lang" select="$currentLang"/>
+        <xsl:param name="lang" select="dp:choose($href_id, $currentLang, '')"/>
         <xsl:param name="src" select="@src"/>
         <xsl:param name="sizes" select="@sizes"/>
         <xsl:param name="srcset" select="@srcset"/>
@@ -211,6 +216,7 @@
                 <xsl:call-template name="edit:img">
                     <xsl:with-param name="href" select="$href"/>
                     <xsl:with-param name="href_id" select="$href_id"/>
+                    <xsl:with-param name="hash" select="$hash"/>
                     <xsl:with-param name="target" select="$target"/>
                     <xsl:with-param name="class" select="$class"/>
                     <xsl:with-param name="id" select="$id"/>
@@ -235,13 +241,14 @@
         <xsl:param name="node" select="." />
 
         <xsl:param name="href" select="@href"/>
-        <xsl:param name="href_id" select="dp:value(@href_id, substring-after($href, 'pageref://'))"/>
+        <xsl:param name="href_id" select="dp:value(@href_id, dp:getPageIdFromRef($href))"/>
+        <xsl:param name="hash" select="dp:getHashFromRef($href)" />
         <xsl:param name="type" select="@type"/>
         <xsl:param name="rel" select="@rel"/>
         <xsl:param name="class" select="@class"/>
         <xsl:param name="id" select="@id"/>
         <xsl:param name="target" select="@target"/>
-        <xsl:param name="lang" select="$currentLang"/>
+        <xsl:param name="lang" select="dp:choose($href_id, $currentLang, '')"/>
         <xsl:param name="role"/>
         <xsl:param name="tabindex"/>
         <xsl:param name="redirect"/>
@@ -256,10 +263,10 @@
         <xsl:attribute name="href">
             <xsl:choose>
                 <xsl:when test="$href_id">
-                    <xsl:value-of select="dp:getPageRef($href_id, $lang)" />
+                    <xsl:value-of select="dp:getPageRef($href_id, $lang, false(), $hash)" />
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:value-of select="dp:getRef($href, $lang)" />
+                    <xsl:value-of select="dp:getRef($href, $lang, $hash)" />
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:attribute>
@@ -746,7 +753,6 @@
     <xsl:template match="@src" mode="subdoc">
         <xsl:variable name="path"><xsl:if test="not(dp:getUseBaseUrl())"><xsl:for-each select="$subDocCurrentDocLevels">../</xsl:for-each></xsl:if></xsl:variable>
         <xsl:attribute name="src"><xsl:value-of select="$path" /><xsl:value-of select="." /></xsl:attribute>
-        <xsl:attribute name="data-src"><xsl:value-of select="dp:getUseBaseUrl()" /></xsl:attribute>
     </xsl:template>
     <!-- }}} -->
     <!-- {{{ @srcset subdoc -->
