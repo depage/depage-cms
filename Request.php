@@ -151,7 +151,8 @@ class Request
         $ip = $_SERVER['REMOTE_ADDR'];
 
         if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = array_pop(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']));
+            $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ip = array_pop($parts);
         } elseif (!empty($_SERVER['HTTP_X_REAL_IP'])) {
             $ip = $_SERVER['HTTP_X_REAL_IP'];
         } elseif (!empty($_SERVER['HTTP_CLIENT_IP'])) {
