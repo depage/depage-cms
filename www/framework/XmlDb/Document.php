@@ -606,15 +606,15 @@ class Document
         $doc_info = $this->clearDoc();
         $xml_text = $xml->saveXML();
 
-        // @TODO get namespaces from document at this moment it is only per preg_match not by the domxml interface, because
-        // @TODO namespace definitions are not available
-        preg_match_all('/ xmlns:([^=]*)="([^"]*)"/', $xml_text, $matches, PREG_SET_ORDER);
+        $xpath = new \DOMXPath($xml);
         $namespaces = '';
-        for ($i = 0; $i < count($matches); $i++) {
-            if ($matches[$i][1] != $this->db_ns->ns) {
-                $namespaces .= $matches[$i][0];
+        foreach ($xpath->query('namespace::*') as $node) {
+            if ($node->nodeName == 'xmlns:xml') {
+                continue;
             }
+            $namespaces .= " " . $node->nodeName . "=\"" . htmlspecialchars($node->nodeValue) . "\"";
         }
+
 
         // @TODO get document and entities or set html_entities as standard as long as php does not inherit the entites() function
         $doc_info->rootid = $this->saveNodePrivate($xml);
@@ -1281,7 +1281,7 @@ class Document
     public static function removeNodeAttr($node, $db_ns, $attribute)
     {
         if ($node->nodeType == XML_ELEMENT_NODE || $node->nodeType == XML_DOCUMENT_NODE) {
-            list($xml, $node) = \Depage\Xml\Document::getDocAndNode($node);
+            [$xml, $node] = \Depage\Xml\Document::getDocAndNode($node);
 
             $xpath = new \DOMXPath($xml);
             $xpath->registerNamespace($db_ns->ns, $db_ns->uri);
@@ -1305,7 +1305,7 @@ class Document
         $doc = new \DOMDocument();
         $doc->formatOutput = false;
 
-        list($d, $node) = \Depage\Xml\Document::getDocAndNode($node);
+        [$d, $node] = \Depage\Xml\Document::getDocAndNode($node);
         $rootNode = $doc->importNode($node, true);
         $doc->appendChild($rootNode);
 
