@@ -309,21 +309,19 @@ class XmlDb implements XmlGetter
         $tableSql = [];
         $params = [];
         $condSql = [];
-        $xpathElements = $this->parseXpathElements($xpath);
+        $parser = new XpathParser();
+        $xpathElements = $parser->parseXpathElements($xpath);
         $levels = count($xpathElements) - 1;
 
         foreach ($xpathElements as $level => $element) {
-            $element[] = '';
-            [, $divider, $ns, $name, $condition] = $element;
-
             if ($level == 0) {
                 $tableSql[] = "SELECT l$levels.id FROM";
-                if ($divider == '/') {
+                if ($element->divider == '/') {
                     $condSql[] = "l0.id_parent IS NULL";
                 }
             } else {
                 $tableSql[] = 'INNER JOIN';
-                if ($divider == '/' && !$fallback) {
+                if ($element->divider == '/' && !$fallback) {
                     $parentLevel = $level - 1;
                     $condSql[] = "l$level.id_parent = l$parentLevel.id";
                 } else {
@@ -332,27 +330,28 @@ class XmlDb implements XmlGetter
             }
 
             $tableSql[] = "{$this->table_xml} AS l$level";
-            $op = $this->getConditionOperator($ns, $name);
+            $op = $parser->getConditionOperator($element->namespace, $element->name);
             $condSql[] = "l$level.name $op :name$level";
-            $params["name$level"] = $this->translateName($ns, $name);
+            $params["name$level"] = $parser->translateName($element->namespace, $element->name);
 
-            $hasPosition = $this->parsePosition($condition);
+            $hasPosition = $parser->parsePosition($element->condition);
 
             if ($hasPosition) {
                 $fallback = true;
-            } elseif ($condition != '') {
-                if ($attributes = $this->parseAttributes($condition)) {
+            } elseif ($element->condition != '') {
+                if ($attributes = $parser->parseAttributes($element->condition)) {
                     // fetch by simple attributes: "ns:name[@attr1] ..."
                     $attributeCond = '';
                     foreach ($attributes as $i => $attribute) {
                         [$name, $operator, $value, $bool] = $attribute;
 
                         if ($bool) {
-                            $attributeCond .= $this->cleanOperator($bool);
+                            $attributeCond .= $parser->cleanOperator($bool);
                         }
 
                         if ($name == 'db:id') {
-                            $attributeCond .= " l$level.id {$this->cleanOperator($operator)} :attr{$level}n{$i} ";
+                            $attributeOperator = $parser->cleanOperator($operator);
+                            $attributeCond .= " l$level.id {$parser->cleanOperator($operator)} :attr{$level}n{$i} ";
                             $params["attr{$level}n{$i}"] = $value;
                         } elseif ($operator == '=' || $operator == '') {
                             $attributeCond .= " l$level.value REGEXP :attr{$level}n{$i} ";
@@ -433,144 +432,6 @@ class XmlDb implements XmlGetter
         }
 
         return $ids;
-    }
-    // }}}
-
-    // {{{ parseXpathElements
-    protected function parseXpathElements($xpath)
-    {
-        $pName = '(?:([^\/\[\]]*):)?([^\/\[\]]+)';
-        $pCondition = '(?:\[(.*?)\])?';
-        preg_match_all("/(\/+)$pName$pCondition/", $xpath, $levels, PREG_SET_ORDER);
-
-        return $levels;
-    }
-    // }}}
-    // {{{ parsePosition
-    protected function parsePosition($condition)
-    {
-        $positionArray = [];
-        $matches = [];
-        $pOperator = '(=|!=|<|>|<=|>=)';
-        $pPosition = '([0-9]+)';
-
-        if (preg_match("/^\s*(?:(?:position\(\))\s*$pOperator)?\s*$pPosition\s*$/", $condition, $matches)) {
-            $positionArray[] = ($matches[1] == '') ? '=' : $matches[1];
-            $positionArray[] = $matches[2];
-
-            return $positionArray;
-        }
-
-        return false;
-    }
-    // }}}
-    // {{{ parseAttributes
-    protected function parseAttributes($condition)
-    {
-        $cond_array = false;
-        $temp_condition = $this->removeLiteralStrings($condition, $strings);
-
-        if (preg_match('/^[\w\d@=: -<>\*]*$/', $temp_condition)) {
-            /**
-             * "//ns:name[@attr1] ..."
-             * "//ns:name[@attr1 = 'string1'] ..."
-             * "//ns:name[@attr1 = 'string1' and/or @attr2 = 'string2'] ..."
-             */
-            $cond_array = $this->getConditionAttributes($temp_condition, $strings);
-        }
-
-        return $cond_array;
-    }
-    // }}}
-    // {{{ translateName
-    protected function translateName($ns, $name)
-    {
-        $colon = (strlen($ns) && strlen($name)) ? ':' : '';
-
-        return str_replace('*', '%', "$ns$colon$name");
-    }
-    // }}}
-    // {{{ getConditionOperator
-    protected function getConditionOperator($ns, $name)
-    {
-        if (str_contains($ns, "*") || str_contains($name, "*")) {
-            return 'LIKE';
-        } else {
-            return '=';
-        }
-    }
-    // }}}
-    // {{{ getConditionAttributes
-    protected function getConditionAttributes($conditionString, $strings)
-    {
-        $conditionArray = [];
-
-        $pAttr = '@(\w[\w\d:]*)';
-        $pOperator = '(=|!=|<|>|<=|>=)';
-        $pBool = '(and|or|AND|OR)';
-        $pString = '\$(\d*)';
-
-        preg_match_all("/$pBool?\s*$pAttr\s*(?:$pOperator\s*$pString)?/", $conditionString, $conditions, PREG_SET_ORDER);
-
-        $first = true;
-        foreach ($conditions as $condition) {
-            $bool = $condition[1] ?? null;
-
-            if ($first == $bool) {
-                throw new XmlDbException('Invalid XPath syntax');
-            }
-
-            if ($first) {
-                $first = false;
-            };
-
-            $conditionArray[] = [
-                $condition[2],
-                $condition[3] ?? null,
-                (isset($condition[4]) && $condition[4] != '') ? $strings[$condition[4]] : null,
-                $bool,
-            ];
-        }
-
-        return $conditionArray;
-    }
-    // }}}
-    // {{{ removeLiteralStrings
-    protected function removeLiteralStrings($text, &$strings)
-    {
-        $n = 0;
-        $newText = '';
-        $strings = [];
-
-        $p = "/([^\"']*)|(?:\"([^\"]*)\"|'([^']*)')/";
-        preg_match_all($p, $text, $parts);
-
-        for ($i = 0; $i < count($parts[0]); $i++) {
-            if ($parts[1][$i] == '' && ($parts[2][$i] != '' || $parts[3][$i] != '')) {
-                $strings[$n] = $parts[2][$i] . $parts[3][$i];
-                $newText .= "\$$n";
-                $n++;
-            } else {
-                $newText .= $parts[1][$i];
-            }
-        }
-
-        return $newText;
-    }
-    // }}}
-    // {{{ cleanOperator
-    protected function cleanOperator($operator)
-    {
-        $cleaned = '';
-        $operators = ['=', '!=', '<=', '>=', '<', '>', 'and', 'or'];
-
-        if (in_array($operator, $operators)) {
-            $cleaned = $operator;
-        } else {
-            throw new XmlDbException("Invalid XPath operator \"$operator\"");
-        }
-
-        return $cleaned;
     }
     // }}}
 

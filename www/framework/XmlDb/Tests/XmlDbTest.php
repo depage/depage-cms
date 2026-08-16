@@ -226,28 +226,6 @@ class XmlDbTest extends XmlDbTestCase
         $this->xmlDb->createDoc('Depage\XmlDb\XmlDoctypes\Base', 'pages');
     }
     // }}}
-
-    // {{{ testCleanOperator
-    public function testCleanOperator()
-    {
-        $this->assertEquals('=', $this->xmlDb->cleanOperator('='));
-        $this->assertEquals('<', $this->xmlDb->cleanOperator('<'));
-        $this->assertEquals('>', $this->xmlDb->cleanOperator('>'));
-        $this->assertEquals('<=', $this->xmlDb->cleanOperator('<='));
-        $this->assertEquals('>=', $this->xmlDb->cleanOperator('>='));
-        $this->assertEquals('and', $this->xmlDb->cleanOperator('and'));
-        $this->assertEquals('or', $this->xmlDb->cleanOperator('or'));
-    }
-    // }}}
-    // {{{ testCleanOperatorFail
-    public function testCleanOperatorFail()
-    {
-        $this->expectException(\Depage\XmlDb\Exceptions\XmlDbException::class);
-        $this->expectExceptionMessage("Invalid XPath operator \"'\"");
-
-        $this->xmlDb->cleanOperator('\'');
-    }
-    // }}}
 }
 
 /* vim:set ft=php fenc=UTF-8 sw=4 sts=4 fdm=marker et : */
