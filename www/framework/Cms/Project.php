@@ -1163,7 +1163,6 @@ class Project extends \Depage\Entity\Entity
      **/
     public function getXsltProcessor($xslFile)
     {
-        libxml_disable_entity_loader(false);
         libxml_use_internal_errors(true);
 
         $xsltProc = new \XSLTProcessor();

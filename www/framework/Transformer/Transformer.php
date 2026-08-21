@@ -4,6 +4,8 @@ namespace Depage\Transformer;
 
 use Depage\Html\Html;
 
+use function pcov\waiting;
+
 abstract class Transformer
 {
     protected $xmlGetter;
@@ -115,6 +117,51 @@ abstract class Transformer
         $this->baseUrlStatic = $url;
     }
     // }}}
+    // {{{ externelEntityLoader
+    public function externalEntitiyLoader ($public, $system, $context) {
+        $schema = parse_url($system, \PHP_URL_SCHEME);
+        $url = $system;
+
+        if (is_null($schema)) {
+            $schema = "file";
+            $url = $schema . "://" . $system;
+        }
+
+        // only allow local schemata
+        if (!in_array($schema, [
+            "xmldb",
+            "xslt",
+            "file",
+            "libref",
+            "libid",
+            "pageref",
+        ])) {
+            throw new \Exception("schema $schema not allowed in xsl transform for '$url'");
+        }
+        if ($schema == "xslt") {
+            // load interal stylesheets directly through xslt:// schema
+            $path = DEPAGE_FM_PATH . "/Cms/Xslt/" . substr($url, 6);
+
+            $schema = "file";
+            $url = "file://" . $path;
+        }
+        if ($schema == "file") {
+            $path = realpath(substr($url, 7));
+
+            // allow symlinked paths outside?
+            /*
+            if (!str_starts_with($path, DEPAGE_FM_PATH)) {
+                throw new \Exception("file $path outside of framework path");
+            }
+            */
+
+            if (!file_exists($path)) {
+                throw new \Exception("file $path does not exist");
+            }
+        }
+        return $url;
+    }
+    // }}}
     // {{{ getXsltProc()
     public function getXsltProc($subtype = "_"): \XSLTProcessor
     {
@@ -122,6 +169,7 @@ abstract class Transformer
             return $this->xsltProcs[$subtype];
         }
 
+        libxml_set_external_entity_loader([$this, "externalEntitiyLoader"]);
         libxml_use_internal_errors(true);
 
         $xsltProc = new \XSLTProcessor();
@@ -231,7 +279,7 @@ abstract class Transformer
             $this->transformCache->clearAll();
         }
         $xslt = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
-        $xslt .= $this->getXsltEntities();
+        $xslt .= "<!DOCTYPE xsl:stylesheet [ <!ENTITY % htmlentities SYSTEM \"xslt://htmlentities.ent\"> %htmlentities; ]>\n";
         $xslt .= "<xsl:stylesheet
             version=\"1.0\"
             xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\"
@@ -254,7 +302,7 @@ abstract class Transformer
 
         // add include base functions
         $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:include");
-        $n->setAttribute("href", "xslt://functions.xsl");
+        $n->setAttribute("href", rawurlencode(realpath(DEPAGE_FM_PATH . "/Cms/Xslt/functions.xsl")));
         $root->appendChild($n);
 
         // add basic paramaters and variables
@@ -324,15 +372,31 @@ abstract class Transformer
         }
         $this->addXsltIncludes($doc, $files);
 
+        $xpath = new \DOMXPath($doc);
+        $comments = $xpath->query("//comment()");
+
+        for ($i = $comments->length - 1; $i >= 0; $i--) {
+            $node = $comments->item($i);
+
+            $node->parentNode->removeChild($node);
+        }
+
+
         $this->xsltCache->set($xslFile, $doc);
 
         return $doc;
     }
     // }}}
-    // {{{ getXsltEntities()
-    protected function getXsltEntities()
+    // {{{ addXsltIncludes()
+    protected function addXsltIncludes($doc, $files)
     {
-        return "<!DOCTYPE xsl:stylesheet [ <!ENTITY % htmlentities SYSTEM \"xslt://htmlentities.ent\"> %htmlentities; ]>";
+        $root = $doc->documentElement;
+
+        foreach ($files as $file) {
+            $n = $doc->createElementNS("http://www.w3.org/1999/XSL/Transform", "xsl:include");
+            $n->setAttribute("href", rawurlencode(realpath($file)));
+            $root->appendChild($n);
+        }
     }
     // }}}
 
@@ -643,9 +707,6 @@ abstract class Transformer
             "xmldb" => $this->xmlGetter,
             "transformer" => $this,
         ]);
-
-        // register stream to get global xsl templates
-        \Depage\Cms\Streams\Xslt::registerStream("xslt");
 
         // register stream to get page-links
         \Depage\Cms\Streams\Pageref::registerStream("pageref", [

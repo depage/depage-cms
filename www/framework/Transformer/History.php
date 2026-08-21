@@ -2,29 +2,10 @@
 
 namespace Depage\Transformer;
 
-class History extends Transformer
+class History extends Preview
 {
     protected $previewType = "history";
-    protected $profiling = true;
-
-    // {{{ getXsltEntities()
-    protected function getXsltEntities()
-    {
-        return "";
-    }
-    // }}}
-    // {{{ getXsltIncludes()
-    protected function getXsltIncludes($files)
-    {
-        $xslt = "";
-
-        foreach ($files as $file) {
-            $xslt .= "\n<xsl:include href=\"" . htmlentities(rawurlencode(realpath($file))) . "\" />";
-        }
-
-        return $xslt;
-    }
-    // }}}
+    protected $profiling = false;
 
     // {{{ display()
     /**
@@ -38,7 +19,7 @@ class History extends Transformer
         try {
             return parent::display($urlPath, $lang);
         } catch (\Exception $e) {
-            throw new \Exception("Could not display old version\n");
+            throw new \Exception("Could not display old version\n" . $e->getMessage());
         }
     }
     // }}}

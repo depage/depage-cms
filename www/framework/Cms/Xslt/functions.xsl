@@ -98,7 +98,14 @@
         <xsl:param name="docref" />
         <xsl:param name="xpath" select="''" />
 
-        <func:result select="document(concat('xmldb://', $docref, '/', $xpath))" />
+        <xsl:choose>
+            <xsl:when test="$docref != ''">
+                <func:result select="document(concat('xmldb://', $docref, '/', $xpath))" />
+            </xsl:when>
+            <xsl:otherwise>
+                <func:result select="/dp:non-existent-node-to-automatically-return-empty-result" />
+            </xsl:otherwise>
+        </xsl:choose>
     </func:function>
     <!-- }}} -->
     <!-- {{{ dp:getPageNode() -->
