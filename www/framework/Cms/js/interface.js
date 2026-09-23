@@ -1615,8 +1615,13 @@ var depageCMS = (function() {
 
                     xmldb.setAttribute(pageId, attrName, attrValue);
                 });
-                $form.find(".doc-property-meta p.release a").on("click", function() {
-                    $(this).addClass("disabled");
+
+                var $releaseButton = $form.find(".doc-property-meta p.release button");
+                var $unreleaseButton = $form.find(".doc-property-meta p.unrelease button");
+                $releaseButton.on("click", function(e) {
+                    $releaseButton.prop("disabled", true);
+                    $unreleaseButton.prop("disabled", false);
+
                     var docRef = $(this).parents("fieldset").data("docref");
                     var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
 
@@ -1624,13 +1629,36 @@ var depageCMS = (function() {
 
                     return false;
                 });
+                $unreleaseButton.depageShyDialogue({
+                    ok: {
+                        title: locale.unrelease,
+                        classes: 'default',
+                        click: function(e) {
+                            $releaseButton.prop("disabled", false);
+                            $unreleaseButton.prop("disabled", true);
+
+                            var docRef = $(this).parents("fieldset").data("docref");
+                            var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
+
+                            xmldb.unreleaseDocument();
+
+                            return true;
+                        }
+                    },
+                    cancel: {
+                        title: locale.cancel
+                    }
+                },{
+                    title: locale.unrelease,
+                    message : locale.unreleaseQuestion,
+                    actionActiveTimeout: 1000,
+                    directionMarker: true
+                });
+
                 $form.find(".doc-property-meta .page-versions").each(function() {
                     var $pageVersionSelect = $(this).find("select[name='pageVersions']");
-                    var $rollbackButton = $("<a class=\"button disabled\">" + "Rollback" + "</a>").appendTo(this);
+                    var $rollbackButton = $("<button class=\"button\" disabled>" + "Rollback" + "</button>").appendTo(this);
                     $rollbackButton.on("click", function() {
-                        if ($(this).hasClass("disabled")) return;
-
-                        $(this).addClass("disabled");
                         var docRef = $(this).parents("fieldset").data("docref");
                         var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
                         var timestamp = $pageVersionSelect[0].value.substring(8);
@@ -1643,7 +1671,7 @@ var depageCMS = (function() {
                     });
                     $pageVersionSelect.on("change", function() {
                         var previewType = this.value || "pre";
-                        $rollbackButton.toggleClass("disabled", previewType == "pre");
+                        $rollbackButton.prop("disabled", previewType == "pre");
 
                         var regex = new RegExp('project/' + projectName + '/preview/html/([^/]*)');
                         var url = currentPreviewUrl.replace(regex, 'project/' + projectName + '/preview/html/' + previewType);
@@ -1738,7 +1766,9 @@ var depageCMS = (function() {
                 });
 
 
-                localJS.setFormState($form, $form.find(".doc-property-meta").data("protected") == 1);
+                if ($form.find(".doc-property-meta").data("protected") == 1) {
+                    localJS.setFormState($form, true);
+                }
 
                 // @todo add ui for editing table columns and rows
                 // @todo keep squire from merging cells when deleting at the beginning or end of cell

@@ -9,7 +9,7 @@
 
         // minify javascript
         $jsmin = \Depage\JsMin\JsMin::factory(array(
-            'extension' => "closureLocal",
+            //'extension' => "closureLocal",
             //'extension' => "closureApi",
         ));
 

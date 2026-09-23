@@ -66,6 +66,8 @@
             "shareUrl" => _("Mail Link to file"),
             "shareUrlSubject" => _("Link to file"),
             "uploadFinishedCancel" => _("Finished uploading/Cancel"),
+            "unrelease" => _("Unrelease Page"),
+            "unreleaseQuestion" => _("Are sure you want to unrelease this page? It will be unpublished during the next publishing task."),
             "zoomHelp" => _("Change zoom level of preview."),
         ];
     }

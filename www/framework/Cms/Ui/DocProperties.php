@@ -467,8 +467,17 @@ class DocProperties extends Base
                 'defaultValue' => $url,
             ]);
             // }}}
+            // {{{ add umpublish button
+            if ($this->authUser->canDirectlyReleasePages()) {
+                $unreleaseTitle = _("Unrelease Page");
+                $unreleaseHover = _("Unpublish this page during next publishing task");
+
+                $disabled = !$pageInfo->released || !$pageInfo->published ? "disabled" : "";
+                $fs->addHtml("<p class=\"unrelease\"><button class=\"button\" $disabled data-tooltip=\"$unreleaseHover\">{$unreleaseTitle}</button></p>");
+            }
+            // }}}
             // {{{ add restore from history interface
-            if ($this->authUser->canEditTemplates()) {
+            if ($this->authUser->canEditTemplates() && !$pageInfo->protected) {
                 $history = $this->doc->getHistory();
                 $list = [
                     '' => _("Earlier page versions"),
@@ -499,8 +508,8 @@ class DocProperties extends Base
                 $releaseTitle = _("Request Release");
                 $releaseHover = _("Ask for this page the be released");
             }
-            $class = $pageInfo->released ? "disabled" : "";
-            $fs->addHtml("<p class=\"release\"><a class=\"button $class\" data-tooltip=\"$releaseHover\">{$releaseTitle}</a></p>");
+            $disabled = $pageInfo->released ? "disabled" : "";
+            $fs->addHtml("<p class=\"release\"><button class=\"button\" $disabled data-tooltip=\"$releaseHover\">{$releaseTitle}</button></p>");
             // }}}
         }
     }

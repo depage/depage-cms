@@ -424,9 +424,7 @@ class Project extends \Depage\Entity\Entity
 
             $projectPath = $this->getProjectPath();
 
-            $xsltPath = $projectPath . "xslt/";
             $xmlPath = $projectPath . "xml/";
-            $libPath = $projectPath . "lib/";
 
             $this->xmldb = new \Depage\XmlDb\XmlDb($prefix, $this->pdo, $this->cache, [
                 'pathXMLtemplate' => $xmlPath,
@@ -601,23 +599,10 @@ class Project extends \Depage\Entity\Entity
             return false;
         }
 
-        $query = $this->xmlDb->pdo->prepare(
-            "SELECT
-                pos as pos,
-                validparents as validParents
-            FROM {$this->xmlDb->table_nodetypes}
-            WHERE
-                xmltemplate = :template
-            ;"
-        );
-        $query->execute(['template' => $template]);
+        $node->setAttribute("pos", 0);
+        $node->setAttribute("valid-parents", "");
 
-        if ($result = $query->fetchObject()) {
-            $node->setAttribute("pos", $result->pos);
-            $node->setAttribute("valid-parents", str_replace(" ", "", $result->validParents));
-
-            $xml->save($file);
-        }
+        $xml->save($file);
     }
     // }}}
 
@@ -1069,6 +1054,23 @@ class Project extends \Depage\Entity\Entity
         // @todo set userId correctly
         $doc = $this->xmldb->getDoc($docId);
         $doc->getHistory()->save($userId, true);
+
+        $doc->clearCache();
+
+        return $doc->getDocInfo()->rootid;
+    }
+    // }}}
+    // {{{ unreleaseDocument()
+    /**
+     * @brief unreleaseDocument
+     *
+     * @param mixed $
+     * @return void
+     **/
+    public function unreleaseDocument($docId, $userId)
+    {
+        $doc = $this->xmldb->getDoc($docId);
+        $doc->getHistory()->unpublishAll();
 
         $doc->clearCache();
 

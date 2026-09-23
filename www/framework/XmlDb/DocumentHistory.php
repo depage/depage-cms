@@ -235,6 +235,27 @@ class DocumentHistory
         return $result;
     }
     // }}}
+    // {{{ unpublishAll
+    /**
+     * Set all document versions as unpublished
+     */
+    public function unpublishAll() {
+        $query = $this->pdo->prepare(
+            "UPDATE {$this->table_history} SET published=0
+             WHERE doc_id = :doc_id;"
+        );
+
+        $params = [
+            'doc_id' => $this->document->getDocId(),
+        ];
+
+        if ($query->execute($params)) {
+            return $query->rowCount() > 0;
+        }
+
+        return false;
+    }
+    // }}}
     // {{{ restore
     /**
      * Restores the document to a previous state

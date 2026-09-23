@@ -584,8 +584,29 @@ class Tree extends Base {
     {
         if ($this->authUser->canDirectlyReleasePages()) {
             $status = $this->project->releaseDocument($this->docName, $this->authUser->id);
+            $this->recordPageChange();
         } else {
             $status = $this->project->requestDocumentRelease($this->docName, $this->authUser->id);
+        }
+
+        return new \Depage\Json\Json(array("status" => $status));
+    }
+    // }}}
+    // {{{ unreleaseDocument
+    /**
+     * releases Document
+     *
+     * @return \json
+     */
+    public function unreleaseDocument()
+    {
+        $status = false;
+        if ($this->authUser->canDirectlyReleasePages()) {
+            $status = $this->project->unreleaseDocument($this->docName, $this->authUser->id);
+
+            if ($status) {
+                $this->recordPageChange();
+            }
         }
 
         return new \Depage\Json\Json(array("status" => $status));
@@ -610,6 +631,7 @@ class Tree extends Base {
 
                 if ($status) {
                     $this->recordChange($this->docId, [$this->docInfo->rootid]);
+                    $this->recordPageChange();
                 }
             }
         }
@@ -746,7 +768,24 @@ class Tree extends Base {
             $this->deltaUpdates->recordChange($parent_id);
         }
 
-        $this->deltaUpdates->sendChangesTo($this->options->websocket);;
+        $this->deltaUpdates->sendChangesTo($this->options->websocket);
+    }
+    // }}}
+    // {{{ recordPageChange
+    /**
+     * Record Page Change
+     *
+     * @param $docRef
+     */
+    protected function recordPageChange()
+    {
+        $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docName);
+        $pageDoc = $this->xmldb->getDoc("pages");
+        $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($this->prefix, $this->pdo, $this->xmldb, $pageDoc->getDocId(), $this->project);
+        $parentId = $pageDoc->getParentIdById($pageInfo->pageId);
+        $deltaUpdates->recordChange($parentId);
+
+        $deltaUpdates->sendChangesTo($this->options->websocket);
     }
     // }}}
 

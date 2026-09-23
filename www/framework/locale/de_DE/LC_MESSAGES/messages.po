@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-17 13:04+0200\n"
+"POT-Creation-Date: 2026-09-23 19:27+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -144,9 +144,9 @@ msgstr "Kommentare"
 msgid "Send"
 msgstr "Senden"
 
-#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:736
-#: Cms/Ui/DocProperties.php:780 Cms/Ui/DocProperties.php:818
-#: Cms/Ui/DocProperties.php:858
+#: Comments/Forms/commentform.php:28 Cms/Ui/DocProperties.php:745
+#: Cms/Ui/DocProperties.php:789 Cms/Ui/DocProperties.php:827
+#: Cms/Ui/DocProperties.php:867
 msgid "Text"
 msgstr ""
 
@@ -189,8 +189,8 @@ msgstr "Website"
 msgid "(public)"
 msgstr "(öffentlich)"
 
-#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:1118
-#: Cms/Ui/DocProperties.php:1254
+#: Comments/Forms/commentform.php:54 Cms/Ui/DocProperties.php:1127
+#: Cms/Ui/DocProperties.php:1263
 msgid "http://domain.com"
 msgstr "http://domain.de"
 
@@ -2053,7 +2053,7 @@ msgstr "News und Versionsinfo anzeigen"
 msgid "Project Settings"
 msgstr "Projekt"
 
-#: Cms/Ui/Project.php:78 Cms/Ui/Project.php:100 Cms/Ui/DocProperties.php:567
+#: Cms/Ui/Project.php:78 Cms/Ui/Project.php:100 Cms/Ui/DocProperties.php:576
 msgid "Tags"
 msgstr ""
 
@@ -2144,17 +2144,17 @@ msgstr "Sie haben keine Authentifizierung, diese Projekt zu veröffentlichen."
 msgid "Publish Project '%s'"
 msgstr "Publizieren von Projekt '%s'"
 
-#: Cms/Ui/Project.php:394
+#: Cms/Ui/Project.php:393
 #, php-format
 msgid "Release Pages for Project '%s'"
 msgstr "Seiten freigeben für Projekt '%s'"
 
-#: Cms/Ui/Project.php:441
+#: Cms/Ui/Project.php:440
 #, php-format
 msgid "Unreleased Pages for Project '%s'"
 msgstr "Nicht freigegebene Seiten für Projekt '%s'"
 
-#: Cms/Ui/Project.php:626
+#: Cms/Ui/Project.php:625
 #, php-format
 msgid "Deleted %d pages."
 msgstr "%d Seiten gelöscht."
@@ -2263,244 +2263,252 @@ msgstr ""
 msgid "Current Version"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:496
+#: Cms/Ui/DocProperties.php:494 Cms/js/locale.php:69
+msgid "Unrelease Page"
+msgstr "Freigabe zurückziehen"
+
+#: Cms/Ui/DocProperties.php:495
+msgid "Unpublish this page during next publishing task"
+msgstr "Die Live-Version Seite wird bei der nächsten Veröffentlichung entfernt"
+
+#: Cms/Ui/DocProperties.php:505
 msgid "Release Page"
 msgstr "Seite freigeben"
 
-#: Cms/Ui/DocProperties.php:497
+#: Cms/Ui/DocProperties.php:506
 msgid "Mark this page to be published, when project gets published next time"
 msgstr ""
 "Diese Seite zur Veröffentlichung freigeben, wenn das Projekt das nächste mal "
 "veröffentlicht wird"
 
-#: Cms/Ui/DocProperties.php:499
+#: Cms/Ui/DocProperties.php:508
 msgid "Request Release"
 msgstr "Freigabe anfragen"
 
-#: Cms/Ui/DocProperties.php:500
+#: Cms/Ui/DocProperties.php:509
 msgid "Ask for this page the be released"
 msgstr "Anfragen, diese Seite zu Veröffentlichen"
 
-#: Cms/Ui/DocProperties.php:524 Cms/Ui/DocProperties.php:1073
-#: Cms/Ui/DocProperties.php:1107
+#: Cms/Ui/DocProperties.php:533 Cms/Ui/DocProperties.php:1082
+#: Cms/Ui/DocProperties.php:1116
 msgid "Default"
 msgstr "Standard"
 
-#: Cms/Ui/DocProperties.php:526 Cms/Ui/DocProperties.php:1074
+#: Cms/Ui/DocProperties.php:535 Cms/Ui/DocProperties.php:1083
 #: Cms/XmlDocTypes/Colors.php:15
 msgid "Colorscheme"
 msgstr "Farbschema"
 
-#: Cms/Ui/DocProperties.php:545
+#: Cms/Ui/DocProperties.php:554
 msgid "Navigation"
 msgstr "Navigation"
 
-#: Cms/Ui/DocProperties.php:583 Cms/Ui/DocProperties.php:600
+#: Cms/Ui/DocProperties.php:592 Cms/Ui/DocProperties.php:609
 msgid "Protection"
 msgstr "Schutz"
 
-#: Cms/Ui/DocProperties.php:592
+#: Cms/Ui/DocProperties.php:601
 msgid "Page protected"
 msgstr "Seite geschützt"
 
-#: Cms/Ui/DocProperties.php:603
+#: Cms/Ui/DocProperties.php:612
 msgid "Page is protected and cannot be changed."
 msgstr "Seite ist geschützt und kann nicht verändert werden."
 
-#: Cms/Ui/DocProperties.php:607
+#: Cms/Ui/DocProperties.php:616
 msgid "Pagetype"
 msgstr "Seitentyp"
 
-#: Cms/Ui/DocProperties.php:615
+#: Cms/Ui/DocProperties.php:624
 msgid "html"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:616
+#: Cms/Ui/DocProperties.php:625
 msgid "text"
 msgstr "text"
 
-#: Cms/Ui/DocProperties.php:617
+#: Cms/Ui/DocProperties.php:626
 msgid "php"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:638 Cms/Ui/DocProperties.php:1098
+#: Cms/Ui/DocProperties.php:647 Cms/Ui/DocProperties.php:1107
 #: Cms/Forms/Newsletter.php:53 Cms/Forms/Project/Language.php:74
 msgid "Title"
 msgstr "Titel"
 
-#: Cms/Ui/DocProperties.php:655
+#: Cms/Ui/DocProperties.php:664
 msgid "Linkinfo"
 msgstr "Linkinfo"
 
-#: Cms/Ui/DocProperties.php:657 Cms/Forms/Newsletter.php:66
+#: Cms/Ui/DocProperties.php:666 Cms/Forms/Newsletter.php:66
 msgid "Subject"
 msgstr "Betreff"
 
-#: Cms/Ui/DocProperties.php:680 Cms/Forms/Newsletter.php:79
+#: Cms/Ui/DocProperties.php:689 Cms/Forms/Newsletter.php:79
 msgid "Description"
 msgstr "Beschreibung"
 
-#: Cms/Ui/DocProperties.php:705
+#: Cms/Ui/DocProperties.php:714
 msgid "Active"
 msgstr "Aktiv"
 
-#: Cms/Ui/DocProperties.php:709
+#: Cms/Ui/DocProperties.php:718
 #, php-format
 msgid "%s is active"
 msgstr "%s ist aktiv"
 
-#: Cms/Ui/DocProperties.php:710
+#: Cms/Ui/DocProperties.php:719
 #, php-format
 msgid "%s is disabled"
 msgstr "%s ist inaktiv"
 
-#: Cms/Ui/DocProperties.php:755
+#: Cms/Ui/DocProperties.php:764
 msgid "Headline"
 msgstr "Überschrift"
 
-#: Cms/Ui/DocProperties.php:898 Cms/tpl/usertable.tpl:5
+#: Cms/Ui/DocProperties.php:907 Cms/tpl/usertable.tpl:5
 msgid "Type"
 msgstr "Typ"
 
-#: Cms/Ui/DocProperties.php:938
+#: Cms/Ui/DocProperties.php:947
 msgid "Options"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:960
+#: Cms/Ui/DocProperties.php:969
 msgid "Left"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:961
+#: Cms/Ui/DocProperties.php:970
 msgid "Center"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:962
+#: Cms/Ui/DocProperties.php:971
 #, fuzzy
 msgid "Right"
 msgstr "Höhe: "
 
-#: Cms/Ui/DocProperties.php:965
+#: Cms/Ui/DocProperties.php:974
 msgid "Top"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:966
+#: Cms/Ui/DocProperties.php:975
 msgid "Middle"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:967
+#: Cms/Ui/DocProperties.php:976
 msgid "Bottom"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:974
+#: Cms/Ui/DocProperties.php:983
 #, fuzzy
 msgid "Alignment"
 msgstr "Element"
 
-#: Cms/Ui/DocProperties.php:1006
+#: Cms/Ui/DocProperties.php:1015
 msgid "Date"
 msgstr "Datum"
 
-#: Cms/Ui/DocProperties.php:1028
+#: Cms/Ui/DocProperties.php:1037
 msgid "Boolean"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1051
+#: Cms/Ui/DocProperties.php:1060
 msgid "Color"
 msgstr "Farbe"
 
-#: Cms/Ui/DocProperties.php:1095
+#: Cms/Ui/DocProperties.php:1104
 msgid "Link"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1099
+#: Cms/Ui/DocProperties.php:1108
 msgid "Link title"
 msgstr "Linktitel"
 
-#: Cms/Ui/DocProperties.php:1105
+#: Cms/Ui/DocProperties.php:1114
 msgid "Target"
 msgstr "Ziel"
 
-#: Cms/Ui/DocProperties.php:1108
+#: Cms/Ui/DocProperties.php:1117
 msgid "New Window"
 msgstr "Neues Fenster"
 
-#: Cms/Ui/DocProperties.php:1116 Cms/Ui/DocProperties.php:1252
+#: Cms/Ui/DocProperties.php:1125 Cms/Ui/DocProperties.php:1261
 msgid "href"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1136 Cms/Forms/Project/FileSearch.php:52
+#: Cms/Ui/DocProperties.php:1145 Cms/Forms/Project/FileSearch.php:52
 msgid "Audio"
 msgstr "Audio"
 
-#: Cms/Ui/DocProperties.php:1140 Cms/Ui/DocProperties.php:1165
-#: Cms/Ui/DocProperties.php:1195 Cms/Ui/DocProperties.php:1223
+#: Cms/Ui/DocProperties.php:1149 Cms/Ui/DocProperties.php:1174
+#: Cms/Ui/DocProperties.php:1204 Cms/Ui/DocProperties.php:1232
 msgid "src"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1161 Cms/Forms/Project/FileSearch.php:51
+#: Cms/Ui/DocProperties.php:1170 Cms/Forms/Project/FileSearch.php:51
 msgid "Video"
 msgstr "Video"
 
-#: Cms/Ui/DocProperties.php:1185
+#: Cms/Ui/DocProperties.php:1194
 msgid "File"
 msgstr "Datei"
 
-#: Cms/Ui/DocProperties.php:1215 Cms/Forms/Project/FileSearch.php:50
+#: Cms/Ui/DocProperties.php:1224 Cms/Forms/Project/FileSearch.php:50
 msgid "Image"
 msgstr "Bild"
 
-#: Cms/Ui/DocProperties.php:1233
+#: Cms/Ui/DocProperties.php:1242
 msgid "title"
 msgstr "Titel"
 
-#: Cms/Ui/DocProperties.php:1234
+#: Cms/Ui/DocProperties.php:1243
 msgid "Image title"
 msgstr "Bildtitel"
 
-#: Cms/Ui/DocProperties.php:1239
+#: Cms/Ui/DocProperties.php:1248
 msgid "alt"
 msgstr ""
 
-#: Cms/Ui/DocProperties.php:1240
+#: Cms/Ui/DocProperties.php:1249
 msgid "Image description"
 msgstr "Bildbeschreibung"
 
-#: Cms/Ui/DocProperties.php:1245
+#: Cms/Ui/DocProperties.php:1254
 msgid "copyright"
 msgstr "Copyright"
 
-#: Cms/Ui/DocProperties.php:1246
+#: Cms/Ui/DocProperties.php:1255
 msgid "Image copyright"
 msgstr "Bildrechte"
 
-#: Cms/Ui/DocProperties.php:1271
+#: Cms/Ui/DocProperties.php:1280
 msgid "Table"
 msgstr "Tabelle"
 
-#: Cms/Ui/DocProperties.php:1310
+#: Cms/Ui/DocProperties.php:1319
 msgid "Source"
 msgstr "Quelltext"
 
-#: Cms/Ui/DocProperties.php:1329
+#: Cms/Ui/DocProperties.php:1338
 msgid "Not allowed to edit this element."
 msgstr "Sie haben keine Authentifizierung, dieses Element zu bearbeiten."
 
-#: Cms/Ui/DocProperties.php:1365
+#: Cms/Ui/DocProperties.php:1374
 msgid "Please choose the news items you want to include in the newsletter:"
 msgstr ""
 "Bitte wählen Sie die News aus, die in den Newsletter aufgenommen werden "
 "sollen:"
 
-#: Cms/Ui/DocProperties.php:1367 Cms/Forms/Newsletter.php:87
+#: Cms/Ui/DocProperties.php:1376 Cms/Forms/Newsletter.php:87
 msgid "Unsent news items"
 msgstr "Ungesendete News"
 
-#: Cms/Ui/DocProperties.php:1382 Cms/Ui/DocProperties.php:1402
+#: Cms/Ui/DocProperties.php:1391 Cms/Ui/DocProperties.php:1411
 #: Cms/Forms/Newsletter.php:101 Cms/Forms/Newsletter.php:123
 msgid "No news items available."
 msgstr "Keine News verfügbar."
 
-#: Cms/Ui/DocProperties.php:1388 Cms/Forms/Newsletter.php:107
+#: Cms/Ui/DocProperties.php:1397 Cms/Forms/Newsletter.php:107
 msgid "News items included in other newsletters"
 msgstr "News, die in anderen Newslettern enthalten sind"
 
@@ -2721,15 +2729,21 @@ msgstr "Link zu Datei"
 msgid "Finished uploading/Cancel"
 msgstr "Upload beenden/abbrechen"
 
-#: Cms/js/locale.php:69
+#: Cms/js/locale.php:70
+msgid ""
+"Are sure you want to unrelease this page? It will be unpublished during the "
+"next publishing task."
+msgstr "Sind Sie sicher, dass Sie die Freigabe dieser Seite zurückziehen möchten? Die Live-Seite wird bei der nächsten Veröffentlichung entfernt."
+
+#: Cms/js/locale.php:71
 msgid "Change zoom level of preview."
 msgstr "Ändern Sie die Zoomstufe der Vorschau"
 
-#: Cms/Project.php:1106
+#: Cms/Project.php:1108
 msgid "Document Release Request"
 msgstr "Anfrage zur Seitenfreigabe: "
 
-#: Cms/Project.php:1107
+#: Cms/Project.php:1109
 #, php-format
 msgid "%s is requesting a document release for '%s' on project '%s'."
 msgstr "%s bittet um eine Seitenfreigabe von '%s' für Projekt '%s'."

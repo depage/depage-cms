@@ -376,7 +376,6 @@ class Project extends Base
 
         if ($form->validate()) {
             $values = $form->getValues();
-            $publishId = $values['publishId'];
 
             // release pages
             foreach ($values as $key => $value) {

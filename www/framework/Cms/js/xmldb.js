@@ -166,6 +166,11 @@ var DepageXmldb = (function() {
             this.ajaxCall("releaseDocument", {}, success);
         },
         // }}}
+        // {{{ unreleaseDocument()
+        unreleaseDocument: function(success) {
+            this.ajaxCall("unreleaseDocument", {}, success);
+        },
+        // }}}
         // {{{ rollbackDocument()
         rollbackDocument: function(timestamp, success) {
             this.ajaxCall("rollbackDocument", {
