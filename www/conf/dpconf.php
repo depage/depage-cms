@@ -150,7 +150,10 @@ $conf = [
     // }}}
 ];
 
-if (gethostbyname("aaf.mariadb") === "aaf.mariadb") {
+if (
+    ($_SERVER['HTTP_HOST'] ?? "") == "edit.depage.net" 
+    && gethostbyname("aaf.mariadb") === "aaf.mariadb"
+) {
     $conf['editbeta.depage.net/']['db']['dsn'] = 'mysql:dbname=depage-edit;host=mariadb';
     $conf['*edit.depage.net/']['db']['dsn'] = 'mysql:dbname=depage-edit;host=mariadb';
 }

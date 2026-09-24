@@ -2,10 +2,6 @@
 
 namespace Depage\Transformer;
 
-use Depage\Html\Html;
-
-use function pcov\waiting;
-
 abstract class Transformer
 {
     protected $xmlGetter;
