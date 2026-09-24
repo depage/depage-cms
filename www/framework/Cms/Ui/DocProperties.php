@@ -144,12 +144,18 @@ class DocProperties extends Base
         $node = $xml->documentElement;
         $hashOld = $doc->hashDomNode($node);
 
+        $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docRef);
+
         $this->form = new \Depage\Cms\Forms\XmlForm("xmldata_{$this->nodeId}", [
             'jsAutosave' => true,
             'dataNode' => $node,
             'class' => "labels-on-top",
             'ttl' => $this->auth->sessionLifetime,
             'fl' => $this->fl,
+            'dataAttr' => [
+                'docref' => $this->docRef,
+                'pageid' => $pageInfo->pageId,
+            ],
         ]);
 
         if ($node->getAttribute("icon")) {
@@ -209,7 +215,6 @@ class DocProperties extends Base
 
                 if ($released) {
                     // get pageId correctly
-                    $pageInfo = $this->project->getXmlNav()->getPageInfo($this->docRef);
                     $pageDoc = $this->xmldb->getDoc("pages");
                     $deltaUpdates = new \Depage\WebSocket\JsTree\DeltaUpdates($prefix, $this->pdo, $this->xmldb, $pageDoc->getDocId(), $this->project);
                     $parentId = $pageDoc->getParentIdById($pageInfo->pageId);
@@ -472,7 +477,7 @@ class DocProperties extends Base
                 $unreleaseTitle = _("Unrelease Page");
                 $unreleaseHover = _("Unpublish this page during next publishing task");
 
-                $disabled = !$pageInfo->released || !$pageInfo->published ? "disabled" : "";
+                $disabled = !$pageInfo->released && !$pageInfo->published ? "disabled" : "";
                 $fs->addHtml("<p class=\"unrelease\"><button class=\"button\" $disabled data-tooltip=\"$unreleaseHover\">{$unreleaseTitle}</button></p>");
             }
             // }}}
@@ -559,9 +564,6 @@ class DocProperties extends Base
             'list' => $navs,
             'class' => 'page-navigations',
             'defaultValue' => $defaults,
-            'dataAttr' => [
-                'pageId' => $pageInfo->pageId,
-            ],
         ]);
 
         $tags = $this->project->getTags();
@@ -581,9 +583,6 @@ class DocProperties extends Base
                 'list' => $tags,
                 'class' => 'page-tags',
                 'defaultValue' => $defaults,
-                'dataAttr' => [
-                    'pageId' => $pageInfo->pageId,
-                ],
             ]);
         }
 
@@ -599,9 +598,6 @@ class DocProperties extends Base
                 'defaultValue' => $pageInfo->protected ? ['protected'] : [],
                 'list' => [
                     'protected' => _("Page protected"),
-                ],
-                'dataAttr' => [
-                    'pageId' => $pageInfo->pageId,
                 ],
             ]);
         } elseif ($pageInfo->protected) {
@@ -626,9 +622,6 @@ class DocProperties extends Base
                     'php' => _("php"),
                 ],
                 'defaultValue' => $pageInfo->fileType,
-                'dataAttr' => [
-                    'pageId' => $pageInfo->pageId,
-                ],
             ]);
         }
     }

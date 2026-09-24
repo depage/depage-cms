@@ -1563,13 +1563,16 @@ var depageCMS = (function() {
             currentDocPropertyId = nodeId;
 
             var url = baseUrl + "project/" + projectName + "/doc-properties/" + docref + "/" + nodeId + "/";
-            var xmldb = new DepageXmldb(baseUrl, projectName, "pages");
+            var xmldbPages = new DepageXmldb(baseUrl, projectName, "pages");
 
             $docPropertiesContainer.find("input[type='color']").spectrum("destroy");
 
             $docPropertiesContainer.removeClass("loaded").empty().load(url + "?ajax=true", function() {
                 $docPropertiesContainer.addClass("loaded");
                 var $form = $docPropertiesContainer.find('.depage-form');
+                var docRef = $form.data("docref");
+                var pageId = $form.data("pageid");
+                var xmldbPage = new DepageXmldb(baseUrl, projectName, docRef);
 
                 localJS.setupTooltips();
 
@@ -1584,48 +1587,42 @@ var depageCMS = (function() {
                     currentPreviewUrl = currentPreviewUrl.replace(/\/(pre|dev)\/..\//, "/$1/" + lang + "/");
                 });
                 $form.find(".page-navigations input").on("change", function() {
-                    var pageId = $(this).parents("p").data("pageid");
                     var attrName = "nav_" + this.value;
                     var attrValue = this.checked ? 'true' : 'false';
 
-                    xmldb.setAttribute(pageId, attrName, attrValue);
+                    xmldbPages.setAttribute(pageId, attrName, attrValue);
                 });
                 $form.find(".page-tags input").on("change", function() {
-                    var pageId = $(this).parents("p").data("pageid");
                     var attrName = "tag_" + this.value;
                     var attrValue = this.checked ? 'true' : 'false';
 
-                    xmldb.setAttribute(pageId, attrName, attrValue);
+                    xmldbPages.setAttribute(pageId, attrName, attrValue);
                 });
                 $form.find(".page-protection input").on("change", function() {
-                    var pageId = $(this).parents("p").data("pageid");
                     var attrName = "db:protected";
                     var attrValue = this.checked ? 'true' : 'false';
 
                     localJS.setFormState($form, this.checked);
 
-                    xmldb.setAttribute(pageId, attrName, attrValue, function() {
+                    xmldbPages.setAttribute(pageId, attrName, attrValue, function() {
                         localJS.loadPagedataTree(currentDocId, true);
                     });
                 });
                 $form.find(".page-type select").on("change", function() {
-                    var pageId = $(this).parents("p").data("pageid");
                     var attrName = "file_type";
                     var attrValue = this.value;
 
-                    xmldb.setAttribute(pageId, attrName, attrValue);
+                    xmldbPages.setAttribute(pageId, attrName, attrValue);
                 });
 
                 var $releaseButton = $form.find(".doc-property-meta p.release button");
                 var $unreleaseButton = $form.find(".doc-property-meta p.unrelease button");
+
                 $releaseButton.on("click", function(e) {
                     $releaseButton.prop("disabled", true);
                     $unreleaseButton.prop("disabled", false);
 
-                    var docRef = $(this).parents("fieldset").data("docref");
-                    var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
-
-                    xmldb.releaseDocument();
+                    xmldbPage.releaseDocument();
 
                     return false;
                 });
@@ -1637,10 +1634,9 @@ var depageCMS = (function() {
                             $releaseButton.prop("disabled", false);
                             $unreleaseButton.prop("disabled", true);
 
-                            var docRef = $(this).parents("fieldset").data("docref");
-                            var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
-
-                            xmldb.unreleaseDocument();
+                            xmldbPage.unreleaseDocument();
+                            xmldbPages.setAttribute(pageId, "db:released", "false");
+                            xmldbPages.setAttribute(pageId, "db:published", "false");
 
                             return true;
                         }
@@ -1659,11 +1655,9 @@ var depageCMS = (function() {
                     var $pageVersionSelect = $(this).find("select[name='pageVersions']");
                     var $rollbackButton = $("<button class=\"button\" disabled>" + "Rollback" + "</button>").appendTo(this);
                     $rollbackButton.on("click", function() {
-                        var docRef = $(this).parents("fieldset").data("docref");
-                        var xmldb = new DepageXmldb(baseUrl, projectName, docRef);
                         var timestamp = $pageVersionSelect[0].value.substring(8);
 
-                        xmldb.rollbackDocument(timestamp, function() {
+                        xmldbPage.rollbackDocument(timestamp, function() {
                             $pageVersionSelect[0].selectize.setValue("", false);
                         });
 
@@ -1758,7 +1752,7 @@ var depageCMS = (function() {
                     showSelectionPalette: false
                 });
                 $form.on("depageForm.autosaved", function() {
-                    $form.find(".doc-property-meta p.release a").removeClass("disabled");
+                    $form.find(".doc-property-meta p.release button").prop("disabled", false);
                 });
 
                 $form.find("fieldset.detail").depageDetails({
