@@ -21,6 +21,20 @@ Version 2.7   {#v2-7}
 - Neues Interface für kleine Screens
 - Neues online [Benutzerhandbuch](https://docs.depage.net/depage-cms-manual/de/)
 
+v2.7.1 / 24.09.2026      {#v2-7-1}
+-------------------
+
+**Backend**
+- Laden von externen Daten in XSL-Templates verbessert
+- Sicherheit beim Laden von externen XML/XSL-Daten erhöht
+- XSL-Template verbessert
+- XmlDb verbessert
+- XPath-Parser verbessert
+
+**Frontend**
+- Neue Funktion zum Zurückziehen von Freigaben hinzugefügt
+
+
 v2.7.0 / 17.07.2026      {#v2-7-0}
 -------------------
 
