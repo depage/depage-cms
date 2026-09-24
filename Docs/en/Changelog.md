@@ -21,6 +21,20 @@ Version 2.7   {#v2-7}
 - New mobile interface
 - New online [user manual](https://docs.depage.net/depage-cms-manual/de/)
 
+v2.7.1 / 24.09.2026      {#v2-7-1}
+-------------------
+
+**Backend**
+- enhanced external data loading from xsl template
+- enhanced security of xml/xsl data loader
+- enhanced xsl templates
+- enhanced xmldb
+- enhanced xpath parser
+
+**Frontend**
+- added unrelease page function
+
+
 v2.7.0 / 17.07.2026      {#v2-7-0}
 -------------------
 
