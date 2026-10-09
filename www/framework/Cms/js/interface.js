@@ -1743,13 +1743,19 @@ var depageCMS = (function() {
 
                     localJS.chooseImageCenter($thumb, $input);
                 });
-                $form.find("input[type='color']").spectrum({
-                    preferredFormat: "hex",
-                    showButtons: false,
-                    showInitial: true,
-                    showInput: true,
-                    showPalette: false,
-                    showSelectionPalette: false
+                $form.find("input[type='color']").each(function() {
+                    let $input = $(this);
+                    let palette = $input.parents(".input-color").data("palette");
+
+                    $input.spectrum({
+                        preferredFormat: "hex",
+                        showButtons: false,
+                        showInitial: true,
+                        showInput: true,
+                        showPalette: palette.length > 0,
+                        showSelectionPalette: false,
+                        palette: [palette],
+                    });
                 });
                 $form.on("depageForm.autosaved", function() {
                     $form.find(".doc-property-meta p.release button").prop("disabled", false);

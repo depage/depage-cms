@@ -1054,6 +1054,9 @@ class DocProperties extends Base
         $fs->addColor("xmledit-$nodeId", [
             'label' => "",
             'dataPath' => "//*[@db:id = '$nodeId']/@value",
+            'dataAttr' => [
+                'palette' => json_encode($this->project->getColorPalette()),
+            ],
         ]);
     }
     // }}}

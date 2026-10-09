@@ -8,6 +8,14 @@
     *zoom: 1;
     @extend %scrollY;
     width: $treeWidth - 30px;
+    z-index: 20000;
+    display: flex;
+    flex-direction: column;
+
+    @media screen and (min-width: $breakTablet) {
+        width: 1.75 * $treeWidth - 30px;
+        flex-direction: row;
+    }
 }
 .sp-container.sp-flat {
     position: relative;
@@ -279,10 +287,15 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     padding-bottom: 100px;
 }
 .sp-palette-container {
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    padding-top: 20px;
     width: 100%;
+    order: 10;
+
+    @media screen and (min-width: $breakTablet) {
+        padding-top: 0px;
+        padding-left: 20px;
+        width: 1 * $treeWidth;
+    }
 }
 
 /* Palettes */
